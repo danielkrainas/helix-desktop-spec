@@ -49,6 +49,14 @@ keys, as an allowed shortcut inhibitor does, until it ends the grab or
 **Window icons** (`xdg_toplevel_icon_manager_v1`): see "Window
 switching" for where they show.
 
+**Xwayland options** (`org.gnome.mutter.wayland`, read when Xwayland
+starts, so changes take effect in the next session):
+`xwayland-disable-extension` `Security` and `Xtest` disable the X
+`SECURITY` and `XTEST` extensions, when this Xwayland can switch them off
+(otherwise the flag is ignored); `xwayland-allow-byte-swapped-clients`
+lets X11 clients of the other byte order connect (Xwayland refuses them
+otherwise).
+
 **Foreign toplevels** (`zxdg_exporter_v2`/`zxdg_importer_v2`, and v1). An
 app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
