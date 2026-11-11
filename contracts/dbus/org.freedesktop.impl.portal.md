@@ -196,7 +196,7 @@ within one second.
   "Deny"). Cancelling answers 1. Then it creates an
   `org.gnome.Mutter.RemoteDesktop` session (and, with sources, a screen
   cast session belonging to it), starts it, and returns `devices` (the
-  types asked for, all when not given), `clipboard_enabled` false and the
+  types asked for, all when not given), `clipboard_enabled` and the
   streams.
 - `Notify*` for a device type not allowed, before `Start`, or with an
   unknown stream are ignored. They are passed on to the compositor's
@@ -245,3 +245,28 @@ picks, 4 an area the user selects, 8 the active window.
 - `PickColor` uses the shell's color picker. Cancelling answers 1.
 - The portal calls `org.gnome.Shell.Screenshot`, which is why its bus name
   is on that interface's allowed list.
+
+## Clipboard (`org.freedesktop.impl.portal.Clipboard`)
+
+Contract: `org.freedesktop.impl.portal.Clipboard.xml`. A portal session of
+another portal (RemoteDesktop) asks for the clipboard with
+`RequestClipboard(session_handle, options)` before it starts; once
+started, `SetSelection`, `SelectionWrite`, `SelectionWriteDone` and
+`SelectionRead` take the session handle, and `SelectionOwnerChanged`
+(`mime_types` `as`, `session_is_owner` `b`) and `SelectionTransfer` are
+emitted with it. `version` is 1.
+
+### Helix
+
+- Only RemoteDesktop sessions: `RequestClipboard` for any other or
+  unknown session fails with `org.freedesktop.DBus.Error.InvalidArgs`;
+  after `Start` with `org.freedesktop.DBus.Error.Failed`.
+- No separate question: allowing the session (the RemoteDesktop `Start`
+  dialog) allows the clipboard it asked for. `Start` then turns on the
+  compositor session's clipboard (`EnableClipboard`, see
+  `org.gnome.Mutter.RemoteDesktop.md`) and returns `clipboard_enabled`
+  true (false when not asked for, or when that fails).
+- The methods and signals are those of the compositor session, passed
+  through (option names with `_` instead of `-`); for a session that does
+  not share the clipboard the methods fail with
+  `org.freedesktop.DBus.Error.Failed`.

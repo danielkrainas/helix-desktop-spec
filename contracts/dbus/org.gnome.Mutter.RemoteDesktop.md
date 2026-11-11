@@ -68,13 +68,75 @@ backends (and, in GNOME, gnome-remote-desktop) use it.
 - The screen cast session of a remote desktop session refuses its own
   `Start` and `Stop` (`org.freedesktop.DBus.Error.Failed`).
 - `CapsLockState` and `NumLockState` are the current lock states.
-  `KeymapCapabilities` is empty and `CurrentKeymap` is `{source: 0}`;
-  `SetKeymap` and `SetKeymapLayoutIndex` fail with
-  `org.freedesktop.DBus.Error.NotSupported`, as do the clipboard methods
-  (`EnableClipboard`, `DisableClipboard`, `SetSelection`,
-  `SelectionWrite`, `SelectionWriteDone`, `SelectionRead`); the
-  clipboard signals are never emitted.
-- EIS (`ConnectToEIS`, after `Start`): Helix's EIS server offers one seat,
+- Clipboard and keymap methods, like input, need a started session
+  (else `org.freedesktop.DBus.Error.Failed`).
+- EIS (`ConnectToEIS`, after `Start`): see below.
+
+### Clipboard
+
+The session shares the clipboard (the `CLIPBOARD` selection of Wayland
+and X11 apps; not the primary selection).
+
+- `EnableClipboard(options)` turns sharing on; again while on fails with
+  `org.freedesktop.DBus.Error.Failed`. A non-empty `mime-types` (`as`)
+  also does `SetSelection`. If the clipboard has content then (not the
+  session's own), `SelectionOwnerChanged` is emitted at once. While
+  sharing is off, the other clipboard methods fail with
+  `org.freedesktop.DBus.Error.Failed`.
+- `SelectionOwnerChanged(options)` is emitted whenever the clipboard
+  changes: `mime-types` (`as`, empty when the clipboard was cleared) and
+  `session-is-owner` (`b`, true when this session set it).
+- `SetSelection(options)`: the session's clipboard content, offered in
+  `mime-types` (`as`; missing or empty:
+  `org.freedesktop.DBus.Error.InvalidArgs`), becomes the clipboard.
+- When an app pastes one of those types, `SelectionTransfer(mime_type,
+  serial)` is emitted with a new serial. `SelectionWrite(serial)` returns
+  the file descriptor to write the data to (closing it ends the data);
+  `SelectionWriteDone(serial, success)` finishes the transfer. An unknown
+  or finished serial fails with `org.freedesktop.DBus.Error.InvalidArgs`.
+  A transfer without `SelectionWrite` within 30 seconds is dropped (the
+  app gets no data).
+- `SelectionRead(mime_type)` returns a file descriptor to read the
+  clipboard's data in that type from. A type the clipboard does not offer
+  fails with `org.freedesktop.DBus.Error.InvalidArgs`; an empty clipboard,
+  or the session's own content, with `org.freedesktop.DBus.Error.Failed`.
+- `DisableClipboard`, or the session ending, turns sharing off: content
+  the session set is cleared if it still is the clipboard, and transfers
+  not yet written are dropped.
+
+### Keymaps
+
+- `KeymapCapabilities` is `{supported-keymap-types: [0],
+  supported-xkb-keymap-formats: [1]}` (XKB, text format version 1).
+- `SetKeymap(options)` with `keymap-type` 0 replaces the keymap of the
+  session's keyboard, for everything (apps, shortcuts,
+  `NotifyKeyboardKeysym`): `xkb-keymap` (`h`, required) is read to its
+  end (a final NUL is allowed); `xkb-keymap-format` (`u`), if given,
+  must be 1; `xkb-keymap-layout-index` (`u`, default 0) is the active
+  layout; `lock-keymap` (`b`, default false). An unsupported type or
+  format, a missing, unreadable or invalid keymap, or a layout index the
+  keymap does not have, fail with `org.freedesktop.DBus.Error.InvalidArgs`.
+  Without `keymap-type`, the configured input sources come back (when
+  the keymap in effect is this session's).
+- While a session's keymap is in effect, a change of the configured input
+  sources (`org.gnome.desktop.input-sources`, also switching the active
+  one) replaces it, unless it was set with `lock-keymap`; then such
+  changes wait until the session resets its keymap or ends. When the
+  session ends, its keymap gives way to the configured input sources.
+- `SetKeymapLayoutIndex(index)` changes the active layout of the keymap
+  this session set last, while that keymap is in effect (else
+  `org.freedesktop.DBus.Error.Failed`); an index the keymap does not have
+  fails with `org.freedesktop.DBus.Error.InvalidArgs`.
+- `CurrentKeymap` is `{name, source}`: `name` (`s`) is the XKB name of the
+  active layout (e.g. `English (US)`), `source` (`u`) 1 when the keymap in
+  effect was set by this session, else 0. Every session's property
+  changes (`PropertiesChanged`) when the keymap or active layout changes.
+- EIS keyboards are replaced (device removed, a new one added and resumed)
+  when the keymap changes, so they carry the keymap in effect.
+
+### EIS
+
+- `ConnectToEIS`, after `Start`: Helix's EIS server offers one seat,
   `default`, with the capabilities of `device-types`. When the client
   binds them it gets virtual devices, resumed at once: a pointer
   (relative motion, buttons, scrolling), an absolute pointer and a

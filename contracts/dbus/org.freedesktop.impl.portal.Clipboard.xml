@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.freedesktop.impl.portal.Clipboard
+  Source: https://github.com/flatpak/xdg-desktop-portal/blob/main/data/org.freedesktop.impl.portal.Clipboard.xml
+  Pinned against GNOME 51 surface. Interface shape only; behavior notes in
+  org.freedesktop.impl.portal.md.
+-->
+<node>
+  <interface name="org.freedesktop.impl.portal.Clipboard">
+    <method name="RequestClipboard">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+    </method>
+    <method name="SetSelection">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+    </method>
+    <method name="SelectionWrite">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="serial" type="u" direction="in" />
+      <arg name="fd" type="h" direction="out" />
+    </method>
+    <method name="SelectionWriteDone">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="serial" type="u" direction="in" />
+      <arg name="success" type="b" direction="in" />
+    </method>
+    <method name="SelectionRead">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="mime_type" type="s" direction="in" />
+      <arg name="fd" type="h" direction="out" />
+    </method>
+    <signal name="SelectionOwnerChanged">
+      <arg name="session_handle" type="o" />
+      <arg name="options" type="a{sv}" />
+    </signal>
+    <signal name="SelectionTransfer">
+      <arg name="session_handle" type="o" />
+      <arg name="mime_type" type="s" />
+      <arg name="serial" type="u" />
+    </signal>
+    <property name="version" type="u" access="read" />
+  </interface>
+</node>
