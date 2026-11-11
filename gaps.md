@@ -14,7 +14,7 @@ Living log of missing, unclear, or underspecified contracts.
 - SessionManager inhibitor/client lifetime: Helix drops a caller's clients and inhibitors when its bus connection goes away (so a crashed app can't block logout forever). Not specified by the contract.
 - SessionManager `CanShutdown` / `CanReboot` / `CanSuspend` return a `u` availability whose values are undocumented. Helix does not implement them; its shell asks logind (`CanPowerOff` etc., whose answers are documented) instead.
 - SessionManager session-restore API (`RegisterRestore`, `DeletedInstanceIds`, `UnregisterRestore`): semantics of `reason`, `instance_id` and `cleanup_ids` are undocumented. Helix sets `RestoreSupported` to false and does not implement them.
-- Where `Setenv` values must be propagated (session children, D-Bus/systemd activation environment). Helix currently only records them.
+- Whether `Setenv` values must also reach the systemd user manager's environment (GNOME runs its session as systemd user units). Helix does not use systemd units and only updates the D-Bus activation environment.
 - `org.gtk.Notifications` `ActionInvoked` signal (added in GNOME 51): when GNOME Shell emits it relative to activating the app over `org.freedesktop.Application` is undocumented. Helix activates the app and does not emit it.
 - `org.gnome.SessionManager.EndSessionDialog` `Open` type values beyond 0 (logout), 1 (power off) and 2 (restart) are undocumented (GNOME also has upgrade-related dialogs). Helix only uses 0–2.
 - Portal backend requirements beyond the standard XDG portal interfaces (GNOME-specific impl details).

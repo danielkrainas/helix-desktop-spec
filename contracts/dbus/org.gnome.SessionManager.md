@@ -45,6 +45,19 @@ Unknown bits are carried through unchanged (they still count for
 - Inhibitors without the logout bit (e.g. idle-only) never block ending the
   session.
 
+## `Setenv(s variable, s value)`
+
+Only valid during the initialization phase (before `Initialized`). The
+variable becomes part of the session's application launch environment:
+
+- it is added to the D-Bus activation environment
+  (`org.freedesktop.DBus.UpdateActivationEnvironment`) before `Setenv`
+  returns, so services the bus starts from then on see it;
+- session components started after the call inherit it.
+
+Processes that are already running keep their environment. Setting a
+variable again replaces its value.
+
 ## `GetLocale(i category)`
 
 `category` is the platform C library's `LC_*` constant (e.g. `LC_MESSAGES`).
