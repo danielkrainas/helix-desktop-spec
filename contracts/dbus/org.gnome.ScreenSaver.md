@@ -32,6 +32,14 @@ The session locks automatically when the user has been idle for
 `org.gnome.desktop.screensaver lock-enabled` is true. An active
 `SessionManager` inhibitor with the idle flag (8) prevents it.
 
+## Locking before suspend
+
+The shell holds a logind `sleep` inhibitor in `delay` mode (see
+`org.freedesktop.login1.md`). On `PrepareForSleep(true)` it locks if
+`org.gnome.desktop.screensaver lock-enabled` is true, waits until the lock
+screen is shown, then releases the inhibitor so the system can sleep. On
+`PrepareForSleep(false)` it takes a new one.
+
 ## Unlocking
 
 Unlocking requires authenticating as the session's user through PAM.

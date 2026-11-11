@@ -95,3 +95,25 @@ return; `SessionOver` is emitted when it completes.
    clean up and answer `EndSessionResponse`.
 4. **Stop.** Clients get `Stop`, then `SessionOver` is emitted and the
    session manager exits.
+5. **Power.** After `Shutdown`, once the session's processes are stopped,
+   the session manager asks logind to power off (`PowerOff(false)`, see
+   `org.freedesktop.login1.md`); after `Reboot`, to restart
+   (`Reboot(false)`). If logind is unavailable or refuses, the session has
+   still ended.
+
+## `Suspend`
+
+Asks logind to suspend (`Suspend(false)`) and returns; the session keeps
+running. Fails with an error if logind is unavailable or refuses (for
+example because something blocks sleep).
+
+While any inhibitor has the suspend bit (4), the session manager holds a
+logind `sleep` inhibitor in `block` mode, so the system does not sleep
+until the last such inhibitor goes away.
+
+## `SessionIsActive`
+
+Follows the `Active` property of the logind session the session manager
+runs in (`GetSession($XDG_SESSION_ID)`, or `GetSessionByPID` of its own
+process when the variable is unset), with `PropertiesChanged` on every
+change. Without logind it is true.

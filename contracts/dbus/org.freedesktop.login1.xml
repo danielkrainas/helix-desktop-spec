@@ -1,0 +1,55 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  Subset of systemd-logind's public API that a GNOME-compatible session
+  depends on (system bus, name org.freedesktop.login1). Not a GNOME
+  interface: Helix calls it, it does not implement it. Shapes checked
+  against systemd 255's introspection.
+-->
+<node>
+  <!-- /org/freedesktop/login1 -->
+  <interface name="org.freedesktop.login1.Manager">
+    <method name="GetSession">
+      <arg name="session_id" direction="in" type="s"/>
+      <arg name="object_path" direction="out" type="o"/>
+    </method>
+    <method name="GetSessionByPID">
+      <arg name="pid" direction="in" type="u"/>
+      <arg name="object_path" direction="out" type="o"/>
+    </method>
+    <method name="PowerOff">
+      <arg name="interactive" direction="in" type="b"/>
+    </method>
+    <method name="Reboot">
+      <arg name="interactive" direction="in" type="b"/>
+    </method>
+    <method name="Suspend">
+      <arg name="interactive" direction="in" type="b"/>
+    </method>
+    <method name="CanPowerOff">
+      <arg name="result" direction="out" type="s"/>
+    </method>
+    <method name="CanReboot">
+      <arg name="result" direction="out" type="s"/>
+    </method>
+    <method name="CanSuspend">
+      <arg name="result" direction="out" type="s"/>
+    </method>
+    <method name="Inhibit">
+      <arg name="what" direction="in" type="s"/>
+      <arg name="who" direction="in" type="s"/>
+      <arg name="why" direction="in" type="s"/>
+      <arg name="mode" direction="in" type="s"/>
+      <arg name="pipe_fd" direction="out" type="h"/>
+    </method>
+    <signal name="PrepareForSleep">
+      <arg name="start" type="b"/>
+    </signal>
+  </interface>
+
+  <!-- /org/freedesktop/login1/session/<id> -->
+  <interface name="org.freedesktop.login1.Session">
+    <property name="Id" type="s" access="read"/>
+    <property name="Active" type="b" access="read"/>
+  </interface>
+</node>
