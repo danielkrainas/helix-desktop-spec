@@ -63,6 +63,15 @@ the first frame at or after it. Commits of windows not shown (minimized,
 on another workspace) are not held back. `wp_single_pixel_buffer_manager_v1`
 is offered.
 
+**Explicit sync** (`wp_linux_drm_syncobj_manager_v1`). Offered when the
+GPU Helix renders with can wait on DRM syncobj timeline points with an
+eventfd (bare hardware: the GPU it drives; nested: the host GPU's render
+node). A commit with an acquire point is applied once that point is
+signalled; the release point is signalled once Helix no longer uses the
+buffer. GPU buffers committed without explicit sync wait for their
+implicit (dmabuf) fences before the commit is applied, with or without
+this protocol.
+
 ## Pointer image (Helix)
 
 The pointer shows what the app under it asks for: its own image
