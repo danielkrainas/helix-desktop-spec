@@ -96,7 +96,7 @@ Clicks on the title bar:
 | Click | Effect |
 |-------|--------|
 | left on a button, released on it | minimize; maximize or restore; close (`WM_DELETE_WINDOW`, as the client's own close) |
-| left elsewhere | focus and raise; dragging moves the window (a maximized window is restored first) |
+| left elsewhere | focus and raise; dragging moves the window (a maximized window is restored once the pointer has moved, under the pointer) |
 | two left clicks within `org.gnome.desktop.peripherals.mouse double-click` milliseconds | `action-double-click-titlebar` |
 | middle | `action-middle-click-titlebar` |
 | right | `action-right-click-titlebar` |
@@ -104,8 +104,9 @@ Clicks on the title bar:
 Actions: `toggle-maximize` maximizes or restores;
 `toggle-maximize-horizontally` / `-vertically` fill the work area in that
 direction only (or restore); `minimize`; `lower` puts the window below
-all others; `none`, `menu` (Helix has no window menu) and `toggle-shade`
-(Helix does not shade windows) do nothing.
+all others; `menu` opens the window menu (see "Window menu and window
+keys") at the pointer; `none` and `toggle-shade` (Helix does not shade
+windows) do nothing.
 
 Around a framed window (left, right, bottom, and above the title bar) is
 an invisible border `org.gnome.mutter draggable-border-width` logical
@@ -115,6 +116,50 @@ Corners are where two borders meet, extended along each edge by the
 border width.
 
 `ScreenshotWindow` with `include_frame` true includes the title bar.
+
+## Window menu and window keys (Helix)
+
+The window menu opens for a window when the app asks for it
+(`xdg_toplevel.show_window_menu`, e.g. a right click on a GTK header bar),
+on the `activate-window-menu` key (`org.gnome.desktop.wm.keybindings`,
+default `<Alt>space`; for the focused window, at its top-left corner), and
+as the `menu` title bar action of X11 frames. It lists, top to bottom:
+
+- **Minimize**;
+- **Maximize**, or **Restore** for a maximized window;
+- **Move** and **Resize** (see below; not for maximized or fullscreen
+  windows);
+- **Always on Top** (checked when on): the window stays above windows
+  that are not;
+- **Always on Visible Workspace** (checked when on; `toggle-on-all-workspaces`);
+- **Move to Workspace Left** / **Right**, when there is one that way;
+- **Move to Monitor Left** / **Right** / **Up** / **Down**, when there is a
+  monitor that way;
+- **Close**.
+
+The menu closes on a choice, Escape, or a click outside it.
+
+**Move** and **Resize** follow the pointer without a button held: Move
+keeps the window where the pointer took it, Resize moves the window's
+bottom-right corner. A click ends it; Escape puts the window back as it
+was.
+
+Keys from `org.gnome.desktop.wm.keybindings` acting on the focused window:
+
+| Key | Effect |
+|-----|--------|
+| `close` | close it, as its own close button would |
+| `minimize` | minimize |
+| `maximize`, `unmaximize`, `toggle-maximized` | maximize, restore, or switch |
+| `maximize-horizontally`, `maximize-vertically` | fill the work area in that direction (again: restore) |
+| `toggle-fullscreen` | fullscreen or back |
+| `toggle-above`, `always-on-top` | switch Always on Top |
+| `begin-move`, `begin-resize` | Move / Resize as from the menu |
+| `move-to-monitor-left` / `-right` / `-up` / `-down` | to the nearest monitor that way, keeping its place relative to the work area (maximized and fullscreen windows stay so) |
+| `move-to-center` | center it in its work area |
+| `move-to-side-n` / `-s` / `-e` / `-w`, `move-to-corner-ne` / `-nw` / `-se` / `-sw` | against that edge or corner of the work area |
+| `raise`, `lower`, `raise-or-lower` | above all windows, below all, or whichever it is not (lowering focuses the new top window) |
+| `show-desktop` | minimize every window on the workspace; again (before any is shown) shows them back |
 
 ## Window switching (Helix)
 
