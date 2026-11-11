@@ -1,6 +1,6 @@
 <!--
   org.gnome.Mutter.DisplayConfig
-  Source: https://gitlab.gnome.org/GNOME/mutter/-/blob/main/data/dbus-interfaces/org.gnome.Mutter.DisplayConfig.xml
+  Source: https://gitlab.gnome.org/GNOME/mutter/-/blob/51.0/data/dbus-interfaces/org.gnome.Mutter.DisplayConfig.xml
   Pinned against GNOME 51 surface. Clean-room extraction of public contract.
   Note: Full type signatures for complex structs are preserved from upstream introspection.
 -->
@@ -43,6 +43,13 @@
       <arg name="serial" direction="in" type="u" />
       <arg name="connector" direction="in" type="s" />
       <arg name="value" direction="in" type="i" />
+    </method>
+
+    <method name="ChangeBacklight">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="output" direction="in" type="u" />
+      <arg name="value" direction="in" type="i" />
+      <arg name="new_value" direction="out" type="i" />
     </method>
 
     <method name="GetCrtcGamma">

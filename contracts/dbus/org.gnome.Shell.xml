@@ -1,6 +1,6 @@
 <!--
   org.gnome.Shell
-  Source: https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/data/dbus-interfaces/org.gnome.Shell.xml
+  Source: https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/51.0/data/dbus-interfaces/org.gnome.Shell.xml
   Pinned against GNOME 51 surface. Clean-room extraction.
   Note: Eval is typically restricted; many methods are for internal/session use.
 -->
@@ -35,9 +35,11 @@
     </method>
     <method name="UngrabAccelerator">
       <arg type="u" direction="in" name="action"/>
+      <arg type="b" direction="out" name="success"/>
     </method>
     <method name="UngrabAccelerators">
       <arg type="au" direction="in" name="actions"/>
+      <arg type="b" direction="out" name="success"/>
     </method>
     <method name="ScreenTransition"/>
 

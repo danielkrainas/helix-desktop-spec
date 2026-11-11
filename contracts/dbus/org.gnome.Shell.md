@@ -13,6 +13,10 @@ Companion to `org.gnome.Shell.xml`.
   modes such as `gdm` and `unlock-dialog` belong to the login screen and lock
   screen).
 - `ShellVersion` (`s`): a GNOME-style version string such as `51.0`.
+  Helix reports the GNOME version whose surface it implements (`51.0`), not
+  its own version, so clients that parse it see a GNOME release. Extension
+  tooling also reads it; Helix does not implement
+  `org.gnome.Shell.Extensions`, so extension installs fail cleanly.
 - `OverviewActive` (`b`, read/write): whether the overview is shown. Setting
   it shows or hides the overview.
 
@@ -56,5 +60,7 @@ pressed and `AcceleratorDeactivated` when released. `parameters` keys:
 `device-id` (`u`), `timestamp` (`u`), `action-mode` (`u`), `device-node`
 (`s`).
 
-`UngrabAccelerator(action)` / `UngrabAccelerators(actions)` release grabs.
+`UngrabAccelerator(action)` / `UngrabAccelerators(actions)` release grabs
+and return whether they succeeded (false if an action was not grabbed; for
+the list form, false if any was not).
 Grabs belong to the caller and are released when it leaves the bus.

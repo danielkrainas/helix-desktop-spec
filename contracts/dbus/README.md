@@ -17,6 +17,9 @@ Behavioral notes that XML cannot express live in companion `.md` files
 
 ## Notes
 
-These are clean-room extractions of the public introspection interfaces from upstream GNOME 51 and xdg-desktop-portal sources. They represent the contract surface, not implementation code.
+These are clean-room extractions of the public introspection interfaces from upstream GNOME 51 and xdg-desktop-portal sources.
+
+The `org.gnome.*` interface shapes (members, argument types and directions,
+property access) were checked against the upstream 51.0 tags on 2026-11-11. They represent the contract surface, not implementation code.
 
 Additional interfaces (ScreenCast, RemoteDesktop, portals, Shell.Screenshot, etc.) will be added as the living spec grows.

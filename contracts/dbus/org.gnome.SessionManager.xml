@@ -4,7 +4,7 @@
   org.gnome.SessionManager:
   @short_description: The Manager
 
-  Source: https://gitlab.gnome.org/GNOME/gnome-session/-/blob/main/gnome-session/org.gnome.SessionManager.xml
+  Source: https://gitlab.gnome.org/GNOME/gnome-session/-/blob/51.0/gnome-session/org.gnome.SessionManager.xml
   Pinned against GNOME 51 surface. Clean-room extraction of public contract.
 -->
 <node>

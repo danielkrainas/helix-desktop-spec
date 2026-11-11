@@ -6,10 +6,9 @@ Living log of missing, unclear, or underspecified contracts.
 
 - Full `org.gnome.Shell.Screenshot` interface (InteractiveScreenshot, Screenshot, ScreenshotWindow, ScreenshotArea) — present in GNOME Shell; needs extraction.
 - Mutter ScreenCast / RemoteDesktop D-Bus interfaces (private-ish but used by portals).
-- DisplayConfig write side: `ApplyMonitorsConfig` method values (verify / temporary / persistent), its `logical_monitors` and `properties` arguments, and the confirmation/revert flow; `SetBacklight`, gamma and CTM semantics; keys in `Backlight` dictionaries. Helix reports `ApplyMonitorsConfigAllowed` = false and does not implement them yet.
+- DisplayConfig write side: `ApplyMonitorsConfig` method values (verify / temporary / persistent), its `logical_monitors` and `properties` arguments, and the confirmation/revert flow; `SetBacklight` / `ChangeBacklight`, gamma and CTM semantics; keys in `Backlight` dictionaries. Helix reports `ApplyMonitorsConfigAllowed` = false and does not implement them yet.
 - Which input counts as "user activity" for IdleMonitor (e.g. whether pointer motion without buttons does). Helix counts every input event.
 - Session startup ordering in GNOME 51 (gnome-session's systemd targets) is not documented here. Helix uses its own simple launcher; components announce readiness by owning a bus name or calling `SessionManager.Setenv` (the compositor sets `WAYLAND_DISPLAY`).
-- GSettings key tables exist for `org.gnome.desktop.interface`, `.a11y.interface` and `.wm.preferences`, but were described from gsettings-desktop-schemas 46.1 (the version available when extracted), not 51. Keys added since (e.g. `accent-color` in 47) are missing. Regenerate against 51.
 - GSettings key tables for other high-traffic schemas (`org.gnome.desktop.wm.keybindings`, peripherals).
 - SessionManager client and inhibitor objects: the object path shape (Helix currently uses `/org/gnome/SessionManager/Client<n>` and `/org/gnome/SessionManager/Inhibitor<cookie>`) and the interfaces exported at those paths (`org.gnome.SessionManager.Client`, `.ClientPrivate`, `.Inhibitor`) are not in the contract. Helix returns the paths but does not export objects there yet.
 - SessionManager D-Bus error names are unspecified. Helix uses `org.gnome.SessionManager.Error.{NotInInitialization,AlreadyInitialized,NotInRunning,NotRegistered,InvalidCookie,InvalidArgs,Inhibited,General}` pending a contract.
@@ -25,7 +24,5 @@ Living log of missing, unclear, or underspecified contracts.
 - Settings / Session portal backends: the value of the `version` property each backend should report is undocumented. Helix reports 1.
 - Inhibit portal "query end" flow: requires a SessionManager query-end phase (gnome-session's `QueryEndSession` client protocol), which is not in the spec. Helix monitors report running → ending only.
 - Shell extension API surface (explicitly deferred; internal and unstable).
-- `org.gnome.Shell` `ShellVersion`: Helix reports the targeted GNOME version (`51.0`) so clients that probe the shell see the surface Helix implements. Extension tooling also reads it; since `org.gnome.Shell.Extensions` is not implemented, extension installs fail cleanly, but whether to report a Helix version instead is open.
 - `org.gnome.Shell` grab flags (`grabFlags` values beyond 0) are undocumented.
-- `org.gnome.Shell.xml` declares `UngrabAccelerator` / `UngrabAccelerators` without an out argument; upstream GNOME Shell may return a `b` success value. Verify against the GNOME 51 introspection and fix the contract if so. Helix follows the contract as written.
 - How Helix's separate compositor and shell processes share keyboard grabs for `GrabAccelerator` (in GNOME both live in one process). Helix records grabs but does not deliver `AcceleratorActivated` yet.

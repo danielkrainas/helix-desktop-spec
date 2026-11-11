@@ -1,8 +1,7 @@
 # `org.gnome.desktop.wm.preferences`
 
-Key surface of the `org.gnome.desktop.wm.preferences` GSettings schema, described from the
-installed schema via GSettings introspection (gsettings-desktop-schemas 46.1).
-Verify against GNOME 51 before relying on newer keys (see `gaps.md`).
+Key surface of the `org.gnome.desktop.wm.preferences` GSettings schema in gsettings-desktop-schemas
+51.0, described through GSettings introspection of the compiled schema.
 
 Path: `/org/gnome/desktop/wm/preferences/`
 
@@ -23,7 +22,7 @@ Path: `/org/gnome/desktop/wm/preferences/`
 | `raise-on-click` | `b` | `true` |  |
 | `resize-with-right-button` | `b` | `false` |  |
 | `theme` | `s` | `'Adwaita'` |  |
-| `titlebar-font` | `s` | `'Cantarell Bold 11'` |  |
+| `titlebar-font` | `s` | `'Adwaita Sans Bold 11'` |  |
 | `titlebar-uses-system-font` | `b` | `true` |  |
 | `visual-bell` | `b` | `false` |  |
 | `visual-bell-type` | `s` | `'fullscreen-flash'` | `fullscreen-flash`, `frame-flash` |

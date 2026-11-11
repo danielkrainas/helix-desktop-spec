@@ -1,13 +1,13 @@
 # `org.gnome.desktop.interface`
 
-Key surface of the `org.gnome.desktop.interface` GSettings schema, described from the
-installed schema via GSettings introspection (gsettings-desktop-schemas 46.1).
-Verify against GNOME 51 before relying on newer keys (see `gaps.md`).
+Key surface of the `org.gnome.desktop.interface` GSettings schema in gsettings-desktop-schemas
+51.0, described through GSettings introspection of the compiled schema.
 
 Path: `/org/gnome/desktop/interface/`
 
 | Key | Type | Default | Allowed values |
 |-----|------|---------|----------------|
+| `accent-color` | `s` | `'blue'` | `blue`, `teal`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `slate` |
 | `avatar-directories` | `as` | `[]` |  |
 | `can-change-accels` | `b` | `false` |  |
 | `clock-format` | `s` | `'24h'` | `24h`, `12h` |
@@ -20,29 +20,30 @@ Path: `/org/gnome/desktop/interface/`
 | `cursor-blink-timeout` | `i` | `10` | `1` to `2147483647` |
 | `cursor-size` | `i` | `24` |  |
 | `cursor-theme` | `s` | `'Adwaita'` |  |
-| `document-font-name` | `s` | `'Cantarell 11'` |  |
+| `document-font-name` | `s` | `'Adwaita Sans 12'` |  |
 | `enable-animations` | `b` | `true` |  |
 | `enable-hot-corners` | `b` | `true` |  |
 | `font-antialiasing` | `s` | `'grayscale'` | `none`, `grayscale`, `rgba` |
 | `font-hinting` | `s` | `'slight'` | `none`, `slight`, `medium`, `full` |
-| `font-name` | `s` | `'Noto Sans 9'` |  |
+| `font-name` | `s` | `'Adwaita Sans 11'` |  |
+| `font-rendering` | `s` | `'automatic'` | `automatic`, `manual` |
 | `font-rgba-order` | `s` | `'rgb'` | `rgba`, `rgb`, `bgr`, `vrgb`, `vbgr` |
 | `gtk-color-palette` | `s` | `'black:white:gray50:red:purple:blue:light blue:green:yellow:orange:lavender:brown:goldenrod4:dodger blue:pink:light green:gray10:gray30:gray75:gray90'` |  |
 | `gtk-color-scheme` | `s` | `''` |  |
-| `gtk-enable-primary-paste` | `b` | `true` |  |
+| `gtk-enable-primary-paste` | `b` | `false` |  |
 | `gtk-im-module` | `s` | `''` |  |
 | `gtk-im-preedit-style` | `s` | `'callback'` |  |
 | `gtk-im-status-style` | `s` | `'callback'` |  |
 | `gtk-key-theme` | `s` | `'Default'` |  |
-| `gtk-theme` | `s` | `'Greybird'` |  |
+| `gtk-theme` | `s` | `'Adwaita'` |  |
 | `gtk-timeout-initial` | `i` | `200` |  |
 | `gtk-timeout-repeat` | `i` | `20` |  |
-| `icon-theme` | `s` | `'elementary-xfce-dark'` |  |
+| `icon-theme` | `s` | `'Adwaita'` |  |
 | `locate-pointer` | `b` | `false` |  |
 | `menubar-accel` | `s` | `'F10'` |  |
 | `menubar-detachable` | `b` | `false` |  |
 | `menus-have-tearoff` | `b` | `false` |  |
-| `monospace-font-name` | `s` | `'Monospace 10'` |  |
+| `monospace-font-name` | `s` | `'Adwaita Mono 11'` |  |
 | `overlay-scrolling` | `b` | `true` |  |
 | `scaling-factor` | `u` | `0` |  |
 | `show-battery-percentage` | `b` | `false` |  |

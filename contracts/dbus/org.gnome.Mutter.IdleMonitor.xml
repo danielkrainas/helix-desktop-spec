@@ -1,6 +1,6 @@
 <!--
   org.gnome.Mutter.IdleMonitor
-  Source: https://gitlab.gnome.org/GNOME/mutter/-/blob/main/data/dbus-interfaces/org.gnome.Mutter.IdleMonitor.xml
+  Source: https://gitlab.gnome.org/GNOME/mutter/-/blob/51.0/data/dbus-interfaces/org.gnome.Mutter.IdleMonitor.xml
   Pinned against GNOME 51 surface.
 -->
 <!DOCTYPE node PUBLIC

@@ -42,8 +42,9 @@ Additional shell-specific schemas live in `gnome-shell` (e.g. `org.gnome.shell`)
 ## Key contracts
 
 Schemas Helix depends on directly have a key table (key, GVariant type,
-default, allowed values), described from the installed schema through
-GSettings' introspection API rather than copied from schema sources:
+default, allowed values) for gsettings-desktop-schemas 51.0, described
+through GSettings' introspection API from the compiled upstream schemas
+rather than copied from schema sources:
 
 - [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
 - [`org.gnome.desktop.a11y.interface`](org.gnome.desktop.a11y.interface.md)

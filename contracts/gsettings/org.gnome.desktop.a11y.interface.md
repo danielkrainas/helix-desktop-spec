@@ -1,12 +1,13 @@
 # `org.gnome.desktop.a11y.interface`
 
-Key surface of the `org.gnome.desktop.a11y.interface` GSettings schema, described from the
-installed schema via GSettings introspection (gsettings-desktop-schemas 46.1).
-Verify against GNOME 51 before relying on newer keys (see `gaps.md`).
+Key surface of the `org.gnome.desktop.a11y.interface` GSettings schema in gsettings-desktop-schemas
+51.0, described through GSettings introspection of the compiled schema.
 
 Path: `/org/gnome/desktop/a11y/interface/`
 
 | Key | Type | Default | Allowed values |
 |-----|------|---------|----------------|
 | `high-contrast` | `b` | `false` |  |
+| `keyboard-focus-visible-timeout` | `i` | `-1` |  |
+| `reduced-motion` | `s` | `'no-preference'` | `no-preference`, `reduce` |
 | `show-status-shapes` | `b` | `false` |  |
