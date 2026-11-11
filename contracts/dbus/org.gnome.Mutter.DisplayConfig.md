@@ -138,6 +138,25 @@ monitors change.
 - `HasExternalMonitor` (`b`): any monitor that is not built in
 - `Backlight` (`(uaa{sv})`): see below
 
+## Gamma
+
+`GetCrtcGamma(serial, crtc)` returns the current gamma ramps of a CRTC
+(an id from `GetResources`): red, green and blue, 16-bit values, one entry
+per step of the hardware's ramp. `SetCrtcGamma(serial, crtc, red, green,
+blue)` replaces them. Both fail with `org.freedesktop.DBus.Error.InvalidArgs`
+for a serial other than the current `GetResources` serial or an unknown
+CRTC; `SetCrtcGamma` also when the three ramps are not all as long as the
+ones `GetCrtcGamma` returns.
+
+### Helix
+
+- On bare hardware the ramps go to the CRTC (DRM gamma); their length is
+  the CRTC's gamma size. A ramp set stays in effect across mode changes
+  and switching back from another VT, until it is set again or the
+  monitor goes away.
+- In the nested session the ramps are kept (256 entries, identity at
+  first) but have no visible effect.
+
 ## Backlight
 
 `Backlight` is a serial and one dictionary per monitor:
