@@ -55,15 +55,19 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   keys do nothing.
 - `Above_Tab` in an accelerator means the key above Tab, whatever symbol
   the layout gives it (the grave accent on a US layout).
-- `org.gnome.shell.app-switcher` and `org.gnome.shell.window-switcher`
-  are ignored: Helix has no workspaces and shows no thumbnails or icons.
+- `current-workspace-only` of `org.gnome.shell.app-switcher` and
+  `org.gnome.shell.window-switcher` limits the switchers to the active
+  workspace (`contracts/gsettings/workspaces.md`); `app-icon-mode` is
+  ignored, as Helix shows no thumbnails or icons.
 - The application launcher lists open windows (matching the search on
   title or app id) above the apps; choosing one activates it.
 - Activating raises the window, gives it focus, and brings it back if it
   was minimized.
-- The compositor tells the shell about windows (app id, title, focus) and
-  activates them on request over Helix's private `helix_window_list_v1`
-  Wayland protocol, offered only to the shell it launched.
+- The compositor tells the shell about windows (app id, title, focus,
+  workspace) and the workspaces (how many, which is active), and
+  activates windows, switches workspaces and moves windows between them on
+  request, over Helix's private `helix_window_list_v1` Wayland protocol,
+  offered only to the shell it launched.
 
 ## Screen capture (Helix)
 

@@ -62,6 +62,7 @@ From other GNOME 51.0 packages, described the same way:
   (gnome-shell)
 - [`org.gnome.settings-daemon.plugins.media-keys`](org.gnome.settings-daemon.plugins.media-keys.md)
   (gnome-settings-daemon)
+- [`org.gnome.mutter`](org.gnome.mutter.md) (mutter)
 
 Helix reuses the system dconf and the installed GNOME schemas, so these
 tables are what the installed schemas must provide; they are not a
@@ -72,4 +73,5 @@ them.
 
 Key tables (generated from the compiled 51.0 schemas) exist for the schemas
 Helix reads; `input-settings.md` describes how Helix applies the input
-schemas, and `shell-keys.md` the screenshot, brightness and volume keys.
+schemas, `shell-keys.md` the screenshot, brightness, volume and playback
+keys, and `workspaces.md` workspaces.
