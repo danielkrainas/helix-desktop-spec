@@ -57,3 +57,9 @@ Helix reuses the system dconf and the installed GNOME schemas, so these
 tables are what the installed schemas must provide; they are not a
 replacement for them. More schemas get tables as Helix starts depending on
 them.
+
+## Key tables and behavior notes
+
+Key tables (generated from the compiled 51.0 schemas) exist for the schemas
+Helix reads; `input-settings.md` describes how Helix applies the input
+schemas.
