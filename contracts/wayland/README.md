@@ -273,7 +273,10 @@ The menu closes on a choice, Escape, or a click outside it.
 **Move** and **Resize** follow the pointer without a button held: Move
 keeps the window where the pointer took it, Resize moves the window's
 bottom-right corner. A click ends it; Escape puts the window back as it
-was.
+was. The keyboard works too: the arrow keys move the pointer (so the
+window, or its corner) by 10 logical pixels, 1 with Control held;
+Return, keypad Enter or Space ends it as a click does. Meanwhile key
+presses do not reach apps.
 
 Keys from `org.gnome.desktop.wm.keybindings` acting on the focused window:
 
