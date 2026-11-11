@@ -65,3 +65,11 @@ The launcher always lists every window.
 
 When there is more than one workspace, the panel shows one dot per
 workspace next to the Apps button, the active one highlighted.
+
+Switching workspaces with a key (the switch and move keys above) also
+shows a popup in the middle of the primary monitor for 750 ms after the
+last switch: one box per workspace in a row, the active one highlighted,
+and below them the active workspace's name. Names come from
+`org.gnome.desktop.wm.preferences workspace-names`: entry N names
+workspace N; missing or empty entries are "Workspace N" (counting from
+1), and extra entries are ignored.
