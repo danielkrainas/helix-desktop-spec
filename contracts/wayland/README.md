@@ -26,3 +26,9 @@ Many session interactions (screenshots, screencasts, inhibit, settings) should p
 Helix should implement the portal backends needed for GTK/libadwaita apps to function without modification.
 
 Detailed protocol XML or behavioral notes will be added as gaps are identified.
+
+## Session locking
+
+The lock screen uses the standard `ext-session-lock-v1` protocol: while
+locked, the compositor shows only the lock client's surfaces and sends input
+only to them, and stays locked if the lock client dies.
