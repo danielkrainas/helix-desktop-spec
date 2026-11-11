@@ -7,6 +7,17 @@
 -->
 <node>
   <interface name="org.helix.ScreenCastChooser">
+    <method name="DescribeWindow">
+      <arg type="u" name="window" direction="in"/>
+      <arg type="s" name="app_id" direction="out"/>
+      <arg type="s" name="title" direction="out"/>
+    </method>
+    <method name="FindWindow">
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="s" name="title" direction="in"/>
+      <arg type="b" name="found" direction="out"/>
+      <arg type="u" name="window" direction="out"/>
+    </method>
     <method name="ChooseSource">
       <arg type="s" name="app_id" direction="in"/>
       <arg type="a(ss)" name="monitors" direction="in"/>

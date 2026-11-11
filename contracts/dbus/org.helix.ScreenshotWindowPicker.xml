@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.ScreenshotWindowPicker — Helix-private (CC0). The user picks a
+  window to capture. Served by the shell at /org/gnome/Shell/Screenshot;
+  called by Helix's Screenshot portal backend. Behavior notes in
+  org.gnome.Shell.Screenshot.md ("Picking a window").
+-->
+<node>
+  <interface name="org.helix.ScreenshotWindowPicker">
+    <method name="PickWindow">
+      <arg type="b" name="include_cursor" direction="in"/>
+      <arg type="b" name="flash" direction="in"/>
+      <arg type="s" name="filename" direction="in"/>
+      <arg type="b" name="success" direction="out"/>
+      <arg type="s" name="filename_used" direction="out"/>
+    </method>
+  </interface>
+</node>

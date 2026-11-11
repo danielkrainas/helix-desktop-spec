@@ -161,7 +161,12 @@ within one second.
   `SelectSources`, `Start` shares that monitor without asking if a monitor
   with the same vendor, product and serial is on (else the one on that
   connector, if its identity is unknown on both sides), and asks
-  otherwise. Shared windows are not remembered (`persist_mode` 0).
+  otherwise.
+- A shared window is remembered the same way, by its app id and title:
+  `restore_data` `("Helix", 1, <a{sv}>)` with `window-app-id` and
+  `window-title` (`s`). Restoring shares the open window with that app id
+  and title (the most recently used one when several match), and asks
+  when there is none.
 - When the compositor ends the recording, the Session emits `Closed`.
 
 ## RemoteDesktop
@@ -204,7 +209,15 @@ within one second.
 - `ConnectToEIS` passes on the compositor's EIS socket, offering the
   allowed device types; before `Start` it fails
   (`org.freedesktop.DBus.Error.Failed`).
-- `persist_mode` and `restore_data` are ignored: every session asks.
+- Remembering: with `persist_mode` 1 or 2, `Start` returns the same
+  `persist_mode` and `restore_data` `("Helix", 1, <a{sv}>)` holding
+  `devices` (`u`, the device types allowed) and, when the screen was
+  shared, the monitor or window keys as for ScreenCast. Given such
+  `restore_data` in `SelectDevices`, `Start` does not ask when every
+  device type asked for is among the remembered ones and the remembered
+  monitor or window (if sources were selected) is found as for ScreenCast;
+  otherwise it asks. Restore data from a ScreenCast-only session (no
+  `devices`) is not enough to skip asking.
 - Closing the Session ends the remote desktop session (and its screen
   cast); when the compositor ends it, the Session emits `Closed`.
 
@@ -232,14 +245,20 @@ picks, 4 an area the user selects, 8 the active window.
 
 ### Helix
 
-- `AvailableTargets` is 13 (screen, area, active window); `version` is 3.
+- `AvailableTargets` is 15 (screen, window, area, active window);
+  `version` is 3.
 - With `interactive` true, or `permission_store_checked` false (nobody
   asked the user yet), the shell's screenshot UI is shown
   (`org.gnome.Shell.Screenshot.md`), so the user decides what, if
   anything, is captured.
-- Otherwise `target` decides: 1 or absent the whole screen, 4 an area the
-  user selects, 8 the focused window. A target that is not available
-  answers 2.
+- Otherwise `target` decides: 1 or absent the whole screen, 2 a window
+  the user picks, 4 an area the user selects, 8 the focused window. A
+  target that is not available answers 2.
+- Picking a window: every monitor is dimmed with the hint "Click a window
+  to capture it"; clicking a window captures it as `ScreenshotWindow`
+  with `include_frame` true does (`org.gnome.Shell.Screenshot.md`).
+  Clicking where there is no window does nothing; Escape or the secondary
+  button cancels (answer 1).
 - Images are saved like the screenshot UI's: in the `Screenshots` folder of
   the pictures directory, named `Screenshot From YYYY-MM-DD HH-MM-SS.png`.
 - `PickColor` uses the shell's color picker. Cancelling answers 1.

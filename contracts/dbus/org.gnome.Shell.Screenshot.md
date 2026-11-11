@@ -90,6 +90,18 @@ The UI is not part of the capture. Images are saved as
 folder inside the pictures directory (as for base names above), which is
 created if needed.
 
+## Picking a window (Helix)
+
+Helix-private, for its Screenshot portal backend: interface
+`org.helix.ScreenshotWindowPicker` at the same object, with the same
+callers allowed. `PickWindow(include_cursor, flash, filename)` dims every
+monitor with the hint "Click a window to capture it · Esc to cancel".
+Clicking a window captures it as `ScreenshotWindow` with `include_frame`
+true does, and returns `(success, filename_used)`; clicking where there is
+no window shows the hint again. Escape or the secondary button cancels:
+the call fails with `org.freedesktop.DBus.Error.Failed` and the message
+"Operation was cancelled" (as `SelectArea`).
+
 ## After a screenshot the user took (Helix)
 
 For screenshots taken in the screenshot UI or with the screenshot keys

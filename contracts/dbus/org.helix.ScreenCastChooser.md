@@ -28,6 +28,12 @@ dialog looks like the rest of the shell and appears above everything.
   shell asks "Allow remote control?": the app wants to control the listed
   devices, "Deny" / "Allow". Returns whether the user allowed it (Escape
   or the session locking: false).
+- `DescribeWindow(window)` returns `(app_id, title)` of an open window
+  (by window list id); an unknown window fails with
+  `org.freedesktop.DBus.Error.InvalidArgs`.
+- `FindWindow(app_id, title)` returns `(true, window)` for the open window
+  with that app id and title (the most recently used when several do),
+  else `(false, 0)`. Neither asks the user.
 - One question at a time: a call while one is open fails with
   `org.freedesktop.DBus.Error.Failed`.
 - Only the owner of `org.freedesktop.impl.portal.desktop.helix` may call
