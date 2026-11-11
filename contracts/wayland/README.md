@@ -51,8 +51,15 @@ app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
 "Window-management settings").
 
-**Touchpad gestures** (`zwp_pointer_gestures_v1`). Swipe, pinch and hold
-gestures go to the surface under the pointer (bare hardware).
+**Touchpad gestures** (`zwp_pointer_gestures_v1`, bare hardware). Swipes
+with 3 or 4 fingers are Helix's and are not passed on: when the fingers
+lift having moved at least 100 logical pixels sideways, and more sideways
+than up or down, the workspace switches the way the content was pulled
+(fingers moving left show the next workspace, to the right; moving right
+the previous one), as GNOME does regardless of `natural-scroll`; there is
+none past the first or last workspace, and a cancelled swipe, or one
+while the session is locked, does nothing. Other gestures (two-finger
+swipes, pinches, holds) go to the surface under the pointer.
 
 **Frame timing.** `wp_presentation` feedback reports when a frame was
 shown (the monitor's vblank, its refresh interval and sequence) or that
