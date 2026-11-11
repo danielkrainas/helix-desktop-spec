@@ -38,8 +38,13 @@ name `app_id`, object path derived from it (`org.gnome.Calculator` →
 
 - an `app.NAME` action → `ActivateAction("NAME", [target] or [], platform_data)`
 - no default action → `Activate(platform_data)`
+- any other action (not exported on the app's `app.` action group) →
+  the `ActionInvoked(app_id, id, action, parameter, platform_data)`
+  signal instead, with `parameter` holding the target if there is one.
 
 The notification is then removed.
 
-The meaning of the `ActionInvoked` signal (new in GNOME 51) is not
-documented; see `gaps.md`.
+gnome-shell does not document `ActionInvoked` (new in GNOME 51). Helix
+gives it the meaning xdg-desktop-portal documents for the same signal of
+its Notification backend interface: it is sent "to the application when a
+non-exported action is activated" (see `gaps.md`).

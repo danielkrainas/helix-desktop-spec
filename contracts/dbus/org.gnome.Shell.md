@@ -55,10 +55,25 @@ same for a list, returning ids in order.
   overview, 4 lock screen, 8 unlock screen, 16 login screen, 32 system
   modal dialog, 64 looking glass, 128 top-bar popup; `0xFFFFFFFF`
   (all).
-- `grabFlags`: 0 for none.
+- `grabFlags`: the key-binding flags of mutter's documented API
+  (`Meta.KeyBindingFlags`, which `Meta.Display.grab_accelerator` takes):
+  1 per-window, 2 built-in, 4 reversed, 8 always active (non-maskable),
+  16 ignore autorepeat, 32 not grabbed automatically, 64 custom trigger,
+  128 trigger on release (notify on release as well as press). 0 for
+  none.
 
 `AcceleratorActivated(action, parameters)` is emitted when the shortcut is
-pressed and `AcceleratorDeactivated` when released. `parameters` keys:
+pressed, and `AcceleratorDeactivated` when it is released if the grab has
+the trigger-on-release flag (128).
+
+### Helix
+
+- Grabs whose `modeFlags` include the lock screen (4) keep working while
+  the session is locked; others do not fire then.
+- Of the `grabFlags`, only trigger-on-release (128) changes anything:
+  without it no `AcceleratorDeactivated` is sent. Global keys never
+  autorepeat in Helix (repeat is the focused client's business), so 16
+  holds anyway; the other flags concern mutter's own bindings. `parameters` keys:
 `device-id` (`u`), `timestamp` (`u`), `action-mode` (`u`), `device-node`
 (`s`).
 
