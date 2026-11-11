@@ -25,6 +25,16 @@ screenshot UI's: `Screenshot From YYYY-MM-DD HH-MM-SS.png` in the
 `Screenshots` folder of the pictures directory. They do not work while
 the session is locked. `show-screen-recording-ui` is not supported.
 
+## Overview and launcher
+
+| Key | Action |
+|-----|--------|
+| `toggle-overview` | show or hide the overview (`contracts/wayland/README.md`, "Overview") |
+| `toggle-application-view` | show or hide the application launcher |
+
+`shift-overview-up` / `-down`, `focus-active-notification`,
+`toggle-message-tray` and `toggle-quick-settings` are not supported.
+
 ## Brightness
 
 | Key | Action |

@@ -358,7 +358,7 @@ taking focus (it does get focus when no window has it).
 
 **Overlay key.** `overlay-key` (default `Super`, meaning either Super
 key; otherwise a key name such as `Super_R`; empty: none) pressed and
-released alone shows the application launcher.
+released alone shows the overview, or hides it (see "Overview").
 
 **Bells.** An app rings the bell with `xdg_system_bell_v1`. With
 `audible-bell` the `bell` sound of the sound theme plays (subject to
@@ -388,6 +388,37 @@ to quit entirely.", with **Wait** and **Force Quit**.
   process) is killed with `SIGKILL`; an X11 app's connection to the display
   is closed (`XKillClient`).
 - An answer from the app closes the dialog.
+
+## Overview (Helix)
+
+The overview shows the open windows of the active workspace and all the
+workspaces, on the primary monitor. It is shown by the overlay key, by
+`org.gnome.shell.keybindings toggle-overview`, and by setting
+`org.gnome.Shell` `OverviewActive`; the same key again, Escape, or setting
+`OverviewActive` false hides it. It holds, from the top:
+
+- **A search field.** Typing opens the application launcher with what was
+  typed as its search (see "Window switching" for the launcher's window
+  results).
+- **Workspace thumbnails**, one per workspace in order: a small picture of
+  the primary monitor with the windows on that workspace where they are
+  (minimized windows left out; windows shown on every workspace in all of
+  them), the active workspace outlined. Clicking one switches to it; the
+  overview stays open and shows that workspace's windows.
+- **The active workspace's windows** (minimized ones and those on every
+  workspace included), as pictures taken when the overview opened or the
+  workspace changed, in rows, each keeping its proportions and at most
+  its real size, its title below. The focused window is selected; the
+  arrow keys move the selection and Enter activates it. Clicking a window
+  activates it and hides the overview. Its × button (shown on the picture
+  under the pointer and on the selected one) closes the window, as its
+  close button would. Dragging a window onto a workspace thumbnail moves it
+  to that workspace.
+
+The launcher (the Apps button, `toggle-application-view`,
+`org.gnome.Shell` `ShowApplications`, `FocusSearch` and `FocusApp`) and the
+overview each replace the other. `OverviewActive` is true while either is
+shown.
 
 ## Window switching (Helix)
 
