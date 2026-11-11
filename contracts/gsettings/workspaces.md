@@ -44,8 +44,12 @@ on that workspace gets focus.
 | `switch-to-workspace-last` | the last workspace |
 | `move-to-workspace-1` … `-12`, `-left`, `-right`, `-last` | move the focused window there and switch with it |
 
+| `toggle-on-all-workspaces` | show the focused window on every workspace, or only on the active one again |
+
 The workspaces are in a row, so the `-up` and `-down` keys do nothing
-(see `gaps.md`). `toggle-on-all-workspaces` is not supported.
+(see `gaps.md`). A window on every workspace counts as on the active one
+for switchers and for dynamic workspaces; when it stops being on every
+workspace it belongs to the active one.
 
 ## Switchers
 

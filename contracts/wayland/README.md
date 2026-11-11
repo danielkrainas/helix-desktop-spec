@@ -71,6 +71,21 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   with the `-backward` keys or Shift). Releasing the modifier activates
   the selected entry; Escape cancels. With nothing else to switch to, the
   keys do nothing.
+- In the application switcher, Down or the key above Tab shows the
+  selected application's windows (the switcher becomes a window switcher
+  for that application, its most recent window selected); Up goes back
+  to the applications.
+- `cycle-windows` (default Alt+Escape) and `cycle-group` (Alt+F6) switch
+  directly, without a switcher: each press activates the next window, of
+  every application or of the focused window's application, in most
+  recently used order (backward with the `-backward` keys). A cycle starts
+  with that order at the first press; presses less than 1.5 seconds apart
+  continue along it (as the shell does not see the modifier being let go
+  without a switcher), and a pause starts a new cycle. They follow
+  `current-workspace-only` of `org.gnome.shell.window-switcher`.
+- `switch-panels` (Ctrl+Alt+Tab) moves keyboard focus to the panel: Left,
+  Right and Tab (and the key again) move between its controls (Apps,
+  Power), Enter or Space activates one, Escape leaves.
 - `Above_Tab` in an accelerator means the key above Tab, whatever symbol
   the layout gives it (the grave accent on a US layout).
 - `current-workspace-only` of `org.gnome.shell.app-switcher` and
@@ -82,7 +97,7 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
 - Activating raises the window, gives it focus, and brings it back if it
   was minimized.
 - The compositor tells the shell about windows (app id, title, focus,
-  workspace) and the workspaces (how many, which is active), and
+  workspace, or all workspaces) and the workspaces (how many, which is active), and
   activates windows, switches workspaces and moves windows between them on
   request, over Helix's private `helix_window_list_v1` Wayland protocol,
   offered only to the shell it launched.
