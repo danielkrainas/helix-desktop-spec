@@ -46,6 +46,9 @@ true, an X11 window whose `WM_CLASS` name or class matches an entry of
 keys, as an allowed shortcut inhibitor does, until it ends the grab or
 `restore-shortcuts` is pressed.
 
+**Window icons** (`xdg_toplevel_icon_manager_v1`): see "Window
+switching" for where they show.
+
 **Foreign toplevels** (`zxdg_exporter_v2`/`zxdg_importer_v2`, and v1). An
 app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
@@ -426,7 +429,12 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
 - `current-workspace-only` of `org.gnome.shell.app-switcher` and
   `org.gnome.shell.window-switcher` limits the switchers to the active
   workspace (`contracts/gsettings/workspaces.md`); `app-icon-mode` is
-  ignored, as Helix shows no thumbnails or icons.
+  ignored: Helix shows no thumbnails, and every entry has an icon.
+- Switcher entries show a window's icon: the one its app set
+  (`xdg_toplevel_icon_manager_v1`: an icon theme name, or the largest
+  image it gave), else its app's icon (the icon of the desktop file named
+  by its app id, or for X11 windows its `WM_CLASS` class). Helix asks for
+  24, 48 and 96 pixel images (`icon_size`).
 - The application launcher lists open windows (matching the search on
   title or app id) above the apps; choosing one activates it.
 - Activating raises the window, gives it focus, and brings it back if it
