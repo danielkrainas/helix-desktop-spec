@@ -157,6 +157,29 @@ ones `GetCrtcGamma` returns.
 - In the nested session the ramps are kept (256 entries, identity at
   first) but have no visible effect.
 
+## Color transformation matrix
+
+`SetOutputCTM(serial, output, ctm)` sets the color transformation matrix
+of an output (an id from `GetResources`). It fails with
+`org.freedesktop.DBus.Error.InvalidArgs` for a serial other than the
+current `GetResources` serial or an unknown output. The interface does not
+document what the nine values mean (see `gaps.md`).
+
+### Helix
+
+- The nine values are a 3×3 matrix in row-major order, each in the Linux
+  kernel's `drm_color_ctm` format (S31.32 fixed point, sign and magnitude:
+  bit 63 is the sign, the rest the magnitude in units of 2⁻³²), applied as
+  output color = matrix × input color. The identity matrix (1.0 on the
+  diagonal, `0x100000000`) undoes any change.
+- On bare hardware the matrix goes to the CRTC's `CTM` property; the call
+  fails with `org.freedesktop.DBus.Error.NotSupported` when the CRTC has
+  none (or the monitor is off). Like gamma ramps, a matrix stays in effect
+  across mode changes and switching back from another VT, until it is set
+  again or the monitor goes away.
+- In the nested session the matrix is accepted and kept but has no visible
+  effect.
+
 ## Backlight
 
 `Backlight` is a serial and one dictionary per monitor:
