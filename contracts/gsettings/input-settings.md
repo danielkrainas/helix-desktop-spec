@@ -1,7 +1,7 @@
 # Input settings — how Helix applies them
 
 Behavior for `org.gnome.desktop.input-sources`,
-`org.gnome.desktop.peripherals.{keyboard,mouse,touchpad}` and the
+`org.gnome.desktop.peripherals.{keyboard,mouse,touchpad,trackball,pointingstick}` and the
 input-source keys of `org.gnome.desktop.wm.keybindings` (key tables in the
 files named after each schema). Changes apply at once.
 
@@ -17,7 +17,9 @@ files named after each schema). Changes apply at once.
 - `switch-input-source` / `switch-input-source-backward` open the input
   source switcher. It lists the sources most recently used first (the
   `mru-sources` entries that are in `sources`, then the other sources in
-  `sources` order) by id, with the second one selected (the last one,
+  `sources` order) by name (the layout's description from the system's
+  XKB rules, `evdev.xml`, e.g. "German (no dead keys)"; the id when it is
+  not listed), with the second one selected (the last one,
   backward). Pressing the key again moves the selection (backward with
   the `-backward` key or Shift). Releasing the modifier activates the
   selected source by moving it to the front of `mru-sources`; Escape
@@ -30,16 +32,42 @@ files named after each schema). Changes apply at once.
 `repeat` turns it on or off; `delay` is the time in milliseconds before a
 held key repeats, `repeat-interval` the time between repeats.
 
-## Mouse and touchpad
+## Pointing devices
 
 On bare hardware (libinput devices). A pointer device that supports
-tapping is a touchpad; other pointer devices use the mouse settings.
-Nested sessions leave pointer settings to the host.
+tapping is a touchpad; one udev tags `ID_INPUT_TRACKBALL` is a trackball,
+`ID_INPUT_POINTINGSTICK` a pointing stick; other pointer devices are
+mice. Nested sessions leave pointer settings to the host.
 
-- Both: `speed`, `accel-profile` (`default` and `custom` mean the device's
-  default profile), `natural-scroll`, `middle-click-emulation`,
-  `left-handed` (for the touchpad, `mouse` follows the mouse's setting).
-- Touchpad also: `tap-to-click`, `tap-and-drag`, `tap-and-drag-lock`,
-  `tap-button-map`, `two-finger-scrolling-enabled` and
-  `edge-scrolling-enabled` (two-finger wins when both are on),
-  `disable-while-typing`, `click-method`, `send-events`.
+- Mice: `speed`, `accel-profile`, `custom-accel-config`, `natural-scroll`,
+  `middle-click-emulation`, `left-handed`,
+  `scroll-wheel-emulation-button` and `-lock`.
+- Touchpads: the same pointer keys of the touchpad schema (`left-handed`
+  `mouse` follows the mouse's setting), and `tap-to-click`,
+  `tap-and-drag`, `tap-and-drag-lock`, `tap-button-map`,
+  `two-finger-scrolling-enabled` and `edge-scrolling-enabled` (two-finger
+  wins when both are on), `disable-while-typing`, `click-method`,
+  `send-events`, `scroll-speed`.
+- Trackballs: `accel-profile`, `custom-accel-config`,
+  `middle-click-emulation`, `scroll-wheel-emulation-button` and `-lock`
+  from the trackball schema; `speed`, `natural-scroll` and `left-handed`
+  from the mouse schema.
+- Pointing sticks: `speed`, `accel-profile`, `custom-accel-config` and
+  `scroll-method` (`on-button-down`: scroll while the middle button is
+  held; `none`; `default`: the device's default) from the pointing stick
+  schema; `natural-scroll` and `left-handed` from the mouse schema.
+
+Details:
+
+- `accel-profile` `default` means the device's default profile; `custom`
+  uses `custom-accel-config`: `pointer-step` (`d`) and `pointer-speeds`
+  (`ad`) are the points of libinput's custom acceleration function for
+  pointer motion (`scroll-step` / `scroll-speeds`, when present, for
+  scrolling). Devices without custom profiles (libinput older than 1.23)
+  keep their default.
+- `scroll-wheel-emulation-button` (0 off) is an X button number: 1 left,
+  2 middle, 3 right, 8 back, 9 forward, 10 and up the following buttons.
+  While it is held, moving the pointer scrolls; with `-lock`, a click
+  toggles that instead.
+- `scroll-speed` multiplies the touchpad's finger scrolling (1 unchanged).
+- Touchscreens are not supported (no touch input yet).

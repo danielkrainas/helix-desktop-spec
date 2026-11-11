@@ -54,6 +54,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md)
 - [`org.gnome.desktop.sound`](org.gnome.desktop.sound.md)
 - [`org.gnome.desktop.privacy`](org.gnome.desktop.privacy.md)
+- [`org.gnome.desktop.peripherals.trackball`](org.gnome.desktop.peripherals.trackball.md), [`org.gnome.desktop.peripherals.pointingstick`](org.gnome.desktop.peripherals.pointingstick.md)
 
 From other GNOME 51.0 packages, described the same way:
 
