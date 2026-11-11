@@ -25,4 +25,3 @@ Living log of missing, unclear, or underspecified contracts.
 - Inhibit portal "query end" flow: requires a SessionManager query-end phase (gnome-session's `QueryEndSession` client protocol), which is not in the spec. Helix monitors report running → ending only.
 - Shell extension API surface (explicitly deferred; internal and unstable).
 - `org.gnome.Shell` grab flags (`grabFlags` values beyond 0) are undocumented.
-- How Helix's separate compositor and shell processes share keyboard grabs for `GrabAccelerator` (in GNOME both live in one process). Helix records grabs but does not deliver `AcceleratorActivated` yet.
