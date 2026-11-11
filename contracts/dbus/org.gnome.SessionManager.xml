@@ -85,6 +85,13 @@
     <method name="CanRebootToFirmwareSetup">
       <arg name="is_available" direction="out" type="b"/>
     </method>
+    <!--
+      Logout mode values (see org.gnome.SessionManager.md):
+        0 = normal (show confirmation if needed)
+        1 = no confirmation
+        2 = force
+      Any other value is invalid.
+    -->
     <method name="Logout">
       <arg name="mode" type="u" direction="in"/>
     </method>
