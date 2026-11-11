@@ -35,8 +35,14 @@ An `ibus` entry's id is an IBus engine name (e.g. `anthy`, `hangul`,
   committed and pre-edit text to the app, and shows IBus's candidates in
   a popup next to the text cursor. Keys IBus does not use go to the app
   unchanged.
-- The keymap stays that of the most recently used `xkb` source (GNOME
-  uses the engine's own layout; see `gaps.md`).
+- The keymap is the engine's own layout, as IBus describes the engine:
+  its `<layout>`, `<layout_variant>` and `<layout_option>` in an IBus
+  component file (`ibus/component/*.xml` under the system data
+  directories, `XDG_DATA_DIRS`), with `xkb-model` and `xkb-options`
+  (the engine's options added). When the engine's layout is `default`, or
+  no component file lists the engine (some components list their engines
+  by running a program, which Helix does not do), the keymap stays that
+  of the most recently used `xkb` source.
 
 While an `xkb` source is active, keys go straight to the app.
 - `switch-input-source` / `switch-input-source-backward` open the input
