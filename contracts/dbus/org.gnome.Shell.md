@@ -36,7 +36,9 @@ Companion to `org.gnome.Shell.xml`.
   - `connector` (`s`): monitor connector to show it on (all if absent)
 - `ShowMonitorLabels(params)` / `HideMonitorLabels`: show/hide labels
   identifying monitors; `params` maps connector names (`s`) to label numbers
-  (`i`, wrapped in `v`).
+  (`i`, wrapped in `v`). Each call replaces the labels shown; monitors not
+  in `params` get none. (Helix shows the number in the top-left corner of
+  each monitor, below the panel; labels take no input.)
 - `ScreenTransition`: briefly freezes the screen so a following change
   (e.g. a display reconfiguration) appears as a cross-fade.
 

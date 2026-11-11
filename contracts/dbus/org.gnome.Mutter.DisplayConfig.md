@@ -93,6 +93,28 @@ An invalid configuration is rejected and nothing changes. When an applied
 configuration changes anything, the serial changes and `MonitorsChanged` is
 emitted before the call returns.
 
+### Keeping a persistent change
+
+A persistent configuration is applied at once, then the user is asked
+whether to keep it (Helix: through the shell's
+`org.helix.DisplayChangeDialog`, with a 20-second countdown).
+`ApplyMonitorsConfig` returns without waiting for the answer.
+
+- Kept: the configuration is remembered.
+- Reverted, the countdown running out, or no answer: the configuration
+  from before the change comes back (with `MonitorsChanged`), and nothing
+  is remembered.
+- With no dialog to ask, or when the configuration is the one already
+  shown, it is kept and remembered at once.
+- Another `ApplyMonitorsConfig` while the question is open closes it.
+  The earlier change is neither remembered nor reverted; if the new one is
+  persistent the question is asked again, and reverting goes back to the
+  configuration from before the first unanswered change.
+
+Temporary configurations are never asked about.
+
+### Remembered configurations
+
 A persistent configuration is restored whenever the same set of monitors
 is connected again (monitors are told apart by connector, vendor, product
 and serial), including after a restart. A temporary one lasts until the

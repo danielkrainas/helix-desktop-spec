@@ -1,0 +1,18 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  Helix-private: the compositor asks the shell whether to keep a display
+  configuration change. GNOME does this inside one process (mutter and
+  gnome-shell); Helix's compositor and shell are separate.
+  Served by the shell on org.gnome.Shell at /org/helix/DisplayChangeDialog.
+-->
+<node>
+  <interface name="org.helix.DisplayChangeDialog">
+    <method name="Open">
+      <arg name="seconds" direction="in" type="u"/>
+    </method>
+    <method name="Close"/>
+    <signal name="Kept"/>
+    <signal name="Reverted"/>
+  </interface>
+</node>
