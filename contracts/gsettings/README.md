@@ -66,6 +66,8 @@ From other GNOME 51.0 packages, described the same way:
   (gnome-settings-daemon)
 - [`org.gnome.mutter`](org.gnome.mutter.md) (mutter)
 - [`org.gnome.mutter.keybindings`](org.gnome.mutter.keybindings.md) (mutter)
+- [`org.gnome.mutter.wayland`](org.gnome.mutter.wayland.md) (mutter)
+- [`org.gnome.mutter.wayland.keybindings`](org.gnome.mutter.wayland.keybindings.md) (mutter)
 - [`org.gnome.settings-daemon.plugins.color`](org.gnome.settings-daemon.plugins.color.md)
   (gnome-settings-daemon)
 

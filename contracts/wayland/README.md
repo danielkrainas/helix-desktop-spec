@@ -8,6 +8,61 @@ Notes on protocols and usage expected for a GNOME-compatible session under Helix
 - `wlr-layer-shell-unstable-v1` (or equivalent) for shell surfaces (panels, notifications, OSD).
 - Mutter/GNOME-specific private protocols are out of scope for initial compatibility; public portals and D-Bus are preferred.
 
+## More Wayland protocols (Helix)
+
+**Idle inhibition** (`zwp_idle_inhibit_manager_v1`). While a surface with
+an inhibitor is shown (its window mapped on the active workspace and not
+minimized, or a shown shell surface), the session counts as in use: the
+`IdleMonitor` idle time stays at 0, so the screen neither blanks nor locks.
+
+**Pointer constraints** (`zwp_pointer_constraints_v1`) and **relative
+pointer** (`zwp_relative_pointer_manager_v1`). A lock or confinement takes
+effect while its surface has pointer focus (oneshot ones end when it
+loses focus; persistent ones come back with focus). While locked the
+pointer stays put and only relative motion is reported; when the lock
+ends the pointer moves to the surface's cursor position hint, if it set
+one. While confined the pointer stays inside the confinement region.
+Relative motion carries the device's unaccelerated deltas (nested: the
+host's motion).
+
+**Shortcut inhibition** (`zwp_keyboard_shortcuts_inhibit_manager_v1`).
+When a surface asks, the shell asks "Allow APP to use all keyboard
+shortcuts?" with **Deny** / **Allow**, naming the app (as the share dialog
+does). The answer is stored in the permission store
+(`org.freedesktop.impl.portal.PermissionStore`, table `gnome`, id
+`shortcuts-inhibitor`, the app id with `["GRANTED"]` or `["DENIED"]`) and
+not asked again; apps without an app id are asked every time and nothing
+is stored. While an allowed surface has keyboard focus, Helix's own
+shortcuts and the shell's bindings go to the app, except
+`org.gnome.mutter.wayland.keybindings restore-shortcuts` (default
+`<Super>Escape`), which ends the inhibition until the surface gets
+keyboard focus again, and switching virtual terminals.
+
+**Xwayland keyboard grabs** (`zwp_xwayland_keyboard_grab_manager_v1`,
+Xwayland only). With `org.gnome.mutter.wayland xwayland-allow-grabs`
+true, an X11 window whose `WM_CLASS` name or class matches an entry of
+`xwayland-grab-access-rules` (`*` and `?` wildcards; entries starting with
+`!` deny and win over allowing ones) may grab the keyboard: it gets all
+keys, as an allowed shortcut inhibitor does, until it ends the grab or
+`restore-shortcuts` is pressed.
+
+**Foreign toplevels** (`zxdg_exporter_v2`/`zxdg_importer_v2`, and v1). An
+app (typically a portal) may make its toplevel a dialog of another app's
+exported toplevel: it is then placed and kept as dialogs are (see
+"Window-management settings").
+
+**Touchpad gestures** (`zwp_pointer_gestures_v1`). Swipe, pinch and hold
+gestures go to the surface under the pointer (bare hardware).
+
+**Frame timing.** `wp_presentation` feedback reports when a frame was
+shown (the monitor's vblank, its refresh interval and sequence) or that
+it was discarded. `wp_fifo_manager_v1`: a commit waiting on a FIFO barrier
+is applied after the next frame of the surface's monitor.
+`wp_commit_timing_manager_v1`: a commit with a target time is applied at
+the first frame at or after it. Commits of windows not shown (minimized,
+on another workspace) are not held back. `wp_single_pixel_buffer_manager_v1`
+is offered.
+
 ## GPU buffers (Helix)
 
 Helix offers `zwp_linux_dmabuf_v1` so apps can hand it GPU buffers instead
