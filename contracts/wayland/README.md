@@ -105,6 +105,40 @@ screenshots and embedded cursors show only an app's own image (the host
 draws named cursors), while cursor metadata carries the theme's image for
 named cursors.
 
+## Color management (Helix)
+
+Helix offers `wp_color_manager_v1` (version 1) for what it renders
+faithfully: it composites in the monitors' own encoding, treating all
+content as sRGB, and does not convert colors.
+
+- Advertised: the perceptual render intent, the `parametric` feature,
+  the transfer functions `srgb` and `gamma22`, and the `srgb` primaries.
+  Other features (ICC, scRGB, BT.2100, `set_primaries`, `set_tf_power`,
+  `set_luminances`, mastering display values) are not, and using them is
+  the protocol's `unsupported_feature` error; so are other named values
+  (`invalid_tf`, `invalid_primaries_named`).
+- A parametric image description with those values (and, optionally,
+  `max_cll` / `max_fall`) is ready at once. Its identity is the same for
+  the same parameters and new for each new set; identities are never
+  reused.
+- A surface may set any ready description with the perceptual intent; it
+  does not change how the surface is drawn (its content is already right
+  for every description Helix accepts). A second
+  `wp_color_management_surface_v1` for a surface is the `surface_exists`
+  error; once its surface is gone the object is inert.
+- Every monitor's description, and every surface's preferred one, is sRGB:
+  `srgb` primaries (red 0.64/0.33, green 0.30/0.60, blue 0.15/0.06, white
+  0.3127/0.3290), the `srgb` transfer function, luminances 0.2 / 80 / 80
+  cd/m² (minimum / maximum / reference white) and the same target volume.
+  They do not change, so `image_description_changed` and
+  `preferred_changed` are never sent. A monitor that has gone away gives a
+  description that fails with `no_output`.
+
+HDR output (BT.2100 color mode), color conversion between descriptions,
+and the `output-luminance` level for HDR are not implemented (see
+`gaps.md`); `output-luminance` for SDR dims through the gamma ramps
+(`org.gnome.Mutter.DisplayConfig.md`, "Gamma").
+
 ## GPU buffers (Helix)
 
 Helix offers `zwp_linux_dmabuf_v1` so apps can hand it GPU buffers instead

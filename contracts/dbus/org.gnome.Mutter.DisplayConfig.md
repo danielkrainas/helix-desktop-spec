@@ -25,6 +25,9 @@ and `MonitorsChanged` is emitted. Methods taking a serial reject a stale one.
 - properties `a{sv}`:
   - `is-builtin` (`b`): a laptop panel or similar
   - `display-name` (`s`): human-readable name
+  - `color-mode` (`u`) and `supported-color-modes` (`au`): how the monitor
+    is driven, 0 default (SDR), 1 BT.2100 (HDR). Helix: always 0 and
+    `[0]`.
 
 `logical_monitors` — `a(iiduba(ssss)a{sv})`: x, y, scale, transform, primary,
 the monitor specs shown in it, properties. A logical monitor showing more
@@ -84,6 +87,9 @@ off.
 
 `properties`: `layout-mode` (`u`, see above) may only differ from the
 current layout mode when `supports-changing-layout-mode` is true.
+
+A monitor's `properties` may hold `color-mode` (`u`), one of its
+`supported-color-modes`; Helix rejects any other than 0.
 
 A configuration is valid when:
 
@@ -169,6 +175,12 @@ ones `GetCrtcGamma` returns.
   monitor goes away.
 - In the nested session the ramps are kept (256 entries, identity at
   first) but have no visible effect.
+- A monitor's `org.gnome.mutter output-luminance` (the entry with its
+  connector, vendor, product and serial and color mode 0) scales what is
+  sent to its CRTC: every ramp value is multiplied by the percentage / 100,
+  taken between 10 and 100 (SDR cannot be brighter than full). Changes
+  apply at once. `GetCrtcGamma` returns the ramps clients set, unscaled;
+  without any, the identity ramp is scaled.
 
 ## Color transformation matrix
 
