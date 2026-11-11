@@ -44,8 +44,9 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   portal backend, which asks the user first) may call these methods;
   others get `org.freedesktop.DBus.Error.AccessDenied`. A session ends
   when its creator leaves the bus.
-- Streams are BGRx frames, at most 30 per second, in shared-memory
-  buffers: a monitor upright at its pixel size, or a window cropped to its
+- Streams are BGRx frames, at most 30 per second and only when the
+  picture changed (a new consumer gets a whole frame at once), in
+  shared-memory buffers: a monitor upright at its pixel size, or a window cropped to its
   window geometry at the highest scale among the monitors it is on (popup
   menus inside it included). When that size changes (a mode change, the window
   resized) the stream's format changes with it. While the session is
