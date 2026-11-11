@@ -6,6 +6,9 @@ Living log of missing, unclear, or underspecified contracts.
 
 - Full `org.gnome.Shell.Screenshot` interface (InteractiveScreenshot, Screenshot, ScreenshotWindow, ScreenshotArea) — present in GNOME Shell; needs extraction.
 - Mutter ScreenCast / RemoteDesktop D-Bus interfaces (private-ish but used by portals).
+- DisplayConfig write side: `ApplyMonitorsConfig` method values (verify / temporary / persistent), its `logical_monitors` and `properties` arguments, and the confirmation/revert flow; `SetBacklight`, gamma and CTM semantics; keys in `Backlight` dictionaries. Helix reports `ApplyMonitorsConfigAllowed` = false and does not implement them yet.
+- Which input counts as "user activity" for IdleMonitor (e.g. whether pointer motion without buttons does). Helix counts every input event.
+- Session startup ordering in GNOME 51 (gnome-session's systemd targets) is not documented here. Helix uses its own simple launcher; components announce readiness by owning a bus name or calling `SessionManager.Setenv` (the compositor sets `WAYLAND_DISPLAY`).
 - GSettings key tables exist for `org.gnome.desktop.interface`, `.a11y.interface` and `.wm.preferences`, but were described from gsettings-desktop-schemas 46.1 (the version available when extracted), not 51. Keys added since (e.g. `accent-color` in 47) are missing. Regenerate against 51.
 - GSettings key tables for other high-traffic schemas (`org.gnome.desktop.wm.keybindings`, peripherals).
 - SessionManager client and inhibitor objects: the object path shape (Helix currently uses `/org/gnome/SessionManager/Client<n>` and `/org/gnome/SessionManager/Inhibitor<cookie>`) and the interfaces exported at those paths (`org.gnome.SessionManager.Client`, `.ClientPrivate`, `.Inhibitor`) are not in the contract. Helix returns the paths but does not export objects there yet.
