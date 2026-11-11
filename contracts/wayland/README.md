@@ -50,8 +50,8 @@ only to them, and stays locked if the lock client dies.
 - Shell surfaces (layer surfaces) that do not name a monitor go on the
   primary monitor. Their reserved zones (panels) shrink the work area of
   that monitor only.
-- New windows open on the monitor under the pointer, cascading from the
-  top-left corner of its work area.
+- New windows open on the monitor under the pointer (see
+  "Window-management settings").
 - Maximizing fills the work area of the monitor a window mostly covers;
   fullscreen covers that monitor, or the monitor the client asks for.
 - Popup menus are kept inside the monitor their window mostly covers.
@@ -183,6 +183,56 @@ from the edge drops the preview.
 
 `switch-monitor`, `rotate-monitor` and `cancel-input-capture` are not
 handled.
+
+## Window-management settings (Helix)
+
+Helix follows these keys of `org.gnome.desktop.wm.preferences` and
+`org.gnome.mutter`; changes apply at once.
+
+**Focus.** `focus-mode` `click` (default): clicking a window focuses it.
+`sloppy`: the window the pointer moves into gets focus (moving over the
+desktop or the panel changes nothing). `mouse`: as `sloppy`, and moving
+the pointer onto the desktop also takes focus away. With
+`focus-change-on-pointer-rest` (in `sloppy`/`mouse`), focus changes only
+once the pointer has rested for 150 ms. Focus by pointer does not raise,
+unless `auto-raise` is on: then the window is raised after
+`auto-raise-delay` milliseconds if it still has focus. With
+`raise-on-click` false, clicking a window's own area focuses it without
+raising it; clicks on title bars Helix draws, and modifier clicks, still
+raise.
+
+**Modifier clicks.** Holding `mouse-button-modifier` (default `<Super>`;
+empty or unparsable: off): a left drag moves the window, a middle drag
+resizes it, a right click opens the window menu; with
+`resize-with-right-button` the right drag resizes and the middle click
+opens the menu. A resize moves the corner nearest the pointer (the window
+is split into quarters). These clicks are not passed to the app.
+
+**New windows.** They open on the monitor under the pointer, cascading
+from the top-left corner of its work area, or centered in it with
+`center-new-windows`. With `auto-maximize`, a new window at least as
+large as the work area (title bar included) opens maximized. Dialogs
+(windows with a parent) open centered over their parent; with
+`attach-modal-dialogs`, a modal dialog (`xdg_dialog_v1` modal) opens
+centered at its parent's top edge and moves with its parent.
+`focus-new-windows` `smart` (default): new windows get focus and go on
+top; `strict`: a new window goes just below the focused window without
+taking focus (it does get focus when no window has it).
+
+**Overlay key.** `overlay-key` (default `Super`, meaning either Super
+key; otherwise a key name such as `Super_R`; empty: none) pressed and
+released alone shows the application launcher.
+
+**Bells.** An app rings the bell with `xdg_system_bell_v1`. With
+`audible-bell` the `bell` sound of the sound theme plays (subject to
+`org.gnome.desktop.sound event-sounds`). With `visual-bell`,
+`visual-bell-type` `fullscreen-flash` flashes the monitor of the window
+(or of the pointer) white for a moment; `frame-flash` flashes the
+window itself (the focused one when the app is unknown).
+
+**Locate pointer.** With `org.gnome.desktop.interface locate-pointer`,
+pressing and releasing `locate-pointer-key` (default `Control_L`) alone
+shows shrinking circles around the pointer for half a second.
 
 ## Window switching (Helix)
 
