@@ -60,3 +60,38 @@ failure starting a session component. If `fatal` is true the session ends.
 
 When false, clients must not use `RegisterRestore`, `DeletedInstanceIds` or
 `UnregisterRestore`.
+
+## Client and inhibitor objects
+
+`RegisterClient` returns `/org/gnome/SessionManager/Client<n>`; that object
+implements `org.gnome.SessionManager.ClientPrivate` (see below). Each
+inhibitor is exported at `/org/gnome/SessionManager/Inhibitor<cookie>`
+implementing `org.gnome.SessionManager.Inhibitor`: `GetAppId`, `GetReason`,
+`GetFlags`, and `GetClientId` (the inhibiting app's client object, or `/`
+if it has none). `GetInhibitors` lists these paths.
+
+## Ending the session
+
+`Logout`, `Shutdown` and `Reboot` start the end-of-session sequence and
+return; `SessionOver` is emitted when it completes.
+
+1. **Confirmation.** In normal mode (`Logout(0)`, `Shutdown`, `Reboot`) the
+   session manager asks the shell's
+   `org.gnome.SessionManager.EndSessionDialog` (see its notes) to confirm,
+   listing the inhibitors that block (logout flag). With mode 1 (no
+   confirmation) the dialog is only shown if something blocks. Mode 2
+   (force) skips confirmation and ignores inhibitors and client answers.
+   If no dialog is available, a blocked request fails with an error instead.
+   Cancelling stops here and the session keeps running.
+   A forced logout (`Logout(2)`) requested while a confirmation is pending
+   takes over: the dialog is closed and the session ends as forced.
+2. **Query.** Every registered client gets `QueryEndSession(flags)` (flag
+   1 = forced) and must answer `EndSessionResponse(is_ok, reason)` within
+   one second; silence counts as OK. A client answering `false` blocks like
+   an inhibitor (with its reason): the dialog is shown again listing it,
+   unless forced. If the user cancels, clients that were queried get
+   `CancelEndSession`.
+3. **End.** Every client gets `EndSession(flags)` and has ten seconds to
+   clean up and answer `EndSessionResponse`.
+4. **Stop.** Clients get `Stop`, then `SessionOver` is emitted and the
+   session manager exits.

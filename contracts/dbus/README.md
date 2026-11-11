@@ -5,6 +5,8 @@ Initial public contracts extracted for GNOME 51 compatibility.
 ## Included
 
 - `org.gnome.SessionManager.xml` — session lifecycle, inhibit, logout/shutdown
+- `org.gnome.SessionManager.ClientPrivate.xml`, `org.gnome.SessionManager.Inhibitor.xml` — session client and inhibitor objects
+- `org.gnome.SessionManager.EndSessionDialog.xml` — logout/shutdown confirmation (served by the shell)
 - `org.gnome.Mutter.DisplayConfig.xml` — multi-monitor configuration
 - `org.gnome.Mutter.IdleMonitor.xml` — idle time and activity watches
 - `org.gnome.Shell.xml` — shell control (overview, OSD, accelerators)
@@ -17,6 +19,7 @@ Behavioral notes that XML cannot express live in companion `.md` files
 (`org.gnome.SessionManager.md`, `org.gnome.Mutter.IdleMonitor.md`,
 `org.gnome.Mutter.DisplayConfig.md`, `org.gnome.Shell.md`, `org.gnome.ScreenSaver.md`, `org.freedesktop.Notifications.md`,
 `org.gtk.Notifications.md`, `org.freedesktop.Application.md`,
+`org.gnome.SessionManager.EndSessionDialog.md`,
 `org.freedesktop.impl.portal.md`).
 
 ## Notes
