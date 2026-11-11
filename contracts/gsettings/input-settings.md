@@ -14,9 +14,16 @@ files named after each schema). Changes apply at once.
 - The active source is the first entry of `mru-sources` that is also in
   `sources`; if there is none, the first source. `current` is deprecated
   and ignored.
-- `switch-input-source` / `switch-input-source-backward` activate the next
-  / previous source in `sources` order (wrapping around) by moving it to
-  the front of `mru-sources`. The shell briefly shows the new source's id.
+- `switch-input-source` / `switch-input-source-backward` open the input
+  source switcher. It lists the sources most recently used first (the
+  `mru-sources` entries that are in `sources`, then the other sources in
+  `sources` order) by id, with the second one selected (the last one,
+  backward). Pressing the key again moves the selection (backward with
+  the `-backward` key or Shift). Releasing the modifier activates the
+  selected source by moving it to the front of `mru-sources`; Escape
+  cancels. So a quick press and release goes back to the previous source.
+  A binding without a modifier switches at once. With a single source
+  there is nothing to switch to.
 
 ## Key repeat
 

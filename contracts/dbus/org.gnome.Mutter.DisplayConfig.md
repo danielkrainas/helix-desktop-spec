@@ -136,4 +136,44 @@ monitors change.
 - `ApplyMonitorsConfigAllowed` (`b`): whether clients may call
   `ApplyMonitorsConfig`
 - `HasExternalMonitor` (`b`): any monitor that is not built in
-- `Backlight` (`(uaa{sv})`): serial and one dictionary per backlight
+- `Backlight` (`(uaa{sv})`): see below
+
+## Backlight
+
+`Backlight` is a serial and one dictionary per monitor:
+
+| Key | Type | Meaning |
+|-----|------|---------|
+| `connector` | `s` | the monitor's connector |
+| `active` | `b` | whether the monitor is on |
+| `min` | `i` | lowest value (optional) |
+| `max` | `i` | highest value (optional) |
+| `value` | `i` | current value (optional) |
+
+An entry without `min`, `max` and `value` cannot be controlled through this
+interface. The property emits `PropertiesChanged` when a value or the set
+of entries changes.
+
+`SetBacklight(serial, connector, value)` sets the brightness of that
+monitor; `value` is in the entry's `min`…`max` range. It fails with
+`org.freedesktop.DBus.Error.InvalidArgs` for a serial other than the
+current `Backlight` serial, a connector without control, or a value out of
+range.
+
+`ChangeBacklight(serial, output, value)` is deprecated (a percentage for a
+`GetResources` output id); Helix does not implement it.
+
+### Helix
+
+- The built-in panel (connector `eDP-*`, `LVDS-*` or `DSI-*`) is
+  controlled through a kernel backlight device
+  (`/sys/class/backlight/*`). When there are several, `firmware` devices
+  are preferred, then `platform`, then `raw`.
+- Values are the device's own units: `min` is 1 (so the panel is never
+  turned fully dark this way), `max` is the device's `max_brightness`.
+- The value is written through logind's `Session.SetBrightness`
+  (`org.freedesktop.login1.md`) and re-read from the device, so changes
+  made elsewhere show up within a few seconds.
+- The serial changes only when the set of entries changes (monitors
+  added, removed or reconfigured), not when a value changes.
+- External monitors (DDC/CI) are not controlled.

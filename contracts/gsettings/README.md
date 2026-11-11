@@ -52,6 +52,16 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.session`](org.gnome.desktop.session.md)
 - [`org.gnome.desktop.screensaver`](org.gnome.desktop.screensaver.md)
 - [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md)
+- [`org.gnome.desktop.sound`](org.gnome.desktop.sound.md)
+
+From other GNOME 51.0 packages, described the same way:
+
+- [`org.gnome.shell.keybindings`](org.gnome.shell.keybindings.md),
+  [`org.gnome.shell.app-switcher`](org.gnome.shell.app-switcher.md),
+  [`org.gnome.shell.window-switcher`](org.gnome.shell.window-switcher.md)
+  (gnome-shell)
+- [`org.gnome.settings-daemon.plugins.media-keys`](org.gnome.settings-daemon.plugins.media-keys.md)
+  (gnome-settings-daemon)
 
 Helix reuses the system dconf and the installed GNOME schemas, so these
 tables are what the installed schemas must provide; they are not a
@@ -62,4 +72,4 @@ them.
 
 Key tables (generated from the compiled 51.0 schemas) exist for the schemas
 Helix reads; `input-settings.md` describes how Helix applies the input
-schemas.
+schemas, and `shell-keys.md` the screenshot, brightness and volume keys.

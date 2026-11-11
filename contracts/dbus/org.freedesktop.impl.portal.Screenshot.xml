@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.freedesktop.impl.portal.Screenshot
+  Source: https://github.com/flatpak/xdg-desktop-portal/blob/1.22.1/data/org.freedesktop.impl.portal.Screenshot.xml
+  Pinned against xdg-desktop-portal 1.22.1 (interface version 3). Interface
+  shape only; behavior notes in org.freedesktop.impl.portal.md.
+-->
+<node>
+  <interface name="org.freedesktop.impl.portal.Screenshot">
+    <method name="Screenshot">
+      <arg type="o" name="handle" direction="in"/>
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="s" name="parent_window" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="u" name="response" direction="out"/>
+      <arg type="a{sv}" name="results" direction="out"/>
+    </method>
+    <method name="PickColor">
+      <arg type="o" name="handle" direction="in"/>
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="s" name="parent_window" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="u" name="response" direction="out"/>
+      <arg type="a{sv}" name="results" direction="out"/>
+    </method>
+    <property name="AvailableTargets" type="u" access="read"/>
+    <property name="version" type="u" access="read"/>
+  </interface>
+</node>

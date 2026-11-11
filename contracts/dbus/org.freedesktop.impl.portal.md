@@ -77,3 +77,41 @@ and sends `StateChanged(session_handle, state)` while the session is open.
 
 On `session-state` 2, monitors must call `QueryEndResponse(session_handle)`
 within one second.
+
+## Screenshot
+
+Methods that take a `handle` answer with `response`: 0 success, 1
+cancelled by the user, 2 ended another way (failed, refused). Version 3 of
+the interface.
+
+`AvailableTargets` is a bitmask: 1 the whole screen, 2 a window the user
+picks, 4 an area the user selects, 8 the active window.
+
+`Screenshot(handle, app_id, parent_window, options)` returns
+`results["uri"]` (`s`), the URI of the image. `options`:
+
+| Key | Type | Meaning |
+|-----|------|---------|
+| `modal` | `b` | the dialog is modal; default true |
+| `interactive` | `b` | let the user adjust the screenshot first; default false |
+| `target` | `u` | one value from `AvailableTargets`; absent means the behavior before version 3 (the whole screen) |
+| `permission_store_checked` | `b` | the frontend already checked the app's `screenshot` permission; default false |
+
+`PickColor(handle, app_id, parent_window, options)` returns
+`results["color"]` (`(ddd)`), sRGB values from 0 to 1.
+
+### Helix
+
+- `AvailableTargets` is 13 (screen, area, active window); `version` is 3.
+- With `interactive` true, or `permission_store_checked` false (nobody
+  asked the user yet), the shell's screenshot UI is shown
+  (`org.gnome.Shell.Screenshot.md`), so the user decides what, if
+  anything, is captured.
+- Otherwise `target` decides: 1 or absent the whole screen, 4 an area the
+  user selects, 8 the focused window. A target that is not available
+  answers 2.
+- Images are saved like the screenshot UI's: in the `Screenshots` folder of
+  the pictures directory, named `Screenshot From YYYY-MM-DD HH-MM-SS.png`.
+- `PickColor` uses the shell's color picker. Cancelling answers 1.
+- The portal calls `org.gnome.Shell.Screenshot`, which is why its bus name
+  is on that interface's allowed list.

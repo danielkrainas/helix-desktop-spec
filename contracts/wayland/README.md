@@ -35,14 +35,28 @@ only to them, and stays locked if the lock client dies.
 
 ## Window switching (Helix)
 
-- `switch-applications` and `switch-windows` (and their `-backward`
-  variants) in `org.gnome.desktop.wm.keybindings` open the window
-  switcher; defaults include Alt+Tab and Super+Tab. The switcher lists the
-  open windows, most recently focused first, with the previously focused
-  window selected; pressing the keys again moves the selection
-  (backward with the `-backward` keys or Shift). Releasing the modifier
-  activates the selected window; Escape cancels. With a single window
-  there is nothing to switch to.
+Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
+
+- `switch-applications` (defaults include Alt+Tab and Super+Tab) opens the
+  application switcher: one entry per application (windows with the same
+  app id), ordered by each application's most recently focused window. A
+  window without an app id is an entry of its own. Entries show the
+  application's name (from its desktop file, else the app id) and how many
+  windows it has. Activating an entry activates the application's most
+  recently focused window.
+- `switch-windows` opens the window switcher: one entry per window, most
+  recently focused first.
+- `switch-group` (defaults Alt+Above_Tab and Super+Above_Tab) opens the
+  window switcher for the focused window's application only.
+- In each switcher the entry after the current one is selected (the last
+  one, backward); pressing the keys again moves the selection (backward
+  with the `-backward` keys or Shift). Releasing the modifier activates
+  the selected entry; Escape cancels. With nothing else to switch to, the
+  keys do nothing.
+- `Above_Tab` in an accelerator means the key above Tab, whatever symbol
+  the layout gives it (the grave accent on a US layout).
+- `org.gnome.shell.app-switcher` and `org.gnome.shell.window-switcher`
+  are ignored: Helix has no workspaces and shows no thumbnails or icons.
 - The application launcher lists open windows (matching the search on
   title or app id) above the apps; choosing one activates it.
 - Activating raises the window, gives it focus, and brings it back if it
@@ -50,3 +64,21 @@ only to them, and stays locked if the lock client dies.
 - The compositor tells the shell about windows (app id, title, focus) and
   activates them on request over Helix's private `helix_window_list_v1`
   Wayland protocol, offered only to the shell it launched.
+
+## Screen capture (Helix)
+
+The shell serves `org.gnome.Shell.Screenshot`, but the pixels are the
+compositor's. The shell asks for captures over Helix's private
+`helix_screenshot_v1` Wayland protocol, offered only to the shell the
+compositor launched: it names the target (every monitor, an area in
+layout coordinates, or the focused window), whether to draw the pointer,
+and a file descriptor; the compositor writes a PNG image to it and
+reports the captured rectangle, or why it failed. Captures are refused
+while the session is locked. Ordinary clients have no way to capture the
+screen; sandboxed apps use the Screenshot portal.
+
+## Global keys (Helix)
+
+The shell binds its keys through Helix's private `helix_keybindings_v1`
+protocol. Bound keys do nothing while the session is locked, except
+those the shell marks as working while locked (volume and brightness).

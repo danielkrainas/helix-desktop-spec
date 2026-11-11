@@ -51,5 +51,10 @@
   <interface name="org.freedesktop.login1.Session">
     <property name="Id" type="s" access="read"/>
     <property name="Active" type="b" access="read"/>
+    <method name="SetBrightness">
+      <arg type="s" name="subsystem" direction="in"/>
+      <arg type="s" name="name" direction="in"/>
+      <arg type="u" name="brightness" direction="in"/>
+    </method>
   </interface>
 </node>

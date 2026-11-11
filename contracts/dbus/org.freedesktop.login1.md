@@ -35,3 +35,13 @@ lasts until every copy of it is closed.
 `PrepareForSleep(true)` is emitted just before the system sleeps, after
 delay inhibitors were asked to finish; `PrepareForSleep(false)` after it
 resumes.
+
+## Brightness
+
+`SetBrightness(subsystem, name, brightness)` on the session object sets a
+`backlight` (or `leds`) device under `/sys/class/<subsystem>/<name>` to
+`brightness` (0 to the device's `max_brightness`), without the caller
+needing write access to sysfs. Only a session of the seat the device
+belongs to may use it. Helix's compositor uses it for the `Backlight` of
+`org.gnome.Mutter.DisplayConfig` and reads the current value from
+`/sys/class/backlight/<name>/brightness`.
