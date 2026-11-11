@@ -14,6 +14,31 @@ files named after each schema). Changes apply at once.
 - The active source is the first entry of `mru-sources` that is also in
   `sources`; if there is none, the first source. `current` is deprecated
   and ignored.
+- `per-window`: when true, each window keeps its own active source. A
+  window that gets focus for the first time keeps the source active then;
+  switching sources while it has focus changes its source; when a window
+  with a remembered source gets focus again, that source becomes active
+  again (moved to the front of `mru-sources`).
+
+## Input methods (`ibus` sources)
+
+An `ibus` entry's id is an IBus engine name (e.g. `anthy`, `hangul`,
+`table:cangjie5`). While one is the active source:
+
+- The shell runs IBus: it starts `ibus-daemon` (with its panel disabled)
+  on a private address when the session has `ibus` sources and none is
+  running yet, and makes the engine IBus's global engine
+  (`contracts/dbus/org.freedesktop.IBus.md`).
+- Apps type through the Wayland text-input protocol, as under GNOME: no
+  environment variables are needed. When a text field has focus, the
+  shell (the session's input method) passes the keys to IBus, gives
+  committed and pre-edit text to the app, and shows IBus's candidates in
+  a popup next to the text cursor. Keys IBus does not use go to the app
+  unchanged.
+- The keymap stays that of the most recently used `xkb` source (GNOME
+  uses the engine's own layout; see `gaps.md`).
+
+While an `xkb` source is active, keys go straight to the app.
 - `switch-input-source` / `switch-input-source-backward` open the input
   source switcher. It lists the sources most recently used first (the
   `mru-sources` entries that are in `sources`, then the other sources in

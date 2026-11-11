@@ -117,6 +117,16 @@ selection and serves it to Wayland and X11 clients until something else
 replaces it. Ordinary clients have no way to capture the
 screen; sandboxed apps use the Screenshot portal.
 
+## Input methods (Helix)
+
+The compositor offers `zwp_text_input_v3` to every client, and
+`zwp_input_method_v2` and `zwp_virtual_keyboard_v1` only to the shell it
+launched. The shell is the session's input method (for `ibus` input
+sources, `contracts/gsettings/input-settings.md`): while it grabs the
+keyboard, keys go to it, and it sends the app's text field committed and
+pre-edit text, and the keys it does not use through its virtual keyboard.
+Its candidate popups are placed next to the text cursor the app reports.
+
 ## Global keys (Helix)
 
 The shell binds its keys through Helix's private `helix_keybindings_v1`

@@ -19,6 +19,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
 - `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
 - `org.gnome.SettingsDaemon.Color.xml` — Night Light state (served by the shell)
+- `org.freedesktop.IBus.xml` — the part of IBus Helix's shell calls as the input method; not implemented by Helix
 - `org.mpris.MediaPlayer2.Player.xml` — the part of MPRIS Helix calls on media players (playback keys); not implemented by Helix
 - `org.freedesktop.login1.xml` — the subset of systemd-logind Helix calls (power, sessions, sleep inhibitors, brightness); not implemented by Helix
 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.freedesktop.IBus, org.freedesktop.IBus.InputContext
+  Source: IBus 1.5.29, as its daemon introspects them (on the IBus bus,
+  name org.freedesktop.IBus). The subset Helix's shell calls; Helix does
+  not implement these. Behavior notes in org.freedesktop.IBus.md.
+-->
+<node>
+  <!-- /org/freedesktop/IBus -->
+  <interface name="org.freedesktop.IBus">
+    <method name="CreateInputContext">
+      <arg type="s" name="client_name" direction="in"/>
+      <arg type="o" name="object_path" direction="out"/>
+    </method>
+    <method name="SetGlobalEngine">
+      <arg type="s" name="engine_name" direction="in"/>
+    </method>
+    <method name="Exit">
+      <arg type="b" name="restart" direction="in"/>
+    </method>
+    <signal name="GlobalEngineChanged">
+      <arg type="s" name="engine_name"/>
+    </signal>
+  </interface>
+
+  <!-- the path CreateInputContext returns -->
+  <interface name="org.freedesktop.IBus.InputContext">
+    <method name="ProcessKeyEvent">
+      <arg type="u" name="keyval" direction="in"/>
+      <arg type="u" name="keycode" direction="in"/>
+      <arg type="u" name="state" direction="in"/>
+      <arg type="b" name="handled" direction="out"/>
+    </method>
+    <method name="SetCursorLocation">
+      <arg type="i" name="x" direction="in"/>
+      <arg type="i" name="y" direction="in"/>
+      <arg type="i" name="w" direction="in"/>
+      <arg type="i" name="h" direction="in"/>
+    </method>
+    <method name="FocusIn"/>
+    <method name="FocusOut"/>
+    <method name="Reset"/>
+    <method name="SetCapabilities">
+      <arg type="u" name="caps" direction="in"/>
+    </method>
+    <method name="SetSurroundingText">
+      <arg type="v" name="text" direction="in"/>
+      <arg type="u" name="cursor_pos" direction="in"/>
+      <arg type="u" name="anchor_pos" direction="in"/>
+    </method>
+    <signal name="CommitText">
+      <arg type="v" name="text"/>
+    </signal>
+    <signal name="ForwardKeyEvent">
+      <arg type="u" name="keyval"/>
+      <arg type="u" name="keycode"/>
+      <arg type="u" name="state"/>
+    </signal>
+    <signal name="UpdatePreeditText">
+      <arg type="v" name="text"/>
+      <arg type="u" name="cursor_pos"/>
+      <arg type="b" name="visible"/>
+    </signal>
+    <signal name="HidePreeditText"/>
+    <signal name="UpdateLookupTable">
+      <arg type="v" name="table"/>
+      <arg type="b" name="visible"/>
+    </signal>
+    <signal name="HideLookupTable"/>
+  </interface>
+</node>
