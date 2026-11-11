@@ -95,4 +95,12 @@ Details:
   While it is held, moving the pointer scrolls; with `-lock`, a click
   toggles that instead.
 - `scroll-speed` multiplies the touchpad's finger scrolling (1 unchanged).
-- Touchscreens are not supported (no touch input yet).
+## Touchscreens
+
+Touch input goes to the surface under the touch point, with Wayland touch
+events (`wl_touch`); touching a window also focuses and raises it, as a
+click does. Shell surfaces (panel, launcher, dialogs) take a tap as a
+click. A touchscreen covers one monitor: the built-in panel if there is
+one, else the primary monitor. The per-device
+`org.gnome.desktop.peripherals.touchscreen` settings (`output`) are not
+read (see `gaps.md`); there are no gestures.
