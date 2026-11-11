@@ -39,4 +39,17 @@ Source: https://gitlab.gnome.org/GNOME/gsettings-desktop-schemas (tag 51.0)
 
 Additional shell-specific schemas live in `gnome-shell` (e.g. `org.gnome.shell`).
 
-Full XML schemas will be added as needed for implementation. This list establishes the expected surface for v0 compatibility.
+## Key contracts
+
+Schemas Helix depends on directly have a key table (key, GVariant type,
+default, allowed values), described from the installed schema through
+GSettings' introspection API rather than copied from schema sources:
+
+- [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
+- [`org.gnome.desktop.a11y.interface`](org.gnome.desktop.a11y.interface.md)
+- [`org.gnome.desktop.wm.preferences`](org.gnome.desktop.wm.preferences.md)
+
+Helix reuses the system dconf and the installed GNOME schemas, so these
+tables are what the installed schemas must provide; they are not a
+replacement for them. More schemas get tables as Helix starts depending on
+them.

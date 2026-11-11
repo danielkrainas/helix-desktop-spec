@@ -6,7 +6,8 @@ Living log of missing, unclear, or underspecified contracts.
 
 - Full `org.gnome.Shell.Screenshot` interface (InteractiveScreenshot, Screenshot, ScreenshotWindow, ScreenshotArea) — present in GNOME Shell; needs extraction.
 - Mutter ScreenCast / RemoteDesktop D-Bus interfaces (private-ish but used by portals).
-- Complete GSettings schema XML for high-traffic keys (`org.gnome.desktop.interface`, `org.gnome.desktop.wm.keybindings`, peripherals).
+- GSettings key tables exist for `org.gnome.desktop.interface`, `.a11y.interface` and `.wm.preferences`, but were described from gsettings-desktop-schemas 46.1 (the version available when extracted), not 51. Keys added since (e.g. `accent-color` in 47) are missing. Regenerate against 51.
+- GSettings key tables for other high-traffic schemas (`org.gnome.desktop.wm.keybindings`, peripherals).
 - SessionManager client and inhibitor objects: the object path shape (Helix currently uses `/org/gnome/SessionManager/Client<n>` and `/org/gnome/SessionManager/Inhibitor<cookie>`) and the interfaces exported at those paths (`org.gnome.SessionManager.Client`, `.ClientPrivate`, `.Inhibitor`) are not in the contract. Helix returns the paths but does not export objects there yet.
 - SessionManager D-Bus error names are unspecified. Helix uses `org.gnome.SessionManager.Error.{NotInInitialization,AlreadyInitialized,NotInRunning,NotRegistered,InvalidCookie,InvalidArgs,Inhibited,General}` pending a contract.
 - SessionManager inhibitor/client lifetime: Helix drops a caller's clients and inhibitors when its bus connection goes away (so a crashed app can't block logout forever). Not specified by the contract.
