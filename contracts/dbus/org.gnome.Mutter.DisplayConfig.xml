@@ -1,0 +1,79 @@
+<!--
+  org.gnome.Mutter.DisplayConfig
+  Source: https://gitlab.gnome.org/GNOME/mutter/-/blob/main/data/dbus-interfaces/org.gnome.Mutter.DisplayConfig.xml
+  Pinned against GNOME 51 surface. Clean-room extraction of public contract.
+  Note: Full type signatures for complex structs are preserved from upstream introspection.
+-->
+<!DOCTYPE node PUBLIC
+'-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
+'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+  <interface name="org.gnome.Mutter.DisplayConfig">
+    <method name="GetResources">
+      <arg name="serial" direction="out" type="u" />
+      <arg name="crtcs" direction="out" type="a(uxiiiiiuaua{sv})" />
+      <arg name="outputs" direction="out" type="a(uxiausauaua{sv})" />
+      <arg name="modes" direction="out" type="a(uxuudu)" />
+      <arg name="max_screen_width" direction="out" type="i" />
+      <arg name="max_screen_height" direction="out" type="i" />
+    </method>
+
+    <method name="ApplyConfiguration">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="persistent" direction="in" type="b" />
+      <arg name="crtcs" direction="in" type="a(uiiiuaua{sv})" />
+      <arg name="outputs" direction="in" type="a(ua{sv})" />
+    </method>
+
+    <method name="GetCurrentState">
+      <arg name="serial" direction="out" type="u" />
+      <arg name="monitors" direction="out" type="a((ssss)a(siiddada{sv})a{sv})" />
+      <arg name="logical_monitors" direction="out" type="a(iiduba(ssss)a{sv})" />
+      <arg name="properties" direction="out" type="a{sv}" />
+    </method>
+
+    <method name="ApplyMonitorsConfig">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="method" direction="in" type="u" />
+      <arg name="logical_monitors" direction="in" type="a(iiduba(ssa{sv}))" />
+      <arg name="properties" direction="in" type="a{sv}" />
+    </method>
+
+    <method name="SetBacklight">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="connector" direction="in" type="s" />
+      <arg name="value" direction="in" type="i" />
+    </method>
+
+    <method name="GetCrtcGamma">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="crtc" direction="in" type="u" />
+      <arg name="red" direction="out" type="aq" />
+      <arg name="green" direction="out" type="aq" />
+      <arg name="blue" direction="out" type="aq" />
+    </method>
+
+    <method name="SetCrtcGamma">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="crtc" direction="in" type="u" />
+      <arg name="red" direction="in" type="aq" />
+      <arg name="green" direction="in" type="aq" />
+      <arg name="blue" direction="in" type="aq" />
+    </method>
+
+    <method name="SetOutputCTM">
+      <arg name="serial" direction="in" type="u" />
+      <arg name="output" direction="in" type="u" />
+      <arg name="ctm" direction="in" type="(ttttttttt)" />
+    </method>
+
+    <property name="Backlight" type="(uaa{sv})" access="read" />
+    <property name="PowerSaveMode" type="i" access="readwrite" />
+    <property name="PanelOrientationManaged" type="b" access="read" />
+    <property name="ApplyMonitorsConfigAllowed" type="b" access="read" />
+    <property name="NightLightSupported" type="b" access="read" />
+    <property name="HasExternalMonitor" type="b" access="read" />
+
+    <signal name="MonitorsChanged" />
+  </interface>
+</node>

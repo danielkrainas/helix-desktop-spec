@@ -2,13 +2,11 @@
 
 Living log of missing, unclear, or underspecified contracts.
 
-As the Helix specification is built out and implementation work proceeds, gaps will be recorded here. Each entry should describe:
-
-- What is missing or unclear
-- Where it was observed (interface name, schema, protocol, or component)
-- Why it matters for compatibility
-- Any temporary notes or workarounds
-
 ## Open gaps
 
-_None recorded yet._
+- Full `org.gnome.Shell.Screenshot` interface (InteractiveScreenshot, Screenshot, ScreenshotWindow, ScreenshotArea) — present in GNOME Shell; needs extraction.
+- Mutter ScreenCast / RemoteDesktop D-Bus interfaces (private-ish but used by portals).
+- Complete GSettings schema XML for high-traffic keys (`org.gnome.desktop.interface`, `org.gnome.desktop.wm.keybindings`, peripherals).
+- Exact inhibit flag bitmasks and logout mode values for SessionManager.
+- Portal backend requirements beyond the standard XDG portal interfaces (GNOME-specific impl details).
+- Shell extension API surface (explicitly deferred; internal and unstable).

@@ -1,0 +1,29 @@
+<!--
+  org.gnome.Mutter.IdleMonitor
+  Source: https://gitlab.gnome.org/GNOME/mutter/-/blob/main/data/dbus-interfaces/org.gnome.Mutter.IdleMonitor.xml
+  Pinned against GNOME 51 surface.
+-->
+<!DOCTYPE node PUBLIC
+'-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
+'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+  <interface name="org.gnome.Mutter.IdleMonitor">
+    <method name="GetIdletime">
+      <arg name="idletime" direction="out" type="t"/>
+    </method>
+    <method name="AddIdleWatch">
+      <arg name="interval" direction="in" type="t"/>
+      <arg name="id" direction="out" type="u"/>
+    </method>
+    <method name="AddUserActiveWatch">
+      <arg name="id" direction="out" type="u"/>
+    </method>
+    <method name="RemoveWatch">
+      <arg name="id" direction="in" type="u"/>
+    </method>
+    <method name="ResetIdletime"/>
+    <signal name="WatchFired">
+      <arg name="id" type="u"/>
+    </signal>
+  </interface>
+</node>

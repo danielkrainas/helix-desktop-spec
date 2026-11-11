@@ -1,7 +1,28 @@
-# Wayland contracts
+# Wayland contracts (GNOME 51)
 
-Notes on Wayland protocols and their expected usage in a Helix session.
+Notes on protocols and usage expected for a GNOME-compatible session under Helix.
 
-This includes protocols required for normal desktop operation (e.g. layer shell, primary selection) as well as any GNOME-specific protocol usage that applications or session components rely on.
+## Core expectations
 
-Detailed protocol XML or behavioral notes will be added as the specification develops.
+- Standard Wayland protocols sufficient for normal desktop operation (xdg-shell, xdg-decoration, primary selection, etc.).
+- `wlr-layer-shell-unstable-v1` (or equivalent) for shell surfaces (panels, notifications, OSD).
+- Mutter/GNOME-specific private protocols are out of scope for initial compatibility; public portals and D-Bus are preferred.
+
+## GNOME 51 notes
+
+- Support for `ext-background-effect-v1` (blur) was added in Mutter; apps must explicitly request it.
+- Screen casting and remote desktop use PipeWire + portals (`org.freedesktop.portal.ScreenCast`, etc.) rather than direct compositor APIs where possible.
+- Idle inhibition and related behavior route through Mutter's IdleMonitor and session inhibitors.
+
+## Portals (preferred path)
+
+Many session interactions (screenshots, screencasts, inhibit, settings) should prefer XDG Desktop Portals:
+
+- `org.freedesktop.portal.Screenshot`
+- `org.freedesktop.portal.ScreenCast`
+- `org.freedesktop.portal.Inhibit`
+- `org.freedesktop.portal.Settings`
+
+Helix should implement the portal backends needed for GTK/libadwaita apps to function without modification.
+
+Detailed protocol XML or behavioral notes will be added as gaps are identified.

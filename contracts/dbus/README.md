@@ -1,5 +1,16 @@
 # D-Bus contracts
 
-D-Bus interface definitions (typically XML introspection files) that form part of the Helix compatibility surface.
+Initial public contracts extracted for GNOME 51 compatibility.
 
-Files will be added here as interfaces are extracted from the GNOME 51 public contract surface.
+## Included
+
+- `org.gnome.SessionManager.xml` — session lifecycle, inhibit, logout/shutdown
+- `org.gnome.Mutter.DisplayConfig.xml` — multi-monitor configuration
+- `org.gnome.Mutter.IdleMonitor.xml` — idle time and activity watches
+- `org.gnome.Shell.xml` — shell control (overview, OSD, accelerators)
+
+## Notes
+
+These are clean-room extractions of the public introspection interfaces from upstream GNOME 51 sources. They represent the contract surface, not implementation code.
+
+Additional interfaces (ScreenCast, RemoteDesktop, portals, Shell.Screenshot, etc.) will be added as the living spec grows.
