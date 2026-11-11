@@ -53,6 +53,12 @@ variable becomes part of the session's application launch environment:
 - it is added to the D-Bus activation environment
   (`org.freedesktop.DBus.UpdateActivationEnvironment`) before `Setenv`
   returns, so services the bus starts from then on see it;
+- it is set in the systemd user manager's environment too
+  (`org.freedesktop.systemd1.Manager.SetEnvironment`, when that service
+  is on the session bus), so user units started from then on see it.
+  The same goes for the environment of Helix's session configuration.
+  When the session ends, Helix unsets there the variables it set
+  (`UnsetEnvironment`), so a later session does not inherit them;
 - session components started after the call inherit it.
 
 Processes that are already running keep their environment. Setting a
