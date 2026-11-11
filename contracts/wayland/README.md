@@ -370,8 +370,10 @@ shows shrinking circles around the pointer for half a second.
 
 ## Unresponsive apps (Helix)
 
-When a Wayland app's window gets focus, Helix checks that the app still
-responds (`xdg_wm_base.ping`). Without an answer within
+When a window gets focus, Helix checks that its app still responds: a
+Wayland app with `xdg_wm_base.ping`, an X11 app with `_NET_WM_PING` (only
+windows listing it in `WM_PROTOCOLS`; the app answers by sending the
+message back to the root window). Without an answer within
 `org.gnome.mutter check-alive-timeout` milliseconds (default 5000; 0 turns
 checking off), the shell shows a dialog: "“TITLE” is not responding.",
 "You may choose to wait a short while for it to continue or force the app
@@ -379,11 +381,10 @@ to quit entirely.", with **Wait** and **Force Quit**.
 
 - **Wait** closes the dialog; if the app still has not answered after
   another `check-alive-timeout`, the dialog comes back.
-- **Force Quit** ends the app: its process (the Wayland client's peer
-  process) is killed with `SIGKILL`.
+- **Force Quit** ends the app: a Wayland app's process (the client's peer
+  process) is killed with `SIGKILL`; an X11 app's connection to the display
+  is closed (`XKillClient`).
 - An answer from the app closes the dialog.
-
-X11 apps are not checked.
 
 ## Window switching (Helix)
 
