@@ -6,7 +6,7 @@ Living log of missing, unclear, or underspecified contracts.
 
 - Full `org.gnome.Shell.Screenshot` interface (InteractiveScreenshot, Screenshot, ScreenshotWindow, ScreenshotArea) — present in GNOME Shell; needs extraction.
 - Mutter ScreenCast / RemoteDesktop D-Bus interfaces (private-ish but used by portals).
-- DisplayConfig write side: `ApplyMonitorsConfig` method values (verify / temporary / persistent), its `logical_monitors` and `properties` arguments, and the confirmation/revert flow; `SetBacklight` / `ChangeBacklight`, gamma and CTM semantics; keys in `Backlight` dictionaries. Helix reports `ApplyMonitorsConfigAllowed` = false and does not implement them yet.
+- DisplayConfig: D-Bus error names for rejected `ApplyMonitorsConfig` calls (Helix uses `org.freedesktop.DBus.Error.InvalidArgs` for stale serials and invalid configurations); per-monitor `properties` keys in `ApplyMonitorsConfig` (Helix ignores them); whether a confirm-or-revert step follows a change and who shows it (Helix has none); fractional scales; `SetBacklight` / `ChangeBacklight`, gamma and CTM semantics; keys in `Backlight` dictionaries. Helix does not implement the backlight, gamma and CTM methods yet.
 - Which input counts as "user activity" for IdleMonitor (e.g. whether pointer motion without buttons does). Helix counts every input event.
 - Session startup ordering in GNOME 51 (gnome-session's systemd targets) is not documented here. Helix uses its own simple launcher; components announce readiness by owning a bus name or calling `SessionManager.Setenv` (the compositor sets `WAYLAND_DISPLAY`).
 - GSettings key tables for other high-traffic schemas (`org.gnome.desktop.wm.keybindings`, peripherals).
