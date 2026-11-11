@@ -51,6 +51,61 @@ only to them, and stays locked if the lock client dies.
   onto the primary one. Maximized and fullscreen windows follow the size
   of the monitor they are on.
 
+## Window frames (Helix)
+
+Like GNOME, Helix draws a frame (title bar) only for X11 windows; Wayland
+apps draw their own decorations. `xdg-decoration` always answers
+client-side (mutter offers no server-side decorations at all).
+
+An X11 window gets a title bar along its top edge, outside the window's
+own area, unless it asks for none (the Motif `_MOTIF_WM_HINTS` property
+without decorations, as apps drawing their own title bar set), is
+fullscreen, or is override-redirect (menus, tooltips). Placing,
+maximizing and keeping windows inside the work area count the title bar
+as part of the window, so it never ends up under the panel.
+
+The title bar is 34 logical pixels high and shows:
+
+- the window title (`_NET_WM_NAME`, else `WM_NAME`), centered and shortened
+  with an ellipsis when it does not fit, dimmed while the window does not
+  have focus;
+- buttons as `org.gnome.desktop.wm.preferences button-layout` says: names
+  before the colon go in the left corner, after it in the right corner, in
+  order. `minimize`, `maximize` and `close` are shown, `spacer` adds a
+  gap, other names (`appmenu`, `menu`, `icon`, unknown ones) are left out,
+  and a repeated name is shown once. Without a colon every button goes on
+  the left.
+
+Text uses the font of `titlebar-font`, or with `titlebar-uses-system-font`
+the family and size of `org.gnome.desktop.interface font-name`, drawn
+bold. Colors are light, or dark with `org.gnome.desktop.interface
+color-scheme` `prefer-dark`. Settings changes apply at once.
+
+Clicks on the title bar:
+
+| Click | Effect |
+|-------|--------|
+| left on a button, released on it | minimize; maximize or restore; close (`WM_DELETE_WINDOW`, as the client's own close) |
+| left elsewhere | focus and raise; dragging moves the window (a maximized window is restored first) |
+| two left clicks within `org.gnome.desktop.peripherals.mouse double-click` milliseconds | `action-double-click-titlebar` |
+| middle | `action-middle-click-titlebar` |
+| right | `action-right-click-titlebar` |
+
+Actions: `toggle-maximize` maximizes or restores;
+`toggle-maximize-horizontally` / `-vertically` fill the work area in that
+direction only (or restore); `minimize`; `lower` puts the window below
+all others; `none`, `menu` (Helix has no window menu) and `toggle-shade`
+(Helix does not shade windows) do nothing.
+
+Around a framed window (left, right, bottom, and above the title bar) is
+an invisible border `org.gnome.mutter draggable-border-width` logical
+pixels wide; dragging it with the left button resizes the window from
+that edge or corner, and the pointer shows the matching resize cursor.
+Corners are where two borders meet, extended along each edge by the
+border width.
+
+`ScreenshotWindow` with `include_frame` true includes the title bar.
+
 ## Window switching (Helix)
 
 Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):

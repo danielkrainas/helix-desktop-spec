@@ -42,8 +42,9 @@ monitor with a lower scale are scaled up.
   shows are transparent.
 - `ScreenshotWindow(include_frame, include_cursor, flash, filename)`: the
   focused window, cropped to its window geometry (client-side shadows are
-  left out). Helix draws no window frames, so `include_frame` changes
-  nothing. Open popup menus show where they lie inside the window. Fails
+  left out). With `include_frame` the title bar Helix draws for X11
+  windows is included (see `contracts/wayland/README.md`, "Window
+  frames"). Open popup menus show where they lie inside the window. Fails
   (`success` false) when no window has focus.
 - `ScreenshotArea(x, y, width, height, flash, filename)`: that rectangle.
   `width` and `height` must be positive, otherwise the call fails with
