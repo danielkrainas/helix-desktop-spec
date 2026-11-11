@@ -18,6 +18,7 @@ Living log of missing, unclear, or underspecified contracts.
 - How `Shutdown` / `Reboot` reach the system (gnome-session uses `org.freedesktop.login1`, which is not in the spec). Helix currently only ends the session.
 - Where `Setenv` values must be propagated (session children, D-Bus/systemd activation environment). Helix currently only records them.
 - Sources of truth for `SessionIsActive` (logind) and `SessionIsLocked` (screensaver/shell). Helix currently reports active=true, locked=false.
+- `org.gtk.Notifications` `ActionInvoked` signal (added in GNOME 51): when GNOME Shell emits it relative to activating the app over `org.freedesktop.Application` is undocumented. Helix activates the app and does not emit it.
 - Portal backend requirements beyond the standard XDG portal interfaces (GNOME-specific impl details).
 - Settings portal: namespaces beyond `org.freedesktop.appearance` are undocumented, yet GTK reads `org.gnome.desktop.interface` (and others) through the portal when sandboxed. Which namespaces and keys a GNOME-compatible backend must expose is not in the spec. Helix exposes a fixed set of GSettings schemas.
 - Settings portal: how GNOME maps `org.gnome.desktop.interface accent-color` names to the `(ddd)` sRGB `accent-color` value. Helix does not report `accent-color` yet.

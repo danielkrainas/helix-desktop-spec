@@ -9,11 +9,14 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.Mutter.IdleMonitor.xml` — idle time and activity watches
 - `org.gnome.Shell.xml` — shell control (overview, OSD, accelerators)
 - `org.gnome.ScreenSaver.xml` — lock state and locking
+- `org.freedesktop.Notifications.xml`, `org.gtk.Notifications.xml` — notifications
+- `org.freedesktop.Application.xml` — application activation (called by the shell)
 - `org.freedesktop.impl.portal.{Settings,Inhibit,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
 
 Behavioral notes that XML cannot express live in companion `.md` files
 (`org.gnome.SessionManager.md`, `org.gnome.Mutter.IdleMonitor.md`,
-`org.gnome.Mutter.DisplayConfig.md`, `org.gnome.Shell.md`, `org.gnome.ScreenSaver.md`,
+`org.gnome.Mutter.DisplayConfig.md`, `org.gnome.Shell.md`, `org.gnome.ScreenSaver.md`, `org.freedesktop.Notifications.md`,
+`org.gtk.Notifications.md`, `org.freedesktop.Application.md`,
 `org.freedesktop.impl.portal.md`).
 
 ## Notes

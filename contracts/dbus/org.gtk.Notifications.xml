@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.gtk.Notifications
+  Source: https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/51.0/data/dbus-interfaces/org.gtk.Notifications.xml
+  Pinned against GNOME 51 surface. Clean-room extraction; behavior notes in
+  org.gtk.Notifications.md.
+-->
+<node>
+  <interface name="org.gtk.Notifications">
+    <method name="AddNotification">
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="id" type="s" direction="in"/>
+      <arg name="notification" type="a{sv}" direction="in"/>
+    </method>
+    <method name="RemoveNotification">
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="id" type="s" direction="in"/>
+    </method>
+    <signal name="ActionInvoked">
+      <arg name="app_id" type="s"/>
+      <arg name="id" type="s"/>
+      <arg name="action" type="s"/>
+      <arg name="parameter" type="av"/>
+      <arg name="platform_data" type="a{sv}"/>
+    </signal>
+  </interface>
+</node>

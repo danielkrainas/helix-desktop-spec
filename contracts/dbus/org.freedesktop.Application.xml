@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.freedesktop.Application
+  Source: https://specifications.freedesktop.org/desktop-entry-spec/latest/dbus.html (D-Bus Activation), as implemented by GLib GApplication
+  Pinned against GNOME 51 surface. Clean-room extraction; behavior notes in
+  org.freedesktop.Application.md.
+-->
+<node>
+  <interface name="org.freedesktop.Application">
+    <method name="Activate">
+      <arg type="a{sv}" name="platform_data" direction="in"/>
+    </method>
+    <method name="Open">
+      <arg type="as" name="uris" direction="in"/>
+      <arg type="a{sv}" name="platform_data" direction="in"/>
+    </method>
+    <method name="ActivateAction">
+      <arg type="s" name="action_name" direction="in"/>
+      <arg type="av" name="parameter" direction="in"/>
+      <arg type="a{sv}" name="platform_data" direction="in"/>
+    </method>
+  </interface>
+</node>

@@ -51,6 +51,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.wm.preferences`](org.gnome.desktop.wm.preferences.md)
 - [`org.gnome.desktop.session`](org.gnome.desktop.session.md)
 - [`org.gnome.desktop.screensaver`](org.gnome.desktop.screensaver.md)
+- [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md)
 
 Helix reuses the system dconf and the installed GNOME schemas, so these
 tables are what the installed schemas must provide; they are not a
