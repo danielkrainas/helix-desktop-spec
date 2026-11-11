@@ -52,7 +52,9 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   0 while the pointer is hidden or off the source. When only the pointer
   moved, the last frame is sent again with new metadata. `is-recording` and
   `disable-animations` are accepted and ignored; a `remote-desktop-session-id`
-  is refused (no RemoteDesktop).
+  ties the session to that remote desktop session
+  (`org.gnome.Mutter.RemoteDesktop.md`), an unknown one fails with
+  `org.freedesktop.DBus.Error.InvalidArgs`.
 - Only the owner of `org.freedesktop.impl.portal.desktop.helix` (Helix's
   portal backend, which asks the user first) may call these methods;
   others get `org.freedesktop.DBus.Error.AccessDenied`. A session ends

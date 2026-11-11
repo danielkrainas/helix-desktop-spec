@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.freedesktop.impl.portal.RemoteDesktop
+  Source: https://github.com/flatpak/xdg-desktop-portal/blob/main/data/org.freedesktop.impl.portal.RemoteDesktop.xml
+  Pinned against GNOME 51 surface. Interface shape only; behavior notes in
+  org.freedesktop.impl.portal.md.
+-->
+<node>
+  <interface name="org.freedesktop.impl.portal.RemoteDesktop">
+    <method name="CreateSession">
+      <arg name="handle" type="o" direction="in" />
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="response" type="u" direction="out" />
+      <arg name="results" type="a{sv}" direction="out" />
+    </method>
+    <method name="SelectDevices">
+      <arg name="handle" type="o" direction="in" />
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="response" type="u" direction="out" />
+      <arg name="results" type="a{sv}" direction="out" />
+    </method>
+    <method name="Start">
+      <arg name="handle" type="o" direction="in" />
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="parent_window" type="s" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="response" type="u" direction="out" />
+      <arg name="results" type="a{sv}" direction="out" />
+    </method>
+    <method name="NotifyPointerMotion">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="dx" type="d" direction="in" />
+      <arg name="dy" type="d" direction="in" />
+    </method>
+    <method name="NotifyPointerMotionAbsolute">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="stream" type="u" direction="in" />
+      <arg name="x" type="d" direction="in" />
+      <arg name="y" type="d" direction="in" />
+    </method>
+    <method name="NotifyPointerButton">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="button" type="i" direction="in" />
+      <arg name="state" type="u" direction="in" />
+    </method>
+    <method name="NotifyPointerAxis">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="dx" type="d" direction="in" />
+      <arg name="dy" type="d" direction="in" />
+    </method>
+    <method name="NotifyPointerAxisDiscrete">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="axis" type="u" direction="in" />
+      <arg name="steps" type="i" direction="in" />
+    </method>
+    <method name="NotifyKeyboardKeycode">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="keycode" type="i" direction="in" />
+      <arg name="state" type="u" direction="in" />
+    </method>
+    <method name="NotifyKeyboardKeysym">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="keysym" type="i" direction="in" />
+      <arg name="state" type="u" direction="in" />
+    </method>
+    <method name="NotifyTouchDown">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="stream" type="u" direction="in" />
+      <arg name="slot" type="u" direction="in" />
+      <arg name="x" type="d" direction="in" />
+      <arg name="y" type="d" direction="in" />
+    </method>
+    <method name="NotifyTouchMotion">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="stream" type="u" direction="in" />
+      <arg name="slot" type="u" direction="in" />
+      <arg name="x" type="d" direction="in" />
+      <arg name="y" type="d" direction="in" />
+    </method>
+    <method name="NotifyTouchUp">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="slot" type="u" direction="in" />
+    </method>
+    <method name="ConnectToEIS">
+      <arg name="session_handle" type="o" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="fd" type="h" direction="out" />
+    </method>
+    <property name="AvailableDeviceTypes" type="u" access="read" />
+    <property name="version" type="u" access="read" />
+  </interface>
+</node>

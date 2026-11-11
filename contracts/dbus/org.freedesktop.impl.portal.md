@@ -164,6 +164,50 @@ within one second.
   otherwise. Shared windows are not remembered (`persist_mode` 0).
 - When the compositor ends the recording, the Session emits `Closed`.
 
+## RemoteDesktop
+
+`AvailableDeviceTypes`: 1 keyboard, 2 pointer, 4 touchscreen.
+
+- `CreateSession(handle, session_handle, app_id, options)` exports a
+  Session. A RemoteDesktop session may also get screen cast sources:
+  `org.freedesktop.impl.portal.ScreenCast.SelectSources` on the same
+  session handle.
+- `SelectDevices(handle, session_handle, app_id, options)`: `types`
+  (`u`, default all), `restore_data` (`(suv)`), `persist_mode` (`u`).
+- `Start(handle, session_handle, app_id, parent_window, options)`
+  typically asks the user; `results`: `devices` (`u`, the device types
+  allowed), `clipboard_enabled` (`b`), `streams` (as for ScreenCast, when
+  sources were selected) and optionally `persist_mode` / `restore_data`.
+- `Notify*` inject input (see `org.gnome.Mutter.RemoteDesktop.md`); their
+  stream arguments are PipeWire node ids of the session's streams, button
+  and key states are `u` (0 released, 1 pressed), and
+  `NotifyPointerAxis` takes `finish` (`b`) in `options`. Each may only be
+  used for an allowed device type.
+- `ConnectToEIS(session_handle, app_id, options)` (version 2) returns a
+  socket to an EIS server for the session.
+
+### Helix
+
+- `AvailableDeviceTypes` 7, `version` 2.
+- `Start` asks the user through the shell: with screen cast sources
+  selected, the share dialog (`org.helix.ScreenCastChooser.md`) also says
+  which devices the app will control; without, a dialog asks whether to
+  let the app control the keyboard / pointer / touchscreen ("Allow" /
+  "Deny"). Cancelling answers 1. Then it creates an
+  `org.gnome.Mutter.RemoteDesktop` session (and, with sources, a screen
+  cast session belonging to it), starts it, and returns `devices` (the
+  types asked for, all when not given), `clipboard_enabled` false and the
+  streams.
+- `Notify*` for a device type not allowed, before `Start`, or with an
+  unknown stream are ignored. They are passed on to the compositor's
+  session (node ids mapped to its stream objects).
+- `ConnectToEIS` passes on the compositor's EIS socket, offering the
+  allowed device types; before `Start` it fails
+  (`org.freedesktop.DBus.Error.Failed`).
+- `persist_mode` and `restore_data` are ignored: every session asks.
+- Closing the Session ends the remote desktop session (and its screen
+  cast); when the compositor ends it, the Session emits `Closed`.
+
 ## Screenshot
 
 Methods that take a `handle` answer with `response`: 0 success, 1

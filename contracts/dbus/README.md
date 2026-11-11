@@ -14,9 +14,10 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.ScreenSaver.xml` — lock state and locking
 - `org.freedesktop.Notifications.xml`, `org.gtk.Notifications.xml` — notifications
 - `org.freedesktop.Application.xml` — application activation (called by the shell)
-- `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,ScreenCast,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
+- `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,ScreenCast,RemoteDesktop,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
 - `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
 - `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
+- `org.gnome.Mutter.RemoteDesktop.xml` — remote input, Notify* and EIS (served by the compositor)
 - `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
 - `org.gnome.SettingsDaemon.Color.xml` — Night Light state (served by the shell)
 - `org.freedesktop.IBus.xml` — the part of IBus Helix's shell calls as the input method; not implemented by Helix
