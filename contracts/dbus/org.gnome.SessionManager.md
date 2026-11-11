@@ -69,10 +69,45 @@ library reports it. An unknown category is an error.
 Only valid during the initialization phase (before `Initialized`). Reports a
 failure starting a session component. If `fatal` is true the session ends.
 
-## `RestoreSupported`
+## `RestoreSupported` and session restore
 
 When false, clients must not use `RegisterRestore`, `DeletedInstanceIds` or
-`UnregisterRestore`.
+`UnregisterRestore`. These are a private interface between the session
+manager and xdg-desktop-portal; apps use the portal.
+
+- `RegisterRestore(app_id, dbus_name)` registers an app instance for save
+  and restore: apps registered when the session ends are started again at
+  the next login. It returns a `reason`, a stable `instance_id` and
+  `cleanup_ids`:
+  - `reason` 0: restore no state; 1: a normal launch (restore what is
+    reasonable, e.g. preferences but not history); 2: a restore after the
+    app or the whole session crashed (restore carefully); 3: a restore
+    after the session ended cleanly (restore as much as possible).
+  - `instance_id` includes a part identifying this session manager and
+    session, so it never collides with other session managers' ids.
+  - `cleanup_ids` are ids that will never be used again; the app deletes
+    their data and then reports them with `DeletedInstanceIds`.
+- `DeletedInstanceIds(app_id, ids)`: the app deleted those instances'
+  data; the session manager forgets them.
+- `UnregisterRestore(app_id, instance_id)`: the app exited cleanly and
+  needs no restore.
+
+### Helix
+
+- `RestoreSupported` is true. Registrations are kept in
+  `$XDG_STATE_HOME/helix/restore.toml` (`~/.local/state/helix/...`).
+- An instance is restorable when it was still registered at the end of
+  the session (reason 3), or when its app left the bus without
+  unregistering, or the whole session ended without the session manager
+  ending it (reason 2). Each restorable instance is handed out once, to
+  the next `RegisterRestore` of its app; otherwise the app gets a new id
+  and reason 1.
+- At login, once the session's components are up, every app with
+  restorable instances is started once per instance, through its desktop
+  file (`<app_id>.desktop`).
+- Unregistered instances become cleanup ids, returned to the app's next
+  `RegisterRestore` until it reports them deleted.
+- Ids look like `helix-<session>-<n>`, `<session>` random per login.
 
 ## Client and inhibitor objects
 
@@ -123,6 +158,21 @@ example because something blocks sleep).
 While any inhibitor has the suspend bit (4), the session manager holds a
 logind `sleep` inhibitor in `block` mode, so the system does not sleep
 until the last such inhibitor goes away.
+
+## `CanShutdown`, `CanReboot`, `CanSuspend`
+
+Return the availability of the action, for showing it in a UI (not for
+automatic power management): 0 unavailable, 1 normally available but
+completely blocked by an inhibitor right now, 2 available after
+authentication, 3 available without authentication.
+
+### Helix
+
+They ask logind (`CanPowerOff`, `CanReboot`, `CanSuspend`): `yes` is 3,
+`challenge` 2, anything else (and no logind) 0. `CanSuspend` is 1 instead
+of 2 or 3 while an inhibitor has the suspend bit, as suspending is then
+blocked. Logout inhibitors do not change `CanShutdown` / `CanReboot`, as
+the end-session dialog lets the user go ahead anyway.
 
 ## `SessionIsActive`
 
