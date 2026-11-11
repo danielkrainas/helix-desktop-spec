@@ -45,6 +45,8 @@ At a fractional scale, apps that support the fractional-scale protocol
 apps are told the next whole scale (`wl_output` and `wl_surface` preferred
 buffer scale) and their pixels are scaled down to fit. X11 apps draw at
 scale 1 and are scaled up.
+Helix's own shell surfaces (panel, launcher, switcher, dialogs, banners,
+lock screen) draw at the exact scale of their monitor.
 
 `transform` values: 0 normal, 1 90°, 2 180°, 3 270°, 4 flipped, 5 flipped
 90°, 6 flipped 180°, 7 flipped 270°.
