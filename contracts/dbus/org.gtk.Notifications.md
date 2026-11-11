@@ -48,3 +48,11 @@ gnome-shell does not document `ActionInvoked` (new in GNOME 51). Helix
 gives it the meaning xdg-desktop-portal documents for the same signal of
 its Notification backend interface: it is sent "to the application when a
 non-exported action is activated" (see `gaps.md`).
+
+## Helix
+
+The `icon` (a serialized `GIcon`: themed icon names, a file, or image
+bytes) is shown, else the application's own icon (its desktop file
+`app_id.desktop`); the body is plain text. Notifications stay in the
+notification list as `org.freedesktop.Notifications.md` ("The
+notification list") describes, until withdrawn, activated or dismissed.

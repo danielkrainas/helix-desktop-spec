@@ -51,3 +51,62 @@ notification is then closed (reason 2) unless it is `resident`.
 among: `actions`, `body`, `body-hyperlinks`, `body-images`,
 `body-markup`, `icon-multi`, `icon-static`, `persistence`, `sound`.
 Clients must not rely on features the server does not list.
+
+## Helix
+
+`GetCapabilities` returns `actions`, `body`, `body-hyperlinks`,
+`body-markup`, `icon-static`, `persistence` and `sound`.
+
+### Icons
+
+A notification shows one icon, the first of:
+
+1. the `image-data` hint (`(iiibiiay)`: width, height, rowstride, has
+   alpha, bits per sample (8), channels (3 or 4), RGB(A) data), or its
+   older names `image_data` and `icon_data`;
+2. the `image-path` hint (or `image_path`): an absolute path, a `file://`
+   URI, or an icon name;
+3. the `app_icon` argument, in the same forms;
+4. the `Icon` of the desktop file named by the `desktop-entry` hint.
+
+Icon names are looked up in the theme of `org.gnome.desktop.interface
+icon-theme`, then `hicolor`; PNG and SVG icons are shown.
+
+### Body markup
+
+The body may use the markup of the Desktop Notifications specification:
+`<b>` (bold), `<i>` (italic; Helix draws it in the regular face), `<u>`
+(underlined), `<a href="URI">` (a link) and the entities `&amp;`, `&lt;`,
+`&gt;`, `&quot;`, `&apos;` and `&#N;` / `&#xN;`. Other tags, `<img>`
+included, are left out with their text kept. A `<` that does not start a
+tag is shown as is. Links are underlined in the accent color; clicking one
+opens its URI with the default application (and does not activate the
+notification).
+
+### Sounds
+
+A notification plays a sound once, when it is posted: the `sound-file`
+hint (a path), else the `sound-name` hint (a name from the freedesktop
+sound theme specification, looked up in the theme of
+`org.gnome.desktop.sound theme-name`, then `freedesktop`). Nothing plays
+with the `suppress-sound` hint, with `org.gnome.desktop.sound
+event-sounds` false, or when do not disturb hides the banner.
+
+### The notification list (persistence)
+
+Notifications stay in a list after their banner goes, until the user
+dismisses or activates them or the app closes them (`CloseNotification`,
+`RemoveNotification`). A banner timing out moves its notification to the
+list without closing it; only a notification with the `transient` hint is
+closed (reason 1) when its banner times out. Do not disturb (`show-banners`
+false) sends notifications straight to the list. At most 50 are kept; the
+oldest beyond that is closed (reason 1).
+
+Clicking the clock in the panel opens the list below it, newest first:
+each notification's icon, app, summary and up to two lines of body, with a
+× that dismisses it (reason 2). Clicking a notification acts as clicking
+its banner. The list also has "Clear" (dismisses all) and a "Do Not
+Disturb" switch (`org.gnome.desktop.notifications show-banners`, inverted).
+Escape or a click outside closes it. While the list holds notifications
+that were posted since it was last opened, the panel shows a dot next to
+the clock.
