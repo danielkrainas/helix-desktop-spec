@@ -33,6 +33,24 @@ The lock screen uses the standard `ext-session-lock-v1` protocol: while
 locked, the compositor shows only the lock client's surfaces and sends input
 only to them, and stays locked if the lock client dies.
 
+## Monitors and windows (Helix)
+
+- The primary monitor is the one DisplayConfig marks primary: the one
+  configured so, else the leftmost one that is on.
+- Shell surfaces (layer surfaces) that do not name a monitor go on the
+  primary monitor. Their reserved zones (panels) shrink the work area of
+  that monitor only.
+- New windows open on the monitor under the pointer, cascading from the
+  top-left corner of its work area.
+- Maximizing fills the work area of the monitor a window mostly covers;
+  fullscreen covers that monitor, or the monitor the client asks for.
+- Popup menus are kept inside the monitor their window mostly covers.
+- When a monitor goes away (unplugged or turned off), its layer surfaces
+  are closed (`closed` event), so the shell creates them again on the
+  remaining monitors, and windows that no longer touch any monitor move
+  onto the primary one. Maximized and fullscreen windows follow the size
+  of the monitor they are on.
+
 ## Window switching (Helix)
 
 Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
