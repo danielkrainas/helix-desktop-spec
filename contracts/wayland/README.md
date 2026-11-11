@@ -161,6 +161,29 @@ Keys from `org.gnome.desktop.wm.keybindings` acting on the focused window:
 | `raise`, `lower`, `raise-or-lower` | above all windows, below all, or whichever it is not (lowering focuses the new top window) |
 | `show-desktop` | minimize every window on the workspace; again (before any is shown) shows them back |
 
+## Tiling (Helix)
+
+`org.gnome.mutter.keybindings` `toggle-tiled-left` and `toggle-tiled-right`
+(defaults `<Super>Left`, `<Super>Right`) tile the focused window: it fills
+the left or right half of its monitor's work area (its title bar, if
+Helix draws one, included). The same key again restores the window's
+earlier size and place; the other key moves it to the other half. Like a
+maximized window, a tiled window follows its work area when that changes,
+restoring it returns it to where it was before, and dragging it restores
+it once the pointer has moved. Wayland apps are told which edges are tiled
+(`xdg_toplevel` states `tiled_left`/`right`/`top`/`bottom`); tiled windows
+are not reported as maximized.
+
+With `org.gnome.mutter edge-tiling` true, dragging a window (by its title
+bar, its own drag area, or `<Super>`+drag) until the pointer touches the
+left or right edge of a monitor, where no other monitor continues,
+previews the half it would fill (a translucent rectangle); releasing there
+tiles it. Touching the top edge previews and then maximizes. Moving away
+from the edge drops the preview.
+
+`switch-monitor`, `rotate-monitor` and `cancel-input-capture` are not
+handled.
+
 ## Window switching (Helix)
 
 Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):

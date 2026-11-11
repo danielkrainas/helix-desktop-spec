@@ -65,6 +65,7 @@ From other GNOME 51.0 packages, described the same way:
 - [`org.gnome.settings-daemon.plugins.media-keys`](org.gnome.settings-daemon.plugins.media-keys.md)
   (gnome-settings-daemon)
 - [`org.gnome.mutter`](org.gnome.mutter.md) (mutter)
+- [`org.gnome.mutter.keybindings`](org.gnome.mutter.keybindings.md) (mutter)
 - [`org.gnome.settings-daemon.plugins.color`](org.gnome.settings-daemon.plugins.color.md)
   (gnome-settings-daemon)
 
