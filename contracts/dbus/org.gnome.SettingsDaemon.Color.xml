@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.gnome.SettingsDaemon.Color
+  Source: gnome-settings-daemon 51.0, plugins/color/gsd-color-manager.c
+  (the interface it registers at /org/gnome/SettingsDaemon/Color).
+  Interface shape only; behavior notes in org.gnome.SettingsDaemon.Color.md.
+-->
+<node>
+  <interface name="org.gnome.SettingsDaemon.Color">
+    <method name="NightLightPreview">
+      <arg type="u" name="duration" direction="in"/>
+    </method>
+    <property name="NightLightActive" type="b" access="read"/>
+    <property name="Temperature" type="u" access="readwrite"/>
+    <property name="DisabledUntilTomorrow" type="b" access="readwrite"/>
+    <property name="Sunrise" type="d" access="read"/>
+    <property name="Sunset" type="d" access="read"/>
+  </interface>
+</node>

@@ -18,6 +18,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
 - `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
 - `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
+- `org.gnome.SettingsDaemon.Color.xml` — Night Light state (served by the shell)
 - `org.mpris.MediaPlayer2.Player.xml` — the part of MPRIS Helix calls on media players (playback keys); not implemented by Helix
 - `org.freedesktop.login1.xml` — the subset of systemd-logind Helix calls (power, sessions, sleep inhibitors, brightness); not implemented by Helix
 
@@ -28,7 +29,8 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.gnome.SessionManager.EndSessionDialog.md`,
 `org.freedesktop.impl.portal.md`, `org.freedesktop.login1.md`,
 `org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`,
-`org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`).
+`org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`,
+`org.gnome.SettingsDaemon.Color.md`).
 
 ## Notes
 

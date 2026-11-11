@@ -38,3 +38,7 @@ The white point for a temperature is the blackbody color approximated
 per channel with Tanner Helland's published fit, divided by its value at
 6500 K so that 6500 K gives (1, 1, 1). Each CRTC gets linear ramps from 0
 to that factor (times 65535), in the size `GetCrtcGamma` reports.
+
+Its state is published as `org.gnome.SettingsDaemon.Color`
+(`contracts/dbus/org.gnome.SettingsDaemon.Color.md`), which can also
+preview it and disable it until tomorrow.
