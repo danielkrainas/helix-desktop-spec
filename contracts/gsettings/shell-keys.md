@@ -31,9 +31,16 @@ the session is locked. `show-screen-recording-ui` is not supported.
 |-----|--------|
 | `toggle-overview` | show or hide the overview (`contracts/wayland/README.md`, "Overview") |
 | `toggle-application-view` | show or hide the application launcher |
+| `shift-overview-up` | from the desktop to the overview, from the overview to the launcher |
+| `shift-overview-down` | from the launcher to the overview, from the overview to the desktop |
+| `toggle-message-tray` | show or hide the notification list |
+| `focus-active-notification` | give the notification banner keyboard focus |
 
-`shift-overview-up` / `-down`, `focus-active-notification`,
-`toggle-message-tray` and `toggle-quick-settings` are not supported.
+A focused banner is outlined: Enter activates it (as a click on it),
+Delete dismisses it (as its close button), Escape gives focus back without
+closing it. It still goes away when its time is up.
+
+`toggle-quick-settings` is not supported.
 
 ## Brightness
 
