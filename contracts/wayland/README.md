@@ -428,6 +428,31 @@ The launcher (the Apps button, `toggle-application-view`,
 overview each replace the other. `OverviewActive` is true while either is
 shown.
 
+## Quick settings (Helix)
+
+The panel's **Power** button and `org.gnome.shell.keybindings
+toggle-quick-settings` (default Super+S) open or close a menu under the
+panel's right end, holding, from the top:
+
+- **Volume**: a slider for the default output's volume (0 to 100 %, or to
+  150 % with `org.gnome.desktop.sound allow-volume-above-100-percent`) and
+  the level in percent; clicking the slider sets the volume where it was
+  clicked (and unmutes); clicking "Volume" mutes or unmutes. Without a
+  sound server (`pactl`) the row is left out.
+- **Brightness**, when a monitor's backlight can be controlled
+  (DisplayConfig `Backlight`): a slider setting every such monitor to the
+  same fraction of its range.
+- Three switches, highlighted while on: **Night Light**
+  (`org.gnome.settings-daemon.plugins.color night-light-enabled`), **Dark
+  Style** (`org.gnome.desktop.interface color-scheme` `prefer-dark`, else
+  `default`) and **Do Not Disturb** (`org.gnome.desktop.notifications
+  show-banners`, inverted).
+- The power actions logind allows: Lock Screen, Suspend, Log Out…,
+  Restart…, Power Off….
+
+Escape or a click outside closes it; choosing a power action closes it
+too. The values are read when it opens and after each change.
+
 ## Window switching (Helix)
 
 Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):

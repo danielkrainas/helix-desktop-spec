@@ -40,7 +40,8 @@ A focused banner is outlined: Enter activates it (as a click on it),
 Delete dismisses it (as its close button), Escape gives focus back without
 closing it. It still goes away when its time is up.
 
-`toggle-quick-settings` is not supported.
+`toggle-quick-settings` opens or closes the quick settings menu
+(`contracts/wayland/README.md`, "Quick settings").
 
 ## Brightness
 
