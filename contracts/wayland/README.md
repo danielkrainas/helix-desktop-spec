@@ -8,6 +8,16 @@ Notes on protocols and usage expected for a GNOME-compatible session under Helix
 - `wlr-layer-shell-unstable-v1` (or equivalent) for shell surfaces (panels, notifications, OSD).
 - Mutter/GNOME-specific private protocols are out of scope for initial compatibility; public portals and D-Bus are preferred.
 
+## GPU buffers (Helix)
+
+Helix offers `zwp_linux_dmabuf_v1` so apps can hand it GPU buffers instead
+of copying pixels through shared memory. Its default feedback (version 4
+and later) names the GPU Helix renders with (its DRM render node) as the
+main device, with the formats and modifiers that GPU can import, so
+Mesa's and other EGL implementations find the right GPU without
+`wl_drm`. When nested, that is the GPU of the host window's EGL display,
+if it can be found; otherwise only the version 3 format list is offered.
+
 ## GNOME 51 notes
 
 - Support for `ext-background-effect-v1` (blur) was added in Mutter; apps must explicitly request it.
