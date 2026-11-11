@@ -139,11 +139,15 @@ within one second.
 
 ### Helix
 
-- `AvailableSourceTypes` 3 (monitors, windows), `AvailableCursorModes` 3
-  (hidden, embedded), `version` 4.
-- `SelectSources` answers 2 when `types` has neither monitors nor windows,
-  or `cursor_mode` is not 1 or 2 (closing the session). `multiple` is
+- `AvailableSourceTypes` 7 (monitors, windows, virtual),
+  `AvailableCursorModes` 7 (hidden, embedded, metadata), `version` 4.
+- `SelectSources` answers 2 when `types` has none of these, or
+  `cursor_mode` is not 1, 2 or 4 (closing the session). `multiple` is
   accepted, but one source is shared.
+- When `types` is only virtual (4), `Start` shares a new virtual monitor
+  (`RecordVirtual`) without asking: nothing that exists is shown. Its
+  stream has `position`, `size` and `source_type` 4. Otherwise virtual
+  is not offered.
 - `Start` asks the user through the shell
   (`org.helix.ScreenCastChooser.md`), offering the types asked for, and
   answers 1 when they cancel. Then it records the choice with

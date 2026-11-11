@@ -30,14 +30,27 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
 
 ## Helix
 
-- `Version` is 2. `RecordMonitor` and `RecordWindow` are implemented;
-  `RecordArea`, `RecordVirtual` and the per-stream `Start` / `Stop` fail
+- `Version` is 2. `RecordMonitor`, `RecordWindow`, `RecordArea` and
+  `RecordVirtual` are implemented; the per-stream `Start` / `Stop` fail
   with `org.freedesktop.DBus.Error.NotSupported`. `RecordWindow` takes
   `window-id` (`t`): the window's id in Helix's window list (see
   `org.helix.ScreenCastChooser.md`); an unknown id fails with
   `org.freedesktop.DBus.Error.InvalidArgs`. Window streams have a `size`
-  parameter (the window's size in layout coordinates) and no position. Cursor mode 2 is not
-  supported (`org.freedesktop.DBus.Error.InvalidArgs`); `is-recording` and
+  parameter (the window's size in layout coordinates) and no position.
+  `RecordArea` records the rectangle (layout coordinates) clipped to the
+  monitor it mostly covers; its `position` and `size` parameters are the
+  clipped rectangle, and an area on no monitor (or empty) fails with
+  `org.freedesktop.DBus.Error.InvalidArgs`. `RecordVirtual` adds a virtual
+  monitor of 1920×1080 at scale 1, to the right of the other monitors,
+  for as long as the stream lives; windows can be moved onto it (by
+  dragging, `move-to-monitor-*`) like any monitor, but it is not listed
+  in DisplayConfig. Its parameters have `position`, `size` and
+  `output-name` (`Virtual-N`). Cursor mode 2 adds PipeWire cursor metadata
+  (`SPA_META_Cursor`) to every buffer: the pointer's position and hotspot
+  in stream pixels and, as a `spa_meta_bitmap`, a BGRA image of the
+  pointer (Helix's arrow, also for pointers apps draw themselves); `id` is
+  0 while the pointer is hidden or off the source. When only the pointer
+  moved, the last frame is sent again with new metadata. `is-recording` and
   `disable-animations` are accepted and ignored; a `remote-desktop-session-id`
   is refused (no RemoteDesktop).
 - Only the owner of `org.freedesktop.impl.portal.desktop.helix` (Helix's
