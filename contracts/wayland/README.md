@@ -63,6 +63,32 @@ the first frame at or after it. Commits of windows not shown (minimized,
 on another workspace) are not held back. `wp_single_pixel_buffer_manager_v1`
 is offered.
 
+## Pointer image (Helix)
+
+The pointer shows what the app under it asks for: its own image
+(`wl_pointer.set_cursor` with a surface, drawn with the hotspot it gave at
+the monitor's scale; it gets frame callbacks while shown), a named cursor
+(`wp_cursor_shape_manager_v1`), or nothing. Elsewhere (desktop, panels
+that set none, Helix's title bars and window edges) it is the theme's
+default or resize cursor.
+
+Named cursors come from the XCursor theme
+`org.gnome.desktop.interface cursor-theme`, at `cursor-size` logical
+pixels (the theme's nearest size for the monitor's scale, rounded up to a
+whole number); a name the theme lacks falls back to its older X name, then
+to `default`; with no usable theme Helix draws a plain arrow. Animated
+cursors animate. Changes to either key apply at once.
+
+Nested, the host window shows named cursors itself (from the host's
+theme); an app's own image is drawn by Helix, with the host's pointer
+hidden over the window meanwhile.
+
+Screenshots that include the pointer, and screen casts with the cursor
+embedded or as metadata, show the same image Helix draws. Nested,
+screenshots and embedded cursors show only an app's own image (the host
+draws named cursors), while cursor metadata carries the theme's image for
+named cursors.
+
 ## GPU buffers (Helix)
 
 Helix offers `zwp_linux_dmabuf_v1` so apps can hand it GPU buffers instead

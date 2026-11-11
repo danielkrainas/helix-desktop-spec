@@ -47,8 +47,9 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   in DisplayConfig. Its parameters have `position`, `size` and
   `output-name` (`Virtual-N`). Cursor mode 2 adds PipeWire cursor metadata
   (`SPA_META_Cursor`) to every buffer: the pointer's position and hotspot
-  in stream pixels and, as a `spa_meta_bitmap`, a BGRA image of the
-  pointer (Helix's arrow, also for pointers apps draw themselves); `id` is
+  in stream pixels and, as a `spa_meta_bitmap`, a BGRA image (straight
+  alpha, at most 64×64, cropped) of the pointer as Helix draws it (see
+  "Pointer image" in `contracts/wayland/README.md`); `id` is
   0 while the pointer is hidden or off the source. When only the pointer
   moved, the last frame is sent again with new metadata. `is-recording` and
   `disable-animations` are accepted and ignored; a `remote-desktop-session-id`
