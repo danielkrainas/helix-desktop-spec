@@ -59,6 +59,45 @@ Documented keys, all in namespace `org.freedesktop.appearance`:
 Unknown values are treated as 0. Backends may expose other namespaces; they
 are undocumented (see `gaps.md`).
 
+### Helix
+
+`org.freedesktop.appearance` is derived from GSettings:
+
+- `color-scheme` from `org.gnome.desktop.interface` `color-scheme`
+  (`default` 0, `prefer-dark` 1, `prefer-light` 2);
+- `contrast` 1 when `org.gnome.desktop.a11y.interface` `high-contrast` is
+  true;
+- `reduced-motion` 1 when `org.gnome.desktop.a11y.interface`
+  `reduced-motion` is `reduce` (on schemas without that key: when
+  `org.gnome.desktop.interface` `enable-animations` is false);
+- `accent-color` from `org.gnome.desktop.interface` `accent-color`, using
+  the colors libadwaita documents for its accent colors
+  (`AdwAccentColor`), as sRGB values (each hex pair divided by 255):
+
+  | Name | Color |
+  |------|-------|
+  | `blue` | `#3584e4` |
+  | `teal` | `#2190a4` |
+  | `green` | `#3a944a` |
+  | `yellow` | `#c88800` |
+  | `orange` | `#ed5b00` |
+  | `red` | `#e62d42` |
+  | `pink` | `#d56199` |
+  | `purple` | `#9141ac` |
+  | `slate` | `#6f8396` |
+
+  On schemas without the key, or with a name not in the table, the value
+  is `(-1, -1, -1)` (out of range: unset).
+
+The raw GSettings schemas are exposed as namespaces of the same name, with
+every key: `org.gnome.desktop.interface`, `org.gnome.desktop.a11y.interface`,
+`org.gnome.desktop.wm.preferences` (window button layout and the like),
+and the app-facing `org.gnome.desktop.sound` (sound theme, event and input
+feedback sounds), `org.gnome.desktop.privacy` (recent files) and
+`org.gnome.desktop.peripherals.mouse` (double-click time, drag threshold),
+so sandboxed apps see the same settings as others. Schemas that are not
+installed are left out. `SettingChanged` follows every key.
+
 ## Inhibit
 
 `Inhibit(handle, app_id, window, flags, options)` inhibits until `Close` is

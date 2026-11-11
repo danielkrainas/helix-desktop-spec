@@ -53,6 +53,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.screensaver`](org.gnome.desktop.screensaver.md)
 - [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md)
 - [`org.gnome.desktop.sound`](org.gnome.desktop.sound.md)
+- [`org.gnome.desktop.privacy`](org.gnome.desktop.privacy.md)
 
 From other GNOME 51.0 packages, described the same way:
 
