@@ -23,3 +23,4 @@ Living log of missing, unclear, or underspecified contracts.
 - Settings / Session portal backends: the value of the `version` property each backend should report is undocumented. Helix reports 1.
 - Shell extension API surface (explicitly deferred; internal and unstable).
 - `org.gnome.Shell` grab flags (`grabFlags` values beyond 0) are undocumented.
+- Window switching: GNOME's `switch-applications` groups windows by application (one entry per app, windows of an app with Alt+\`) while `switch-windows` lists windows; the exact grouping and ordering rules are not documented here. Helix lists windows for both and has no Alt+\` (`switch-group`) yet.
