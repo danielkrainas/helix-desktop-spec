@@ -1,7 +1,7 @@
 # Shell keys — screenshots, brightness and volume
 
 How Helix applies the screenshot and brightness keys of
-`org.gnome.shell.keybindings` and the volume keys of
+`org.gnome.shell.keybindings` and the volume and playback keys of
 `org.gnome.settings-daemon.plugins.media-keys` (key tables in the files
 named after each schema). In GNOME 51 the shell handles the first two
 groups and gnome-settings-daemon the volume keys; in Helix the shell
@@ -69,7 +69,26 @@ Keys of `org.gnome.settings-daemon.plugins.media-keys`, each with a
   `microphone-sensitivity-muted-symbolic` or
   `microphone-sensitivity-high-symbolic` and no level.
 
+## Playback
+
+Keys of `org.gnome.settings-daemon.plugins.media-keys`, each with a
+`-static` twin holding the defaults (`XF86AudioPlay` and so on):
+
+| Key | Call on the player |
+|-----|--------------------|
+| `play` | `PlayPause` |
+| `pause` | `Pause` |
+| `stop` | `Stop` |
+| `next` | `Next` |
+| `previous` | `Previous` |
+
+The player is chosen as in `contracts/dbus/org.mpris.MediaPlayer2.Player.md`.
+Nothing happens when no player is running. GNOME also lets apps grab these
+keys through gnome-settings-daemon's `org.gnome.SettingsDaemon.MediaKeys`;
+Helix does not offer that interface (see `gaps.md`).
+
 ## While locked
 
-Volume and brightness keys keep working while the session is locked (the
-on-screen display is not shown on the lock screen). Screenshot keys do not.
+Volume, brightness and playback keys keep working while the session is
+locked (the on-screen display is not shown on the lock screen). Screenshot
+keys do not.

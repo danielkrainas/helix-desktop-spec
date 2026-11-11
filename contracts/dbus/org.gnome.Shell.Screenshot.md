@@ -88,3 +88,17 @@ The UI is not part of the capture. Images are saved as
 `Screenshot From YYYY-MM-DD HH-MM-SS.png` (local time) in a `Screenshots`
 folder inside the pictures directory (as for base names above), which is
 created if needed.
+
+## After a screenshot the user took (Helix)
+
+For screenshots taken in the screenshot UI or with the screenshot keys
+(not for the other methods, which apps call):
+
+- The image is put on the clipboard as `image/png`, replacing what was
+  there, so it can be pasted at once (X11 apps included).
+- A notification says "Screenshot captured" with the body "You can paste
+  the image from the clipboard." Clicking it opens the image with the
+  default application for PNG images; its "Show in Files" button shows the
+  image in the file manager (`org.freedesktop.FileManager1`
+  `ShowItems`), or opens the `Screenshots` folder when there is no file
+  manager service.

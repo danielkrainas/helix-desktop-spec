@@ -74,7 +74,10 @@ compositor launched: it names the target (every monitor, an area in
 layout coordinates, or the focused window), whether to draw the pointer,
 and a file descriptor; the compositor writes a PNG image to it and
 reports the captured rectangle, or why it failed. Captures are refused
-while the session is locked. Ordinary clients have no way to capture the
+while the session is locked. The shell can also hand the compositor a PNG
+image to put on the clipboard (`image/png`); the compositor then owns the
+selection and serves it to Wayland and X11 clients until something else
+replaces it. Ordinary clients have no way to capture the
 screen; sandboxed apps use the Screenshot portal.
 
 ## Global keys (Helix)

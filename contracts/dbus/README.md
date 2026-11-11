@@ -16,6 +16,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.freedesktop.Application.xml` — application activation (called by the shell)
 - `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
 - `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
+- `org.mpris.MediaPlayer2.Player.xml` — the part of MPRIS Helix calls on media players (playback keys); not implemented by Helix
 - `org.freedesktop.login1.xml` — the subset of systemd-logind Helix calls (power, sessions, sleep inhibitors, brightness); not implemented by Helix
 
 Behavioral notes that XML cannot express live in companion `.md` files
@@ -24,7 +25,7 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.gtk.Notifications.md`, `org.freedesktop.Application.md`,
 `org.gnome.SessionManager.EndSessionDialog.md`,
 `org.freedesktop.impl.portal.md`, `org.freedesktop.login1.md`,
-`org.helix.DisplayChangeDialog.md`).
+`org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`).
 
 ## Notes
 
