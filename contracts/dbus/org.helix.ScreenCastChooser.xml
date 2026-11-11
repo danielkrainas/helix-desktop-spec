@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.ScreenCastChooser — Helix-private (CC0). The shell asks the
+  user what to share with an app. Served by the shell; called by Helix's
+  portal backend. Behavior notes in org.helix.ScreenCastChooser.md.
+-->
+<node>
+  <interface name="org.helix.ScreenCastChooser">
+    <method name="ChooseMonitor">
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="a(ss)" name="monitors" direction="in"/>
+      <arg type="b" name="chosen" direction="out"/>
+      <arg type="s" name="connector" direction="out"/>
+    </method>
+  </interface>
+</node>

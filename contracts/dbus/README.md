@@ -14,8 +14,10 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.ScreenSaver.xml` — lock state and locking
 - `org.freedesktop.Notifications.xml`, `org.gtk.Notifications.xml` — notifications
 - `org.freedesktop.Application.xml` — application activation (called by the shell)
-- `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
+- `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,ScreenCast,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
 - `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
+- `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
+- `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
 - `org.mpris.MediaPlayer2.Player.xml` — the part of MPRIS Helix calls on media players (playback keys); not implemented by Helix
 - `org.freedesktop.login1.xml` — the subset of systemd-logind Helix calls (power, sessions, sleep inhibitors, brightness); not implemented by Helix
 
@@ -25,7 +27,8 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.gtk.Notifications.md`, `org.freedesktop.Application.md`,
 `org.gnome.SessionManager.EndSessionDialog.md`,
 `org.freedesktop.impl.portal.md`, `org.freedesktop.login1.md`,
-`org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`).
+`org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`,
+`org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`).
 
 ## Notes
 
@@ -34,4 +37,4 @@ These are clean-room extractions of the public introspection interfaces from ups
 The `org.gnome.*` interface shapes (members, argument types and directions,
 property access) were checked against the upstream 51.0 tags on 2026-11-11. They represent the contract surface, not implementation code.
 
-Additional interfaces (ScreenCast, RemoteDesktop, more portals, etc.) will be added as the living spec grows.
+Additional interfaces (RemoteDesktop, more portals, etc.) will be added as the living spec grows.

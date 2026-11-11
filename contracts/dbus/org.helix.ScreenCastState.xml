@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.ScreenCastState — Helix-private (CC0). Whether the screen is
+  being shared, for the shell's indicator. Served by the compositor next to
+  org.gnome.Mutter.ScreenCast. Behavior notes in
+  org.gnome.Mutter.ScreenCast.md.
+-->
+<node>
+  <interface name="org.helix.ScreenCastState">
+    <property name="Active" type="b" access="read"/>
+  </interface>
+</node>

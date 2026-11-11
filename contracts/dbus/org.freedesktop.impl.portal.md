@@ -117,6 +117,41 @@ and sends `StateChanged(session_handle, state)` while the session is open.
 On `session-state` 2, monitors must call `QueryEndResponse(session_handle)`
 within one second.
 
+## ScreenCast
+
+`AvailableSourceTypes`: 1 monitor, 2 window, 4 virtual.
+`AvailableCursorModes`: 1 hidden, 2 embedded, 4 metadata.
+
+- `CreateSession(handle, session_handle, app_id, options)` exports a
+  Session at `session_handle`; `results["session_id"]` (`s`).
+- `SelectSources(handle, session_handle, app_id, options)`: `types` (`u`,
+  default monitor), `multiple` (`b`), `cursor_mode` (`u`, one of the
+  available ones, default hidden; another closes the session),
+  `persist_mode` (`u`: 0 none, 1 while the app runs, 2 until revoked) and
+  `restore_data` (`(suv)`).
+- `Start(handle, session_handle, app_id, parent_window, options)`
+  typically asks the user, then returns `results["streams"]`
+  (`a(ua{sv})`): per stream its PipeWire node id and `position` (`(ii)`),
+  `size` (`(ii)`), `source_type` (`u`) and optionally `mapping_id` (`s`)
+  and `pipewire-serial` (`t`); and optionally `persist_mode` and
+  `restore_data`.
+- Closing the Session ends the screen cast.
+
+### Helix
+
+- `AvailableSourceTypes` 1 (monitors), `AvailableCursorModes` 3 (hidden,
+  embedded), `version` 4.
+- `SelectSources` answers 2 when `types` lacks monitors or `cursor_mode`
+  is not 1 or 2 (closing the session). `multiple` is accepted, but one
+  monitor is shared.
+- `Start` asks the user through the shell
+  (`org.helix.ScreenCastChooser.md`), answering 1 when they cancel. Then
+  it records the chosen monitor with `org.gnome.Mutter.ScreenCast`
+  (`org.gnome.Mutter.ScreenCast.md`) and returns one stream with
+  `position`, `size` and `source_type`. Sessions are not persisted:
+  `persist_mode` is 0 and no `restore_data` is returned.
+- When the compositor ends the recording, the Session emits `Closed`.
+
 ## Screenshot
 
 Methods that take a `handle` answer with `response`: 0 success, 1
