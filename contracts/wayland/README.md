@@ -234,6 +234,23 @@ window itself (the focused one when the app is unknown).
 pressing and releasing `locate-pointer-key` (default `Control_L`) alone
 shows shrinking circles around the pointer for half a second.
 
+## Unresponsive apps (Helix)
+
+When a Wayland app's window gets focus, Helix checks that the app still
+responds (`xdg_wm_base.ping`). Without an answer within
+`org.gnome.mutter check-alive-timeout` milliseconds (default 5000; 0 turns
+checking off), the shell shows a dialog: "“TITLE” is not responding.",
+"You may choose to wait a short while for it to continue or force the app
+to quit entirely.", with **Wait** and **Force Quit**.
+
+- **Wait** closes the dialog; if the app still has not answered after
+  another `check-alive-timeout`, the dialog comes back.
+- **Force Quit** ends the app: its process (the Wayland client's peer
+  process) is killed with `SIGKILL`.
+- An answer from the app closes the dialog.
+
+X11 apps are not checked.
+
 ## Window switching (Helix)
 
 Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
