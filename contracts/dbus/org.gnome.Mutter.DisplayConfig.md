@@ -31,9 +31,20 @@ the monitor specs shown in it, properties. A logical monitor showing more
 than one monitor mirrors them. Monitors that are off appear in `monitors`
 (no mode is current) but in no logical monitor.
 
-Supported scales (per mode): Helix offers whole-number scales from 1 to 4
-that divide the mode's width and height and leave a logical area of at
-least 800×480 pixels; 1 is always offered.
+Supported scales (per mode): Helix offers the scales from 1 to 4 in
+steps of 0.25 (1, 1.25, 1.5, … 4) for which the mode's width and height
+divided by the scale are both whole numbers and the logical area is at
+least 800×480 pixels; 1 is always offered. A 1920×1080 mode, for example,
+offers 1, 1.25, 1.5 and 2 (1.75 would not give whole logical pixels).
+There is no switch for fractional scales: GNOME 51's `org.gnome.mutter`
+schema has no `experimental-features` key, so they are always offered.
+The preferred scale of every mode is 1.
+
+At a fractional scale, apps that support the fractional-scale protocol
+(`wp_fractional_scale_v1`) are told the exact scale and draw for it; other
+apps are told the next whole scale (`wl_output` and `wl_surface` preferred
+buffer scale) and their pixels are scaled down to fit. X11 apps draw at
+scale 1 and are scaled up.
 
 `transform` values: 0 normal, 1 90°, 2 180°, 3 270°, 4 flipped, 5 flipped
 90°, 6 flipped 180°, 7 flipped 270°.
