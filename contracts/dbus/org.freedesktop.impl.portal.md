@@ -139,17 +139,25 @@ within one second.
 
 ### Helix
 
-- `AvailableSourceTypes` 1 (monitors), `AvailableCursorModes` 3 (hidden,
-  embedded), `version` 4.
-- `SelectSources` answers 2 when `types` lacks monitors or `cursor_mode`
-  is not 1 or 2 (closing the session). `multiple` is accepted, but one
-  monitor is shared.
+- `AvailableSourceTypes` 3 (monitors, windows), `AvailableCursorModes` 3
+  (hidden, embedded), `version` 4.
+- `SelectSources` answers 2 when `types` has neither monitors nor windows,
+  or `cursor_mode` is not 1 or 2 (closing the session). `multiple` is
+  accepted, but one source is shared.
 - `Start` asks the user through the shell
-  (`org.helix.ScreenCastChooser.md`), answering 1 when they cancel. Then
-  it records the chosen monitor with `org.gnome.Mutter.ScreenCast`
-  (`org.gnome.Mutter.ScreenCast.md`) and returns one stream with
-  `position`, `size` and `source_type`. Sessions are not persisted:
-  `persist_mode` is 0 and no `restore_data` is returned.
+  (`org.helix.ScreenCastChooser.md`), offering the types asked for, and
+  answers 1 when they cancel. Then it records the choice with
+  `org.gnome.Mutter.ScreenCast` (`org.gnome.Mutter.ScreenCast.md`) and
+  returns one stream with `size` and `source_type` (and `position` for a
+  monitor).
+- Remembering: when `persist_mode` is 1 or 2 and a monitor is shared,
+  `Start` returns the same `persist_mode` and `restore_data`
+  `("Helix", 1, <a{sv}>)` with the monitor's `connector`, `vendor`,
+  `product` and `serial` (all `s`). Given such `restore_data` in
+  `SelectSources`, `Start` shares that monitor without asking if a monitor
+  with the same vendor, product and serial is on (else the one on that
+  connector, if its identity is unknown on both sides), and asks
+  otherwise. Shared windows are not remembered (`persist_mode` 0).
 - When the compositor ends the recording, the Session emits `Closed`.
 
 ## Screenshot

@@ -30,9 +30,13 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
 
 ## Helix
 
-- `Version` is 2. `RecordMonitor` is implemented; `RecordWindow`,
+- `Version` is 2. `RecordMonitor` and `RecordWindow` are implemented;
   `RecordArea`, `RecordVirtual` and the per-stream `Start` / `Stop` fail
-  with `org.freedesktop.DBus.Error.NotSupported`. Cursor mode 2 is not
+  with `org.freedesktop.DBus.Error.NotSupported`. `RecordWindow` takes
+  `window-id` (`t`): the window's id in Helix's window list (see
+  `org.helix.ScreenCastChooser.md`); an unknown id fails with
+  `org.freedesktop.DBus.Error.InvalidArgs`. Window streams have a `size`
+  parameter (the window's size in layout coordinates) and no position. Cursor mode 2 is not
   supported (`org.freedesktop.DBus.Error.InvalidArgs`); `is-recording` and
   `disable-animations` are accepted and ignored; a `remote-desktop-session-id`
   is refused (no RemoteDesktop).
@@ -40,9 +44,14 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   portal backend, which asks the user first) may call these methods;
   others get `org.freedesktop.DBus.Error.AccessDenied`. A session ends
   when its creator leaves the bus.
-- Streams are BGRx frames of the monitor's current mode (its pixel size,
-  upright), at most 30 per second, in shared-memory buffers. While the
-  session is locked they are black.
+- Streams are BGRx frames, at most 30 per second, in shared-memory
+  buffers: a monitor upright at its pixel size, or a window cropped to its
+  window geometry at the highest scale among the monitors it is on (popup
+  menus inside it included). When that size changes (a mode change, the window
+  resized) the stream's format changes with it. While the session is
+  locked frames are black; while a shared window is hidden (on another
+  workspace, minimized) no frames are sent. The session ends when its
+  monitor goes away or its window closes.
 - The compositor also serves `org.helix.ScreenCastState` at
   `/org/gnome/Mutter/ScreenCast`: `Active` (`b`) is true while any session
   is started, and emits `PropertiesChanged`. The shell shows a "Sharing"
