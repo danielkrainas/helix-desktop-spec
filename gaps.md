@@ -25,3 +25,7 @@ Living log of missing, unclear, or underspecified contracts.
 - Settings / Session portal backends: the value of the `version` property each backend should report is undocumented. Helix reports 1.
 - Inhibit portal "query end" flow: requires a SessionManager query-end phase (gnome-session's `QueryEndSession` client protocol), which is not in the spec. Helix monitors report running → ending only.
 - Shell extension API surface (explicitly deferred; internal and unstable).
+- `org.gnome.Shell` `ShellVersion`: Helix reports the targeted GNOME version (`51.0`) so clients that probe the shell see the surface Helix implements. Extension tooling also reads it; since `org.gnome.Shell.Extensions` is not implemented, extension installs fail cleanly, but whether to report a Helix version instead is open.
+- `org.gnome.Shell` grab flags (`grabFlags` values beyond 0) are undocumented.
+- `org.gnome.Shell.xml` declares `UngrabAccelerator` / `UngrabAccelerators` without an out argument; upstream GNOME Shell may return a `b` success value. Verify against the GNOME 51 introspection and fix the contract if so. Helix follows the contract as written.
+- How Helix's separate compositor and shell processes share keyboard grabs for `GrabAccelerator` (in GNOME both live in one process). Helix records grabs but does not deliver `AcceleratorActivated` yet.
