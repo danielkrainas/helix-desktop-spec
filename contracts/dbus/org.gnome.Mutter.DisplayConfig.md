@@ -151,7 +151,9 @@ monitors change.
 
 ## Properties
 
-- `PowerSaveMode` (`i`): 0 on, 1 standby, 2 suspend, 3 off, -1 unknown
+- `PowerSaveMode` (`i`): 0 on, 1 standby, 2 suspend, 3 off, -1 unknown.
+  Helix turns every monitor off (DPMS) for 1–3 and on for 0; nothing is
+  drawn while they are off (the nested window shows black).
 - `ApplyMonitorsConfigAllowed` (`b`): whether clients may call
   `ApplyMonitorsConfig`
 - `HasExternalMonitor` (`b`): any monitor that is not built in

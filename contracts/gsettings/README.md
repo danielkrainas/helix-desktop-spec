@@ -51,6 +51,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.app-folders`](org.gnome.desktop.app-folders.md) — see `contracts/wayland/README.md`, "Favorites and app folders"
 - [`org.gnome.shell`](org.gnome.shell.md) — `favorite-apps`: see the same section
 - [`org.gnome.settings-daemon.peripherals.touchscreen`](org.gnome.settings-daemon.peripherals.touchscreen.md) — see `org.gnome.Mutter.DisplayConfig.md`, "Automatic rotation"
+- [`org.gnome.settings-daemon.plugins.power`](org.gnome.settings-daemon.plugins.power.md) — Helix's behavior: [power.md](power.md)
 - [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
 - [`org.gnome.desktop.a11y`](org.gnome.desktop.a11y.md)
 - [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md)
