@@ -104,6 +104,11 @@ tried them with the real hardware. Remove an entry once it has been.
   picks, how it scales `wallpaper`/`spanned` across monitors of different
   scales, and what its lock screen shows (blur, dimming) are not
   documented here; Helix's choices are in `contracts/gsettings/background.md`.
+- Desktop icons: GNOME's shell itself draws none; Ubuntu ships an
+  extension (Desktop Icons NG, with its own settings) whose behavior is
+  documented only by that extension. Helix shows a simple set when
+  `show-desktop-icons` is on (`contracts/gsettings/background.md`,
+  "Desktop icons") and does not read the extension's settings.
 - System status: how gnome-shell picks network and battery icons (its signal
   strength thresholds) and what its airplane mode switch turns off (it goes
   through gnome-settings-daemon's rfkill handling) are not documented here;

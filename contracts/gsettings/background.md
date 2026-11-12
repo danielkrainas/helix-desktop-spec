@@ -28,7 +28,33 @@ screen's picture from `org.gnome.desktop.screensaver`
 - The colors under the picture: `primary-color` (`#rrggbb`), or with
   `color-shading-type` `vertical` / `horizontal` a gradient from
   `primary-color` (top / left) to `secondary-color`.
-- `show-desktop-icons` has no effect.
+- `show-desktop-icons`: see "Desktop icons" below.
+
+## Desktop icons
+
+With `org.gnome.desktop.background show-desktop-icons` true, the shell
+shows the files of the desktop folder (XDG `DESKTOP`; nothing when that
+is the home folder itself) on the primary monitor, on a see-through
+surface just above the background (layer-shell `bottom` layer,
+namespace `helix-background-icons`, clear of the panel and a fixed
+dock).
+
+- Which files: all but hidden ones (`.name`) and backups (`name~`);
+  folders first, then by name ignoring case. The folder is looked at
+  again every two seconds while icons are shown.
+- Each takes a 96 × 96 cell (columns filled top to bottom, from the
+  left, 12 pixels from the edges; files that do not fit are not shown):
+  a 48-pixel icon and, under it, its name on up to two lines (cut short
+  with "…"), white with a shadow. Folders use `folder`, other files the
+  icon of the content type their name suggests (then `text-x-generic`).
+  A `.desktop` file shows its `Name` and `Icon`.
+- A press selects the file under the pointer (an accent-colored rounded
+  cell), or nothing. A second press on the same file within 400 ms opens
+  it: a `.desktop` file of `Type=Application` that is executable starts
+  its application (through `gio launch`), anything else opens with its
+  default application.
+- There are no menus, renaming, dragging or keyboard use; trusted
+  launcher marks (`metadata::trusted`) are not used.
 
 ## Slideshows
 
