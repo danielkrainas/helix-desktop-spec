@@ -57,6 +57,52 @@ starts, so changes take effect in the next session):
 lets X11 clients of the other byte order connect (Xwayland refuses them
 otherwise).
 
+**X11 apps: scaling and settings.** Xwayland's coordinate space is
+scaled by `org.gnome.mutter.wayland xwayland-scaling-factor`, rounded to a
+whole number between 1 and 4; 0 (the default) means automatic, which in
+Helix is the largest monitor scale rounded to a whole number (1.25 gives 1,
+1.5 and 1.75 give 2). At scale *n* the X screen is *n* times the size of
+the monitors' logical layout: X11 apps draw *n* times larger, and Helix
+shows their windows *n* times smaller (Wayland apps are unaffected). The
+scale follows the setting and monitor changes while the session runs;
+X11 apps that cannot change scale while running look right after they are
+restarted. Apps that do not scale themselves look smaller at a scale
+above 1.
+
+Helix is the XSETTINGS manager of Xwayland's screen (it owns
+`_XSETTINGS_S0`, announces itself with a `MANAGER` client message, and
+keeps the `_XSETTINGS_SETTINGS` property of its window, per the
+freedesktop XSETTINGS specification, little-endian, the serial raised on
+each change). It publishes, from GSettings:
+
+| Setting | Value |
+|---------|-------|
+| `Gdk/WindowScalingFactor` | the Xwayland scale |
+| `Gdk/UnscaledDPI` | 96 × `text-scaling-factor` × 1024 |
+| `Xft/DPI` | 96 × `text-scaling-factor` × scale × 1024 |
+| `Xft/Antialias`, `Xft/Hinting` | 1 unless `font-antialiasing` / `font-hinting` is `none` |
+| `Xft/HintStyle` | `hint` + `font-hinting` (`hintslight`, …) |
+| `Xft/RGBA` | `font-rgba-order` when `font-antialiasing` is `rgba`, else `none` |
+| `Net/ThemeName`, `Net/IconThemeName`, `Gtk/FontName`, `Gtk/KeyThemeName` | `gtk-theme`, `icon-theme`, `font-name`, `gtk-key-theme` |
+| `Gtk/CursorThemeName`, `Gtk/CursorThemeSize` | `cursor-theme`, `cursor-size` × scale |
+| `Net/CursorBlink`, `Net/CursorBlinkTime`, `Gtk/CursorBlinkTimeout` | `cursor-blink`, `cursor-blink-time`, `cursor-blink-timeout` |
+| `Gtk/EnableAnimations`, `Gtk/OverlayScrolling` | `enable-animations`, `overlay-scrolling` |
+| `Gtk/DecorationLayout` | `org.gnome.desktop.wm.preferences button-layout` |
+| `Net/EnableEventSounds`, `Net/SoundThemeName` | `org.gnome.desktop.sound event-sounds`, `theme-name` |
+| `Net/DoubleClickTime` | `org.gnome.desktop.peripherals.mouse double-click` |
+
+(keys without a schema are in `org.gnome.desktop.interface`;
+`text-scaling-factor` is taken between 0.5 and 3). The root window's
+`RESOURCE_MANAGER` gets `Xft.dpi` (96 × `text-scaling-factor` × scale),
+`Xft.antialias`, `Xft.hinting`, `Xft.hintstyle`, `Xft.rgba`,
+`Xcursor.theme` and `Xcursor.size` (`cursor-size` × scale), replacing
+earlier lines of those names and keeping others. Both follow setting
+changes. If another XSETTINGS manager already owns the selection, Helix
+publishes nothing.
+
+**Xwayland's display.** Helix lets Smithay pick the first free display
+from `:0` to `:32`; when all are taken it tries `:33` to `:99` in turn.
+
 **Foreign toplevels** (`zxdg_exporter_v2`/`zxdg_importer_v2`, and v1). An
 app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
