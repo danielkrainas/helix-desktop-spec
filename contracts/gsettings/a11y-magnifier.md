@@ -60,8 +60,9 @@ shell, also while locked):
 
 ## Screen reader and on-screen keyboard
 
-Helix starts no screen reader or on-screen keyboard itself. Apps that
-provide them install autostart files whose `AutostartCondition` names the
-switch (Orca: `GSettings org.gnome.desktop.a11y.applications
-screen-reader-enabled`); the session starts and stops them as the switch
-changes (`org.gnome.SessionManager.md`, "Autostart").
+Helix starts no screen reader itself. Apps that provide one install
+autostart files whose `AutostartCondition` names the switch (Orca:
+`GSettings org.gnome.desktop.a11y.applications screen-reader-enabled`);
+the session starts and stops them as the switch changes
+(`org.gnome.SessionManager.md`, "Autostart"). The on-screen keyboard is
+the shell's own: [screen-keyboard.md](screen-keyboard.md).

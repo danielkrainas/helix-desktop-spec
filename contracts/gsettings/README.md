@@ -54,7 +54,7 @@ rather than copied from schema sources:
 - [`org.gnome.settings-daemon.plugins.power`](org.gnome.settings-daemon.plugins.power.md) — Helix's behavior: [power.md](power.md)
 - [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
 - [`org.gnome.desktop.a11y`](org.gnome.desktop.a11y.md)
-- [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md)
+- [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md) — the on-screen keyboard: [screen-keyboard.md](screen-keyboard.md)
 - [`org.gnome.desktop.a11y.interface`](org.gnome.desktop.a11y.interface.md) — Helix's behavior: [a11y-interface.md](a11y-interface.md)
 - [`org.gnome.desktop.a11y.keyboard`](org.gnome.desktop.a11y.keyboard.md) — Helix's behavior: [a11y-keyboard.md](a11y-keyboard.md)
 - [`org.gnome.desktop.a11y.magnifier`](org.gnome.desktop.a11y.magnifier.md) — Helix's magnifier and screen reader: [a11y-magnifier.md](a11y-magnifier.md)
