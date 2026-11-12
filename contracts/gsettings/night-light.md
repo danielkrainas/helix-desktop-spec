@@ -22,9 +22,14 @@ local time is inside the schedule:
   in hours after local midnight (20.5 is 20:30). When "from" is later than
   "to", the schedule runs over midnight. Equal times mean never.
 
-Helix does not look up the location itself (GNOME uses GeoClue to keep
-`night-light-last-coordinates` current); it uses the coordinates stored
-there.
+While `night-light-enabled` and `night-light-schedule-automatic` are true
+and location services are on (`org.gnome.system.location enabled`), the
+shell keeps `night-light-last-coordinates` current from GeoClue
+(`org.freedesktop.GeoClue2` on the system bus, as the system component
+`org.gnome.Shell`, at city accuracy, or at `max-accuracy-level` when that
+is coarser): every location GeoClue reports is stored there. Otherwise,
+or when GeoClue is not there or refuses, the stored coordinates are used
+as they are.
 
 ## What it does
 
