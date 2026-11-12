@@ -58,6 +58,22 @@ While an `xkb` source is active, keys go straight to the app.
   A binding without a modifier switches at once. With a single source
   there is nothing to switch to.
 
+## Input source indicator (Helix)
+
+With two or more input sources, the panel shows the active one's short
+name left of the system status icons:
+
+- an `xkb` source: its `shortDescription` in the XKB rules
+  (`rules/evdev.xml`), the variant's, else its layout's (e.g. `en`, `de`);
+  without one, the layout id;
+- an `ibus` source: the engine name up to its first `:` or `-`, at most 3
+  letters (e.g. `anthy` → `ant`, `xkb:us::eng` → `xkb`).
+
+Clicking it opens a menu of the sources (most recently used first, each by
+its description, the active one highlighted); choosing one activates it as
+the switch keys do. Escape or a click outside closes the menu. The
+indicator follows source changes made elsewhere within a second.
+
 ## Key repeat
 
 `repeat` turns it on or off; `delay` is the time in milliseconds before a
