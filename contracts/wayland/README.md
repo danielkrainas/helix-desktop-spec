@@ -210,42 +210,75 @@ named cursors.
 
 ## Color management (Helix)
 
-Helix offers `wp_color_manager_v1` (version 1) for what it renders
-faithfully: it composites in the monitors' own encoding, treating all
-content as sRGB, and does not convert colors.
+Helix offers `wp_color_manager_v1` (version 1). It composites in its own
+space: BT.709 (sRGB) primaries, gamma 2.2 encoding, reference white at
+the full signal; surfaces without an image description are taken to be
+in it. Surfaces whose image description says otherwise are converted
+into it as they are drawn; in the BT.2100 color mode the whole result
+is then converted for the monitor ("Color modes" in
+`org.gnome.Mutter.DisplayConfig.md`).
 
-- Advertised: the perceptual render intent, the `parametric` feature,
-  the transfer functions `srgb` and `gamma22`, and the `srgb` primaries.
-  Other features (ICC, scRGB, BT.2100, `set_primaries`, `set_tf_power`,
-  `set_luminances`, mastering display values) are not, and using them is
-  the protocol's `unsupported_feature` error; so are other named values
-  (`invalid_tf`, `invalid_primaries_named`).
-- A parametric image description with those values (and, optionally,
-  `max_cll` / `max_fall`) is ready at once. Its identity is the same for
-  the same parameters and new for each new set; identities are never
-  reused.
-- A surface may set any ready description with the perceptual intent; it
-  does not change how the surface is drawn (its content is already right
-  for every description Helix accepts). A second
-  `wp_color_management_surface_v1` for a surface is the `surface_exists`
-  error; once its surface is gone the object is inert.
-- Every surface's preferred description, and a monitor's in color mode
-  0, is sRGB: `srgb` primaries (red 0.64/0.33, green 0.30/0.60, blue
-  0.15/0.06, white 0.3127/0.3290), the `srgb` transfer function,
-  luminances 0.2 / 80 / 80 cd/m² (minimum / maximum / reference white)
-  and the same target volume. `preferred_changed` is never sent.
-- A monitor in the BT.2100 color mode (`org.gnome.Mutter.DisplayConfig.md`,
-  "Color modes") is described as `bt2020` primaries (red 0.708/0.292,
-  green 0.170/0.797, blue 0.131/0.046, white 0.3127/0.3290), the
-  `st2084_pq` transfer function, and as luminances its minimum and
-  maximum (from its EDID, else 0.005 and 1000 cd/m²) and the reference
-  white, with the same target volume. When a monitor's color mode
-  changes, its `wp_color_management_output_v1` objects get
+- Advertised: the perceptual and relative render intents (drawn the
+  same); the features `parametric`, `set_primaries`, `set_tf_power`,
+  `set_luminances`, `set_mastering_display_primaries` and
+  `windows_scrgb`; the transfer functions `bt1886`, `gamma22`, `gamma28`,
+  `ext_linear`, `srgb`, `ext_srgb` and `st2084_pq`; the primaries
+  `srgb`, `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`, `dci_p3`,
+  `display_p3` and `adobe_rgb`. ICC profiles (`create_icc_creator` is
+  the `unsupported_feature` error), HLG and the logarithmic and other
+  transfer functions, and `extended_target_volume` are not offered; other
+  named values are the creator's `invalid_tf` / `invalid_primaries_named`
+  errors.
+- Parametric descriptions follow the protocol: the transfer function and
+  primaries are required (`incomplete_set`), each property is set once
+  (`already_set`), `set_tf_power` takes exponents from 1.0 to 10.0,
+  luminances must lie above the minimum, and `max_cll` / `max_fall` must
+  fit each other and the mastering luminance range
+  (`invalid_luminance`). Unset luminances take the transfer function's
+  defaults (`st2084_pq`: 0.005 / 10000 / 203 cd/m²; others 0.2 / 80 /
+  80); with `st2084_pq` the maximum is the minimum plus 10000 cd/m². A
+  created description is ready at once; equal descriptions share an
+  identity. Descriptions from creators and `create_windows_scrgb` give
+  no information (`no_information`); those of monitors and surface
+  feedback do: primaries (and their name when named), transfer function,
+  luminances, target primaries and luminance (the description's own
+  when no mastering values were set), and `max_cll` / `max_fall` when
+  set.
+- Windows-scRGB is `srgb` primaries with `ext_linear`; Helix takes 1.0
+  (80 cd/m²) as reference white, as EGL's scRGB-linear color space does
+  (the protocol leaves the reference unknown).
+- A surface's description (`set_image_description`, any ready one with a
+  render intent offered; `unset_image_description`; destroying the
+  object unsets it) takes effect on its next commit. A second
+  `wp_color_management_surface_v1` for a surface is `surface_exists`;
+  once the surface is gone the object is inert (`inert`).
+- **Conversion.** A window drawn with a surface whose description is not
+  already the composition space (BT.709 primaries with the `srgb`,
+  `ext_srgb` or `gamma22` transfer function and reference white at the
+  maximum) is drawn from its surfaces' textures, those surfaces through a
+  shader: the transfer function is decoded (`st2084_pq` to cd/m², `bt1886`
+  as a 2.4 power, `ext_linear` as is, `srgb` piecewise, a power as given;
+  negative values keep their sign), scaled so the description's
+  reference white is 1.0, converted to BT.709 (Bradford adaptation when
+  the white points differ), clipped to 0–1 (no tone mapping: anything
+  brighter than reference white is clipped, also on BT.2100 monitors),
+  and encoded with gamma 2.2. Such windows fade but do not grow or shrink
+  as they open and close, and are drawn again in full each frame. Shell
+  surfaces (layer surfaces) are not converted.
+- Monitors: in color mode 0 a monitor's description is sRGB (`srgb`
+  primaries — red 0.64/0.33, green 0.30/0.60, blue 0.15/0.06, white
+  0.3127/0.3290 — the `srgb` transfer function, luminances 0.2 / 80 / 80
+  cd/m²). In the BT.2100 color mode it is `bt2020` primaries (red
+  0.708/0.292, green 0.170/0.797, blue 0.131/0.046, white
+  0.3127/0.3290), `st2084_pq`, and as luminances its minimum and maximum
+  (from its EDID, else 0.005 and 1000 cd/m²) and the reference white,
+  with the same target luminance. When a monitor's color mode changes,
+  its `wp_color_management_output_v1` objects get
   `image_description_changed`. A monitor that has gone away gives a
   description that fails with `no_output`.
-- Content is still taken as sRGB: apps cannot describe their surfaces as
-  BT.2100 (the transfer function and primaries are not advertised); on a
-  BT.2100 monitor the compositor converts everything from sRGB.
+- Every surface's preferred description is sRGB (as above), since that
+  is the composition space; `preferred_changed` is sent only if a
+  surface's preferred description changes (it does not).
 
 ## GPU buffers (Helix)
 

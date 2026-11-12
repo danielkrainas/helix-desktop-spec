@@ -55,10 +55,13 @@ tried them with the real hardware. Remove an entry once it has been.
   version 2 keymaps are accepted only where libxkbcommon reads them (1.11
   and later; the development machine has 1.6, so only their refusal has
   been tried).
-- Color management and HDR: Helix converts only from sRGB (apps cannot
-  send BT.2100, scRGB or ICC-described content; no per-surface
-  conversion), keeps 8 bits per channel for PQ output, and does no tone
-  mapping. GNOME's reference white, the `output-luminance` range it
+- Color management and HDR: Helix converts apps' described content
+  (parametric descriptions and Windows-scRGB, not ICC profiles or HLG)
+  into its SDR composition space, clipping anything above reference
+  white even on BT.2100 monitors (no HDR headroom, no tone mapping), keeps
+  8 bits per channel for PQ output, and does not convert shell surfaces.
+  How mutter maps Windows-scRGB's reference white is not documented here
+  (Helix: 1.0 = 80 cd/m²). GNOME's reference white, the `output-luminance` range it
   allows (Helix: SDR 10–100 % through the gamma ramps; BT.2100 25–300 %
   of 203 cd/m² as SDR white), the order of primaries in its HDR metadata
   (Helix: red, green, blue), how it derives the metadata's values, its
