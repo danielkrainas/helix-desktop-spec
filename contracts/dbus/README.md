@@ -10,6 +10,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.Mutter.DisplayConfig.xml` — multi-monitor configuration
 - `org.gnome.Mutter.IdleMonitor.xml` — idle time and activity watches
 - `org.freedesktop.PolicyKit1.AuthenticationAgent.xml` — polkit authentication agent (served by the shell)
+- `org.freedesktop.GeoClue2.Agent.xml` — GeoClue's location agent (served by the shell) and the Manager calls it makes
 - `org.gnome.keyring.internal.Prompter.xml` — gcr's system prompter (served by the shell)
 - `org.gnome.Shell.SearchProvider2.xml` — app search providers (called by the shell)
 - `org.gnome.Shell.Screencast.xml` — screen recording (served by the shell)
@@ -36,7 +37,7 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.freedesktop.impl.portal.md`, `org.freedesktop.login1.md`,
 `org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`,
 `org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`,
-`org.gnome.SettingsDaemon.Color.md`).
+`org.gnome.SettingsDaemon.Color.md`, `org.freedesktop.GeoClue2.Agent.md`).
 
 ## Notes
 
