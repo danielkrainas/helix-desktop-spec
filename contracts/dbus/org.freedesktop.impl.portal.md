@@ -540,6 +540,51 @@ through a barrier they set, and get it as an EIS (libei) receiver.
 - Closing the portal session closes the compositor's, and the other way
   round.
 
+## GlobalShortcuts (`org.freedesktop.impl.portal.GlobalShortcuts`)
+
+An app (through the frontend) makes a session, binds shortcuts to it and
+is told when they are pressed and released, whatever window has focus.
+
+- `CreateSession(handle, session_handle, app_id, options)`: a session
+  object (`org.freedesktop.impl.portal.Session`) at `session_handle`.
+- `BindShortcuts(handle, session_handle, shortcuts, parent_window,
+  options)`: `shortcuts` are `(id, properties)` with `description` (`s`)
+  and optionally `preferred_trigger` (`s`, in the XDG shortcuts format:
+  modifiers `CTRL`, `ALT`, `SHIFT`, `LOGO`, `NUM` and a key name, joined
+  by `+`, e.g. `CTRL+SHIFT+a`). Results: `shortcuts` (`a(sa{sv})`), each
+  with `description` and `trigger_description` (`s`, human-readable).
+- `ListShortcuts(handle, session_handle)`: results `shortcuts`, as bound.
+- Signals `Activated` / `Deactivated(session_handle, shortcut_id,
+  timestamp, options)` when a bound shortcut is pressed / released;
+  `ShortcutsChanged(session_handle, shortcuts)` when the bindings change.
+- Closing the session releases its shortcuts.
+
+### Helix
+
+- Version 1 (no `ConfigureShortcuts`; triggers cannot be changed).
+- `BindShortcuts` asks the user, unless the app's shortcuts were allowed
+  before with the same triggers: a dialog "Allow Global Shortcuts?"
+  "<app> wants to use these shortcuts in every app.", one row per
+  shortcut ("<description> — <trigger>", or "— not assigned"), **Allow**
+  / **Deny** (denying answers 1, cancelled). An allowed set is remembered
+  for the app in `$XDG_DATA_HOME/helix/global-shortcuts` (one line per
+  shortcut: app id, shortcut id, trigger, tab-separated).
+- A shortcut is bound when its `preferred_trigger` converts to an
+  accelerator: `CTRL` → `<Control>`, `ALT` → `<Alt>`, `SHIFT` →
+  `<Shift>`, `LOGO` → `<Super>`, `NUM` is dropped; the key name as given.
+  Shortcuts without one, or whose accelerator the shell will not grab
+  (taken, or invalid), are listed with `trigger_description` "Not
+  assigned" and never fire.
+- Binding goes through the shell's `org.gnome.Shell`
+  `GrabAccelerators`, in the normal and overview action modes, with
+  trigger-on-release; `AcceleratorActivated` / `AcceleratorDeactivated`
+  become `Activated` / `Deactivated` with the shell's `timestamp`
+  (milliseconds) and empty options. Binding again replaces the session's
+  shortcuts (the old ones are released, then `ShortcutsChanged`).
+- `trigger_description` writes modifiers as `Ctrl`, `Alt`, `Shift`,
+  `Super` and the key with a capital first letter, joined by `+` (e.g.
+  `Ctrl+Shift+S`).
+
 ## Lockdown (`org.freedesktop.impl.portal.Lockdown`)
 
 Read-write boolean properties apps check before offering a feature:
