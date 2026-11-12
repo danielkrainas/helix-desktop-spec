@@ -534,6 +534,17 @@ Left of the Power button the panel shows, right to left:
   `network-cellular-connected-symbolic` (mobile); without one,
   `network-wireless-offline-symbolic` while Wi-Fi is on, else
   `network-offline-symbolic`; `airplane-mode-symbolic` in airplane mode.
+- **Location**: `location-services-active-symbolic` while an app uses
+  GeoClue (`contracts/dbus/org.freedesktop.GeoClue2.Agent.md`, "Location
+  in use").
+- **Microphone**: `audio-input-microphone-symbolic` while a PipeWire node
+  of `media.class` `Stream/Input/Audio` is running, except streams that
+  record an output rather than an input (`stream.capture.sink` true) or
+  only watch levels (`stream.monitor` true).
+- **Camera**: `camera-web-symbolic` while a camera is running: a PipeWire
+  node of `media.class` `Video/Source` whose `media.role` is `Camera` or
+  whose `device.api` is `v4l2` or `libcamera` (screen casts are not
+  cameras).
 
 Icons come from the icon theme (`org.gnome.desktop.interface
 icon-theme`, then `Adwaita`, then `hicolor`), drawn in the panel's text
