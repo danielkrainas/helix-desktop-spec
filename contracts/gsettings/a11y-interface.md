@@ -9,5 +9,6 @@ follows `org.gnome.desktop.a11y.interface`
   (luminance below 0.4) and white when light; saturated colors (the accent,
   warnings) stay; opacity is kept. Pictures (wallpapers, window pictures,
   app icons) are not changed. Apps follow the key themselves.
-- `reduced-motion`: Helix's UI has no animations to reduce.
+- `reduced-motion` `reduce`: the compositor's animations only fade
+  (`contracts/wayland/README.md`, "Animations").
 - `show-status-shapes` and `keyboard-focus-visible-timeout` have no effect.

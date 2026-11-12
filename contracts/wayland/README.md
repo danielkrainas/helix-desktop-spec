@@ -285,6 +285,36 @@ only to them, and stays locked if the lock client dies.
   onto the primary one. Maximized and fullscreen windows follow the size
   of the monitor they are on.
 
+## Animations (Helix)
+
+The compositor animates windows, shell surfaces and workspace switches
+(it draws them; apps are not involved). Each animation eases out (cubic):
+fast at first, slowing to the end.
+
+| What | When | How | Length |
+|------|------|-----|--------|
+| Window opens | first shown, or brought back from minimized | fades in from transparent while growing from 90 % to full size about its center | 200 ms |
+| Window closes | its app takes it away (`xdg_toplevel` destroyed, X11 window unmapped) | its last image fades out while shrinking to 90 % | 150 ms |
+| Window minimized | | its last image shrinks to 20 % while moving to the bottom middle of its monitor (where the dock is) and fading out | 250 ms |
+| Workspace switch | | the old workspace's windows slide out a monitor's width the other way while the new one's slide in (switching to the next workspace: from the right) | 250 ms |
+| Shell surface | overview, launcher, menus, dialogs, notifications and other `zwlr_layer_shell_v1` surfaces appear or go away | fade in / out | 150 ms |
+
+- The panel, the dock (and its edge), the on-screen keyboard and the
+  backgrounds appear and go away without animation.
+- The last image of something going away is the textures of its surfaces
+  at that moment; a window whose surfaces are already gone (for example,
+  its app crashed) disappears without animation.
+- Windows on every workspace do not slide. Window title bars Helix draws
+  for X11 windows are not animated.
+- Screenshots and screen casts show the scene as it is, not mid-animation
+  states of windows going away.
+- `org.gnome.desktop.interface enable-animations` false: no animations.
+- `org.gnome.desktop.a11y.interface reduced-motion` `reduce`: fades only
+  (nothing grows, shrinks or slides; a workspace switch crossfades).
+- `HELIX_ANIMATION_SLOWDOWN` in the compositor's environment (a factor
+  from 1 to 100) makes every animation that many times longer, for
+  testing.
+
 ## Window frames (Helix)
 
 Like GNOME, Helix draws a frame (title bar) only for X11 windows; Wayland
