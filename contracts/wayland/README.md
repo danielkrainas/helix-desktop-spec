@@ -425,6 +425,15 @@ laid out the same way. It is shown by the overlay key, by
   close button would. Dragging a window onto a workspace thumbnail moves it
   to that workspace.
 
+**Hot corner.** While `org.gnome.desktop.interface` `enable-hot-corners`
+is true, moving the pointer into the top-left corner of the primary
+monitor (the corner pixel) shows the overview, or hides it when it (or the
+launcher) is shown. The corner works again once the pointer has left the
+32×32 pixel square at the corner. It does nothing while a pointer button
+is held, while the session is locked, while a fullscreen window is on the
+primary monitor, or when another monitor lies to the left of or above the
+corner (it is then no screen corner).
+
 The launcher (the Apps button, `toggle-application-view`,
 `org.gnome.Shell` `ShowApplications`, `FocusSearch` and `FocusApp`) and the
 overview each replace the other. `OverviewActive` is true while either is
