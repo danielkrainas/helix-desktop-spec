@@ -652,7 +652,10 @@ in the overview (which has its dash) or the launcher.
   `show-icons-notifications-counter`, an app with notifications in the
   list has a red badge with their number (9+ above nine). Pointing at an
   item shows its name (the app's, the drive's, "Trash", "Show Apps")
-  beside the bar.
+  beside the bar; for an app with windows, below its name (dimmer) the
+  windows' titles, as many as the dock counts for it (newest used first,
+  at most five, then "N more"; "Untitled" for a window without one).
+  With `hide-tooltip` nothing is shown on pointing.
 - **Showing and hiding.** With `dock-fixed` the dock is always shown and
   keeps its room (windows are not placed under it). Otherwise it is above
   windows, and with `intellihide` it hides while a window of the current
@@ -712,7 +715,10 @@ in the overview (which has its dash) or the launcher.
   and windows open, "All Windows" (shows the previews), else its windows
   by title (each activates it); then "Open" (no windows) or "New Window", the desktop
   file's actions (`Actions=`), the app's quicklist entries
-  (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`, "Quicklists"),
+  (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`, "Quicklists";
+  a submenu entry, marked with an arrow, shows its entries in place of the
+  menu, under a "Back" entry; Right opens it from the keyboard, Left
+  goes back),
   then "Pin to Dash" or "Unpin" (adds it to
   or removes it from `favorite-apps`), "App Details" (GNOME Software's
   page for it, when `gnome-software` is installed), and for a running app

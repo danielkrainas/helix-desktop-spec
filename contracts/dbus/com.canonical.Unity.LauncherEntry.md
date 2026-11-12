@@ -46,8 +46,9 @@ An app's quicklist entries are added to its dock menu
   sends `LayoutUpdated`.
 - Entries are the root's children, in order: `visible` false ones are
   left out; `type` `separator` is a separator (never first, last or twice
-  in a row); an entry with `children-display` `submenu` is replaced by its
-  own children (one flat list); other entries show their `label` with
+  in a row); an entry with `children-display` `submenu` is a submenu of its
+  own children (by the same rules; its `label`, else "More"; left out
+  when none of them is left); other entries show their `label` with
   mnemonic underscores removed (`__` is a `_`); entries without a label,
   or with `enabled` false, are left out; `toggle-type` `checkmark` or
   `radio` shows a check box, checked when `toggle-state` is 1.
