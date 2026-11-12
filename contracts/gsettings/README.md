@@ -47,7 +47,12 @@ through GSettings' introspection API from the compiled upstream schemas
 rather than copied from schema sources:
 
 - [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
+- [`org.gnome.desktop.a11y`](org.gnome.desktop.a11y.md)
+- [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md)
 - [`org.gnome.desktop.a11y.interface`](org.gnome.desktop.a11y.interface.md)
+- [`org.gnome.desktop.a11y.keyboard`](org.gnome.desktop.a11y.keyboard.md) — Helix's behavior: [a11y-keyboard.md](a11y-keyboard.md)
+- [`org.gnome.desktop.a11y.magnifier`](org.gnome.desktop.a11y.magnifier.md)
+- [`org.gnome.desktop.a11y.mouse`](org.gnome.desktop.a11y.mouse.md)
 - [`org.gnome.desktop.wm.preferences`](org.gnome.desktop.wm.preferences.md)
 - [`org.gnome.desktop.session`](org.gnome.desktop.session.md)
 - [`org.gnome.desktop.screensaver`](org.gnome.desktop.screensaver.md)

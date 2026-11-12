@@ -47,6 +47,12 @@ Living log of missing, unclear, or underspecified contracts.
   its `Error` names, and what it does when a file exists are not documented;
   Helix's choices are in `contracts/dbus/org.gnome.Shell.Screencast.md`. GNOME
   records all monitors for `Screencast`; Helix records the primary one.
+- Keyboard accessibility: how GNOME implements the AccessX-style features
+  (which keys count as modifiers for sticky keys, the keyboard shortcuts
+  `enable` turns on, whether mouse keys need Num Lock off, beep sounds,
+  and what the timeout turns off) is not documented by the schema; Helix's
+  choices are in `contracts/gsettings/a11y-keyboard.md`. Helix does not
+  implement `org.gnome.desktop.a11y.mouse` or the universal access menu.
 - Window placement across monitors: mutter's rules (where new windows open, what happens to windows of a monitor that goes away) are not documented here; Helix's are in `contracts/wayland/README.md` ("Monitors and windows").
 - Workspaces: GNOME's exact rules for dynamic workspaces (e.g. when an emptied workspace is removed, focus after switching) and for `workspaces-only-on-primary` are not documented here; Helix's are in `contracts/gsettings/workspaces.md`. Helix lays workspaces out in a row (as GNOME 51 does), so the `-up`/`-down` workspace keys do nothing; its overview (pictures renewed twice a second) and workspace switch popup are its own design (GNOME's is not documented here).
 - Night Light: how GNOME turns a color temperature into gamma ramps, how it fades, and when it re-checks the schedule are undocumented; Helix's choices are in `contracts/gsettings/night-light.md`. The behavior of gnome-settings-daemon's `org.gnome.SettingsDaemon.Color` (what writing `Temperature` does, how long `DisabledUntilTomorrow` lasts, the preview's limits, `Sunrise`/`Sunset` without a location) is undocumented; Helix's is in `org.gnome.SettingsDaemon.Color.md`.
