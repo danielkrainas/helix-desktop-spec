@@ -653,7 +653,9 @@ in the overview (which has its dash) or the launcher.
   `switch-workspace` switches to the workspace to the right (or left).
 - **Right click** opens a menu. For an app: its windows by title (each
   activates it), then "Open" (no windows) or "New Window", the desktop
-  file's actions (`Actions=`), then "Pin to Dash" or "Unpin" (adds it to
+  file's actions (`Actions=`), the app's quicklist entries
+  (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`, "Quicklists"),
+  then "Pin to Dash" or "Unpin" (adds it to
   or removes it from `favorite-apps`), "App Details" (GNOME Software's
   page for it, when `gnome-software` is installed), and for a running app
   "Quit" or "Quit <n> Windows" (closes its windows). For a drive: "Open",

@@ -12,8 +12,9 @@ code). There is no well-known name or object: listeners match the signal.
   `application://firefox.desktop`).
 - Properties (each optional; missing ones keep their previous value):
   `count` (`x`), `count-visible` (`b`), `progress` (`d`, 0 to 1),
-  `progress-visible` (`b`), `urgent` (`b`). Some senders also use
-  `quicklist` (an object path of a dbusmenu), not used here.
+  `progress-visible` (`b`), `urgent` (`b`), `quicklist` (`s` or `o`: an
+  object path, on the sender's connection, of a menu with the
+  `com.canonical.dbusmenu` interface; empty or `/`: none).
 - An app's values last until it updates them or leaves the bus.
 
 ## Helix
@@ -30,3 +31,25 @@ sent as `i` or `u`.
   in the accent color (values kept within 0 and 1).
 - `urgent` true gives the icon an orange background until it is false.
 - When the sender of an app's updates leaves the bus, its values go.
+
+### Quicklists
+
+An app's quicklist entries are added to its dock menu
+(`contracts/wayland/README.md`, "Dock").
+
+- `com.canonical.dbusmenu` as used: `AboutToShow(i id) → b`,
+  `GetLayout(i parent, i depth, as properties) → (u revision,
+  (i id, a{sv} properties, av children))`, `Event(i id, s event, v data,
+  u timestamp)` and the signal `LayoutUpdated(u revision, i parent)`.
+- The shell reads the layout (`AboutToShow(0)`, then `GetLayout(0, -1,
+  [])`) when an app sends a new `quicklist`, and again whenever that menu
+  sends `LayoutUpdated`.
+- Entries are the root's children, in order: `visible` false ones are
+  left out; `type` `separator` is a separator (never first, last or twice
+  in a row); an entry with `children-display` `submenu` is replaced by its
+  own children (one flat list); other entries show their `label` with
+  mnemonic underscores removed (`__` is a `_`); entries without a label,
+  or with `enabled` false, are left out; `toggle-type` `checkmark` or
+  `radio` shows a check box, checked when `toggle-state` is 1.
+- Choosing an entry sends it `Event(id, "clicked", "" , seconds since
+  1970)`.
