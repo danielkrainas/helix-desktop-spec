@@ -73,8 +73,8 @@ tried them with the real hardware. Remove an entry once it has been.
   (which keys count as modifiers for sticky keys, the keyboard shortcuts
   `enable` turns on, whether mouse keys need Num Lock off, beep sounds,
   and what the timeout turns off) is not documented by the schema; Helix's
-  choices are in `contracts/gsettings/a11y-keyboard.md`. GNOME's dwell click type window and progress
-  feedback, and the exact formulas of its magnifier color effects and its
+  choices are in `contracts/gsettings/a11y-keyboard.md`. GNOME's dwell click type window (its look, place, icons and whether a
+  type stays chosen) and progress feedback, and the exact formulas of its magnifier color effects and its
   high-contrast styling, are not documented here; Helix's are in
   `a11y-mouse.md`, `a11y-magnifier.md` and `a11y-interface.md`.
 - Magnifier: GNOME's zoom steps for `magnifier-zoom-in` / `-out`, how

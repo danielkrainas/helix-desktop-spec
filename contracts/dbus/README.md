@@ -28,6 +28,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
 - `org.gnome.Mutter.RemoteDesktop.xml` — remote input, Notify* and EIS (served by the compositor)
 - `org.helix.ScreenEffects.xml` — Helix-private: grayscale for screen time limits (served by the compositor)
+- `org.helix.ClickType` — Helix-private: the dwell click type (served by the compositor; described in `contracts/gsettings/a11y-mouse.md`)
 - `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
 - `org.gnome.SettingsDaemon.Color.xml` — Night Light state (served by the shell)
 - `org.freedesktop.IBus.xml` — the part of IBus Helix's shell calls as the input method; not implemented by Helix
