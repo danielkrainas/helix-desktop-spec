@@ -256,7 +256,22 @@ range.
   made elsewhere show up within a few seconds.
 - The serial changes only when the set of entries changes (monitors
   added, removed or reconfigured), not when a value changes.
-- External monitors (DDC/CI) are not controlled.
+- External monitors are controlled over DDC/CI, on real hardware only
+  (not in a nested session):
+  - each active external connector's I²C bus is the `ddc` link in its
+    `/sys/class/drm/card*-<connector>` directory (or an `i2c-*` entry
+    there), opened as `/dev/i2c-*` at the DDC/CI address 0x37;
+  - brightness is MCCS control 0x10, read with *Get VCP Feature* and
+    written with *Set VCP Feature*; `min` is 0 and `max` is the maximum
+    the monitor reports;
+  - a monitor that does not answer, or has no brightness control, gets an
+    entry without `min`, `max` and `value`; it is not asked again until it
+    is plugged in again;
+  - monitors are asked when they appear (within a few seconds) and
+    re-read every ten seconds; a change shows up as `PropertiesChanged`;
+  - setting `HELIX_NO_DDC` in the environment turns DDC/CI off.
+- **Not yet tested with real monitors.** The DDC/CI code is checked only
+  against a simulated monitor in Helix's tests (`gaps.md`).
 
 ## Automatic rotation (Helix)
 
