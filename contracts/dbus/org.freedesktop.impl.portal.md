@@ -666,8 +666,12 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   except the home folder itself), GTK bookmarks
   (`$XDG_CONFIG_HOME/gtk-3.0/bookmarks`: local `file:` URIs, named by
   their label or the folder's name), drives mounted under
-  `/media/<user>/` and `/run/media/<user>/` (by folder name), and
-  "Computer" (`/`); folders that do not exist are left out, and a folder
+  `/media/<user>/` and `/run/media/<user>/` (by folder name), network
+  places the user connected to (GVfs's FUSE folders under
+  `$XDG_RUNTIME_DIR/gvfs/`, named "<share> on <server>" for
+  `smb-share:server=…,share=…`, "<user> on <host>" or "<host>" for others,
+  else by folder name; checked with unit tests only), and "Computer"
+  (`/`); folders that do not exist are left out, and a folder
   is listed once. The place showing is marked. Clicking a place shows it
   (when saving, the name typed so far is kept). Recent lists recently
   used files (`$XDG_DATA_HOME/recently-used.xbel`), newest first by when
@@ -686,7 +690,15 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   (when saving: its name is put in the Name field).
 - Opening: the text field is "Location": a path typed there (relative to
   the folder shown, or absolute, or starting with `~`) opens a folder or
-  chooses a file; otherwise the warning "“<text>” was not found.". With
+  chooses a file; otherwise, when opening files and the text has no
+  `/`, it searches: the folder shown and the folders below it (hidden
+  ones skipped) for files whose names hold the text (ignoring case) and
+  pass the current filter, nearest folders first, then by name; at most
+  200 results, after looking at 20 000 entries at most. The results are
+  rows "<name> — <folder name>" (chosen as files are) under the message
+  "Search for “<text>” in <folder>"; with none, the warning "No files
+  named like “<text>”.". Clicking a place ends the search. Otherwise the
+  warning "“<text>” was not found.". With
   `multiple`, files are picked by clicking them (or Space) and accepting
   chooses all picked files; folders and the other rows are not picked.
 - Saving: the text field is "Name" (`current_name`, else `current_file`'s
