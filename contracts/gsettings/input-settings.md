@@ -161,30 +161,102 @@ gestures.
 
 ### Tablets
 
-A tablet's pen (and eraser) drives the pointer: Helix does not offer the
-tablet protocol (`zwp_tablet_manager_v2`), so apps see pointer motion and
-buttons, without pressure, tilt or distance (see `gaps.md`). Settings are
-read when the pen comes near the tablet.
+Settings are read when a tool comes near the tablet (pad buttons: at
+each press). Pad button settings live below the tablet's, one per
+button: `/org/gnome/desktop/peripherals/tablets/<vid>:<pid>/button<N>/`,
+where `<N>` is `A` for the pad's first button, `B` for the second and so
+on (past `Z`, the button's number counting from 1).
 
-- `mapping` `absolute` (the default): the tablet covers one monitor: the
-  one `output` names, else the primary monitor. The pen's position on the
-  tablet is the pointer's position on that monitor:
+#### Where a tool's input goes
+
+The compositor offers the tablet protocol, `zwp_tablet_manager_v2`
+version 1 (tablets, tools and pads; no dials). For each tool in
+proximity:
+
+- **Position.** `mapping` `absolute` (the default): the tablet covers
+  one monitor, the one `output` names, else the primary monitor; the
+  tool's position on the tablet is a position on that monitor:
   - `left-handed`: the tablet is turned around (both axes reversed);
-  - `area`: margins cut off the left, right, top and bottom of the tablet
-    (fractions of its width or height; values above 1 are taken as
-    percentages; each at most 0.45). The pen outside the remaining area does
-    not move the pointer;
-  - `keep-aspect`: the area is cut further, from the right or the bottom,
-    to the monitor's aspect ratio (using the tablet's physical size from
-    libinput; without one, nothing is cut).
-- `mapping` `relative`: the pen moves the pointer like a mouse, 4 logical
-  pixels per millimetre of pen motion.
-- The pen's tip (and the eraser's) is the left button.
-- Stylus buttons (libinput's first, second and third) follow
+  - `area`: margins cut off the left, right, top and bottom of the
+    tablet (fractions of its width or height; values above 1 are taken
+    as percentages; each at most 0.45); outside the remaining area the
+    tool does nothing;
+  - `keep-aspect`: the area is cut further, from the right or the
+    bottom, to the monitor's aspect ratio (using the tablet's physical
+    size from libinput; without one, nothing is cut).
+
+  `mapping` `relative`: the tool moves the position like a mouse, 4
+  logical pixels per millimetre of tool motion.
+- **Apps that take tablet events** (the surface under the tool belongs
+  to a client that created a `zwp_tablet_seat_v2`), outside pointer
+  grabs and X11 window frames: the client gets the tool's
+  `proximity_in`/`proximity_out` as the tool moves onto and off its
+  surfaces, `motion`, `pressure`, `distance`, `tilt`, `rotation`,
+  `slider` and `wheel` as they change, `down`/`up` for the tip, `button`
+  for stylus buttons, and a `frame` after each. The pointer follows the
+  tool but the client is not sent pointer events while the tool is over
+  it; the cursor is the one the client sets with
+  `zwp_tablet_tool_v2.set_cursor` (the default cursor until it does).
+  The tip touching a window focuses (and with `raise-on-click`, raises)
+  it, as a click does.
+- **Elsewhere** the tool drives the pointer: its tip (and the eraser's)
+  is the left button.
+- **Pressure** goes through the stylus's `pressure-range` (for the
+  eraser end: `eraser-pressure-range`) and `pressure-curve`
+  (`eraser-pressure-curve`): the range's percentages of the physical
+  pressure become the whole logical range (below it 0, above it full);
+  the curve is a cubic Bézier curve from (0, 0) to (100, 100) through
+  the two control points the four values give, read as output pressure
+  for input pressure. Malformed values count as a straight line over the
+  whole range.
+- **Stylus buttons** (libinput's first, second and third) follow
   `button-action`, `secondary-button-action` and
-  `tertiary-button-action`: `middle`, `right`, `back`, `forward` press that
-  pointer button; `default` is middle, right and back for the three
-  buttons; `switch-monitor` maps the tablet to the next monitor (left to
-  right, wrapping; until the session ends); `keybinding` does nothing.
-- The pressure curves and ranges, the eraser's button settings and the
-  `*-keybinding` keys have no effect.
+  `tertiary-button-action`: `middle`, `right`, `back`, `forward` give that
+  button (to apps that take tablet events, as the tool's button with that
+  code); `default` is middle, right and back for the three buttons;
+  `switch-monitor` maps the tablet to the next monitor (left to right,
+  wrapping; until the session ends); `keybinding` does nothing.
+- Tools are announced (`tool_added`) when first seen in proximity;
+  tablets and pads when plugged in, with their name, USB ids and device
+  node (`/dev/input/event*`).
+
+#### Pads
+
+A pad's events go to the app with the keyboard focus, when it created a
+tablet seat (`enter`/`leave` follow the keyboard focus; after `enter`,
+each mode group's current mode). Each mode group lists its buttons,
+rings and strips as libinput groups them, and its number of modes;
+`mode_switch` is sent when libinput reports a group's mode changed.
+
+- **Buttons** follow their `action`:
+  - `none` (the default): the button goes to the app
+    (`zwp_tablet_pad_v2.button`);
+  - `help`: an on-screen display (the shell's `ShowOSD`, icon
+    `input-tablet-symbolic`) lists every button as "Button A: …" with
+    "Application defined", "Show this help", "Switch monitor" or "Send
+    keys <keybinding>";
+  - `switch-monitor`: maps the pad's tablet to the next monitor, as the
+    stylus action does;
+  - `keybinding`: on press, types `keybinding` (an accelerator such as
+    `<Control>z`) to the focused app: the key that gives its key name in
+    the current layout, with Control, Alt, Shift and Super held as it
+    says (Shift also when the key needs it). An empty `keybinding`
+    counts as `none`.
+- **Rings** go to the app: `angle` in degrees, `stop` when the finger
+  lets go, `source` `finger` when libinput says so, then `frame`.
+- **Strips** go to the app: `position` from 0 to 65535, `stop`,
+  `source`, `frame`.
+
+#### Not covered
+
+- The eraser button settings (`eraser-button-mode`,
+  `eraser-button-action`, `eraser-button-keybinding`) and the stylus
+  `*-keybinding` keys have no effect (the libinput version Helix builds
+  against has no eraser-button configuration).
+- `wp_cursor_shape_device_v1` for tablet tools is ignored (the cursor
+  stays the default one unless the app sets a surface).
+- Pad feedback strings (`set_feedback`) are accepted and not shown.
+- **Not yet tested with a real tablet.** The protocol is checked with a
+  Wayland client in Helix's tests, and the pressure curve and pad
+  settings by unit tests; no tablet hardware was available
+  (`gaps.md`).
