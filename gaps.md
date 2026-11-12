@@ -11,6 +11,8 @@ tried them with the real hardware. Remove an entry once it has been.
 - DDC/CI brightness of external monitors (`contracts/dbus/org.gnome.Mutter.DisplayConfig.md`, "Backlight"): tested against a simulated MCCS monitor only.
 - Bluetooth file sending and receiving (`contracts/dbus/org.bluez.obex.md`): tested against a fake obexd only.
 - Touchscreen and touchpad gestures (`contracts/wayland/README.md`, "Gestures"): unit tests, and touchscreen swipes through a remote desktop virtual touchscreen in a nested session; no real touchscreen or touchpad has been tried.
+- HDR monitors (`org.gnome.Mutter.DisplayConfig.md`, "Color modes"): EDID parsing, KMS metadata and the PQ conversion are checked by unit tests and the conversion pass in a nested session; no HDR monitor has been tried.
+- Color profiles (`org.gnome.Mutter.DisplayConfig.md`, "Color profiles"): tested against a fake colord and made-up profiles; no calibrated monitor has been tried.
 - Drawing tablets (`contracts/gsettings/input-settings.md`, "Tablets"): the tablet protocol, pressure curves, pads and their settings are tested in-process and by unit tests; no tablet, stylus or pad has been tried.
 
 ## Open gaps
@@ -48,13 +50,19 @@ tried them with the real hardware. Remove an entry once it has been.
   `contracts/dbus/org.gnome.Mutter.RemoteDesktop.md`. XKB text format
   version 2 keymaps are not accepted; an EIS keyboard is not told about
   layout index changes (only keymap changes, by replacement).
-- Color management and HDR: Helix does no color conversion and has no HDR
-  output (no BT.2100 color mode, no KMS HDR metadata, no PQ encoding); its
-  `wp_color_manager_v1` offers only sRGB. How GNOME applies
-  `output-luminance` to an SDR monitor, and the range it allows, are not
-  documented; Helix dims through the gamma ramps between 10 % and 100 %.
-  The color mode values (0 default, 1 BT.2100) follow GNOME's monitor
-  settings; their DisplayConfig names are as GNOME Settings uses them.
+- Color management and HDR: Helix converts only from sRGB (apps cannot
+  send BT.2100, scRGB or ICC-described content; no per-surface
+  conversion), keeps 8 bits per channel for PQ output, and does no tone
+  mapping. GNOME's reference white, the `output-luminance` range it
+  allows (Helix: SDR 10–100 % through the gamma ramps; BT.2100 25–300 %
+  of 203 cd/m² as SDR white), the order of primaries in its HDR metadata
+  (Helix: red, green, blue), how it derives the metadata's values, its
+  colord device ids and properties, and how it combines profile
+  calibration with night light are not documented here; Helix's choices
+  are in `org.gnome.Mutter.DisplayConfig.md` ("Color modes", "Color
+  profiles", "Gamma"). The color mode values (0 default, 1 BT.2100)
+  follow GNOME's monitor settings; their DisplayConfig names are as GNOME
+  Settings uses them.
 - Screen recording: which callers GNOME lets use `org.gnome.Shell.Screencast`,
   its `Error` names, and what it does when a file exists are not documented;
   Helix's choices are in `contracts/dbus/org.gnome.Shell.Screencast.md`. How

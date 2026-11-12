@@ -37,8 +37,8 @@ nested (windowed) compositor's one monitor is `Helix`, `Nested`, `0`.
   - `is-builtin` (`b`): a laptop panel or similar
   - `display-name` (`s`): human-readable name
   - `color-mode` (`u`) and `supported-color-modes` (`au`): how the monitor
-    is driven, 0 default (SDR), 1 BT.2100 (HDR). Helix: always 0 and
-    `[0]`.
+    is driven, 0 default (SDR), 1 BT.2100 (HDR). Helix offers `[0, 1]`
+    for monitors that can show BT.2100 (see "Color modes"), else `[0]`.
 
 `logical_monitors` — `a(iiduba(ssss)a{sv})`: x, y, scale, transform, primary,
 the monitor specs shown in it, properties. A logical monitor showing more
@@ -100,7 +100,10 @@ off.
 current layout mode when `supports-changing-layout-mode` is true.
 
 A monitor's `properties` may hold `color-mode` (`u`), one of its
-`supported-color-modes`; Helix rejects any other than 0.
+`supported-color-modes` (absent: 0); any other value makes the call fail
+with `org.freedesktop.DBus.Error.InvalidArgs`. The color mode is part of
+the configuration: it is applied, and remembered with persistent
+changes.
 
 A configuration is valid when:
 
@@ -190,10 +193,74 @@ ones `GetCrtcGamma` returns.
   first) but have no visible effect.
 - A monitor's `org.gnome.mutter output-luminance` (the entry with its
   connector, vendor, product and serial and color mode 0) scales what is
-  sent to its CRTC: every ramp value is multiplied by the percentage / 100,
-  taken between 10 and 100 (SDR cannot be brighter than full). Changes
-  apply at once. `GetCrtcGamma` returns the ramps clients set, unscaled;
-  without any, the identity ramp is scaled.
+  sent to its CRTC while it is in color mode 0: every ramp value is
+  multiplied by the percentage / 100, taken between 10 and 100 (SDR
+  cannot be brighter than full). Changes apply at once. `GetCrtcGamma`
+  returns the ramps clients set, unscaled; without any, the identity
+  ramp is scaled.
+- A monitor's color profile calibration (see "Color profiles") applies
+  after the ramps clients set and before `output-luminance`: each ramp
+  value is looked up in the profile's curve for its channel.
+
+## Color modes (Helix)
+
+On bare hardware a monitor can be driven in **BT.2100** (color mode 1)
+when its EDID's CTA-861 extension has an HDR static metadata block
+listing the SMPTE ST 2084 (PQ) transfer function and a colorimetry block
+listing BT.2020 RGB. In the nested session every monitor is SDR only.
+
+When a monitor is put in BT.2100:
+
+- its connector's `HDR_OUTPUT_METADATA` property gets the kernel's
+  static metadata (type 1): EOTF ST 2084, BT.2020 primaries (red, green,
+  blue) and D65 white, the EDID's desired maximum luminance (else 1000
+  cd/m²) as the mastering maximum and the maximum content light level,
+  its desired minimum (else 0.005 cd/m²), and its maximum frame-average
+  (else half the maximum) as the maximum frame-average light level; its
+  `Colorspace` property becomes `BT2020_RGB`. Back in color mode 0, the
+  metadata is removed and `Colorspace` is `Default`. A monitor without
+  these properties cannot change color mode (the call fails);
+- each frame is composited as usual, then converted: the sRGB-encoded
+  values are decoded to linear light, converted from sRGB/BT.709
+  primaries to BT.2020 (the same white point), scaled so SDR white is at
+  the reference luminance, and encoded with PQ. The framebuffer keeps 8
+  bits per channel;
+- the **reference luminance** (SDR white) is 203 cd/m² scaled by the
+  monitor's `output-luminance` entry for color mode 1 (100 % is 203
+  cd/m²), taken between 25 % and 300 %. Its gamma ramps are not scaled;
+- monitors' `wp_color_manager_v1` descriptions change to BT.2100
+  (`contracts/wayland/README.md`, "Color management");
+- its color profile's calibration is not applied.
+
+Not yet tried on an HDR monitor: the EDID parsing, the metadata, the
+conversion (checked against reference values, and run on the GPU in a
+nested session with `HELIX_TEST_HDR=1`, which converts the nested window
+as if it were an HDR monitor) and the D-Bus side are tested without one
+(`gaps.md`).
+
+## Color profiles (Helix)
+
+On bare hardware each monitor that is on is a display device in colord
+(`org.freedesktop.ColorManager` on the system bus), so color settings can
+assign it profiles:
+
+- `CreateDevice(id, "temp", properties)` with id
+  `xrandr-<vendor>-<product>-<serial>` (the monitor identity) and
+  properties `Kind` `display`, `Mode` `physical`, `Colorspace` `rgb`,
+  `Vendor`, `Model` (product), `Serial`, `XRANDR_name` (connector) and,
+  for built-in panels, `Embedded` `true`. A monitor that goes away or is
+  turned off is removed with `DeleteDevice`.
+- The device's default profile is the first of its `Profiles`; the
+  profile's `Filename` is read when the device is created and whenever
+  colord sends `DeviceChanged` for it. When the ICC profile has a `vcgt`
+  tag (a table of 8- or 16-bit entries for one or three channels, or a
+  gamma/minimum/maximum formula per channel), its curves, resampled to
+  the CRTC's ramp length, are the monitor's calibration (see "Gamma");
+  without a profile or a `vcgt` tag there is none.
+- In the BT.2100 color mode no calibration is applied.
+
+Not yet tried with a calibrated monitor (tested against a fake colord;
+`gaps.md`).
 
 ## Color transformation matrix
 

@@ -214,18 +214,23 @@ content as sRGB, and does not convert colors.
   for every description Helix accepts). A second
   `wp_color_management_surface_v1` for a surface is the `surface_exists`
   error; once its surface is gone the object is inert.
-- Every monitor's description, and every surface's preferred one, is sRGB:
-  `srgb` primaries (red 0.64/0.33, green 0.30/0.60, blue 0.15/0.06, white
-  0.3127/0.3290), the `srgb` transfer function, luminances 0.2 / 80 / 80
-  cd/m² (minimum / maximum / reference white) and the same target volume.
-  They do not change, so `image_description_changed` and
-  `preferred_changed` are never sent. A monitor that has gone away gives a
+- Every surface's preferred description, and a monitor's in color mode
+  0, is sRGB: `srgb` primaries (red 0.64/0.33, green 0.30/0.60, blue
+  0.15/0.06, white 0.3127/0.3290), the `srgb` transfer function,
+  luminances 0.2 / 80 / 80 cd/m² (minimum / maximum / reference white)
+  and the same target volume. `preferred_changed` is never sent.
+- A monitor in the BT.2100 color mode (`org.gnome.Mutter.DisplayConfig.md`,
+  "Color modes") is described as `bt2020` primaries (red 0.708/0.292,
+  green 0.170/0.797, blue 0.131/0.046, white 0.3127/0.3290), the
+  `st2084_pq` transfer function, and as luminances its minimum and
+  maximum (from its EDID, else 0.005 and 1000 cd/m²) and the reference
+  white, with the same target volume. When a monitor's color mode
+  changes, its `wp_color_management_output_v1` objects get
+  `image_description_changed`. A monitor that has gone away gives a
   description that fails with `no_output`.
-
-HDR output (BT.2100 color mode), color conversion between descriptions,
-and the `output-luminance` level for HDR are not implemented (see
-`gaps.md`); `output-luminance` for SDR dims through the gamma ramps
-(`org.gnome.Mutter.DisplayConfig.md`, "Gamma").
+- Content is still taken as sRGB: apps cannot describe their surfaces as
+  BT.2100 (the transfer function and primaries are not advertised); on a
+  BT.2100 monitor the compositor converts everything from sRGB.
 
 ## GPU buffers (Helix)
 
