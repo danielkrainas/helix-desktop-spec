@@ -524,17 +524,19 @@ disabled-extensions` lists `ubuntu-dock@ubuntu.com` or
 `dash-to-dock@micxgx.gmail.com`, and it is not shown on the lock screen,
 in the overview (which has its dash) or the launcher.
 
-- **Where.** On one monitor: the one whose connector is
-  `preferred-monitor-by-connector`, else the primary monitor (`primary`,
-  the default). On the edge `dock-position` names (`BOTTOM` by default;
+- **Where.** With `multi-monitor`, on every monitor (each its own dock,
+  shown and hidden on its own); otherwise on one monitor: the one whose
+  connector is `preferred-monitor-by-connector`, else the primary monitor
+  (`primary`, the default). On the edge `dock-position` names (`BOTTOM` by default;
   `TOP` is below the panel). Centered on the edge, or along all of it with
   `extend-height` (then the icons start at the edge's beginning unless
-  `always-center-icons`). `multi-monitor`, `isolate-monitors` and
-  `height-fraction` are not used.
+  `always-center-icons`). `height-fraction` is not used.
 - **What.** In order: the Show Apps button when `show-apps-at-top`; the
   favorites (`show-favorites`); apps with windows that are not favorites,
   in the order their first window opened (`show-running`; with
-  `isolate-workspaces`, only windows of the current workspace count);
+  `isolate-workspaces`, only windows of the current workspace count; with
+  `isolate-monitors`, only windows whose middle is on the dock's monitor,
+  which also goes for the running marks and clicks);
   mounted drives that can be unmounted or ejected (`show-mounts`:
   removable drives, discs, phones, network shares); the Trash
   (`show-trash`, its icon full or empty); the Show Apps button
