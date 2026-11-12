@@ -48,6 +48,35 @@
       <arg name="fd" type="h" direction="out"/>
     </method>
     <method name="Close"/>
+    <!-- Clipboard sharing, as org.gnome.Mutter.RemoteDesktop.Session's
+         (same arguments, options and errors; see
+         org.gnome.Mutter.RemoteDesktop.md, "Clipboard"). -->
+    <method name="EnableClipboard">
+      <arg name="options" type="a{sv}" direction="in"/>
+    </method>
+    <method name="DisableClipboard"/>
+    <method name="SetSelection">
+      <arg name="options" type="a{sv}" direction="in"/>
+    </method>
+    <method name="SelectionWrite">
+      <arg name="serial" type="u" direction="in"/>
+      <arg name="fd" type="h" direction="out"/>
+    </method>
+    <method name="SelectionWriteDone">
+      <arg name="serial" type="u" direction="in"/>
+      <arg name="success" type="b" direction="in"/>
+    </method>
+    <method name="SelectionRead">
+      <arg name="mime_type" type="s" direction="in"/>
+      <arg name="fd" type="h" direction="out"/>
+    </method>
+    <signal name="SelectionOwnerChanged">
+      <arg name="options" type="a{sv}"/>
+    </signal>
+    <signal name="SelectionTransfer">
+      <arg name="mime_type" type="s"/>
+      <arg name="serial" type="u"/>
+    </signal>
     <signal name="Activated">
       <arg name="activation_id" type="u"/>
       <arg name="barrier_id" type="u"/>

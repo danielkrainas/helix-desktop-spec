@@ -279,7 +279,7 @@ picks, 4 an area the user selects, 8 the active window.
 ## Clipboard (`org.freedesktop.impl.portal.Clipboard`)
 
 Contract: `org.freedesktop.impl.portal.Clipboard.xml`. A portal session of
-another portal (RemoteDesktop) asks for the clipboard with
+another portal (RemoteDesktop, or InputCapture since its version 2) asks for the clipboard with
 `RequestClipboard(session_handle, options)` before it starts; once
 started, `SetSelection`, `SelectionWrite`, `SelectionWriteDone` and
 `SelectionRead` take the session handle, and `SelectionOwnerChanged`
@@ -288,9 +288,10 @@ emitted with it. `version` is 1.
 
 ### Helix
 
-- Only RemoteDesktop sessions: `RequestClipboard` for any other or
-  unknown session fails with `org.freedesktop.DBus.Error.InvalidArgs`;
-  after `Start` with `org.freedesktop.DBus.Error.Failed`.
+- RemoteDesktop and InputCapture sessions (InputCapture: made with
+  `CreateSession2`): `RequestClipboard` for any other or unknown session
+  fails with `org.freedesktop.DBus.Error.InvalidArgs`; after `Start` with
+  `org.freedesktop.DBus.Error.Failed`.
 - No separate question: allowing the session (the RemoteDesktop `Start`
   dialog) allows the clipboard it asked for. `Start` then turns on the
   compositor session's clipboard (`EnableClipboard`, see
@@ -299,7 +300,12 @@ emitted with it. `version` is 1.
 - The methods and signals are those of the compositor session, passed
   through (option names with `_` instead of `-`); for a session that does
   not share the clipboard the methods fail with
-  `org.freedesktop.DBus.Error.Failed`.
+  `org.freedesktop.DBus.Error.Failed`. An InputCapture session's
+  compositor session is its `org.helix.InputCapture` session, which
+  shares the clipboard the same way (`org.helix.InputCapture.xml`); its
+  `Start` turns sharing on and returns `clipboard_enabled` likewise. The
+  compositor starts reporting the clipboard's owner to it from then on,
+  whether or not input is being captured.
 
 ## Access (`org.freedesktop.impl.portal.Access`)
 
@@ -507,9 +513,10 @@ through a barrier they set, and get it as an EIS (libei) receiver.
 - With `persist_mode` 1 or 2, `Start`'s results carry `restore_data`
   `("Helix", 1, <a{sv}>)` holding `devices` (`u`), the capabilities
   granted. A `Start` whose `restore_data` is Helix's and grants every
-  capability asked for starts without asking. `clipboard_enabled` is
-  always false: Helix does not share the clipboard with input capture
-  sessions.
+  capability asked for starts without asking. A session that asked for
+  the clipboard (`RequestClipboard`, see "Clipboard") shares it once
+  started: no separate question; `clipboard_enabled` says whether it
+  does.
 - Starting asks with the shell's dialog (`org.helix.PortalDialog`):
   "Allow Input Capture?", "<app name> wants to take over the pointer and
   keyboard when the pointer leaves the screen. Super+Escape gives them
