@@ -439,6 +439,37 @@ The launcher (the Apps button, `toggle-application-view`,
 overview each replace the other. `OverviewActive` is true while either is
 shown.
 
+## Favorites and app folders (Helix)
+
+**Favorites** are `org.gnome.shell` `favorite-apps` (desktop file ids, in
+order; ids of apps not installed, or hidden from menus, are skipped).
+
+- **Dash.** The overview shows, centered at the bottom of the primary
+  monitor, the favorites' icons, then (after a gap) the icons of other
+  apps that have windows, most recently used first; a dot under an icon
+  means the app has windows. Clicking an icon activates the app's most
+  recently used window, or launches the app when it has none, and hides
+  the overview.
+- **Launcher.** With an empty search the launcher lists the favorites
+  first (tagged "Favorite"), then the app folders, then the other apps
+  that are in no folder, by name. Ctrl+D adds the selected app to the
+  end of the favorites, or removes it.
+
+**App folders** are `org.gnome.desktop.app-folders` `folder-children`; each
+child `<id>` is a `org.gnome.desktop.app-folders.folder` at
+`/org/gnome/desktop/app-folders/folders/<id>/`:
+
+- its name is `name`, or with `translate` true the `Name` of the desktop
+  directory entry `name` (in `desktop-directories/` under the XDG data
+  directories), else `name` as it is;
+- an app is in it when its id is in `apps`, or one of its desktop file's
+  `Categories` is in `categories`, unless its id is in `excluded-apps`;
+- folders with no installed app are left out.
+
+A folder's row (tagged "Folder") opens it: the launcher then lists the
+folder's apps, its name in the search field's place. Backspace with an
+empty search, or Escape, goes back; typing searches all apps.
+
 ## Quick settings (Helix)
 
 The panel's **Power** button and `org.gnome.shell.keybindings

@@ -89,6 +89,11 @@ Living log of missing, unclear, or underspecified contracts.
   uses subsearches, its timeouts and how it shows results (grid or list) are
   not documented here; Helix's choices are in
   `org.gnome.Shell.SearchProvider2.md`.
+- Favorites and app folders: GNOME's app grid (pages, `app-picker-layout`,
+  dragging apps into folders) and dash (reordering by dragging, its context
+  menus) are not documented here; Helix shows favorites in a dash and the
+  launcher's list, and does not use `app-picker-layout`
+  (`contracts/wayland/README.md`, "Favorites and app folders").
 - Window placement across monitors: mutter's rules (where new windows open, what happens to windows of a monitor that goes away) are not documented here; Helix's are in `contracts/wayland/README.md` ("Monitors and windows").
 - Workspaces: GNOME's exact rules for dynamic workspaces (e.g. when an emptied workspace is removed, focus after switching) and for `workspaces-only-on-primary` are not documented here; Helix's are in `contracts/gsettings/workspaces.md`. Helix lays workspaces out in a row (as GNOME 51 does), so the `-up`/`-down` workspace keys do nothing; its overview (pictures renewed twice a second) and workspace switch popup are its own design (GNOME's is not documented here).
 - Night Light: how GNOME turns a color temperature into gamma ramps, how it fades, and when it re-checks the schedule are undocumented; Helix's choices are in `contracts/gsettings/night-light.md`. The behavior of gnome-settings-daemon's `org.gnome.SettingsDaemon.Color` (what writing `Temperature` does, how long `DisabledUntilTomorrow` lasts, the preview's limits, `Sunrise`/`Sunset` without a location) is undocumented; Helix's is in `org.gnome.SettingsDaemon.Color.md`.
