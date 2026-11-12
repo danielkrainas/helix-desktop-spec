@@ -642,9 +642,11 @@ changes.
   `call.incoming`, `call.ongoing`, `call.unanswered`,
   `weather.warning.extreme`, `cellbroadcast.danger.extreme`,
   `cellbroadcast.danger.severe`, `cellbroadcast.amber-alert`,
-  `cellbroadcast.test`, `os.battery.low`, `browser.web-notification`; no
-  `button-purpose` (buttons with a purpose, such as replying with text,
-  are not offered, so the frontend does not send them).
+  `cellbroadcast.test`, `os.battery.low`, `browser.web-notification`; and
+  `button-purpose`: `im.reply-with-text`, `call.accept`, `call.decline`,
+  `call.hang-up`, `call.enable-speakerphone`,
+  `call.disable-speakerphone` (buttons are passed on with their
+  `purpose`; see `org.gtk.Notifications.md` for what the shell does).
 - Keys taken: `title`, `body`, `markup-body` (shown with notification
   markup in place of `body`), `icon` (themed, bytes, or — version 2 —
   `("file-descriptor", h)`, whose contents are read and passed on as
@@ -673,7 +675,11 @@ changes.
   clients), the shell sends `org.gtk.Notifications.ActionInvoked` instead
   (`org.gtk.Notifications.md`, "Activation"). The backend passes those for
   the notifications it added on as this interface's `ActionInvoked`, with
-  the same action name and parameter.
+  the same action name; the parameter is the target (if any), then the
+  platform data (`a{sv}`, the shell's, without its Helix-private keys),
+  then the user's reply (`s`) for an `im.reply-with-text` button. The
+  shell gives the reply as the last parameter value and, as
+  `x-helix-response`, in its platform data; the backend moves it.
 
 ## Print (`org.freedesktop.impl.portal.Print`)
 

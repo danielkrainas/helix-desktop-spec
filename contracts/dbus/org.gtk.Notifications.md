@@ -64,6 +64,23 @@ given (the Notification portal's key; see `org.freedesktop.impl.portal.md`).
 Two Helix-private keys come from the portal backend: `x-helix-sound`
 (`s`, a sound theme name, or an absolute file, played with the banner)
 and `x-helix-transient` (`b`, true: the banner goes away without staying
-in the notification list). Notifications stay in the
+in the notification list).
+
+Buttons may also carry a `purpose` (`s`, the Notification portal's):
+
+- A button without a label is shown with one for its purpose:
+  `im.reply-with-text` "Reply", `call.accept` "Accept", `call.decline`
+  "Decline", `call.hang-up` "Hang Up", `call.enable-speakerphone`
+  "Speaker On", `call.disable-speakerphone` "Speaker Off"; one without a
+  label and with any other purpose (such as `system.custom-alert`) is not
+  shown.
+- Choosing the first `im.reply-with-text` button opens the prompt dialog
+  "Reply to <app name>" with the notification's title and body, a
+  "Reply" text field and buttons "Cancel" and "Send". Cancel leaves the
+  notification as it was; Send runs the button's action with its target
+  (if any) followed by the text as the parameter (`app.` actions:
+  `ActivateAction`'s parameter; otherwise `ActionInvoked`'s, whose
+  platform data then also holds the text as `x-helix-response`, `s`).
+  The banner itself takes no keyboard input. Notifications stay in the
 notification list as `org.freedesktop.Notifications.md` ("The
 notification list") describes, until withdrawn, activated or dismissed.
