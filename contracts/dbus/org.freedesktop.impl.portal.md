@@ -477,3 +477,65 @@ changes.
   the name is taken. Copies do not apply.
 - Paper size, page setup, ranges and other print settings are passed
   through to the app, not shown.
+
+## FileChooser (`org.freedesktop.impl.portal.FileChooser`)
+
+- `OpenFile(handle, app_id, parent_window, title, options) -> (response,
+  results)`. Options: `accept_label` (`s`), `modal` (`b`), `multiple`
+  (`b`), `directory` (`b`: choose folders), `filters` (`a(sa(us))`: each a
+  name and patterns, kind 0 a glob such as `*.png`, kind 1 a MIME type),
+  `current_filter` (`(sa(us))`), `choices` (`a(ssa(ss)s)`: id, label,
+  options (id, label), initial value; no options means a check box with
+  `true`/`false`), `current_folder` (`ay`, a NUL-terminated path).
+  Results: `uris` (`as`), `choices` (`a(ss)`), `current_filter`.
+- `SaveFile(...)`: options as above (no `multiple`, `directory`) plus
+  `current_name` (`s`) and `current_file` (`ay`). Results: `uris` (one),
+  `choices`, `current_filter`.
+- `SaveFiles(...)`: options `accept_label`, `modal`, `choices`,
+  `current_folder`, `files` (`aay`: file names). Results: `uris`, one per
+  file, in the chosen folder.
+
+### Helix
+
+The shell's dialog (`org.helix.PortalDialog.Dialog`) shows one folder at a
+time: the title (or the accept label), the folder as the message (`~` for
+the home folder), a list of rows, a text field, the check box of the first
+choice without options (the others keep their initial values), and Cancel
+and accept buttons (`accept_label`, else "Open", "Select" for folders,
+"Save"). Clicking the current row again acts as accepting it.
+
+- The rows, in order: "Select This Folder" (folders) or "Save Here"
+  (saving); "Parent Folder" (except at `/`); "File type: <name> (choose to
+  change)" when there are two or more filters (not for folders or
+  `SaveFiles`); the folders (`<name>/`), then the files (not when choosing
+  folders or for `SaveFiles`), each sorted by name ignoring case. Names
+  starting with `.` are hidden; files are shown when the current filter
+  matches them (globs ignore case; MIME types by the type guessed from the
+  name).
+- The start folder: `current_folder`, else `current_file`'s folder, else
+  the folder the app last chose in (this session), else the home folder.
+  The first filter is current unless `current_filter` names one (added
+  when it is not among `filters`).
+- Accepting a row: Parent Folder goes up (with the folder left as the
+  current row); a folder opens; the file type row steps to the next
+  filter; Select This Folder chooses the folder shown; a file is chosen
+  (when saving: its name is put in the Name field).
+- Opening: the text field is "Location": a path typed there (relative to
+  the folder shown, or absolute, or starting with `~`) opens a folder or
+  chooses a file; otherwise the warning "“<text>” was not found.". With
+  `multiple`, files are picked by clicking them (or Space) and accepting
+  chooses all picked files; folders and the other rows are not picked.
+- Saving: the text field is "Name" (`current_name`, else `current_file`'s
+  name). Save Here saves under that name in the folder shown (a name with
+  `/` is a path as above; a folder name opens it); an empty name gives the
+  warning "Type a name for the file.", a missing folder "That folder does
+  not exist.". An existing file needs confirming: "Replace File?", "A file
+  named “<name>” already exists in “<folder>”. Replacing it overwrites
+  its contents.", buttons "Cancel" (back to the chooser) and "Replace".
+  `SaveFiles`: Save Here answers each of `files`' names in the folder
+  shown (existing files are not asked about).
+- With `org.gnome.desktop.lockdown` `disable-save-to-disk` true, `SaveFile`
+  and `SaveFiles` answer 2 without a dialog.
+- Results: `uris` as `file:` URIs; `choices` with every choice's value
+  (the check box's as `true`/`false`); `current_filter` when there are
+  filters.

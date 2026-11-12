@@ -21,7 +21,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.ScreenSaver.xml` — lock state and locking
 - `org.freedesktop.Notifications.xml`, `org.gtk.Notifications.xml` — notifications
 - `org.freedesktop.Application.xml` — application activation (called by the shell)
-- `org.freedesktop.impl.portal.{Access,Account,AppChooser,Background,Wallpaper,Lockdown,Notification,Print}.xml` — more portal backend interfaces (served by `helix-portals`)
+- `org.freedesktop.impl.portal.{Access,Account,AppChooser,Background,Wallpaper,Lockdown,Notification,Print,FileChooser}.xml` — more portal backend interfaces (served by `helix-portals`)
 - `org.helix.PortalDialog.xml` — Helix-private: dialogs and running apps the portal backends ask the shell for
 - `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,ScreenCast,RemoteDesktop,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
 - `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
