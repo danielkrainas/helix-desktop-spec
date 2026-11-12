@@ -251,8 +251,14 @@ rings and strips as libinput groups them, and its number of modes;
     (`zwp_tablet_pad_v2.button`);
   - `help`: an on-screen display (the shell's `ShowOSD`, icon
     `input-tablet-symbolic`) lists every button as "Button A: …" with
-    "Application defined", "Show this help", "Switch monitor" or "Send
-    keys <keybinding>";
+    "Show this help", "Switch monitor", "Send keys <keybinding>", or for
+    buttons left to the app what the app says the button does
+    (`zwp_tablet_pad_v2.set_feedback`), else "Application defined"; then
+    the rings and strips the app described (`set_feedback` on them), as
+    "Ring 1: …" and "Strip 1: …". Descriptions count only from the app
+    the pad's focus is on, are kept until the focus moves to another app,
+    and an empty one withdraws the control's; the `serial` is not
+    checked;
   - `switch-monitor`: maps the pad's tablet to the next monitor, as the
     stylus action does;
   - `keybinding`: on press, types `keybinding` (an accelerator such as
@@ -267,7 +273,6 @@ rings and strips as libinput groups them, and its number of modes;
 
 #### Not covered
 
-- Pad feedback strings (`set_feedback`) are accepted and not shown.
 - **Not yet tested with a real tablet.** The protocol is checked with a
   Wayland client in Helix's tests, and the pressure curve and pad
   settings by unit tests; no tablet hardware was available
