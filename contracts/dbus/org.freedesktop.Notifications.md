@@ -92,6 +92,37 @@ sound theme specification, looked up in the theme of
 with the `suppress-sound` hint, with `org.gnome.desktop.sound
 event-sounds` false, or when do not disturb hides the banner.
 
+### Per-application settings
+
+GNOME Settings keeps per-app notification settings in the relocatable
+schema `org.gnome.desktop.notifications.application` (keys `application-id`,
+`enable`, `show-banners`, `enable-sound-alerts`, `force-expanded`,
+`show-in-lock-screen`, `details-in-lock-screen`), one copy per app, and
+lists the apps named in `org.gnome.desktop.notifications`
+`application-children`.
+
+- A notification's app is the GTK notification's app id, or the
+  `desktop-entry` hint of a freedesktop notification (without a trailing
+  `.desktop`). Notifications without either (and the shell's own) have no
+  per-app settings.
+- The app's settings live at
+  `/org/gnome/desktop/notifications/application/<child>/`, `<child>` being
+  the app id in lower case with every character other than `a`–`z`,
+  `0`–`9` and `-` turned into `-` (`org.gnome.Calendar` →
+  `org-gnome-calendar`). The first time an app notifies, the shell adds
+  `<child>` to `application-children` and sets its `application-id` to
+  `<app id>.desktop`, so GNOME Settings lists the app.
+- `enable` false: the notification is dropped: `Notify` still returns an
+  id, nothing is shown, played or listed, and no signal follows.
+- `show-banners` false: no banner (and no sound); the notification goes
+  straight to the list, as with do not disturb.
+- `enable-sound-alerts` false: no sound.
+- Critical notifications get a banner even when banners are off (as with
+  do not disturb), but not when `enable` is false.
+- `force-expanded`, `show-in-lock-screen` and `details-in-lock-screen` have
+  no effect (Helix's banners always show the body, and the lock screen
+  shows no notifications).
+
 ### The notification list (persistence)
 
 Notifications stay in a list after their banner goes, until the user
