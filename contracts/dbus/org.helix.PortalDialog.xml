@@ -51,6 +51,9 @@
         places (as), place-current (i): a column of places left of the
           rows (at most 14), the current one marked; clicking a place
           accepts.
+        previews (as): a file per row ("" for none); with any, an area
+          below the rows shows the selected row's file as a picture
+          (decoded by the shell; "No preview" when it cannot be).
       response: 0 accepted, 1 canceled. results: check (b), selected (i),
       entry (s, with a text field), picked (ai, with multiple), place (i,
       when a place was clicked).

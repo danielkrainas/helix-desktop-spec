@@ -777,6 +777,12 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   <folder name>"; the message then reads "Recent". Recent files are chosen
   (and, with `multiple`, picked) as files are. The file type row is
   shown there too; there is no Parent Folder.
+- Previews: when some rows are pictures (files, or recent files, whose
+  name suggests PNG, JPEG, WebP, JPEG XL or SVG), an area below the rows
+  shows the selected row's picture, scaled down to fit 392 × 160 pixels,
+  or "No preview" (other rows, files larger than 32 MiB, or pictures
+  that cannot be read). The shell decodes each picture once per folder
+  view, without holding up the dialog.
 - The start folder: `current_folder`, else `current_file`'s folder, else
   the folder the app last chose in (this session), else the home folder.
   The first filter is current unless `current_filter` names one (added
