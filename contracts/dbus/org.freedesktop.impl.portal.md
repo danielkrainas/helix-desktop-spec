@@ -25,6 +25,13 @@ each lowercased entry of `XDG_CURRENT_DESKTOP` in order:
 default=<backend>;<fallback>;
 ```
 
+### Helix
+
+Helix's backend (`helix-portals`) owns `org.freedesktop.impl.portal.desktop.helix`
+and lists its interfaces in `helix.portal`. It exits when its connection to
+the session bus closes, and on SIGTERM leaves the bus for at most two
+seconds (a dialog still waiting for the user does not hold it up).
+
 ## Request (`org.freedesktop.impl.portal.Request`)
 
 Methods that take a `handle` export a Request object at that path for the
@@ -391,6 +398,72 @@ choice is left. `UpdateChoices` is accepted and ignored (see `gaps.md`).
   `picture-uri-dark`, and/or `org.gnome.desktop.screensaver`
   `picture-uri`. A `picture-options` of `none` becomes `zoom` so the
   picture shows.
+
+## Email (`org.freedesktop.impl.portal.Email`)
+
+- `ComposeEmail(handle, app_id, parent_window, options) -> (response,
+  results)`: open a new message for the user to finish and send. Options:
+  `address` (`s`) and `addresses` (`as`): recipients; `cc`, `bcc` (`as`);
+  `subject`, `body` (`s`); `attachments` (`as`): the files to attach
+  (the frontend passes local files); `activation_token` (`s`): for the mail
+  app to raise its window. No results. The interface has no properties.
+
+### Helix
+
+- No dialog: the user's default handler of `mailto:` links (the
+  `x-scheme-handler/mailto` default application) opens with the message.
+  Without one the answer is 2.
+- Recipients that are not of the form `user@host`, or that contain
+  whitespace, control characters, `?`, `&`, `,`, quotes or angle
+  brackets, or start with `-`, are left out. Attachments may be paths or
+  `file:` URIs.
+- The handler gets a `mailto:` URI (RFC 6068): the recipients, then `cc`,
+  `bcc`, `subject`, `body` and one `attach` field per attachment (a path),
+  values percent-encoded except letters, digits, `-._~@`. When the
+  handler's program is named `thunderbird…` (run directly, not through a
+  sandbox launcher), it gets instead `-compose` and Thunderbird's
+  `to='…',cc='…',bcc='…',subject='…',body='…',attachment='<file URIs>'`
+  list (single quotes are dropped from values), since it does not attach
+  files named in a `mailto:` URI.
+- `activation_token` is passed to the mail app as `XDG_ACTIVATION_TOKEN`
+  and `DESKTOP_STARTUP_ID`.
+
+## DynamicLauncher (`org.freedesktop.impl.portal.DynamicLauncher`)
+
+Apps (web browsers above all) add launchers to the user's apps. The
+frontend writes the desktop file and icon itself; the backend only lets
+the user confirm.
+
+- `PrepareInstall(handle, app_id, parent_window, name, icon_v, options)
+  -> (response, results)`: show the launcher (`icon_v` is a serialized
+  `GBytesIcon`: `('bytes', <ay>)`, PNG, JPEG or SVG data the frontend has
+  checked) with its default `name`. Options: `modal` (`b`, default true);
+  `launcher_type` (`u`, default 1); `target` (`s`): a web app's address,
+  to show; `editable_name` (`b`, default true); `editable_icon` (`b`,
+  default false). Results: `name` (`s`), the name to use, and `icon`
+  (`v`), the icon to use.
+- `RequestInstallToken(app_id, options) -> response`: 0 lets the app add
+  launchers without the dialog (with a token the frontend hands out);
+  anything else refuses.
+- Properties: `SupportedLauncherTypes` (`u`, bits: 1 application, 2 web
+  app) and `version` (`u`).
+
+### Helix
+
+- `SupportedLauncherTypes` 3, `version` 1. Another `launcher_type` answers 2.
+- The shell's dialog (`org.helix.PortalDialog.Dialog`): "Add to Apps",
+  "<app name> wants to add a launcher for this app / web app to your
+  apps." (with a name the user cannot change: "… for the app / web app
+  “<name>” to your apps."), a web app's `target` below it, the icon, a
+  "Name" field holding the name when it is editable, and buttons "Cancel"
+  (answer 1) and "Add".
+- The name is trimmed, its runs of whitespace (newlines too) made single
+  spaces and cut to 255 characters; an empty name means the default one.
+  The icon is always returned unchanged (`editable_icon` is not offered).
+  `modal` has no effect (Helix's dialogs are always modal).
+- `RequestInstallToken` answers 2 for every app: Helix lets no app add
+  launchers without asking. (Which apps GNOME's backend trusts is not
+  documented here.)
 
 ## Lockdown (`org.freedesktop.impl.portal.Lockdown`)
 
