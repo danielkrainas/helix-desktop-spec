@@ -4,7 +4,7 @@
   org.helix.PortalDialog — Helix-private (CC0). Dialogs and app state the
   portal backends ask the shell for. Served by the shell (org.gnome.Shell)
   at /org/helix/PortalDialog. Notes in org.freedesktop.impl.portal.md
-  ("Access", "Account", "AppChooser", "Background", "Wallpaper").
+  ("Access", "Account", "AppChooser", "Background", "Wallpaper", "Print").
 -->
 <node>
   <interface name="org.helix.PortalDialog">
@@ -33,8 +33,11 @@
         title, message, description (s); accept, cancel (s): button labels;
         check-label (s), check (b): a check box;
         picture (s): an image file to show (scaled down);
-        rows (as), selected (i): rows to pick one of.
-      response: 0 accepted, 1 canceled. results: check (b), selected (i).
+        rows (as), selected (i): rows to pick one of;
+        entry-label (s), entry (s): a text field and its first text;
+        warning (s): a line in a warning color.
+      response: 0 accepted, 1 canceled. results: check (b), selected (i),
+      entry (s, with a text field).
     -->
     <method name="Dialog">
       <arg name="options" type="a{sv}" direction="in"/>

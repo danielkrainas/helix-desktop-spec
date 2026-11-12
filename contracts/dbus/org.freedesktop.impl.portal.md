@@ -440,3 +440,40 @@ changes.
   (`org.gtk.Notifications.md`, "Activation"). The backend passes those for
   the notifications it added on as this interface's `ActionInvoked`, with
   the same action name and parameter.
+
+## Print (`org.freedesktop.impl.portal.Print`)
+
+- `PreparePrint(handle, app_id, parent_window, title, settings,
+  page_setup, options) -> (response, results)`: let the user choose how
+  to print. `settings` and `page_setup` are GTK's print settings and page
+  setup as string-keyed dictionaries (`GtkPrintSettings`, `GtkPageSetup`
+  serializations: `printer`, `n-copies`, `paper-format`, `PPDName`, …);
+  options `modal` (`b`), `accept_label` (`s`). Results: `settings`,
+  `page-setup`, and `token` (`u`) for a later `Print`.
+- `Print(handle, app_id, parent_window, title, fd, options) -> (response,
+  results)`: print the document in `fd` (PDF, or PostScript). Options:
+  `token` (`u`) from `PreparePrint` (then no dialog is needed), `modal`.
+
+### Helix
+
+- With `org.gnome.desktop.lockdown` `disable-printing` true, both answer
+  2 without a dialog.
+- The dialog (`org.helix.PortalDialog.Dialog`): "Print", "Print “<title>”
+  on:" (or "Choose a printer."), a list of the CUPS printers (`lpstat
+  -e`; the default one, `lpstat -d`, first and chosen; for `PreparePrint`
+  the `printer` of `settings` when listed) and "Print to File", a "Copies"
+  field (1 to 999; others are refused with a warning), buttons "Cancel"
+  and `accept_label` (default "Print").
+- `PreparePrint` answers `settings` with `printer` set to the chosen
+  printer (or "Print to File") and `n-copies` to the copies, `page-setup`
+  as given, and a new `token`; the choice is kept for that token (until
+  used). `Print` with a known token uses its choice; otherwise it shows
+  the dialog first.
+- A printer: the document goes to `lp -d <printer> -n <copies> -t
+  <title> -` on its standard input; response 0 when `lp` succeeds.
+- Print to File: the document is saved in the user's Documents folder
+  (else the home folder) as `<title>.pdf` (`.ps` for PostScript; `/` in
+  the title becomes `-`; "output" without a title), with " (2)" etc. when
+  the name is taken. Copies do not apply.
+- Paper size, page setup, ranges and other print settings are passed
+  through to the app, not shown.
