@@ -127,6 +127,11 @@ the first frame at or after it. Commits of windows not shown (minimized,
 on another workspace) are not held back. `wp_single_pixel_buffer_manager_v1`
 is offered.
 
+**Drawing only what changed.** On bare hardware and nested, a monitor is
+drawn only when something on it changed since the buffer being drawn was
+last shown; when nothing did, Helix looks again about one refresh later
+(frame callbacks still go out), so an idle desktop costs next to nothing.
+
 **Explicit sync** (`wp_linux_drm_syncobj_manager_v1`). Offered when the
 GPU Helix renders with can wait on DRM syncobj timeline points with an
 eventfd (bare hardware: the GPU it drives; nested: the host GPU's render
