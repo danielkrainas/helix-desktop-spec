@@ -46,7 +46,8 @@ interface is not otherwise documented outside GTK and gnome-shell).
 The shell owns the name (once the object is exported) and asks with its
 prompt dialog, the one polkit, keyring and removable-media questions use
 (dialogs take turns). The title is the message's first line, the text
-below it the rest; `icon_name` is not shown.
+below it the rest; above the title, `icon_name` as a 48-pixel theme
+icon (none when empty or not in the icon theme).
 
 - **Passwords.** Fields as `flags` ask: with 2 and 4 a "User name
   (domain\name)" field holding `<default_domain>\<default_user>` (or the

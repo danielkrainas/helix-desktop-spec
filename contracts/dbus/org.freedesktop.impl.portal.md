@@ -469,7 +469,14 @@ the user confirm.
   (answer 1) and "Add".
 - The name is trimmed, its runs of whitespace (newlines too) made single
   spaces and cut to 255 characters; an empty name means the default one.
-  The icon is always returned unchanged (`editable_icon` is not offered).
+  With `editable_icon` the dialog also has a check box "Choose a
+  different icon" (off); accepting with it on opens Helix's file chooser
+  ("Choose an Icon", button "Choose", in the Pictures folder, else home,
+  showing PNG, JPEG and SVG images). The chosen file becomes the icon
+  (`('bytes', <ay>)`) when it is at most 4 MiB and starts like a PNG or
+  JPEG image or holds `<svg` in its first 4 KiB; otherwise, or when the
+  chooser is canceled, the app's icon is returned unchanged (the name
+  still counts: the launcher is added).
   `modal` has no effect (Helix's dialogs are always modal).
 - `RequestInstallToken` answers 2 for every app: Helix lets no app add
   launchers without asking. (Which apps GNOME's backend trusts is not

@@ -44,8 +44,11 @@ shell is the agent.
   `HELIX_NO_POLKIT_AGENT` (any value) keeps it from registering (for
   nested test sessions).
 - The identity: the user running the session when it is among the
-  `unix-user` identities, else the first `unix-user` one; groups are
-  not offered. Without a `unix-user` identity the call fails with
+  `unix-user` identities or belongs (by its primary or supplementary
+  groups) to one of the `unix-group` ones; else the first `unix-user`
+  one; else the first listed member (`/etc/group` member list, through
+  the system's user database) of the first group that has one. The user
+  is not offered a choice. Without any such user the call fails with
   `org.freedesktop.PolicyKit1.Error.Failed`.
 - Only the owner of `org.freedesktop.PolicyKit1` may call the agent;
   others get `org.freedesktop.PolicyKit1.Error.NotAuthorized`.
