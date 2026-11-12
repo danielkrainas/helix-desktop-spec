@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.InputCapture: Helix-private (CC0). The compositor's side of the
+  InputCapture portal, served by helix-comp on the session bus as
+  org.helix.InputCapture at /org/helix/InputCapture. Only the owner of
+  org.freedesktop.impl.portal.desktop.helix (the portal backend) may
+  create sessions; a session belongs to its creator and closes when it
+  leaves the bus. Notes in org.freedesktop.impl.portal.md, "InputCapture".
+-->
+<node>
+  <interface name="org.helix.InputCapture">
+    <!-- capabilities: 1 keyboard, 2 pointer (others are dropped; none is
+         an error). Returns the session's path. -->
+    <method name="CreateSession">
+      <arg name="capabilities" type="u" direction="in"/>
+      <arg name="session_path" type="o" direction="out"/>
+    </method>
+    <!-- 3: keyboard and pointer. -->
+    <property name="SupportedCapabilities" type="u" access="read"/>
+  </interface>
+  <interface name="org.helix.InputCapture.Session">
+    <!-- The zone set and the zones: each monitor's logical width, height,
+         x and y. -->
+    <method name="GetZones">
+      <arg name="zone_set" type="u" direction="out"/>
+      <arg name="zones" type="a(uuii)" direction="out"/>
+    </method>
+    <!-- Replace the session's barriers: (id, (x1, y1, x2, y2)). Returns
+         the ids refused. -->
+    <method name="SetPointerBarriers">
+      <arg name="barriers" type="a(u(iiii))" direction="in"/>
+      <arg name="zone_set" type="u" direction="in"/>
+      <arg name="failed" type="au" direction="out"/>
+    </method>
+    <method name="Enable"/>
+    <method name="Disable"/>
+    <!-- End capture activation_id; with has_position the pointer goes to
+         position. -->
+    <method name="Release">
+      <arg name="activation_id" type="u" direction="in"/>
+      <arg name="has_position" type="b" direction="in"/>
+      <arg name="position" type="(dd)" direction="in"/>
+    </method>
+    <!-- A socket to the compositor's EIS server; the client must be an
+         EIS receiver. -->
+    <method name="ConnectToEIS">
+      <arg name="fd" type="h" direction="out"/>
+    </method>
+    <method name="Close"/>
+    <signal name="Activated">
+      <arg name="activation_id" type="u"/>
+      <arg name="barrier_id" type="u"/>
+      <arg name="cursor_position" type="(dd)"/>
+    </signal>
+    <signal name="Deactivated">
+      <arg name="activation_id" type="u"/>
+      <arg name="cursor_position" type="(dd)"/>
+    </signal>
+    <signal name="Disabled"/>
+    <signal name="ZonesChanged">
+      <arg name="zone_set" type="u"/>
+    </signal>
+    <signal name="Closed"/>
+  </interface>
+</node>

@@ -465,6 +465,74 @@ the user confirm.
   launchers without asking. (Which apps GNOME's backend trusts is not
   documented here.)
 
+## InputCapture (`org.freedesktop.impl.portal.InputCapture`)
+
+Apps that share a keyboard and mouse with other computers (Input Leap,
+Synergy) capture the local input once the pointer leaves the screen
+through a barrier they set, and get it as an EIS (libei) receiver.
+
+- `CreateSession(handle, session_handle, app_id, parent_window, options)
+  -> (response, results)`: `capabilities` (`u`: 1 keyboard, 2 pointer, 4
+  touchscreen) asked; results `capabilities`, those granted.
+- `GetZones(handle, session_handle, app_id, options)`: results `zones`
+  (`a(uuii)`: each zone's width, height, x and y, in logical
+  coordinates) and `zone_set` (`u`), naming this set of zones.
+- `SetPointerBarriers(handle, session_handle, app_id, options, barriers,
+  zone_set)`: each barrier a vardict with `barrier_id` (`u`, non-zero) and
+  `position` (`(iiii)`: x1, y1, x2, y2; horizontal or vertical). Results:
+  `failed_barriers` (`au`).
+- `Enable`, `Disable`, `Release(session_handle, app_id, options)`:
+  `Release` takes `activation_id` (`u`) and optionally `cursor_position`
+  (`(dd)`), where the pointer goes.
+- `ConnectToEIS(session_handle, app_id, options) -> fd`.
+- Signals (each with the session handle and a vardict): `Activated`
+  (`activation_id`, `barrier_id`, `cursor_position`) when input is
+  captured; `Deactivated` (`activation_id`, `cursor_position`) when it is
+  given back; `Disabled` when the session can no longer capture until
+  enabled again; `ZonesChanged` (`zone_set`).
+- Properties `SupportedCapabilities` (`u`) and `version` (`u`). Version 2
+  adds `CreateSession2` and `Start` (creating, then asking), with
+  `persist_mode`/`restore_data` and a clipboard.
+
+### Helix
+
+- `version` 1 (the frontend then calls `CreateSession`),
+  `SupportedCapabilities` 3 (keyboard and pointer; touchscreens are not
+  captured).
+- `CreateSession` asks with the shell's dialog (`org.helix.PortalDialog`):
+  "Allow Input Capture?", "<app name> wants to take over the pointer and
+  keyboard when the pointer leaves the screen. Super+Escape gives them
+  back.", "Deny" (answer 1) and "Allow". Allowed, the compositor makes the
+  session (`org.helix.InputCapture.xml`); asking for no capability Helix
+  has answers 2.
+- The zones are the monitors' logical areas; the zone set changes when
+  they do (and the session's barriers are then dropped, with
+  `ZonesChanged`). `SetPointerBarriers` with an old zone set refuses every
+  barrier; otherwise a barrier is refused when its id is 0, it is
+  diagonal, or it does not lie on an edge of a zone (on a side's line,
+  within it).
+- An enabled session with an EIS client captures when the pointer moves
+  across one of its barriers (the move's start and end on two sides of
+  the barrier's line, crossing it within the barrier); the pointer stays
+  where the move stopped, which `Activated` reports. Activation ids count
+  up from 1. While captured the pointer is hidden and every key, button,
+  scroll and pointer motion (from devices and remote desktop sessions)
+  goes to the session's EIS clients instead of the desktop; absolute
+  pointer positions and touch are not captured.
+- The EIS client must be a receiver. Its seat offers a keyboard (with the
+  current keymap) and a pointer (motion, buttons, scrolling), as the
+  session's capabilities allow; while captured the devices are emulating,
+  with the activation id as the sequence number. Events come one per
+  frame.
+- `Release` with the current activation id ends the capture (the pointer
+  goes to `cursor_position`, kept on the monitors) and emits
+  `Deactivated`; `Disable` ends a capture too. Super+Escape ends a capture
+  at any time: the client gets the Super key's release, the session is
+  disabled, and `Deactivated` then `Disabled` are emitted. A capture also
+  ends when its EIS client disconnects.
+- Closing the portal session closes the compositor's, and the other way
+  round.
+
 ## Lockdown (`org.freedesktop.impl.portal.Lockdown`)
 
 Read-write boolean properties apps check before offering a feature:

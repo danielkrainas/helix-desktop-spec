@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!-- Portal backend interface (xdg-desktop-portal), version 1 as Helix
+     serves it (version 2 adds CreateSession2 and Start); notes in
+     org.freedesktop.impl.portal.md -->
+<node>
+  <interface name="org.freedesktop.impl.portal.InputCapture">
+    <method name="CreateSession">
+      <arg name="handle" type="o" direction="in"/>
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="parent_window" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="GetZones">
+      <arg name="handle" type="o" direction="in"/>
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="SetPointerBarriers">
+      <arg name="handle" type="o" direction="in"/>
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="barriers" type="aa{sv}" direction="in"/>
+      <arg name="zone_set" type="u" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="Enable">
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="Disable">
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="Release">
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="ConnectToEIS">
+      <arg name="session_handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="fd" type="h" direction="out"/>
+    </method>
+    <signal name="Disabled">
+      <arg name="session_handle" type="o"/>
+      <arg name="options" type="a{sv}"/>
+    </signal>
+    <signal name="Activated">
+      <arg name="session_handle" type="o"/>
+      <arg name="options" type="a{sv}"/>
+    </signal>
+    <signal name="Deactivated">
+      <arg name="session_handle" type="o"/>
+      <arg name="options" type="a{sv}"/>
+    </signal>
+    <signal name="ZonesChanged">
+      <arg name="session_handle" type="o"/>
+      <arg name="options" type="a{sv}"/>
+    </signal>
+    <property name="SupportedCapabilities" type="u" access="read"/>
+    <property name="version" type="u" access="read"/>
+  </interface>
+</node>
