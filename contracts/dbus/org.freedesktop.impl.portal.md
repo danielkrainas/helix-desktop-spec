@@ -368,3 +368,43 @@ choice is left. `UpdateChoices` is accepted and ignored (see `gaps.md`).
   `Name=<app_id>`, `Exec=` the command line (each argument quoted as the
   Desktop Entry specification says), `X-Flatpak=<app_id>`, and
   `DBusActivatable=true` with flag 1; result true when that worked.
+
+## Wallpaper (`org.freedesktop.impl.portal.Wallpaper`)
+
+- `SetWallpaperURI(handle, app_id, parent_window, uri, options) ->
+  response`: set the picture at `uri` (the frontend hands local files over
+  as `file:` URIs). Options: `show-preview` (`b`): let the user see the
+  picture first; `set-on` (`s`): `background`, `lockscreen` or `both`
+  (the default). No results.
+
+### Helix
+
+- Only local files are accepted; anything else, or an unknown `set-on`,
+  answers 2.
+- With `show-preview`, the shell's dialog (`org.helix.PortalDialog.Dialog`)
+  shows "Set Background", "<app name> wants to set this picture as the
+  background / the lock screen / the background and lock screen.", the
+  picture scaled to fit, and buttons "Cancel" (answer 1) and "Set".
+- The file is copied to `$XDG_DATA_HOME/backgrounds/` (the app's copy may
+  go away), named `<YYYY-MM-DD-HH-MM-SS>-<original name>`, and the copy's
+  URI is written to `org.gnome.desktop.background` `picture-uri` and
+  `picture-uri-dark`, and/or `org.gnome.desktop.screensaver`
+  `picture-uri`. A `picture-options` of `none` becomes `zoom` so the
+  picture shows.
+
+## Lockdown (`org.freedesktop.impl.portal.Lockdown`)
+
+Read-write boolean properties apps check before offering a feature:
+`disable-printing`, `disable-save-to-disk`, `disable-application-handlers`,
+`disable-location`, `disable-camera`, `disable-microphone`,
+`disable-sound-output`.
+
+### Helix
+
+Each property is a GSettings key: the first three are the same-named keys
+of `org.gnome.desktop.lockdown`, `disable-location` is the opposite of
+`org.gnome.system.location` `enabled`, and the last three are the
+same-named keys of `org.gnome.desktop.privacy` (key tables in
+`contracts/gsettings/`). Setting a property writes the key (an error when
+the key is not writable). `PropertiesChanged` is emitted when a key
+changes.

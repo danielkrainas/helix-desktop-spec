@@ -65,6 +65,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md)
 - [`org.gnome.desktop.sound`](org.gnome.desktop.sound.md)
 - [`org.gnome.desktop.privacy`](org.gnome.desktop.privacy.md)
+- [`org.gnome.desktop.lockdown`](org.gnome.desktop.lockdown.md), [`org.gnome.system.location`](org.gnome.system.location.md)
 - [`org.gnome.desktop.break-reminders`](org.gnome.desktop.break-reminders.md), [`org.gnome.desktop.screen-time-limits`](org.gnome.desktop.screen-time-limits.md) — Helix's behavior: [wellbeing.md](wellbeing.md)
 - [`org.gnome.desktop.media-handling`](org.gnome.desktop.media-handling.md) — Helix's behavior: [removable-media.md](removable-media.md)
 - [`org.gnome.desktop.peripherals.trackball`](org.gnome.desktop.peripherals.trackball.md), [`org.gnome.desktop.peripherals.pointingstick`](org.gnome.desktop.peripherals.pointingstick.md)
