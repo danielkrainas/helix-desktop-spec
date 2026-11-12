@@ -431,7 +431,7 @@ monitor (the corner pixel) shows the overview, or hides it when it (or the
 launcher) is shown. The corner works again once the pointer has left the
 32×32 pixel square at the corner. It does nothing while a pointer button
 is held, while the session is locked, while a fullscreen window is on the
-primary monitor, or when another monitor lies to the left of or above the
+primary monitor, while the screenshot UI is shown, or when another monitor lies to the left of or above the
 corner (it is then no screen corner).
 
 The launcher (the Apps button, `toggle-application-view`,

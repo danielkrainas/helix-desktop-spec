@@ -76,16 +76,31 @@ and the message `Operation was cancelled`.
 
 ## Screenshot UI (Helix)
 
-Shown by `InteractiveScreenshot` and by the `show-screenshot-ui` key
-(`contracts/gsettings/shell-keys.md`). It dims every monitor and shows a
-hint:
+Shown by `InteractiveScreenshot` and by the `show-screenshot-ui` and
+`show-screen-recording-ui` keys (`contracts/gsettings/shell-keys.md`). It
+covers every monitor; a toolbar at the bottom of the primary monitor
+holds, from the left:
 
-- Dragging with the primary button selects an area on that monitor;
-  releasing the button captures it.
-- Enter or Space captures the whole screen.
-- Escape or the secondary button cancels.
+- three modes, one chosen (S, C, W):
+  - **Area** (the start): dragging with the primary button selects a
+    rectangle on one monitor, which is shown undimmed with the rest
+    dimmed; dragging again replaces it;
+  - **Screen**: every monitor, nothing dimmed;
+  - **Window**: the window under the pointer (topmost of the active
+    workspace's windows) is outlined; clicking one selects it;
+- **Screenshot** / **Record** (V switches): what Capture does. Record is
+  offered only from the keys, not to `InteractiveScreenshot`; Window
+  cannot be recorded (choosing Record leaves Window for Area);
+- **Show Pointer** (P): whether the pointer is in the image or recording
+  (off at the start);
+- **Capture** (or **Record**), also Enter or Space: takes the screenshot
+  of the selection, or starts recording it
+  (`contracts/dbus/org.gnome.Shell.Screencast.md`). It does nothing in
+  Area mode before a rectangle is selected, or in Window mode before a
+  window is.
 
-The UI is not part of the capture. Images are saved as
+Escape or the secondary button cancels. The UI is not part of the
+capture. Images are saved as
 `Screenshot From YYYY-MM-DD HH-MM-SS.png` (local time) in a `Screenshots`
 folder inside the pictures directory (as for base names above), which is
 created if needed.
