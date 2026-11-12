@@ -542,7 +542,16 @@ The switches act on (all on the system bus):
   (`org.freedesktop.DBus.ObjectManager` of `org.bluez` at `/`, objects with
   `org.bluez.Device1` `Paired` true), by `Alias`, at most eight, with
   "Connected" for connected ones. Choosing one calls `Connect()` or, when
-  connected, `Disconnect()`. Pairing new devices is left to Settings.
+  connected, `Disconnect()`.
+- **Pair New Device…**, the last row of the device list: starts discovery
+  on every powered adapter (`org.bluez.Adapter1` `StartDiscovery()`); the
+  list then shows the unpaired devices found that have a name, at most
+  eight, under the heading "Nearby Devices". Choosing one calls
+  `Pair()` (codes go through the shell's pairing agent,
+  `contracts/dbus/org.bluez.Agent1.md`), then `Trusted` true and
+  `Connect()`; when pairing fails a notification "Cannot pair with
+  <name>" gives the reason. Closing the list or the menu stops discovery
+  (`StopDiscovery()`).
 - The lists are read with the rest of the status (see "System status");
   "No Networks" or "No Devices" when empty.
 
