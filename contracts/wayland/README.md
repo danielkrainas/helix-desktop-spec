@@ -359,8 +359,15 @@ Actions: `toggle-maximize` maximizes or restores;
 `toggle-maximize-horizontally` / `-vertically` fill the work area in that
 direction only (or restore); `minimize`; `lower` puts the window below
 all others; `menu` opens the window menu (see "Window menu and window
-keys") at the pointer; `none` and `toggle-shade` (Helix does not shade
-windows) do nothing.
+keys") at the pointer; `toggle-shade` rolls the window up to its title
+bar, or back down; `none` does nothing.
+
+A **shaded** window shows only its title bar: its contents are not drawn
+and the pointer goes through where they were (to what lies below); its
+frame's resize borders are gone. It keeps its size, place, workspace and
+focus (keys still go to it). Shading is for windows Helix frames (X11
+windows); it lasts until toggled again or the window closes. The X11
+`_NET_WM_STATE_SHADED` state is not set.
 
 Around a framed window (left, right, bottom, and above the title bar) is
 an invisible border `org.gnome.mutter draggable-border-width` logical
