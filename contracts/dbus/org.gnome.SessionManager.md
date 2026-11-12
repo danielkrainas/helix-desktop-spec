@@ -115,6 +115,41 @@ manager and xdg-desktop-portal; apps use the portal.
   `RegisterRestore` until it reports them deleted.
 - Ids look like `helix-<session>-<n>`, `<session>` random per login.
 
+## Autostart
+
+Apps start with the session through autostart files: desktop files
+(`Type=Application`) in the `autostart` directory under
+`$XDG_CONFIG_HOME` and each of `$XDG_CONFIG_DIRS` (freedesktop.org Desktop
+Application Autostart Specification). A file in an earlier directory hides
+files of the same name in later ones.
+
+GNOME adds keys to these files (not in the freedesktop.org
+specifications), among them:
+
+- `AutostartCondition`: when to run the app;
+  `GSettings <schema> <key>` runs it while that boolean key is true.
+- `X-GNOME-Autostart-enabled=false`: do not start it.
+
+### Helix
+
+- Autostart runs only when the session config's `[session]` section says
+  `autostart = true` (Helix's default config does).
+- Once the session's components are up (before apps are restored), each
+  autostart file is started unless it has `Hidden=true` or
+  `X-GNOME-Autostart-enabled=false`, its `OnlyShowIn` names none of the
+  desktops in `XDG_CURRENT_DESKTOP` (or its `NotShowIn` names one), its
+  `TryExec` program is not found, or its condition does not hold.
+- Conditions: `GSettings <schema> <key>` (a boolean key of an installed
+  schema; followed: the app is started when the key becomes true and
+  sent SIGTERM when it becomes false), `if-exists <file>` and
+  `unless-exists <file>` (a path under `$XDG_CONFIG_HOME`, checked once).
+  A file with any other condition is not started.
+- `Exec` is run directly with the components' environment; its field
+  codes are dropped.
+- Not supported: `X-GNOME-Autostart-Phase`, `X-GNOME-Autostart-Delay`,
+  `X-GNOME-AutoRestart` (all autostart apps start at the same point, at
+  once, and are not restarted).
+
 ## Client and inhibitor objects
 
 `RegisterClient` returns `/org/gnome/SessionManager/Client<n>`; that object

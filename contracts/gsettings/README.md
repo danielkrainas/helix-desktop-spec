@@ -51,7 +51,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md)
 - [`org.gnome.desktop.a11y.interface`](org.gnome.desktop.a11y.interface.md)
 - [`org.gnome.desktop.a11y.keyboard`](org.gnome.desktop.a11y.keyboard.md) — Helix's behavior: [a11y-keyboard.md](a11y-keyboard.md)
-- [`org.gnome.desktop.a11y.magnifier`](org.gnome.desktop.a11y.magnifier.md)
+- [`org.gnome.desktop.a11y.magnifier`](org.gnome.desktop.a11y.magnifier.md) — Helix's magnifier and screen reader: [a11y-magnifier.md](a11y-magnifier.md)
 - [`org.gnome.desktop.a11y.mouse`](org.gnome.desktop.a11y.mouse.md)
 - [`org.gnome.desktop.wm.preferences`](org.gnome.desktop.wm.preferences.md)
 - [`org.gnome.desktop.session`](org.gnome.desktop.session.md)

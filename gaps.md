@@ -53,6 +53,15 @@ Living log of missing, unclear, or underspecified contracts.
   and what the timeout turns off) is not documented by the schema; Helix's
   choices are in `contracts/gsettings/a11y-keyboard.md`. Helix does not
   implement `org.gnome.desktop.a11y.mouse` or the universal access menu.
+- Magnifier: GNOME's zoom steps for `magnifier-zoom-in` / `-out`, how
+  `proportional` and `push` tracking move the view exactly, and the
+  crosshairs' clip gap are not documented; Helix's choices are in
+  `contracts/gsettings/a11y-magnifier.md`. Helix does not support the
+  magnifier's color effects, lens mode, screen positions other than full
+  screen, or focus and caret tracking.
+- Autostart: gnome-session's autostart phases, delays, restarts and its
+  full list of `AutostartCondition` forms are not documented here;
+  Helix's subset is in `org.gnome.SessionManager.md` ("Autostart").
 - Window placement across monitors: mutter's rules (where new windows open, what happens to windows of a monitor that goes away) are not documented here; Helix's are in `contracts/wayland/README.md` ("Monitors and windows").
 - Workspaces: GNOME's exact rules for dynamic workspaces (e.g. when an emptied workspace is removed, focus after switching) and for `workspaces-only-on-primary` are not documented here; Helix's are in `contracts/gsettings/workspaces.md`. Helix lays workspaces out in a row (as GNOME 51 does), so the `-up`/`-down` workspace keys do nothing; its overview (pictures renewed twice a second) and workspace switch popup are its own design (GNOME's is not documented here).
 - Night Light: how GNOME turns a color temperature into gamma ramps, how it fades, and when it re-checks the schedule are undocumented; Helix's choices are in `contracts/gsettings/night-light.md`. The behavior of gnome-settings-daemon's `org.gnome.SettingsDaemon.Color` (what writing `Temperature` does, how long `DisabledUntilTomorrow` lasts, the preview's limits, `Sunrise`/`Sunset` without a location) is undocumented; Helix's is in `org.gnome.SettingsDaemon.Color.md`.

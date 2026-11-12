@@ -111,8 +111,14 @@ Nothing happens when no player is running. GNOME also lets apps grab these
 keys through gnome-settings-daemon's `org.gnome.SettingsDaemon.MediaKeys`;
 Helix does not offer that interface (see `gaps.md`).
 
+## Accessibility
+
+`magnifier`, `magnifier-zoom-in`, `magnifier-zoom-out`, `screenreader` and
+`on-screen-keyboard` (also `org.gnome.settings-daemon.plugins.media-keys`)
+are described in `a11y-magnifier.md`.
+
 ## While locked
 
-Volume, brightness and playback keys keep working while the session is
-locked (the on-screen display is not shown on the lock screen). Screenshot
+Volume, brightness, playback and accessibility keys keep working while
+the session is locked (the on-screen display is not shown on the lock screen). Screenshot
 keys do not.
