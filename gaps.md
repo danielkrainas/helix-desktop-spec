@@ -92,6 +92,7 @@ Living log of missing, unclear, or underspecified contracts.
   uses subsearches, its timeouts and how it shows results (grid or list) are
   not documented here; Helix's choices are in
   `org.gnome.Shell.SearchProvider2.md`.
+- Dock: vanilla GNOME has no dock; Helix's follows Ubuntu's Dash to Dock settings, whose behavior (animations, pressure barriers, previews, multi-monitor docks, Unity launcher counts) is documented only by that extension; Helix's subset is in `contracts/wayland/README.md` ("Dock").
 - Favorites and app folders: GNOME's app grid (pages, `app-picker-layout`,
   dragging apps into folders) and dash (reordering by dragging, its context
   menus) are not documented here; Helix shows favorites in a dash and the

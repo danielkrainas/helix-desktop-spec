@@ -496,10 +496,109 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   means the app has windows. Clicking an icon activates the app's most
   recently used window, or launches the app when it has none, and hides
   the overview.
+- **Switching to apps.** `org.gnome.shell.keybindings
+  switch-to-application-1` … `-9` (default Super+1 … Super+9) act on the
+  first to ninth app of the dash (favorites, then other running apps), as
+  a click on the dock does with `cycle-windows`: the app's newest window
+  is activated, the next of its windows when one of them has focus, and an
+  app without windows is launched.
 - **Launcher.** With an empty search the launcher lists the favorites
   first (tagged "Favorite"), then the app folders, then the other apps
   that are in no folder, by name. Ctrl+D adds the selected app to the
   end of the favorites, or removes it.
+
+## Dock (Helix)
+
+Besides the overview's dash, Helix shows a dock on the desktop, like
+Ubuntu's Dash to Dock. It follows that extension's settings,
+`org.gnome.shell.extensions.dash-to-dock` (key table in
+`contracts/gsettings/org.gnome.shell.extensions.dash-to-dock.md`), when
+the schema is installed, so Ubuntu's Settings controls it; without the
+schema it uses the defaults below. It is off while `org.gnome.shell
+disabled-extensions` lists `ubuntu-dock@ubuntu.com` or
+`dash-to-dock@micxgx.gmail.com`, and it is not shown on the lock screen,
+in the overview (which has its dash) or the launcher.
+
+- **Where.** On one monitor: the one whose connector is
+  `preferred-monitor-by-connector`, else the primary monitor (`primary`,
+  the default). On the edge `dock-position` names (`BOTTOM` by default;
+  `TOP` is below the panel). Centered on the edge, or along all of it with
+  `extend-height` (then the icons start at the edge's beginning unless
+  `always-center-icons`). `multi-monitor`, `isolate-monitors` and
+  `height-fraction` are not used.
+- **What.** In order: the Show Apps button when `show-apps-at-top`; the
+  favorites (`show-favorites`); apps with windows that are not favorites,
+  in the order their first window opened (`show-running`; with
+  `isolate-workspaces`, only windows of the current workspace count);
+  mounted drives that can be unmounted or ejected (`show-mounts`:
+  removable drives, discs, phones, network shares); the Trash
+  (`show-trash`, its icon full or empty); the Show Apps button
+  (`show-show-apps-button`) unless at the top. A thin line separates
+  these groups.
+- **Looks.** Icons are `dash-max-icon-size` (default 48) pixels, made
+  smaller (to 16) when they do not fit the edge, unless
+  `icon-size-fixed`. The bar is dark, with opacity `background-opacity`
+  for `transparency-mode` `FIXED`, 0.8 for `DEFAULT`, and for `DYNAMIC`
+  `background-opacity` or opaque while a window touches the dock. Under
+  (or beside) each running app, one mark per window (at most four):
+  `running-indicator-style` `DOTS` / `DEFAULT` dots, `SQUARES` / `BINARY`
+  squares, `DASHES` / `SEGMENTED` dashes, `SOLID` / `METRO` one bar; the
+  other styles are dots. The focused app's icon is highlighted. With
+  `show-icons-notifications-counter`, an app with notifications in the
+  list has a red badge with their number (9+ above nine). Pointing at an
+  item shows its name (the app's, the drive's, "Trash", "Show Apps")
+  beside the bar.
+- **Showing and hiding.** With `dock-fixed` the dock is always shown and
+  keeps its room (windows are not placed under it). Otherwise it is above
+  windows, and with `intellihide` it hides while a window of the current
+  workspace overlaps it, which windows counting by `intellihide-mode`:
+  `ALL_WINDOWS`, `FOCUS_APPLICATION_WINDOWS` (the focused app's, the
+  default), `MAXIMIZED_WINDOWS` (those spanning the monitor along the
+  dock's edge) or `ALWAYS_ON_TOP` (none). With `autohide` and without
+  `intellihide` it is hidden unless the pointer is on it. A hidden dock
+  with `autohide` shows again when the pointer reaches the screen edge
+  (after `show-delay` seconds) and hides `hide-delay` seconds after the
+  pointer leaves it (1.5 seconds after showing if the pointer never comes
+  onto it). While the focused window covers the whole monitor (full
+  screen) the dock is hidden, and shows at the edge only with
+  `autohide-in-fullscreen`. Helix triggers at the edge pixel, without
+  pressure (`require-pressure-to-show`, `pressure-threshold` are not
+  used), and does not animate (`animation-time`).
+- **Clicking an app.** `click-action` (left button) and
+  `middle-click-action` decide (`shift-click-action` is not used: the
+  shell does not see modifiers on dock clicks): `cycle-windows` activates
+  the app's newest window, or when one of its windows has focus the next
+  of its windows (by the order they opened); `minimize` minimizes the
+  app's windows when one has focus, else activates; `launch` starts it
+  again; `minimize-or-overview` minimizes when focused, opens the
+  overview when it has several windows, else activates;
+  `focus-or-appspread` likewise without minimizing; `previews`,
+  `focus-or-previews`, `minimize-or-previews` and
+  `focus-minimize-or-previews` show a menu of its windows when it has
+  several (Helix has no window previews); `focus-minimize-or-appspread`
+  minimizes when focused, else opens the overview or activates; `quit`
+  closes its windows; `skip` does nothing. An app without windows is
+  launched (except with `skip`). A drive opens in the file manager, the
+  Trash opens, Show Apps opens or closes the launcher.
+- **Scrolling** over the dock, by `scroll-action`: `cycle-windows`
+  activates the next (or previous) window of the app under the pointer;
+  `switch-workspace` switches to the workspace to the right (or left).
+- **Right click** opens a menu. For an app: its windows by title (each
+  activates it), then "Open" (no windows) or "New Window", the desktop
+  file's actions (`Actions=`), then "Pin to Dash" or "Unpin" (adds it to
+  or removes it from `favorite-apps`), "App Details" (GNOME Software's
+  page for it, when `gnome-software` is installed), and for a running app
+  "Quit" or "Quit <n> Windows" (closes its windows). For a drive: "Open",
+  "Eject" (or "Unmount"). For the Trash: "Open" and, when it holds
+  anything, "Empty Trash", which asks first ("Empty Trash?", "All items in
+  the Trash will be permanently deleted.", "Cancel" / "Empty Trash") and
+  then empties the trash of every mount (as `gio trash --empty` does).
+- **Dragging** an app's icon along the dock moves it among the favorites
+  (a running app dropped there becomes a favorite at that place);
+  dropping a favorite more than 60 pixels away from the dock unpins it.
+- `hot-keys`, `app-hotkey-*`, the window previews, launcher counts and
+  progress (`com.canonical.Unity.LauncherEntry`), urgent-app animation
+  and the remaining keys are not used.
 
 **App folders** are `org.gnome.desktop.app-folders` `folder-children`; each
 child `<id>` is a `org.gnome.desktop.app-folders.folder` at
