@@ -43,3 +43,20 @@ screen is shown, then releases the inhibitor so the system can sleep. On
 ## Unlocking
 
 Unlocking requires authenticating as the session's user through PAM.
+
+## Lock screen (Helix)
+
+Under the clock, the user's name and the password field, the lock screen
+shows:
+
+- **Media**: the player the playback keys control
+  (`org.mpris.MediaPlayer2.Player.md`): its track's title and artists and
+  buttons for previous, play/pause and next, which work while locked. It
+  is read when the screen locks, every 5 seconds while locked, and after
+  each button.
+- **Notifications**, with `org.gnome.desktop.notifications
+  show-in-lock-screen` true: for the notifications that arrived since the
+  screen locked and are still in the list, one line per app, "<app>: <n>
+  notification(s)", at most five apps (most notifications first, then by
+  name). Their summaries and bodies are never shown.
+

@@ -119,9 +119,11 @@ lists the apps named in `org.gnome.desktop.notifications`
 - `enable-sound-alerts` false: no sound.
 - Critical notifications get a banner even when banners are off (as with
   do not disturb), but not when `enable` is false.
-- `force-expanded`, `show-in-lock-screen` and `details-in-lock-screen` have
-  no effect (Helix's banners always show the body, and the lock screen
-  shows no notifications).
+- `force-expanded` and `details-in-lock-screen` have no effect (Helix's
+  banners always show the body; the lock screen never shows notification
+  text). The global `show-in-lock-screen` decides whether the lock screen
+  counts the notifications that arrived while locked
+  (`org.gnome.ScreenSaver.md`, "Lock screen").
 
 ### The notification list (persistence)
 

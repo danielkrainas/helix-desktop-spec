@@ -103,8 +103,9 @@ Living log of missing, unclear, or underspecified contracts.
 - Power management: gnome-settings-daemon's dim timing, its idle actions'
   details, its battery notifications' wording and thresholds and its lid
   handling are not documented here; Helix's choices are in
-  `contracts/gsettings/power.md`. Helix does not turn the built-in panel off
-  when the lid closes with an external monitor connected.
+  `contracts/gsettings/power.md`. How mutter lays out monitors when the
+  lid closes or opens (it keeps per-lid-state configurations) is not
+  documented here; Helix's simpler rule is in the same file.
 - Input source indicator: how gnome-shell abbreviates IBus engines (it uses
   the engine's symbol) and what else its menu offers (showing the layout)
   are not documented here; Helix's are in `contracts/gsettings/input-settings.md`.
@@ -117,5 +118,6 @@ Living log of missing, unclear, or underspecified contracts.
 - Privacy indicators: which audio streams gnome-shell counts as using the microphone (e.g. how it treats level meters and recordings of outputs), how it tells cameras from other video sources, and how its indicators look and what they list are not documented here; Helix's choices are in `contracts/wayland/README.md` ("System status").
 - Message tray calendar: gnome-shell reads events through its own helper (`gnome-shell-calendar-server`, a private interface) and expands recurrences with libical; Helix reads EDS directly (`contracts/dbus/org.gnome.evolution.dataserver.md`) and expands only the rule parts listed in `contracts/gsettings/calendar.md` (no `BYMONTHDAY`, `BYSETPOS`, `RDATE`, numbered `BYDAY` and the like). gnome-shell's tray layout, its event list's wording, how it finds a world clock's time zone (GWeather's location database) and its media controls are not documented here; Helix's choices are in `contracts/gsettings/calendar.md`. Helix finds a world clock's time zone from the nearest `zone1970.tab` city, which can be wrong near zone borders.
 - Wellbeing: what gnome-shell does with the break-reminder and screen-time settings (how it counts active time, what its break screen and notifications say and offer, how `delay-seconds` and the overdue reminders work, where and how it keeps screen time history, how it turns the screen gray) is not documented here; Helix's choices are in `contracts/gsettings/wellbeing.md`. GNOME's history file is not read or written by Helix.
-- On-screen keyboard: gnome-shell's keyboard (its layouts, which come from its own data files, its symbol and emoji pages, word suggestions, when it shows for touch versus pointer input, and how it moves windows out of the way) is not documented here; Helix's is in `contracts/gsettings/screen-keyboard.md`. Helix's keyboard has no symbol or emoji pages and no suggestions.
+- On-screen keyboard: gnome-shell's keyboard (its layouts, which come from its own data files, its symbol and emoji pages, word suggestions, when it shows for touch versus pointer input, and how it moves windows out of the way) is not documented here; Helix's is in `contracts/gsettings/screen-keyboard.md`. Helix's keyboard has fixed symbol and emoji pages (not per language) and no suggestions.
 - Bluetooth pairing: how gnome-shell and Settings word and lay out their pairing dialogs, which agent capability they register with, and how long discovery runs are not documented here; Helix's choices are in `contracts/dbus/org.bluez.Agent1.md` and `contracts/wayland/README.md` ("Wi-Fi networks and Bluetooth devices"). Helix does not offer OBEX file transfers or device settings.
+- Weather: gnome-shell gets weather through libgweather (its providers, caching, and how `automatic-location` finds the place) and its weather section's look is not documented here; Helix asks MET Norway directly and ignores `automatic-location` (`contracts/gsettings/calendar.md`, "Weather"). The `org.gnome.shell.weather` key table was taken from gnome-shell 46.

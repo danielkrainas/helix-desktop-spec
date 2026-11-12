@@ -52,6 +52,16 @@ It happens once per idle period. A suspend inhibitor (flag 4) holds back
 - While an external monitor is connected (DisplayConfig
   `HasExternalMonitor`), the shell holds logind's `handle-lid-switch`
   lock, so closing the lid does not suspend.
+- The compositor follows UPower's `LidIsClosed` (`org.freedesktop.UPower`
+  on the system bus, while `LidIsPresent`). When the lid closes and a
+  monitor other than the built-in one (DisplayConfig `is-builtin`) is on,
+  it applies the current configuration without the built-in monitors, as
+  a temporary change: the remaining logical monitors are moved so the
+  layout starts at 0,0, and the first of them becomes primary when the
+  built-in one was. When the lid opens, the configuration from before is
+  applied again if the same monitors are still connected; otherwise the
+  built-in monitor stays off until the user changes the configuration.
+  Monitors plugged in while the lid is closed are handled as usual.
 
 ## Battery
 

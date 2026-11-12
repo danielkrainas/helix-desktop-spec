@@ -30,7 +30,24 @@ first and second (Shift) levels. Keys whose levels give no character
 
 - row 1 ends with **Backspace**; row 2 starts with **Tab**; row 3 ends
   with **Enter**; row 4 has **Shift** at both ends;
-- row 5: **Hide**, **Space**, **←**, **→**.
+- row 5 (on every page): **Hide**, **?123** (on the symbols page:
+  **ABC**), **Emoji** (on the emoji page: **ABC**), **Space**, **←**,
+  **→**.
+
+## Pages
+
+The letters page above, and two more; each keeps row 5 and ends its
+first row with Backspace:
+
+- **Symbols**: `1234567890`; Tab, `@#$%&*-+()/`; `!"':;,.?_=` and Enter;
+  `~` `` ` `` `|` `\` `<>` `[]` `{}` `^` `€`.
+- **Emoji**: three rows of ten: 😀 😂 😊 😍 😘 😎 🤔 😢 😭 😡 / 👍 👎 👏 🙏
+  💪 👋 🤝 ✌ 👌 🙌 / ❤ 💔 ⭐ 🔥 🎉 ✅ ❌ ⚠ 💡 ☕. They are drawn with the
+  font fontconfig gives for `emoji:color=false` (a font with outlines;
+  color emoji fonts are not drawn), and type the character.
+
+The keyboard opens on the letters page; typing a character does not
+change the page.
 
 ## Typing
 

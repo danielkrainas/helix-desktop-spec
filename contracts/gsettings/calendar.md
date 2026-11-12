@@ -46,6 +46,43 @@ current time (24-hour), with the weekday when it differs from today's
 here. The time zone is the one whose principal city in the system's
 `zone1970.tab` is nearest to the location (see `gaps.md`).
 
+## Weather
+
+With a location in `org.gnome.shell.weather locations` (keys below), a
+"Weather" section after the world clocks: the first location's name, the
+current temperature and conditions with an icon, then the next four hours
+(hour and temperature). The forecast comes from MET Norway's public
+location forecast (`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=<lat>&lon=<lon>`,
+coordinates to four decimals, with a `User-Agent` naming Helix and its
+project page), at most every 30 minutes per location; the request is
+made only while a location is configured. Without an answer the section
+says "Weather unavailable".
+
+- Conditions come from the forecast's symbol code (its name without the
+  `_day`/`_night`/`_polartwilight` ending): `clearsky` "Clear"
+  (`weather-clear-symbolic`, `weather-clear-night-symbolic` at night),
+  `fair` "Mostly Clear" and `partlycloudy` "Partly Cloudy"
+  (`weather-few-clouds-symbolic`, `-night-` at night), `cloudy`
+  "Cloudy" (`weather-overcast-symbolic`), `fog` "Fog"
+  (`weather-fog-symbolic`), names containing `thunder` "Thunderstorm"
+  (`weather-storm-symbolic`), `snow` "Snow" (`weather-snow-symbolic`),
+  `sleet` "Sleet", `rain`/`showers` "Rain" (`weather-showers-symbolic`;
+  `lightrain`, `lightrainshowers` "Light Rain"
+  (`weather-showers-scattered-symbolic`)); others "Unknown".
+- Temperatures are shown in whole degrees: `org.gnome.GWeather4
+  temperature-unit` `centigrade` (°C), `fahrenheit` (°F), `kelvin` (K);
+  `default` follows the locale's measurement system (glibc
+  `LC_MEASUREMENT` `measurement`: 2, US customary, gives °F; else °C).
+- `automatic-location` is not used (see `gaps.md`).
+
+`org.gnome.shell.weather` (from gnome-shell; the compiled schema at hand
+was gnome-shell 46's):
+
+| Key | Type | Default | Allowed values |
+|-----|------|---------|----------------|
+| `automatic-location` | `b` | `false` |  |
+| `locations` | `av` | `[]` | serialized GWeather locations, as for world clocks |
+
 ## Media
 
 The player the playback keys control (`contracts/dbus/org.mpris.MediaPlayer2.Player.md`),
