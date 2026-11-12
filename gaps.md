@@ -92,8 +92,9 @@ tried them with the real hardware. Remove an entry once it has been.
   how much pressure and its timing are not documented. Helix's (100
   unaccelerated pixels within a second; reaching the corner for absolute
   pointers) is in `contracts/wayland/README.md`, "Overview".
-- Polkit agent: what gnome-shell's dialog shows and how it picks among
-  identities (it offers a choice of users) are not documented here, nor is
+- Polkit agent: what gnome-shell's dialog shows and how it lets the user
+  pick among identities (a choice of users in the dialog; Helix asks
+  first, in a dialog of its own) are not documented here, nor is
   polkit's helper protocol in polkit's own documentation (it is private to
   libpolkit-agent); Helix's choices are in
   `org.freedesktop.PolicyKit1.AuthenticationAgent.md`.

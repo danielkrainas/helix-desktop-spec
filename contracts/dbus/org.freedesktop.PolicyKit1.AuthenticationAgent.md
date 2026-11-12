@@ -43,13 +43,20 @@ shell is the agent.
   registered, Helix logs it and goes without. The environment variable
   `HELIX_NO_POLKIT_AGENT` (any value) keeps it from registering (for
   nested test sessions).
-- The identity: the user running the session when it is among the
-  `unix-user` identities or belongs (by its primary or supplementary
-  groups) to one of the `unix-group` ones; else the first `unix-user`
-  one; else the first listed member (`/etc/group` member list, through
-  the system's user database) of the first group that has one. The user
-  is not offered a choice. Without any such user the call fails with
-  `org.freedesktop.PolicyKit1.Error.Failed`.
+- The users who may authenticate: the user running the session when it
+  is among the `unix-user` identities or belongs (by its primary or
+  supplementary groups) to one of the `unix-group` ones; then the
+  `unix-user` ones; then the listed members (`/etc/group` member list,
+  through the system's user database) of the `unix-group` ones; each
+  once, at most 20, unknown users left out. Without any the call fails
+  with `org.freedesktop.PolicyKit1.Error.Failed`.
+- With one user the password dialog follows at once. With several, a
+  dialog first asks "Authentication Required", the `message`, "Choose
+  the user to authenticate as.", the users as rows ("Real Name (login)",
+  or the login name without a real name; the first selected; clicking
+  the selected row again goes on), "Cancel" and "Next". Cancel (or
+  polkit's `CancelAuthentication` meanwhile) fails the call with
+  `org.freedesktop.PolicyKit1.Error.Cancelled`.
 - Only the owner of `org.freedesktop.PolicyKit1` may call the agent;
   others get `org.freedesktop.PolicyKit1.Error.NotAuthorized`.
 - One authentication at a time; others wait their turn.
