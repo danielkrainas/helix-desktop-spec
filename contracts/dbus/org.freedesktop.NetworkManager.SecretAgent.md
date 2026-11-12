@@ -42,8 +42,17 @@ Helix answers, when interaction is allowed:
 - `pppoe` (DSL): asks for `username` (filled with the connection's) and
   `password`.
 - `vpn`: see "VPN secrets" below.
-- Other key managements (OWE) and other setting groups (e.g.
-  `wireguard`, `adsl`, `bluetooth`): `NoSecrets`.
+- `wireguard`: the keys `hints` name (`private-key`;
+  `peers.<public key>.preshared-key`), else the private key; each in its
+  own dialog ("WireGuard Connection", "The private key is needed to
+  connect to “<id>”." or "The preshared key for peer <first 8 characters
+  of its public key>… is needed to connect to “<id>”.", a "Private key" or
+  "Preshared key" field). A key must be 32 bytes in base64 (43 characters
+  and `=`), else "This key is not valid.". The answer is
+  `{"wireguard": {"private-key": <s>, "peers": [{"public-key": <s>,
+  "preshared-key": <s>}, …]}}` (only what was asked).
+- Other key managements (OWE) and other setting groups (e.g. `adsl`,
+  `bluetooth`): `NoSecrets`.
 - The dialog: title "Wi-Fi Network" (or "Wired Network" for a connection
   without an `802-11-wireless`, `gsm` or `cdma` group; "Mobile Broadband"
   for mobile broadband; "DSL Connection" for PPPoE); message "A password is needed to

@@ -809,7 +809,8 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
 - Switcher entries show a window's icon: the one its app set
   (`xdg_toplevel_icon_manager_v1`: an icon theme name, or the largest
   image it gave; for X11 windows the largest square image in
-  `_NET_WM_ICON`, followed as it changes), else its app's icon (the icon of the desktop file named
+  `_NET_WM_ICON`, else its largest image centered on a transparent
+  square, followed as it changes), else its app's icon (the icon of the desktop file named
   by its app id, or for X11 windows its `WM_CLASS` class). Helix asks for
   24, 48 and 96 pixel images (`icon_size`).
 - The application launcher lists open windows (matching the search on

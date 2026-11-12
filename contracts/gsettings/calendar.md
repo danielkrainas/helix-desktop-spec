@@ -41,8 +41,16 @@ with `BYMONTH`, within the year for `YEARLY` without it), `BYSETPOS` and
 time zone (a time that does not exist on a day, in a daylight saving
 change, moves as GLib moves it). The start (`DTSTART`) is always the first
 occurrence and counts for `COUNT`, even when the rule would not pick it.
-A rule with `BYWEEKNO`, `BYHOUR`, `BYMINUTE` or `BYSECOND`, or with
-`FREQ=SECONDLY`, is not expanded: the event happens at its start only.
+`BYWEEKNO` (with `YEARLY`) picks weeks of the year: week 1 is the first
+week, starting on `WKST`, with at least four days in the year (so it may
+start in December); negative numbers count from the year's last week;
+the days are the `BYDAY` weekdays of those weeks, else the start's
+weekday, limited by `BYMONTH` and `BYMONTHDAY`. `BYHOUR`, `BYMINUTE` and
+`BYSECOND` give each date its times (every combination, in order; parts
+not given keep the start's) for `DAILY` and longer frequencies, before
+`BYSETPOS`; for `HOURLY` and `MINUTELY` they only narrow which
+occurrences count. A rule with `FREQ=SECONDLY` is not expanded: the event
+happens at its start only.
 `RDATE`s (dates, date-times, or periods by their start; a date for a timed
 event takes the start's time of day) add occurrences, not counted by
 `COUNT`. `EXDATE`s remove occurrences (also those from `RDATE`), and

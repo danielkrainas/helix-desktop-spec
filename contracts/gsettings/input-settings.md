@@ -35,6 +35,16 @@ An `ibus` entry's id is an IBus engine name (e.g. `anthy`, `hangul`,
   committed and pre-edit text to the app, and shows IBus's candidates in
   a popup next to the text cursor. Keys IBus does not use go to the app
   unchanged.
+- Engine properties (the input context's `RegisterProperties` and
+  `UpdateProperty`; the shell asks for them with capability 16): while an
+  `ibus` source is active, the input source menu lists them below the
+  sources, after a separator. Toggles are check boxes (checked at state
+  1), radio items show a dot when chosen, a menu's items stand in its
+  place between separators, separators separate; hidden and insensitive
+  properties are left out. Choosing one calls `PropertyActivate` (a
+  toggle with the other state, a radio item with 1, others with 0). When
+  a property named `InputMode` has a symbol (as `あ` or `A`), the panel's
+  indicator shows that symbol, also with a single source.
 - The keymap is the engine's own layout, as IBus describes the engine:
   its `<layout>`, `<layout_variant>` and `<layout_option>` in an IBus
   component file (`ibus/component/*.xml` under the system data
