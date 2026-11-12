@@ -25,18 +25,21 @@ signals) is answered with the shell's prompt dialog (the one polkit and
 keyring prompts use; prompts take turns):
 
 - **Password** (`ask-password`): title "Unlock <name>" (the mount's or
-  volume's name), message the request's message, a "Password" field,
-  buttons "Unlock" and "Cancel"; when saving is supported, a "Remember
-  Password" check box (on: saved permanently; off: not saved). Cancel
-  aborts the mount. Requests that also need a user name or domain are
-  aborted (see `gaps.md`).
+  volume's name), message the request's message, the fields the request
+  asks for, as for GTK apps (`contracts/dbus/org.gtk.MountOperationHandler.md`,
+  "Passwords": "User name (domain\name)", "User name" or "Domain", then
+  "Password", and "Remember Password" when saving is supported: on,
+  saved permanently; off, not saved), buttons "Unlock" and "Cancel".
+  Cancel aborts the mount.
 - **Question** (`ask-question`) and **busy files** (`show-processes`):
   title the medium's name, message the question; for busy files the
   description lists the programs using the medium (their process names,
-  at most five, then "and N more"). Buttons: the first choice and, when
-  there are two or more, the last; choosing one answers its index;
-  closing the dialog aborts. A repeated `show-processes` for the same
-  operation while the dialog is open updates nothing.
+  at most five, then "and N more"). The choices are offered as for GTK
+  apps (`org.gtk.MountOperationHandler.md`, "Questions": buttons for up to
+  two, rows to pick from for more); choosing one answers its index;
+  cancelling with more than two choices (or with one) aborts. A repeated
+  `show-processes` for the same operation while the dialog is open
+  updates nothing.
 - **Unmount progress** (`show-unmount-progress`): when data is still
   being written, a notification "Writing to <name>" ("Do not unplug until
   finished."); it is withdrawn when the writing ends, and the "can be

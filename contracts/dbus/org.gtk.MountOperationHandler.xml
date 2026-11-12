@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  Mount operation handler, called by GTK's GtkMountOperation (GTK 3 and 4)
+  when the bus name org.gtk.MountOperationHandler has an owner, at
+  /org/gtk/MountOperationHandler. Note the interface name's capital G.
+  Signatures as observed from GTK's calls; notes in
+  org.gtk.MountOperationHandler.md.
+-->
+<node>
+  <interface name="org.Gtk.MountOperationHandler">
+    <method name="AskPassword">
+      <arg name="object_id" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+      <arg name="icon_name" type="s" direction="in"/>
+      <arg name="default_user" type="s" direction="in"/>
+      <arg name="default_domain" type="s" direction="in"/>
+      <arg name="flags" type="u" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="response_details" type="a{sv}" direction="out"/>
+    </method>
+    <method name="AskQuestion">
+      <arg name="object_id" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+      <arg name="icon_name" type="s" direction="in"/>
+      <arg name="choices" type="as" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="response_details" type="a{sv}" direction="out"/>
+    </method>
+    <method name="ShowProcesses">
+      <arg name="object_id" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+      <arg name="icon_name" type="s" direction="in"/>
+      <arg name="application_pids" type="ai" direction="in"/>
+      <arg name="choices" type="as" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="response_details" type="a{sv}" direction="out"/>
+    </method>
+    <method name="Close"/>
+  </interface>
+</node>
