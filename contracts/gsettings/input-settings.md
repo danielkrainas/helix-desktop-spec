@@ -216,7 +216,21 @@ proximity:
   button (to apps that take tablet events, as the tool's button with that
   code); `default` is middle, right and back for the three buttons;
   `switch-monitor` maps the tablet to the next monitor (left to right,
-  wrapping; until the session ends); `keybinding` does nothing.
+  wrapping; until the session ends); `keybinding` types the button's
+  `button-keybinding` (`secondary-button-keybinding`,
+  `tertiary-button-keybinding`) on press, as a pad button's
+  `keybinding` does (below); with an empty one the button does nothing.
+- **Eraser button.** On pens whose eraser is a firmware button (rather
+  than the pen's other end), `eraser-button-mode` `button` asks libinput
+  to report that button as the stylus's third button (`BTN_STYLUS3`)
+  instead of turning the pen into an eraser; that button then follows
+  `eraser-button-action` and `eraser-button-keybinding` (as above;
+  `default` is back) instead of `tertiary-button-action`. `default`
+  leaves libinput's behavior. This needs libinput 1.29 or later: Helix
+  looks the configuration functions up when a tool first comes near
+  (only with the DRM backend) and, without them, logs once and ignores
+  the setting. Settings are applied again when a tool comes near after
+  they changed.
 - Tools are announced (`tool_added`) when first seen in proximity;
   tablets and pads when plugged in, with their name, USB ids and device
   node (`/dev/input/event*`).
@@ -250,10 +264,6 @@ rings and strips as libinput groups them, and its number of modes;
 
 #### Not covered
 
-- The eraser button settings (`eraser-button-mode`,
-  `eraser-button-action`, `eraser-button-keybinding`) and the stylus
-  `*-keybinding` keys have no effect (the libinput version Helix builds
-  against has no eraser-button configuration).
 - `wp_cursor_shape_device_v1` for tablet tools is ignored (the cursor
   stays the default one unless the app sets a surface).
 - Pad feedback strings (`set_feedback`) are accepted and not shown.
