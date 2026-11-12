@@ -43,7 +43,8 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`,
 `org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`,
 `org.gnome.SettingsDaemon.Color.md`, `org.freedesktop.GeoClue2.Agent.md`,
-`org.gnome.evolution.dataserver.md`, `org.freedesktop.NetworkManager.SecretAgent.md`, `org.bluez.Agent1.md`).
+`org.gnome.evolution.dataserver.md`, `org.freedesktop.NetworkManager.SecretAgent.md`, `org.bluez.Agent1.md`,
+`org.bluez.obex.md`).
 
 ## Notes
 

@@ -724,6 +724,9 @@ The switches act on (all on the system bus):
   `org.bluez.Device1` `Paired` true), by `Alias`, at most eight, with
   "Connected" for connected ones. Choosing one calls `Connect()` or, when
   connected, `Disconnect()`.
+- **Send Files…**, below the devices while any is paired: closes the menu
+  and sends files over Bluetooth, asking for the device and the files
+  (`contracts/dbus/org.bluez.obex.md`, "Sending").
 - **Pair New Device…**, the last row of the device list: starts discovery
   on every powered adapter (`org.bluez.Adapter1` `StartDiscovery()`); the
   list then shows the unpaired devices found that have a name, at most
