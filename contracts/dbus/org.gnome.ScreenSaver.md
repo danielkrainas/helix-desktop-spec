@@ -58,5 +58,10 @@ shows:
   show-in-lock-screen` true: for the notifications that arrived since the
   screen locked and are still in the list, one line per app, "<app>: <n>
   notification(s)", at most five apps (most notifications first, then by
-  name). Their summaries and bodies are never shown.
+  name). Apps whose own `show-in-lock-screen` is false are left out. For
+  apps whose `details-in-lock-screen` is true, the line is followed by
+  their two newest notifications, one line each: "<summary> — <first line
+  of the body>" (markup removed, cut to fit); other apps' summaries and
+  bodies are never shown. (Per-app settings:
+  `org.freedesktop.Notifications.md`, "Per-application settings".)
 

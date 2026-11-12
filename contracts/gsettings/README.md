@@ -62,7 +62,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.wm.preferences`](org.gnome.desktop.wm.preferences.md)
 - [`org.gnome.desktop.session`](org.gnome.desktop.session.md)
 - [`org.gnome.desktop.screensaver`](org.gnome.desktop.screensaver.md)
-- [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md)
+- [`org.gnome.desktop.notifications`](org.gnome.desktop.notifications.md), [`org.gnome.desktop.notifications.application`](org.gnome.desktop.notifications.application.md)
 - [`org.gnome.desktop.sound`](org.gnome.desktop.sound.md)
 - [`org.gnome.desktop.privacy`](org.gnome.desktop.privacy.md)
 - [`org.gnome.desktop.lockdown`](org.gnome.desktop.lockdown.md), [`org.gnome.system.location`](org.gnome.system.location.md)

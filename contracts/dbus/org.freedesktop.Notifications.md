@@ -95,7 +95,8 @@ event-sounds` false, or when do not disturb hides the banner.
 ### Per-application settings
 
 GNOME Settings keeps per-app notification settings in the relocatable
-schema `org.gnome.desktop.notifications.application` (keys `application-id`,
+schema `org.gnome.desktop.notifications.application` (key table in
+`contracts/gsettings/org.gnome.desktop.notifications.application.md`; keys `application-id`,
 `enable`, `show-banners`, `enable-sound-alerts`, `force-expanded`,
 `show-in-lock-screen`, `details-in-lock-screen`), one copy per app, and
 lists the apps named in `org.gnome.desktop.notifications`
@@ -119,11 +120,12 @@ lists the apps named in `org.gnome.desktop.notifications`
 - `enable-sound-alerts` false: no sound.
 - Critical notifications get a banner even when banners are off (as with
   do not disturb), but not when `enable` is false.
-- `force-expanded` and `details-in-lock-screen` have no effect (Helix's
-  banners always show the body; the lock screen never shows notification
-  text). The global `show-in-lock-screen` decides whether the lock screen
-  counts the notifications that arrived while locked
-  (`org.gnome.ScreenSaver.md`, "Lock screen").
+- `show-in-lock-screen` false: the app's notifications are left out of
+  the lock screen; `details-in-lock-screen` true: the lock screen shows
+  the text of its newest ones (`org.gnome.ScreenSaver.md`, "Lock screen
+  (Helix)"). Both only matter while the global `show-in-lock-screen` is
+  true. Apps without settings show counts only.
+- `force-expanded` has no effect (Helix's banners always show the body).
 
 ### The notification list (persistence)
 
