@@ -453,16 +453,60 @@ panel's right end, holding, from the top:
 - **Brightness**, when a monitor's backlight can be controlled
   (DisplayConfig `Backlight`): a slider setting every such monitor to the
   same fraction of its range.
-- Three switches, highlighted while on: **Night Light**
+- Switches, highlighted while on, in rows of three: **Wi-Fi** (when
+  NetworkManager runs; its label is the connected network's name while
+  connected), **Bluetooth** (when BlueZ has an adapter), **Airplane
+  Mode** (when either is there), **Night Light**
   (`org.gnome.settings-daemon.plugins.color night-light-enabled`), **Dark
   Style** (`org.gnome.desktop.interface color-scheme` `prefer-dark`, else
   `default`) and **Do Not Disturb** (`org.gnome.desktop.notifications
   show-banners`, inverted).
+- **Power Mode**, when power-profiles-daemon runs: one button per profile
+  it offers (Power Saver, Balanced, Performance), the active one
+  highlighted; clicking one makes it active.
 - The power actions logind allows: Lock Screen, Suspend, Log Out…,
   Restart…, Power Off….
 
 Escape or a click outside closes it; choosing a power action closes it
 too. The values are read when it opens and after each change.
+
+The switches act on (all on the system bus):
+
+- Wi-Fi: NetworkManager's `WirelessEnabled` property
+  (`org.freedesktop.NetworkManager`).
+- Bluetooth: `Powered` of every BlueZ adapter (`org.bluez.Adapter1`).
+- Airplane Mode is on while Wi-Fi is off (or absent) and no adapter is
+  powered (or there is none). Turning it on turns Wi-Fi, mobile broadband
+  (`WwanEnabled`) and Bluetooth off; turning it off turns Wi-Fi and
+  Bluetooth on.
+- Power Mode: power-profiles-daemon's `ActiveProfile`
+  (`org.freedesktop.UPower.PowerProfiles` at
+  `/org/freedesktop/UPower/PowerProfiles`, else the older
+  `net.hadess.PowerProfiles`), from its `Profiles`.
+
+## System status (Helix)
+
+Left of the Power button the panel shows, right to left:
+
+- **Battery**, when UPower's display device
+  (`/org/freedesktop/UPower/devices/DisplayDevice`) is present: its
+  `IconName`, and with `org.gnome.desktop.interface
+  show-battery-percentage` its `Percentage`.
+- **Volume**: `audio-volume-muted-symbolic` (muted or at 0),
+  `-low-` (to 33 %), `-medium-` (to 66 %) or `-high-symbolic`, when a
+  sound server answers.
+- **Network**, when NetworkManager runs: for the primary connection,
+  `network-wireless-signal-{none,weak,ok,good,excellent}-symbolic` (Wi-Fi,
+  by the access point's strength: below 20, 40, 50, 80 and above),
+  `network-wired-symbolic` (Ethernet), `network-vpn-symbolic` (VPN), or
+  `network-cellular-connected-symbolic` (mobile); without one,
+  `network-wireless-offline-symbolic` while Wi-Fi is on, else
+  `network-offline-symbolic`; `airplane-mode-symbolic` in airplane mode.
+
+Icons come from the icon theme (`org.gnome.desktop.interface
+icon-theme`, then `Adwaita`, then `hicolor`), drawn in the panel's text
+color. The status follows the services' property changes, and is read
+again every 5 seconds; clicking it opens the quick settings.
 
 ## Window switching (Helix)
 
