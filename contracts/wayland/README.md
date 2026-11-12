@@ -183,7 +183,11 @@ this protocol.
 The pointer shows what the app under it asks for: its own image
 (`wl_pointer.set_cursor` with a surface, drawn with the hotspot it gave at
 the monitor's scale; it gets frame callbacks while shown), a named cursor
-(`wp_cursor_shape_manager_v1`), or nothing. Elsewhere (desktop, panels
+(`wp_cursor_shape_manager_v1`, version 2: all its shapes; for the pointer
+taken while one of the app's surfaces has the pointer, or started the
+pointer grab, the request's serial not compared; for tablet tools see
+`contracts/gsettings/input-settings.md`; an unknown shape is the
+protocol's `invalid_shape` error), or nothing. Elsewhere (desktop, panels
 that set none, Helix's title bars and window edges) it is the theme's
 default or resize cursor.
 

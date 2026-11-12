@@ -197,7 +197,10 @@ proximity:
   for stylus buttons, and a `frame` after each. The pointer follows the
   tool but the client is not sent pointer events while the tool is over
   it; the cursor is the one the client sets with
-  `zwp_tablet_tool_v2.set_cursor` (the default cursor until it does).
+  `zwp_tablet_tool_v2.set_cursor`, or the named cursor it asks for with
+  `wp_cursor_shape_manager_v1.get_tablet_tool_v2` (taken only while the
+  tool is over one of that app's surfaces; the default cursor until it
+  sets one).
   The tip touching a window focuses (and with `raise-on-click`, raises)
   it, as a click does.
 - **Elsewhere** the tool drives the pointer: its tip (and the eraser's)
@@ -264,8 +267,6 @@ rings and strips as libinput groups them, and its number of modes;
 
 #### Not covered
 
-- `wp_cursor_shape_device_v1` for tablet tools is ignored (the cursor
-  stays the default one unless the app sets a surface).
 - Pad feedback strings (`set_feedback`) are accepted and not shown.
 - **Not yet tested with a real tablet.** The protocol is checked with a
   Wayland client in Helix's tests, and the pressure curve and pad
