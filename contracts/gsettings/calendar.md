@@ -73,7 +73,14 @@ says "Weather unavailable".
   temperature-unit` `centigrade` (°C), `fahrenheit` (°F), `kelvin` (K);
   `default` follows the locale's measurement system (glibc
   `LC_MEASUREMENT` `measurement`: 2, US customary, gives °F; else °C).
-- `automatic-location` is not used (see `gaps.md`).
+- `automatic-location` true: while location services are on
+  (`org.gnome.system.location` `enabled`), the shell follows GeoClue at
+  city accuracy (country with `max-accuracy-level` `country`), as for
+  Night Light (`night-light.md`), and the weather is for the place GeoClue
+  reports, named after the principal city of the nearest
+  `zone1970.tab` time zone when that city is within 100 km, else
+  "Current Location". Until GeoClue reports a place (or with location
+  services off), the first of `locations` is used.
 
 `org.gnome.shell.weather` (from gnome-shell; the compiled schema at hand
 was gnome-shell 46's):
