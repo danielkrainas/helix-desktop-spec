@@ -190,6 +190,19 @@ return; `SessionOver` is emitted when it completes.
    (`Reboot(false)`). If logind is unavailable or refuses, the session has
    still ended.
 
+### When the bus goes away (Helix)
+
+If the session manager's connection to the session bus closes (the bus
+daemon exits), no client can reach it any more: the session ends at once,
+without the steps above and without `SessionOver` (there is no bus to
+emit it on). The session's components are then stopped as at any other
+end: SIGTERM, and SIGKILL after five seconds. When the session manager
+gets SIGTERM, it emits `SessionOver` and leaves the bus for at most two
+seconds before stopping the components, so a bus that stops answering
+cannot keep them running. Components also get SIGTERM if the session
+manager itself dies (Linux's parent-death signal), so they never outlive
+it. How gnome-session behaves in these cases is not documented here.
+
 ## `Suspend`
 
 Asks logind to suspend (`Suspend(false)`) and returns; the session keeps
