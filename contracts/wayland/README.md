@@ -492,7 +492,9 @@ panel's right end, holding, from the top:
   (`org.gnome.settings-daemon.plugins.color night-light-enabled`), **Dark
   Style** (`org.gnome.desktop.interface color-scheme` `prefer-dark`, else
   `default`) and **Do Not Disturb** (`org.gnome.desktop.notifications
-  show-banners`, inverted).
+  show-banners`, inverted). The Wi-Fi and Bluetooth switches have a "›"
+  at their right end that opens (or closes) their list under the
+  switches; only one list is open at a time.
 - **Power Mode**, when power-profiles-daemon runs: one button per profile
   it offers (Power Saver, Balanced, Performance), the active one
   highlighted; clicking one makes it active.
@@ -515,6 +517,32 @@ The switches act on (all on the system bus):
   (`org.freedesktop.UPower.PowerProfiles` at
   `/org/freedesktop/UPower/PowerProfiles`, else the older
   `net.hadess.PowerProfiles`), from its `Profiles`.
+
+### Wi-Fi networks and Bluetooth devices
+
+- **Networks** (while Wi-Fi is on): the access points of NetworkManager's
+  Wi-Fi devices (`DeviceType` 2; `org.freedesktop.NetworkManager.Device.Wireless`
+  `AccessPoints`), one row per network name (`Ssid`; hidden networks
+  without one are left out), keeping the strongest (`Strength`), strongest
+  first, at most eight. Each row shows the signal icon (as in the status
+  area), the name, a lock when the network is secured (`Flags` privacy bit
+  or non-zero `WpaFlags`/`RsnFlags`) and "Connected" for the device's
+  `ActiveAccessPoint`.
+- Choosing a network that is not connected: when a saved connection is
+  for that name (`org.freedesktop.NetworkManager.Settings`
+  `ListConnections`, each connection's `GetSettings` `802-11-wireless`
+  `ssid`), `ActivateConnection(connection, device, access point)`; else,
+  for an open network, `AddAndActivateConnection({}, device, access
+  point)`; else (a new secured network: Helix does not ask for Wi-Fi
+  passwords, see `gaps.md`) it runs `gnome-control-center wifi`. Choosing
+  the connected network does nothing.
+- **Devices** (while Bluetooth is on): BlueZ's paired devices
+  (`org.freedesktop.DBus.ObjectManager` of `org.bluez` at `/`, objects with
+  `org.bluez.Device1` `Paired` true), by `Alias`, at most eight, with
+  "Connected" for connected ones. Choosing one calls `Connect()` or, when
+  connected, `Disconnect()`. Pairing new devices is left to Settings.
+- The lists are read with the rest of the status (see "System status");
+  "No Networks" or "No Devices" when empty.
 
 ## System status (Helix)
 

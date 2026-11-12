@@ -86,8 +86,7 @@ Living log of missing, unclear, or underspecified contracts.
   strength thresholds) and what its airplane mode switch turns off (it goes
   through gnome-settings-daemon's rfkill handling) are not documented here;
   Helix's choices are in `contracts/wayland/README.md` ("Quick settings",
-  "System status"). Helix lists no Wi-Fi networks or Bluetooth devices to
-  connect to.
+  "System status"). Helix lists networks and paired devices but is not a NetworkManager secret agent (it never asks for Wi-Fi passwords; new secured networks are left to Settings) and does not pair Bluetooth devices.
 - Search providers: how many results gnome-shell shows per provider, when it
   uses subsearches, its timeouts and how it shows results (grid or list) are
   not documented here; Helix's choices are in
