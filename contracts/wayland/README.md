@@ -563,10 +563,17 @@ laid out the same way. It is shown by the overlay key, by
   to that workspace.
 
 **Hot corner.** While `org.gnome.desktop.interface` `enable-hot-corners`
-is true, moving the pointer into the top-left corner of the primary
-monitor (the corner pixel) shows the overview, or hides it when it (or the
-launcher) is shown. The corner works again once the pointer has left the
-32×32 pixel square at the corner. It does nothing while a pointer button
+is true, pushing the pointer into the top-left corner of the primary
+monitor shows the overview, or hides it when it (or the launcher) is
+shown. With a mouse, touchpad, mouse keys or remote relative motion, the
+pointer must be on the corner pixel and keep moving up or left past it:
+the unaccelerated motion beyond the corner (not the way there) is added
+up, starting over when more than a second passes between pushes or the
+pointer leaves the corner pixel, and the overview toggles when it reaches
+100 pixels. Pointers that cannot push past the screen edge (tablet pens,
+remote absolute motion, the host pointer of a nested session) toggle it
+on reaching the corner pixel. The corner works again once the pointer has
+left the 32×32 pixel square at the corner. It does nothing while a pointer button
 is held, while the session is locked, while a fullscreen window is on the
 primary monitor, while the screenshot UI is shown, or when another monitor lies to the left of or above the
 corner (it is then no screen corner).

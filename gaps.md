@@ -88,9 +88,10 @@ tried them with the real hardware. Remove an entry once it has been.
 - Autostart: gnome-session's autostart phases, delays, restarts and its
   full list of `AutostartCondition` forms are not documented here;
   Helix's subset is in `org.gnome.SessionManager.md` ("Autostart").
-- Hot corner: GNOME triggers it by pointer pressure against a barrier (how
-  much, and its timing, is not documented); Helix triggers on reaching the
-  corner pixel (`contracts/wayland/README.md`, "Overview").
+- Hot corner: GNOME triggers it by pointer pressure against a barrier;
+  how much pressure and its timing are not documented. Helix's (100
+  unaccelerated pixels within a second; reaching the corner for absolute
+  pointers) is in `contracts/wayland/README.md`, "Overview".
 - Polkit agent: what gnome-shell's dialog shows and how it picks among
   identities (it offers a choice of users) are not documented here, nor is
   polkit's helper protocol in polkit's own documentation (it is private to
