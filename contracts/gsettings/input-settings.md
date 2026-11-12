@@ -117,12 +117,64 @@ Details:
   While it is held, moving the pointer scrolls; with `-lock`, a click
   toggles that instead.
 - `scroll-speed` multiplies the touchpad's finger scrolling (1 unchanged).
-## Touchscreens
+## Touchscreens and tablets
+
+Key tables: [`org.gnome.desktop.peripherals.touchscreen`](org.gnome.desktop.peripherals.touchscreen.md),
+[`org.gnome.desktop.peripherals.tablet`](org.gnome.desktop.peripherals.tablet.md),
+[`org.gnome.desktop.peripherals.tablet.stylus`](org.gnome.desktop.peripherals.tablet.stylus.md).
+These schemas are relocatable, one copy per device. Where GNOME keeps the
+copies is not documented (see `gaps.md`); Helix reads them at:
+
+- touchscreens: `/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/`
+- tablets: `/org/gnome/desktop/peripherals/tablets/<vid>:<pid>/`
+- styli: `/org/gnome/desktop/peripherals/stylus/<serial>/`, or for a stylus
+  without a serial number `/org/gnome/desktop/peripherals/stylus/default-<vid>:<pid>/`
+
+`<vid>` and `<pid>` are the device's USB vendor and product ids as four
+lower-case hex digits; `<serial>` is the stylus's serial in lower-case hex
+without leading zeros. Devices without USB ids use the defaults.
+
+A monitor named by an `output` setting is `[vendor, product, serial]` as
+DisplayConfig reports them (`org.gnome.Mutter.DisplayConfig.md`, "Monitor
+identity"); all three empty means "choose automatically".
+
+### Touchscreens
 
 Touch input goes to the surface under the touch point, with Wayland touch
 events (`wl_touch`); touching a window also focuses and raises it, as a
 click does. Shell surfaces (panel, launcher, dialogs) take a tap as a
-click. A touchscreen covers one monitor: the built-in panel if there is
-one, else the primary monitor. The per-device
-`org.gnome.desktop.peripherals.touchscreen` settings (`output`) are not
-read (see `gaps.md`); there are no gestures.
+click. A touchscreen covers one monitor: the one its `output` names (read
+again at each touch down), else the built-in panel if there is one, else
+the primary monitor. `orientation-lock` is described in
+`org.gnome.Mutter.DisplayConfig.md` ("Automatic rotation"). There are no
+gestures.
+
+### Tablets
+
+A tablet's pen (and eraser) drives the pointer: Helix does not offer the
+tablet protocol (`zwp_tablet_manager_v2`), so apps see pointer motion and
+buttons, without pressure, tilt or distance (see `gaps.md`). Settings are
+read when the pen comes near the tablet.
+
+- `mapping` `absolute` (the default): the tablet covers one monitor: the
+  one `output` names, else the primary monitor. The pen's position on the
+  tablet is the pointer's position on that monitor:
+  - `left-handed`: the tablet is turned around (both axes reversed);
+  - `area`: margins cut off the left, right, top and bottom of the tablet
+    (fractions of its width or height; values above 1 are taken as
+    percentages; each at most 0.45). The pen outside the remaining area does
+    not move the pointer;
+  - `keep-aspect`: the area is cut further, from the right or the bottom,
+    to the monitor's aspect ratio (using the tablet's physical size from
+    libinput; without one, nothing is cut).
+- `mapping` `relative`: the pen moves the pointer like a mouse, 4 logical
+  pixels per millimetre of pen motion.
+- The pen's tip (and the eraser's) is the left button.
+- Stylus buttons (libinput's first, second and third) follow
+  `button-action`, `secondary-button-action` and
+  `tertiary-button-action`: `middle`, `right`, `back`, `forward` press that
+  pointer button; `default` is middle, right and back for the three
+  buttons; `switch-monitor` maps the tablet to the next monitor (left to
+  right, wrapping; until the session ends); `keybinding` does nothing.
+- The pressure curves and ranges, the eraser's button settings and the
+  `*-keybinding` keys have no effect.

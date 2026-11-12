@@ -14,6 +14,17 @@ by settings tools and portals, and changing the monitor configuration with
 Every configuration has a serial `u`. It changes whenever monitors change,
 and `MonitorsChanged` is emitted. Methods taking a serial reject a stale one.
 
+## Monitor identity (Helix)
+
+A monitor's vendor, product and serial (in monitor specs, and in the
+`output` settings of touchscreens and tablets) come from its EDID base
+block: the vendor is its three-letter PNP manufacturer id; the product is
+its monitor name descriptor, else its product code as `0x` and four hex
+digits; the serial is its serial number descriptor, else its serial number
+as `0x` and eight hex digits. Without an EDID they are `Unknown`, `Unknown`
+and `0`. The `display-name` is the product name, else the connector. The
+nested (windowed) compositor's one monitor is `Helix`, `Nested`, `0`.
+
 ## `GetCurrentState`
 
 `monitors` — `a((ssss)a(siiddada{sv})a{sv})`, one per physical monitor:

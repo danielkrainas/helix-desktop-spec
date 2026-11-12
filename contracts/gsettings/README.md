@@ -69,6 +69,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.break-reminders`](org.gnome.desktop.break-reminders.md), [`org.gnome.desktop.screen-time-limits`](org.gnome.desktop.screen-time-limits.md) — Helix's behavior: [wellbeing.md](wellbeing.md)
 - [`org.gnome.desktop.media-handling`](org.gnome.desktop.media-handling.md) — Helix's behavior: [removable-media.md](removable-media.md)
 - [`org.gnome.desktop.peripherals.trackball`](org.gnome.desktop.peripherals.trackball.md), [`org.gnome.desktop.peripherals.pointingstick`](org.gnome.desktop.peripherals.pointingstick.md)
+- [`org.gnome.desktop.peripherals.touchscreen`](org.gnome.desktop.peripherals.touchscreen.md), [`org.gnome.desktop.peripherals.tablet`](org.gnome.desktop.peripherals.tablet.md), [`org.gnome.desktop.peripherals.tablet.stylus`](org.gnome.desktop.peripherals.tablet.stylus.md) — Helix's behavior: [input-settings.md](input-settings.md)
 
 From other GNOME 51.0 packages, described the same way:
 
