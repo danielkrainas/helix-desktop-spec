@@ -15,8 +15,32 @@ Settings are read when a medium arrives; changes apply to the next one.
   and no notification is shown for these.
 - A volume that arrives later is mounted the same way. While the screen is
   locked it waits, and is mounted when the session is unlocked.
-- Mounting asks no questions: a volume that needs a passphrase or other
-  answers fails to mount and is left alone (see `gaps.md`).
+- Mounting and ejecting carry a mount operation, so a volume that needs
+  answers asks the user (see "Questions" below).
+
+## Questions
+
+What GIO asks during a mount or an unmount (its `GMountOperation`
+signals) is answered with the shell's prompt dialog (the one polkit and
+keyring prompts use; prompts take turns):
+
+- **Password** (`ask-password`): title "Unlock <name>" (the mount's or
+  volume's name), message the request's message, a "Password" field,
+  buttons "Unlock" and "Cancel"; when saving is supported, a "Remember
+  Password" check box (on: saved permanently; off: not saved). Cancel
+  aborts the mount. Requests that also need a user name or domain are
+  aborted (see `gaps.md`).
+- **Question** (`ask-question`) and **busy files** (`show-processes`):
+  title the medium's name, message the question; for busy files the
+  description lists the programs using the medium (their process names,
+  at most five, then "and N more"). Buttons: the first choice and, when
+  there are two or more, the last; choosing one answers its index;
+  closing the dialog aborts. A repeated `show-processes` for the same
+  operation while the dialog is open updates nothing.
+- **Unmount progress** (`show-unmount-progress`): when data is still
+  being written, a notification "Writing to <name>" ("Do not unplug until
+  finished."); it is withdrawn when the writing ends, and the "can be
+  removed" notification follows as before.
 
 ## When a medium is mounted
 
