@@ -46,6 +46,7 @@ default, allowed values) for gsettings-desktop-schemas 51.0, described
 through GSettings' introspection API from the compiled upstream schemas
 rather than copied from schema sources:
 
+- [`org.gnome.desktop.background`](org.gnome.desktop.background.md) — Helix's behavior: [background.md](background.md)
 - [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
 - [`org.gnome.desktop.a11y`](org.gnome.desktop.a11y.md)
 - [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md)
