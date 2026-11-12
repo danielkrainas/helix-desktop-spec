@@ -28,12 +28,28 @@ weekday and date), then that day's events ordered by start: "All Day" or
 the start time (24-hour), and the summary; at most six, then "N more".
 "No Events" when there are none.
 
-An event is on a day when it overlaps it in local time. Recurring events
-are expanded for `FREQ` `DAILY`, `WEEKLY` (with `BYDAY` weekdays),
-`MONTHLY` and `YEARLY`, with `INTERVAL`, `COUNT` and `UNTIL`; `EXDATE`s and
-detached instances (`RECURRENCE-ID`) replace occurrences; other rule parts
-are not used (see `gaps.md`). Cancelled events (`STATUS:CANCELLED`) are
-left out.
+An event is on a day when it overlaps it in local time. Cancelled events
+(`STATUS:CANCELLED`) are left out.
+
+Recurring events (RFC 5545 `RRULE`) are expanded as RFC 5545 describes,
+for `FREQ` `YEARLY`, `MONTHLY`, `WEEKLY`, `DAILY`, `HOURLY` and
+`MINUTELY`, with `INTERVAL`, `COUNT`, `UNTIL`, `BYMONTH`, `BYMONTHDAY`
+(negative: from the month's end), `BYYEARDAY`, `BYDAY` (with positions
+such as `2TU` or `-1FR`: within the month for `MONTHLY` and for `YEARLY`
+with `BYMONTH`, within the year for `YEARLY` without it), `BYSETPOS` and
+`WKST`. Every occurrence keeps the start's time of day in the start's
+time zone (a time that does not exist on a day, in a daylight saving
+change, moves as GLib moves it). The start (`DTSTART`) is always the first
+occurrence and counts for `COUNT`, even when the rule would not pick it.
+A rule with `BYWEEKNO`, `BYHOUR`, `BYMINUTE` or `BYSECOND`, or with
+`FREQ=SECONDLY`, is not expanded: the event happens at its start only.
+`RDATE`s (dates, date-times, or periods by their start; a date for a timed
+event takes the start's time of day) add occurrences, not counted by
+`COUNT`. `EXDATE`s remove occurrences (also those from `RDATE`), and
+detached instances (`RECURRENCE-ID`) replace them. An event's expansion
+stops after 5000 occurrences that may reach the time asked about
+(occurrences starting more than a year before it are not kept) or after
+100 000 periods of its frequency.
 
 ## World clocks
 
