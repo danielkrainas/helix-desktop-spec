@@ -480,7 +480,10 @@ taking focus (it does get focus when no window has it).
 key; otherwise a key name such as `Super_R`; empty: none) pressed and
 released alone shows the overview, or hides it (see "Overview").
 
-**Bells.** An app rings the bell with `xdg_system_bell_v1`. With
+**Bells.** An app rings the bell with `xdg_system_bell_v1`; an X11 app
+rings it through XKB (the compositor's own Xwayland connection selects
+XKB bell notifications on the core keyboard; the notification's window
+is the app's window, none for 0). With
 `audible-bell` the `bell` sound of the sound theme plays (subject to
 `org.gnome.desktop.sound event-sounds`). With `visual-bell`,
 `visual-bell-type` `fullscreen-flash` flashes the monitor of the window
