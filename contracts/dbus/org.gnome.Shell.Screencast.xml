@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.gnome.Shell.Screencast
+  Source: https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/main/data/dbus-interfaces/org.gnome.Shell.Screencast.xml
+  Pinned against GNOME 51 surface. Interface shape only; behavior notes in
+  org.gnome.Shell.Screencast.md.
+-->
+<node>
+  <interface name="org.gnome.Shell.Screencast">
+    <property name="ScreencastSupported" type="b" access="read" />
+    <method name="Screencast">
+      <arg name="file_template" type="s" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="success" type="b" direction="out" />
+      <arg name="filename_used" type="s" direction="out" />
+    </method>
+    <method name="ScreencastArea">
+      <arg name="x" type="i" direction="in" />
+      <arg name="y" type="i" direction="in" />
+      <arg name="width" type="i" direction="in" />
+      <arg name="height" type="i" direction="in" />
+      <arg name="file_template" type="s" direction="in" />
+      <arg name="options" type="a{sv}" direction="in" />
+      <arg name="success" type="b" direction="out" />
+      <arg name="filename_used" type="s" direction="out" />
+    </method>
+    <method name="StopScreencast">
+      <arg name="success" type="b" direction="out" />
+    </method>
+    <signal name="Error">
+      <arg name="name" type="s" />
+      <arg name="message" type="s" />
+    </signal>
+  </interface>
+</node>

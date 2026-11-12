@@ -23,7 +23,13 @@ missing key uses the default from the 51.0 table.
 Captures taken at once flash the captured area and are saved like the
 screenshot UI's: `Screenshot From YYYY-MM-DD HH-MM-SS.png` in the
 `Screenshots` folder of the pictures directory. They do not work while
-the session is locked. `show-screen-recording-ui` is not supported.
+the session is locked.
+
+`show-screen-recording-ui` opens the screenshot UI to record instead: the
+hint says "Drag to record an area · Enter to record the whole screen ·
+Esc to cancel", and the choice starts a recording
+(`contracts/dbus/org.gnome.Shell.Screencast.md`) saved as `Screencast From
+%d %t.webm` in the videos directory. While one runs, the key stops it.
 
 ## Overview and launcher
 

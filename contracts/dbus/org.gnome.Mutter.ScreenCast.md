@@ -57,7 +57,8 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   (`org.gnome.Mutter.RemoteDesktop.md`), an unknown one fails with
   `org.freedesktop.DBus.Error.InvalidArgs`.
 - Only the owner of `org.freedesktop.impl.portal.desktop.helix` (Helix's
-  portal backend, which asks the user first) may call these methods;
+  portal backend, which asks the user first) and the owner of
+  `org.gnome.Shell` (screen recording) may call these methods;
   others get `org.freedesktop.DBus.Error.AccessDenied`. A session ends
   when its creator leaves the bus.
 - Streams are BGRx frames, at most 30 per second and only when the
@@ -69,7 +70,10 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   locked frames are black; while a shared window is hidden (on another
   workspace, minimized) no frames are sent. The session ends when its
   monitor goes away or its window closes.
+- Every buffer carries a header (`SPA_META_Header`) whose `pts` is the time
+  the frame was made (`CLOCK_MONOTONIC`, nanoseconds) and whose `seq`
+  counts the stream's frames.
 - The compositor also serves `org.helix.ScreenCastState` at
   `/org/gnome/Mutter/ScreenCast`: `Active` (`b`) is true while any session
-  is started, and emits `PropertiesChanged`. The shell shows a "Sharing"
+  is started other than the shell's own (screen recording), and emits `PropertiesChanged`. The shell shows a "Sharing"
   indicator in the panel while it is true.
