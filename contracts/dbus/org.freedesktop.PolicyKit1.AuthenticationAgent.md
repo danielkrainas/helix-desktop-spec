@@ -64,9 +64,10 @@ shell is the agent.
 
 The shell's dialog for passwords (also used for keyring prompts): a box in
 the middle of the primary monitor over a dimmed screen, with a title, a
-message, a smaller description, a password field (bullets instead of
-characters), an optional second field to confirm a new password, an
-optional check box, a warning line, and Cancel / continue buttons. Enter
-continues, Escape cancels, Tab moves between fields, Space toggles the
-check box when no field has text focus. While the answer is checked the
-dialog shows "Authenticating…" and ignores input.
+message, a smaller description, an optional text field (shown as typed,
+e.g. a user name), a password field (bullets instead of characters), an
+optional second field to confirm a new password, an optional check box, a
+warning line, and Cancel / continue buttons. Enter continues, Escape
+cancels, Tab (or a click) moves between fields, Space toggles the check
+box when no field has text focus. While the answer is checked the dialog
+shows "Authenticating…" and ignores input.

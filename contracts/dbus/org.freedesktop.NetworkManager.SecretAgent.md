@@ -27,22 +27,38 @@ user asked for this connection, 0x8 WPS push button active, 0x40000000
 no errors, 0x80000000 system secrets only. Errors:
 `org.freedesktop.NetworkManager.SecretAgent.UserCanceled`, `.NoSecrets`.
 
-Helix answers, for `802-11-wireless-security`, when interaction is
-allowed:
+Helix answers, when interaction is allowed:
 
-- `key-mgmt` `wpa-psk` or `sae`: asks for `psk`; `none` (WEP): asks for
-  `wep-key0`. Other key managements (802.1X enterprise, OWE) and other
-  setting groups: `NoSecrets`.
-- The dialog: title "Wi-Fi Network", message "A password is needed to
-  connect to “<SSID>”." (the SSID from `802-11-wireless` `ssid`), a
-  "Password" field, buttons "Connect" and "Cancel"; with flag 0x2 the
-  warning "Wrong password? Try again.".
+- `802-11-wireless-security` with `key-mgmt` `wpa-psk` or `sae`: asks for
+  `psk`; `none` (WEP): asks for `wep-key0`; `none` or `ieee8021x` with
+  `auth-alg` `leap`: asks for `leap-username` and `leap-password`.
+- `802-1x` (WPA and WPA2/3 Enterprise, dynamic WEP, wired 802.1X): when
+  the first of `eap` is `tls`, asks for `identity` and
+  `private-key-password`; otherwise (PEAP, TTLS, PWD, FAST, LEAP, MD5)
+  for `identity` and `password`. The certificates themselves are not
+  asked for.
+- Other key managements (OWE), other setting groups (VPN, mobile
+  broadband, PPPoE): `NoSecrets`.
+- The dialog: title "Wi-Fi Network" (or "Wired Network" for a connection
+  without an `802-11-wireless` group); message "A password is needed to
+  connect to “<name>”.", or "A user name and password are needed to
+  connect to “<name>”.", or for TLS "Your identity and the password of
+  your private key are needed to connect to “<name>”." (the name: the
+  SSID from `802-11-wireless` `ssid`, else the connection's `id`); a
+  "User name" text field (filled with the connection's `identity` or
+  `leap-username`; not for WPA and WEP) and a "Password" field ("Private
+  key password" for TLS), buttons "Connect" and "Cancel"; with flag 0x2
+  the warning "Wrong password? Try again.". Focus starts in the user name
+  field when it is empty, else the password.
 - A WPA password must be 8 to 63 characters, or 64 hexadecimal digits; a
-  WEP key 5 or 13 characters, or 10 or 26 hexadecimal digits. Others are
-  refused in the dialog with the warning "This password is not valid."
-- The answer: `{"802-11-wireless-security": {"psk": <s>}}` (or
-  `wep-key0`); Cancel answers `UserCanceled`. Without interaction:
-  `NoSecrets`.
+  WEP key 5 or 13 characters, or 10 or 26 hexadecimal digits; other
+  passwords must not be empty, and a user name is needed where one is
+  asked. Others are refused in the dialog with the warning "This password
+  is not valid." (or "A user name is needed.").
+- The answer: the asked setting group with the keys above, e.g.
+  `{"802-11-wireless-security": {"psk": <s>}}` or `{"802-1x":
+  {"identity": <s>, "password": <s>}}`; Cancel answers `UserCanceled`.
+  Without interaction: `NoSecrets`.
 - `CancelGetSecrets` closes the dialog that is open for that connection
   and setting (the pending call answers `AgentCanceled`).
 - `SaveSecrets` and `DeleteSecrets` succeed without storing anything:

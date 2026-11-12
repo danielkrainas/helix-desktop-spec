@@ -86,7 +86,7 @@ Living log of missing, unclear, or underspecified contracts.
   strength thresholds) and what its airplane mode switch turns off (it goes
   through gnome-settings-daemon's rfkill handling) are not documented here;
   Helix's choices are in `contracts/wayland/README.md` ("Quick settings",
-  "System status"). Helix lists networks and paired devices. Its NetworkManager secret agent answers only Wi-Fi WPA/SAE and WEP passwords (no 802.1X enterprise, VPN or mobile broadband secrets, which NetworkManager then cannot get), and stores no agent-owned secrets; gnome-shell's agent dialogs and its keyring use are not documented here. The agent identifier `org.gnome.Shell.NetworkAgent` is the one GNOME's shell is known to use.
+  "System status"). Helix lists networks and paired devices. Its NetworkManager secret agent answers Wi-Fi WPA/SAE, WEP and LEAP passwords and 802.1X user names and passwords (not certificates, VPN or mobile broadband secrets, which NetworkManager then cannot get), and stores no agent-owned secrets; gnome-shell's agent dialogs and its keyring use are not documented here. The agent identifier `org.gnome.Shell.NetworkAgent` is the one GNOME's shell is known to use.
 - Search providers: how many results gnome-shell shows per provider, when it
   uses subsearches, its timeouts and how it shows results (grid or list) are
   not documented here; Helix's choices are in
