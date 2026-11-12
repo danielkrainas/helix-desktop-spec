@@ -108,15 +108,41 @@ app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
 "Window-management settings").
 
-**Touchpad gestures** (`zwp_pointer_gestures_v1`, bare hardware). Swipes
-with 3 or 4 fingers are Helix's and are not passed on: when the fingers
-lift having moved at least 100 logical pixels sideways, and more sideways
-than up or down, the workspace switches the way the content was pulled
-(fingers moving left show the next workspace, to the right; moving right
-the previous one), as GNOME does regardless of `natural-scroll`; there is
-none past the first or last workspace, and a cancelled swipe, or one
-while the session is locked, does nothing. Other gestures (two-finger
-swipes, pinches, holds) go to the surface under the pointer.
+**Gestures.** Some swipes are Helix's own and are not passed to apps.
+A finished swipe does one of:
+
+- **sideways** (at least 100 logical pixels, and more sideways than up
+  or down): switch workspace the way the content was pulled (fingers
+  moving left show the next workspace, to the right; moving right the
+  previous one), as GNOME does regardless of `natural-scroll`; there is
+  none past the first or last workspace;
+- **up** (at least 100 logical pixels, more up than sideways): open the
+  overview; when it is already open, show its application grid
+  (`org.gnome.Shell` `OverviewActive`, `ShowApplications`);
+- **down**: close the overview when it is open.
+
+A cancelled swipe, or one while the session is locked, does nothing.
+
+- **Touchpads** (`zwp_pointer_gestures_v1`, bare hardware): swipes with 3
+  or 4 fingers are Helix's, measured by libinput's swipe motion. Other
+  gestures (two-finger swipes, pinches, holds) go to the surface under
+  the pointer.
+- **Touchscreens** (and remote desktop virtual touchscreens): when a
+  third finger touches while two are down, the touch points become
+  Helix's (apps get `wl_touch.cancel`; further touches go to Helix until
+  every finger has lifted); the swipe is the average movement of the
+  fingers from where each went down to where it lifted.
+- **Edge swipes** (touchscreens): a single finger that goes down within
+  16 logical pixels of an edge of the monitor it touches (the nearest
+  edge in a corner) and moves at least 48 logical pixels inwards, more
+  inwards than along the edge, becomes Helix's (apps get
+  `wl_touch.cancel`); when it lifts: from the bottom edge, **up**; from
+  the top edge, **down**; from the left edge, the previous workspace;
+  from the right edge, the next. A second finger before that leaves the
+  touch to the app.
+- Not yet tested with a real touchscreen or touchpad: the recognizer is
+  checked by unit tests, and touchscreen swipes in a nested session with
+  a remote desktop virtual touchscreen (`gaps.md`).
 
 **Frame timing.** `wp_presentation` feedback reports when a frame was
 shown (the monitor's vblank, its refresh interval and sequence) or that

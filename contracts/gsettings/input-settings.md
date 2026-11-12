@@ -156,8 +156,9 @@ click does. Shell surfaces (panel, launcher, dialogs) take a tap as a
 click. A touchscreen covers one monitor: the one its `output` names (read
 again at each touch down), else the built-in panel if there is one, else
 the primary monitor. `orientation-lock` is described in
-`org.gnome.Mutter.DisplayConfig.md` ("Automatic rotation"). There are no
-gestures.
+`org.gnome.Mutter.DisplayConfig.md` ("Automatic rotation"). Swipes with
+three or more fingers and swipes in from an edge are Helix's own
+(`contracts/wayland/README.md`, "Gestures").
 
 ### Tablets
 
