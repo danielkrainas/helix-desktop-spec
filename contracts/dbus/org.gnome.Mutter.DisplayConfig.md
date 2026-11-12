@@ -39,6 +39,11 @@ nested (windowed) compositor's one monitor is `Helix`, `Nested`, `0`.
   - `color-mode` (`u`) and `supported-color-modes` (`au`): how the monitor
     is driven, 0 default (SDR), 1 BT.2100 (HDR). Helix offers `[0, 1]`
     for monitors that can show BT.2100 (see "Color modes"), else `[0]`.
+  - `is-underscanning` (`b`): present only for monitors that can
+    underscan ("Adjust for TV": the picture is shrunk inside a border, for
+    TVs that cut off its edges), and then whether they do. GNOME Settings
+    shows its "Adjust for TV" switch for monitors that have it (observed
+    with GNOME Settings 46).
 
 `logical_monitors` — `a(iiduba(ssss)a{sv})`: x, y, scale, transform, primary,
 the monitor specs shown in it, properties. A logical monitor showing more
@@ -104,6 +109,21 @@ A monitor's `properties` may hold `color-mode` (`u`), one of its
 with `org.freedesktop.DBus.Error.InvalidArgs`. The color mode is part of
 the configuration: it is applied, and remembered with persistent
 changes.
+
+A monitor's `properties` may also hold `underscanning` (`b`, absent:
+false; the key GNOME Settings 46 was seen to send): true only for a
+monitor that reports `is-underscanning`, else the call fails with
+`org.freedesktop.DBus.Error.InvalidArgs`. It is part of the
+configuration like the color mode. With the DRM backend, Helix finds the
+ability in the connector's `underscan` property (an enum with `on`;
+drivers offer it for some HDMI outputs) and turns it `on` with
+`underscan hborder` and `underscan vborder` of 5 % of the mode's width
+and height (at most 128 pixels each), or `off`; it is off when the
+monitor appears. Other monitor property keys are ignored. Implemented
+but not tested with real hardware: no monitor with an `underscan`
+property was available; the D-Bus side is tested with the nested
+session's `HELIX_TEST_UNDERSCAN` (the window then claims it can
+underscan; nothing changes on screen).
 
 A configuration is valid when:
 
