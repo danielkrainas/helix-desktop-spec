@@ -8,7 +8,8 @@ How Helix applies `org.gnome.desktop.a11y.magnifier`
 ## Magnifier
 
 The compositor magnifies the screen while `screen-magnifier-enabled` is
-true and `mag-factor` is above 1.
+true and `mag-factor` is above 1 (color effects, below, apply while it is
+on).
 
 - Every monitor is magnified by `mag-factor` (its whole area:
   `screen-position` and `lens-mode` are not supported). The pointer is
@@ -31,9 +32,18 @@ true and `mag-factor` is above 1.
   `cross-hairs-clip`, they stop short of the pointer (a gap of 16 pixels
   times `mag-factor` around it).
 - Screenshots and screen casts are not magnified.
+- Color effects, applied to what the magnifier shows (with each channel
+  from 0 to 1), in this order:
+  - `invert-lightness`: the lightness is inverted, hue and saturation
+    kept: every channel `c` becomes `c + 1 - max - min` (`max`, `min` of
+    the pixel's three channels);
+  - `color-saturation` `s`: each channel becomes `l + (c - l) * s`, `l` the
+    luminance `0.2126 r + 0.7152 g + 0.0722 b`;
+  - `contrast-red`/`-green`/`-blue` `k` and `brightness-red`/`-green`/`-blue`
+    `b`: `(c - 0.5) * (1 + k) + 0.5 + b`, kept within 0 and 1.
+  They apply while the magnifier is on, also at `mag-factor` 1.
 - Not supported: `focus-tracking` and `caret-tracking` (they need the
-  accessibility bus), the color effects (`invert-lightness`,
-  `color-saturation`, `brightness-*`, `contrast-*`).
+  accessibility bus).
 
 ## Keys
 

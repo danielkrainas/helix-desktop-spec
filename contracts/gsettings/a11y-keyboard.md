@@ -70,6 +70,6 @@ toggle and mouse keys are turned off (their `-enable` keys become false).
 
 ## Not supported
 
-`org.gnome.desktop.a11y.mouse` (simulated secondary click and dwell
-click) and `org.gnome.desktop.a11y` `always-show-universal-access-status`
-(Helix has no accessibility menu in the panel).
+`org.gnome.desktop.a11y` `always-show-universal-access-status` (Helix has
+no accessibility menu in the panel). Mouse accessibility is in
+`a11y-mouse.md`.

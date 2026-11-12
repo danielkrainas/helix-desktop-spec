@@ -52,14 +52,17 @@ Living log of missing, unclear, or underspecified contracts.
   (which keys count as modifiers for sticky keys, the keyboard shortcuts
   `enable` turns on, whether mouse keys need Num Lock off, beep sounds,
   and what the timeout turns off) is not documented by the schema; Helix's
-  choices are in `contracts/gsettings/a11y-keyboard.md`. Helix does not
-  implement `org.gnome.desktop.a11y.mouse` or the universal access menu.
+  choices are in `contracts/gsettings/a11y-keyboard.md`. Helix has no
+  universal access menu. GNOME's dwell click type window and progress
+  feedback, and the exact formulas of its magnifier color effects and its
+  high-contrast styling, are not documented here; Helix's are in
+  `a11y-mouse.md`, `a11y-magnifier.md` and `a11y-interface.md`.
 - Magnifier: GNOME's zoom steps for `magnifier-zoom-in` / `-out`, how
   `proportional` and `push` tracking move the view exactly, and the
   crosshairs' clip gap are not documented; Helix's choices are in
   `contracts/gsettings/a11y-magnifier.md`. Helix does not support the
-  magnifier's color effects, lens mode, screen positions other than full
-  screen, or focus and caret tracking.
+  magnifier's lens mode, screen positions other than full screen, or focus
+  and caret tracking.
 - Autostart: gnome-session's autostart phases, delays, restarts and its
   full list of `AutostartCondition` forms are not documented here;
   Helix's subset is in `org.gnome.SessionManager.md` ("Autostart").
