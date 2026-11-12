@@ -40,11 +40,22 @@ keyboard focus again, and switching virtual terminals.
 
 **Xwayland keyboard grabs** (`zwp_xwayland_keyboard_grab_manager_v1`,
 Xwayland only). With `org.gnome.mutter.wayland xwayland-allow-grabs`
-true, an X11 window whose `WM_CLASS` name or class matches an entry of
-`xwayland-grab-access-rules` (`*` and `?` wildcards; entries starting with
-`!` deny and win over allowing ones) may grab the keyboard: it gets all
-keys, as an allowed shortcut inhibitor does, until it ends the grab or
-`restore-shortcuts` is pressed.
+true, an X11 window may grab the keyboard when its `WM_CLASS` name or
+class matches an entry of `xwayland-grab-access-rules` or of Helix's
+built-in list, or when it asked for it, and no `!` entry of the rules
+denies it (`*` and `?` wildcards; `!` entries win over everything). It
+then gets all keys, as an allowed shortcut inhibitor does, until it ends
+the grab or `restore-shortcuts` is pressed.
+
+- The built-in list: `Xephyr`, `Xnest`, `VirtualBox Machine`,
+  `VirtualBoxVM`, `Vncviewer`, `vncviewer`, `remote-viewer`, `xfreerdp`,
+  `rdesktop`, `qemu*` (nested X servers, virtual machine and remote
+  desktop viewers).
+- Asking: an X11 client sends a `ClientMessage` of type
+  `_XWAYLAND_MAY_GRAB_KEYBOARD` for its window to the root window
+  (substructure masks), `data32[0]` 1 to ask and 0 to stop asking. The
+  compositor's own Xwayland connection receives it; the answer lasts for
+  that window id.
 
 **Window icons** (`xdg_toplevel_icon_manager_v1`): see "Window
 switching" for where they show.
