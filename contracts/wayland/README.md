@@ -629,9 +629,16 @@ in the overview (which has its dash) or the launcher.
   pointer leaves it (1.5 seconds after showing if the pointer never comes
   onto it). While the focused window covers the whole monitor (full
   screen) the dock is hidden, and shows at the edge only with
-  `autohide-in-fullscreen`. Helix triggers at the edge pixel, without
-  pressure (`require-pressure-to-show`, `pressure-threshold` are not
-  used), and does not animate (`animation-time`).
+  `autohide-in-fullscreen`. The edge is a one-pixel strip along the
+  screen edge. With `require-pressure-to-show` (the default) the dock
+  shows only when the pointer, on that strip, keeps pushing against the
+  edge: the pointer's unaccelerated motion towards the edge
+  (`zwp_relative_pointer_v1`, which is not stopped by the edge) is added
+  up, starting over when more than a second passes between pushes or the
+  pointer leaves the strip, and the dock shows at once when it reaches
+  `pressure-threshold` pixels; without it the dock shows after
+  `show-delay` seconds on the strip. The dock does not slide
+  (`animation-time` is not used).
 - **Clicking an app.** `click-action` (left button) and
   `middle-click-action` decide (`shift-click-action` is not used: the
   shell does not see modifiers on dock clicks): `cycle-windows` activates
@@ -642,8 +649,9 @@ in the overview (which has its dash) or the launcher.
   overview when it has several windows, else activates;
   `focus-or-appspread` likewise without minimizing; `previews`,
   `focus-or-previews`, `minimize-or-previews` and
-  `focus-minimize-or-previews` show a menu of its windows when it has
-  several (Helix has no window previews); `focus-minimize-or-appspread`
+  `focus-minimize-or-previews` show its windows when it has several:
+  with `show-windows-preview` (the default) as previews (below), else as
+  a menu of their titles; `focus-minimize-or-appspread`
   minimizes when focused, else opens the overview or activates; `quit`
   closes its windows; `skip` does nothing. An app without windows is
   launched (except with `skip`). A drive opens in the file manager, the
@@ -651,8 +659,16 @@ in the overview (which has its dash) or the launcher.
 - **Scrolling** over the dock, by `scroll-action`: `cycle-windows`
   activates the next (or previous) window of the app under the pointer;
   `switch-workspace` switches to the workspace to the right (or left).
-- **Right click** opens a menu. For an app: its windows by title (each
-  activates it), then "Open" (no windows) or "New Window", the desktop
+- **Window previews** are a popup beside the app's icon (above a bottom
+  dock): a tile per window, at most four in a row, each 220 pixels wide
+  with the window's picture (taken when the popup opens, its outline until
+  the picture comes), its title below and a close button at the top
+  right. Clicking a tile activates the window; the close button closes
+  it; Escape or a click outside closes the popup; the arrow keys move
+  between tiles and close buttons, Return chooses.
+- **Right click** opens a menu. For an app: with `show-windows-preview`
+  and windows open, "All Windows" (shows the previews), else its windows
+  by title (each activates it); then "Open" (no windows) or "New Window", the desktop
   file's actions (`Actions=`), the app's quicklist entries
   (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`, "Quicklists"),
   then "Pin to Dash" or "Unpin" (adds it to
