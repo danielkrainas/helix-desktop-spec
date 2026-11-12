@@ -60,9 +60,9 @@ Living log of missing, unclear, or underspecified contracts.
 - Magnifier: GNOME's zoom steps for `magnifier-zoom-in` / `-out`, how
   `proportional` and `push` tracking move the view exactly, and the
   crosshairs' clip gap are not documented; Helix's choices are in
-  `contracts/gsettings/a11y-magnifier.md`. Helix does not support the
-  magnifier's lens mode, screen positions other than full screen, or focus
-  and caret tracking.
+  `contracts/gsettings/a11y-magnifier.md`. GNOME's lens size and
+  frame, and how it picks the point it follows for focus and caret, are
+  not documented; Helix's are in `a11y-magnifier.md`.
 - Autostart: gnome-session's autostart phases, delays, restarts and its
   full list of `AutostartCondition` forms are not documented here;
   Helix's subset is in `org.gnome.SessionManager.md` ("Autostart").
