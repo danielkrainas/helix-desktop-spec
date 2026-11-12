@@ -620,6 +620,31 @@ A folder's row (tagged "Folder") opens it: the launcher then lists the
 folder's apps, its name in the search field's place. Backspace with an
 empty search, or Escape, goes back; typing searches all apps.
 
+## Accessibility menu (Helix)
+
+While `org.gnome.desktop.a11y always-show-universal-access-status` is
+true, or any of its switches is on, the panel shows an accessibility
+indicator (a figure with arms out) left of the input source indicator.
+Clicking it opens a menu below it with a check box per switch, in this
+order (a switch whose key is not installed is left out):
+
+| Switch | Setting |
+|--------|---------|
+| High Contrast | `org.gnome.desktop.a11y.interface high-contrast` |
+| Zoom | `org.gnome.desktop.a11y.applications screen-magnifier-enabled` |
+| Large Text | `org.gnome.desktop.interface text-scaling-factor`: on is 1.25, off 1.0; shown on when above 1.0 |
+| Screen Reader | `org.gnome.desktop.a11y.applications screen-reader-enabled` |
+| Screen Keyboard | `org.gnome.desktop.a11y.applications screen-keyboard-enabled` |
+| Visual Alerts | `org.gnome.desktop.wm.preferences visual-bell` |
+| Sticky Keys | `org.gnome.desktop.a11y.keyboard stickykeys-enable` |
+| Slow Keys | `org.gnome.desktop.a11y.keyboard slowkeys-enable` |
+| Bounce Keys | `org.gnome.desktop.a11y.keyboard bouncekeys-enable` |
+| Mouse Keys | `org.gnome.desktop.a11y.keyboard mousekeys-enable` |
+
+Choosing a switch turns it on or off and closes the menu. The menu
+follows changes made elsewhere (it shows the settings as they are when
+opened); the indicator comes and goes with them.
+
 ## Quick settings (Helix)
 
 The panel's **Power** button and `org.gnome.shell.keybindings

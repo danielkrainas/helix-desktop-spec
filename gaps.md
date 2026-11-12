@@ -53,8 +53,7 @@ Living log of missing, unclear, or underspecified contracts.
   (which keys count as modifiers for sticky keys, the keyboard shortcuts
   `enable` turns on, whether mouse keys need Num Lock off, beep sounds,
   and what the timeout turns off) is not documented by the schema; Helix's
-  choices are in `contracts/gsettings/a11y-keyboard.md`. Helix has no
-  universal access menu. GNOME's dwell click type window and progress
+  choices are in `contracts/gsettings/a11y-keyboard.md`. GNOME's dwell click type window and progress
   feedback, and the exact formulas of its magnifier color effects and its
   high-contrast styling, are not documented here; Helix's are in
   `a11y-mouse.md`, `a11y-magnifier.md` and `a11y-interface.md`.
@@ -124,3 +123,4 @@ Living log of missing, unclear, or underspecified contracts.
 - Bluetooth pairing: how gnome-shell and Settings word and lay out their pairing dialogs, which agent capability they register with, and how long discovery runs are not documented here; Helix's choices are in `contracts/dbus/org.bluez.Agent1.md` and `contracts/wayland/README.md` ("Wi-Fi networks and Bluetooth devices"). Helix does not offer OBEX file transfers or device settings.
 - Weather: gnome-shell gets weather through libgweather (its providers, caching, and how `automatic-location` finds the place) and its weather section's look is not documented here; Helix asks MET Norway directly and names an automatic location after the nearest time zone city (`contracts/gsettings/calendar.md`, "Weather"). The `org.gnome.shell.weather` key table was taken from gnome-shell 46.
 - X11 scaling and XSETTINGS: how mutter picks the automatic Xwayland scale (`xwayland-scaling-factor` 0) and what gnome-settings-daemon's XSETTINGS plugin publishes (its full list, its DPI rules, whether it merges or replaces `RESOURCE_MANAGER`) are not documented here; Helix's choices are in `contracts/wayland/README.md` ("X11 apps: scaling and settings"). Helix scales Xwayland through the compositor (it does not use Xwayland's own HiDPI mode).
+- Accessibility menu: which switches gnome-shell's accessibility menu holds in GNOME 51, their order and the text scale it uses for Large Text are not documented here; Helix's are in `contracts/wayland/README.md` ("Accessibility menu").

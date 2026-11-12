@@ -68,8 +68,8 @@ timeout below turns features off.
 After `disable-timeout` seconds with no key pressed, sticky, slow, bounce,
 toggle and mouse keys are turned off (their `-enable` keys become false).
 
-## Not supported
+## The panel's accessibility menu
 
-`org.gnome.desktop.a11y` `always-show-universal-access-status` (Helix has
-no accessibility menu in the panel). Mouse accessibility is in
-`a11y-mouse.md`.
+`org.gnome.desktop.a11y` `always-show-universal-access-status` shows the
+panel's accessibility menu (`contracts/wayland/README.md`, "Accessibility
+menu"). Mouse accessibility is in `a11y-mouse.md`.
