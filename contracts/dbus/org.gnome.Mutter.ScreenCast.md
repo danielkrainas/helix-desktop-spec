@@ -38,8 +38,12 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   `org.freedesktop.DBus.Error.InvalidArgs`. Window streams have a `size`
   parameter (the window's size in layout coordinates) and no position.
   `RecordArea` records the rectangle (layout coordinates) clipped to the
-  monitor it mostly covers; its `position` and `size` parameters are the
-  clipped rectangle, and an area on no monitor (or empty) fails with
+  bounding box of all monitors (virtual monitors of `RecordVirtual`
+  included); it may span monitors, and is then recorded
+  at the highest scale among the monitors it touches, parts on no monitor
+  showing the background color. Its `position` and `size` parameters are
+  the clipped rectangle (`output-name`: the monitor it mostly covers), and
+  an area on no monitor (or empty) fails with
   `org.freedesktop.DBus.Error.InvalidArgs`. `RecordVirtual` adds a virtual
   monitor of 1920×1080 at scale 1, to the right of the other monitors,
   for as long as the stream lives; windows can be moved onto it (by

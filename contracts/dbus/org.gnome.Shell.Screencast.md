@@ -37,9 +37,11 @@ video file.
   extension.
 - One recording at a time: a second `Screencast` / `ScreencastArea`
   returns `(false, "")`, as does an empty area or one on no monitor.
-- The whole screen is the primary monitor (see `gaps.md`); an area is
-  recorded as `org.gnome.Mutter.ScreenCast` `RecordArea` records it
-  (clipped to the monitor it mostly covers). `draw-cursor` true embeds the
+- The whole screen is every monitor (virtual ones included): the bounding
+  box of the layout, at
+  the highest monitor scale (parts on no monitor show the background
+  color). An area is recorded as `org.gnome.Mutter.ScreenCast`
+  `RecordArea` records it (it may span monitors). `draw-cursor` true embeds the
   pointer, false leaves it out.
 - Frames come from an `org.gnome.Mutter.ScreenCast` stream and are encoded
   by GStreamer (`gst-launch-1.0`): `pipewiresrc`, the frame rate capped at
