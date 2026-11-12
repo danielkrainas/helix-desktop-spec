@@ -10,6 +10,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.Mutter.DisplayConfig.xml` — multi-monitor configuration
 - `org.gnome.Mutter.IdleMonitor.xml` — idle time and activity watches
 - `org.freedesktop.PolicyKit1.AuthenticationAgent.xml` — polkit authentication agent (served by the shell)
+- `org.gnome.keyring.internal.Prompter.xml` — gcr's system prompter (served by the shell)
 - `org.gnome.Shell.Screencast.xml` — screen recording (served by the shell)
 - `org.gnome.Shell.xml` — shell control (overview, OSD, accelerators)
 - `org.gnome.Shell.Screenshot.xml` — screenshots, area selection, color picking (served by the shell)

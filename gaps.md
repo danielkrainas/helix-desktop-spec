@@ -71,6 +71,10 @@ Living log of missing, unclear, or underspecified contracts.
   polkit's helper protocol in polkit's own documentation (it is private to
   libpolkit-agent); Helix's choices are in
   `org.freedesktop.PolicyKit1.AuthenticationAgent.md`.
+- Keyring prompts: gcr's prompter interface and secret exchange are internal
+  to gcr (not a stable API, documented only in its sources); how
+  gnome-shell's prompt looks and rates password strength is not documented
+  here. Helix's choices are in `org.gnome.keyring.internal.Prompter.md`.
 - Window placement across monitors: mutter's rules (where new windows open, what happens to windows of a monitor that goes away) are not documented here; Helix's are in `contracts/wayland/README.md` ("Monitors and windows").
 - Workspaces: GNOME's exact rules for dynamic workspaces (e.g. when an emptied workspace is removed, focus after switching) and for `workspaces-only-on-primary` are not documented here; Helix's are in `contracts/gsettings/workspaces.md`. Helix lays workspaces out in a row (as GNOME 51 does), so the `-up`/`-down` workspace keys do nothing; its overview (pictures renewed twice a second) and workspace switch popup are its own design (GNOME's is not documented here).
 - Night Light: how GNOME turns a color temperature into gamma ramps, how it fades, and when it re-checks the schedule are undocumented; Helix's choices are in `contracts/gsettings/night-light.md`. The behavior of gnome-settings-daemon's `org.gnome.SettingsDaemon.Color` (what writing `Temperature` does, how long `DisabledUntilTomorrow` lasts, the preview's limits, `Sunrise`/`Sunset` without a location) is undocumented; Helix's is in `org.gnome.SettingsDaemon.Color.md`.
