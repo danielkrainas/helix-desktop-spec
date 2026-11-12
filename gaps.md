@@ -51,8 +51,9 @@ tried them with the real hardware. Remove an entry once it has been.
   `SelectionTransfer` may go unanswered and whether `SelectionOwnerChanged`
   is emitted on `EnableClipboard`; Helix's choices are in
   `contracts/dbus/org.gnome.Mutter.RemoteDesktop.md`. XKB text format
-  version 2 keymaps are not accepted; an EIS keyboard is not told about
-  layout index changes (only keymap changes, by replacement).
+  version 2 keymaps are accepted only where libxkbcommon reads them (1.11
+  and later; the development machine has 1.6, so only their refusal has
+  been tried).
 - Color management and HDR: Helix converts only from sRGB (apps cannot
   send BT.2100, scRGB or ICC-described content; no per-surface
   conversion), keeps 8 bits per channel for PQ output, and does no tone

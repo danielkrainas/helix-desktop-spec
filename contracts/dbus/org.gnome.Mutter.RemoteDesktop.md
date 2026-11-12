@@ -107,12 +107,17 @@ and X11 apps; not the primary selection).
 ### Keymaps
 
 - `KeymapCapabilities` is `{supported-keymap-types: [0],
-  supported-xkb-keymap-formats: [1]}` (XKB, text format version 1).
+  supported-xkb-keymap-formats: [1]}` (XKB, text format version 1), or
+  `[1, 2]` when the system's XKB library (libxkbcommon 1.11 or later)
+  reads text format version 2; Helix finds out once, by compiling a small
+  keymap as version 2.
 - `SetKeymap(options)` with `keymap-type` 0 replaces the keymap of the
   session's keyboard, for everything (apps, shortcuts,
   `NotifyKeyboardKeysym`): `xkb-keymap` (`h`, required) is read to its
-  end (a final NUL is allowed); `xkb-keymap-format` (`u`), if given,
-  must be 1; `xkb-keymap-layout-index` (`u`, default 0) is the active
+  end (a final NUL is allowed); `xkb-keymap-format` (`u`, default 1), if
+  given, must be one of the supported formats (a version 2 keymap is
+  compiled as such and then used as the version 1 text the library
+  writes out for it); `xkb-keymap-layout-index` (`u`, default 0) is the active
   layout; `lock-keymap` (`b`, default false). An unsupported type or
   format, a missing, unreadable or invalid keymap, or a layout index the
   keymap does not have, fail with `org.freedesktop.DBus.Error.InvalidArgs`.
@@ -132,7 +137,12 @@ and X11 apps; not the primary selection).
   effect was set by this session, else 0. Every session's property
   changes (`PropertiesChanged`) when the keymap or active layout changes.
 - EIS keyboards are replaced (device removed, a new one added and resumed)
-  when the keymap changes, so they carry the keymap in effect.
+  when the keymap changes, so they carry the keymap in effect. When only
+  the active layout changes (`SetKeymapLayoutIndex`, or switching input
+  sources within the same keymap) they stay and are sent
+  `ei_keyboard.modifiers` with the new group (and the current depressed,
+  locked and latched modifiers); a new EIS keyboard is sent `modifiers`
+  right after it is added.
 
 ### EIS
 
