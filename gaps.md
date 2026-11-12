@@ -118,7 +118,7 @@ tried them with the real hardware. Remove an entry once it has been.
   uses subsearches, its timeouts and how it shows results (grid or list) are
   not documented here; Helix's choices are in
   `org.gnome.Shell.SearchProvider2.md`.
-- Animations: GNOME's animation curves, lengths and which surfaces it animates (and how it animates maximizing, which Helix does not) are not documented here; Helix's are in `contracts/wayland/README.md`, "Animations".
+- Animations: GNOME's animation curves, lengths and which surfaces it animates (and how it animates maximizing, full screen and tiling; Helix's way is its own) are not documented here; Helix's are in `contracts/wayland/README.md`, "Animations".
 - Dock: vanilla GNOME has no dock; Helix's follows Ubuntu's Dash to Dock settings, whose behavior (its animation curves, what exactly `height-fraction` measures, and the look of its previews and their hover popups; Helix shows previews on click, has no hover popups, and shows quicklists as entries of the dock menu, without submenus) is documented only by that extension; Helix's subset is in `contracts/wayland/README.md` ("Dock").
 - Favorites and app folders: GNOME's app grid (pages, `app-picker-layout`,
   dragging apps into folders) and dash (reordering by dragging, its context

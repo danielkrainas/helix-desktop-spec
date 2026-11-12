@@ -307,6 +307,7 @@ fast at first, slowing to the end.
 | Window opens | first shown, or brought back from minimized | fades in from transparent while growing from 90 % to full size about its center | 200 ms |
 | Window closes | its app takes it away (`xdg_toplevel` destroyed, X11 window unmapped) | its last image fades out while shrinking to 90 % | 150 ms |
 | Window minimized | | its last image shrinks to 20 % while moving to the bottom middle of its monitor (where the dock is) and fading out | 250 ms |
+| Window changes place | maximized, tiled to a side, made full screen, or restored from any of these (also when the work area changes under a maximized or tiled window) | drawn in a rectangle going from where it was to where it goes; whatever the window shows meanwhile (its old or new size) is stretched to fill it | 250 ms |
 | Workspace switch | | the old workspace's windows slide out a monitor's width the other way while the new one's slide in (switching to the next workspace: from the right) | 250 ms |
 | Shell surface | overview, launcher, menus, dialogs, notifications and other `zwlr_layer_shell_v1` surfaces appear or go away | fade in / out | 150 ms |
 
@@ -316,7 +317,10 @@ fast at first, slowing to the end.
   at that moment; a window whose surfaces are already gone (for example,
   its app crashed) disappears without animation.
 - Windows on every workspace do not slide. Window title bars Helix draws
-  for X11 windows are not animated.
+  for X11 windows are not animated, except that they follow a window
+  changing place (drawn at the rectangle's width).
+- Changing place again part way starts from where the window is drawn
+  at that moment. With `reduced-motion` a window changes place at once.
 - Screenshots and screen casts show the scene as it is, not mid-animation
   states of windows going away.
 - `org.gnome.desktop.interface enable-animations` false: no animations.
