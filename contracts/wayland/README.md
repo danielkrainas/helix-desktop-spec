@@ -400,7 +400,9 @@ to quit entirely.", with **Wait** and **Force Quit**.
 ## Overview (Helix)
 
 The overview shows the open windows of the active workspace and all the
-workspaces, on the primary monitor. It is shown by the overlay key, by
+workspaces. The primary monitor holds all of it; every other monitor
+shows the active workspace's windows that are on it (by their middle),
+laid out the same way. It is shown by the overlay key, by
 `org.gnome.shell.keybindings toggle-overview`, and by setting
 `org.gnome.Shell` `OverviewActive`; the same key again, Escape, or setting
 `OverviewActive` false hides it. It holds, from the top:
@@ -414,8 +416,8 @@ workspaces, on the primary monitor. It is shown by the overlay key, by
   them), the active workspace outlined. Clicking one switches to it; the
   overview stays open and shows that workspace's windows.
 - **The active workspace's windows** (minimized ones and those on every
-  workspace included), as pictures taken when the overview opened or the
-  workspace changed, in rows, each keeping its proportions and at most
+  workspace included) of this monitor, as pictures renewed about twice a
+  second while the overview is open, in rows, each keeping its proportions and at most
   its real size, its title below. The focused window is selected; the
   arrow keys move the selection and Enter activates it. Clicking a window
   activates it and hides the overview. Its × button (shown on the picture
