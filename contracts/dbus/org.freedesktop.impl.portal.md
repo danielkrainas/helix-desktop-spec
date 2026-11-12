@@ -496,10 +496,17 @@ through a barrier they set, and get it as an EIS (libei) receiver.
 
 ### Helix
 
-- `version` 1 (the frontend then calls `CreateSession`),
-  `SupportedCapabilities` 3 (keyboard and pointer; touchscreens are not
-  captured).
-- `CreateSession` asks with the shell's dialog (`org.helix.PortalDialog`):
+- `version` 2, `SupportedCapabilities` 3 (keyboard and pointer;
+  touchscreens are not captured). `CreateSession2` makes the session
+  (nothing is asked); `Start` asks and starts it. `CreateSession` (version
+  1) does both.
+- With `persist_mode` 1 or 2, `Start`'s results carry `restore_data`
+  `("Helix", 1, <a{sv}>)` holding `devices` (`u`), the capabilities
+  granted. A `Start` whose `restore_data` is Helix's and grants every
+  capability asked for starts without asking. `clipboard_enabled` is
+  always false: Helix does not share the clipboard with input capture
+  sessions.
+- Starting asks with the shell's dialog (`org.helix.PortalDialog`):
   "Allow Input Capture?", "<app name> wants to take over the pointer and
   keyboard when the pointer leaves the screen. Super+Escape gives them
   back.", "Deny" (answer 1) and "Allow". Allowed, the compositor makes the
