@@ -944,7 +944,9 @@ reports the captured rectangle, or why it failed. Captures are refused
 while the session is locked. The shell can also hand the compositor a PNG
 image to put on the clipboard (`image/png`); the compositor then owns the
 selection and serves it to Wayland and X11 clients until something else
-replaces it. Ordinary clients have no way to capture the
+replaces it. Likewise (since version 6) UTF-8 text, offered as
+`text/plain;charset=utf-8`, `text/plain`, `UTF8_STRING`, `STRING` and
+`TEXT`. Ordinary clients have no way to capture the
 screen; sandboxed apps use the Screenshot portal.
 
 ## Input methods (Helix)

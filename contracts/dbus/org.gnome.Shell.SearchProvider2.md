@@ -47,8 +47,12 @@ turned off; `enabled` lists `DefaultDisabled` providers turned on;
   `GetInitialResultSet`. A provider that has not answered within 5
   seconds, or whose answer is for an older text, is left out.
 - Up to 3 results per provider are shown, after the windows and apps,
-  grouped by provider in order: each its `name`, its `description` (in a
+  grouped by provider in order: each its icon (`icon`, else `icon-data`;
+  20 pixels, at the row's start), its `name`, its `description` (in a
   dimmer color) and, at the row's end, the provider's app name. Choosing
-  one (Enter or a click) calls `ActivateResult` (timestamp 0) and closes
-  the launcher.
-- Result icons, `clipboardText` and `LaunchSearch` are not used.
+  one (Enter or a click) puts its `clipboardText`, if any, on the
+  clipboard, calls `ActivateResult` (timestamp 0) and closes the
+  launcher.
+- After each provider's results comes a row "Search for “text” in App";
+  choosing it calls `LaunchSearch` with the terms (timestamp 0) and
+  closes the launcher.
