@@ -533,9 +533,11 @@ The switches act on (all on the system bus):
   `ListConnections`, each connection's `GetSettings` `802-11-wireless`
   `ssid`), `ActivateConnection(connection, device, access point)`; else,
   for an open network, `AddAndActivateConnection({}, device, access
-  point)`; else (a new secured network: Helix does not ask for Wi-Fi
-  passwords, see `gaps.md`) it runs `gnome-control-center wifi`. Choosing
-  the connected network does nothing.
+  point)`; else, for a new secured network, also
+  `AddAndActivateConnection({}, device, access point)`: NetworkManager
+  then asks the shell's secret agent for the password
+  (`contracts/dbus/org.freedesktop.NetworkManager.SecretAgent.md`).
+  Choosing the connected network does nothing.
 - **Devices** (while Bluetooth is on): BlueZ's paired devices
   (`org.freedesktop.DBus.ObjectManager` of `org.bluez` at `/`, objects with
   `org.bluez.Device1` `Paired` true), by `Alias`, at most eight, with
