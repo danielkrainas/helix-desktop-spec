@@ -138,6 +138,8 @@ each notification's icon, app, summary and up to two lines of body, with a
 × that dismisses it (reason 2). Clicking a notification acts as clicking
 its banner. The list also has "Clear" (dismisses all) and a "Do Not
 Disturb" switch (`org.gnome.desktop.notifications show-banners`, inverted).
-Escape or a click outside closes it. While the list holds notifications
+Escape or a click outside closes it. Beside the list are the date, a
+calendar, world clocks and the media player (`contracts/gsettings/calendar.md`).
+While the list holds notifications
 that were posted since it was last opened, the panel shows a dot next to
 the clock.

@@ -18,6 +18,11 @@ serves the interface at `/org/mpris/MediaPlayer2`.
   `CanGoNext`, `CanGoPrevious` false); with `CanControl` false it does not
   accept any of them.
 
+- `Metadata` (`a{sv}`): the track; Helix shows `xesam:title` (`s`) and
+  `xesam:artist` (`as`).
+- On the root interface `org.mpris.MediaPlayer2` (same path): `Identity`
+  (`s`), the player's name.
+
 ## Which player the keys control (Helix)
 
 The first player, in bus-name order, whose `PlaybackStatus` is `Playing`;
