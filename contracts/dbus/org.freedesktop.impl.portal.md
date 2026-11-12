@@ -619,11 +619,34 @@ changes.
 
 ### Helix
 
-- `version` is 1, so the frontend sends version 1 notifications; Helix
-  also takes `markup-body` (shown with notification markup in place of
-  `body`). Other keys are dropped.
+- `version` is 2. Property `SupportedOptions` (`a{sv}`): `category`,
+  the categories Helix takes: `im.received`, `alarm.ringing`,
+  `call.incoming`, `call.ongoing`, `call.unanswered`,
+  `weather.warning.extreme`, `cellbroadcast.danger.extreme`,
+  `cellbroadcast.danger.severe`, `cellbroadcast.amber-alert`,
+  `cellbroadcast.test`, `os.battery.low`, `browser.web-notification`; no
+  `button-purpose` (buttons with a purpose, such as replying with text,
+  are not offered, so the frontend does not send them).
+- Keys taken: `title`, `body`, `markup-body` (shown with notification
+  markup in place of `body`), `icon` (themed, bytes, or — version 2 —
+  `("file-descriptor", h)`, whose contents are read and passed on as
+  bytes), `priority`, `default-action`, `default-action-target`,
+  `buttons`, and:
+  - `category`: `alarm.ringing`, `call.incoming`,
+    `weather.warning.extreme`, `cellbroadcast.danger.extreme`,
+    `cellbroadcast.amber-alert` and `os.battery.low` make the
+    notification urgent (unless it has its own `priority`); the others
+    change nothing;
+  - `sound`: `default` plays the sound theme's `message-new-instant`;
+    `silent` or no `sound`, nothing; `("file-descriptor", h)` plays that
+    file (copied to `$XDG_RUNTIME_DIR/helix-notification-sounds/`);
+  - `display-hint`: `transient` makes the banner go away without staying
+    in the notification list; the other hints are ignored.
+  Other keys are dropped.
 - The notification is passed to the shell's `org.gtk.Notifications`
-  `AddNotification` (and `RemoveNotification`) unchanged, so it looks and
+  `AddNotification` (and `RemoveNotification`) with the keys above
+  (sounds and transience as the Helix-private keys `x-helix-sound`, `s`:
+  a sound name or an absolute file, and `x-helix-transient`, `b`), so it looks and
   behaves as a GTK notification of app `app_id`, with that app's
   notification settings.
 - Actions: the shell activates `app.` actions over

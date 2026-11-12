@@ -60,6 +60,10 @@ bytes) is shown, else the application's own icon (its desktop file
 `app_id.desktop`); the app's name is its desktop file's name, else
 `app_id`. The body is plain text; a `markup-body` (`s`, notification
 markup as in `org.freedesktop.Notifications.md`) is shown instead when
-given (the Notification portal's key; see `org.freedesktop.impl.portal.md`). Notifications stay in the
+given (the Notification portal's key; see `org.freedesktop.impl.portal.md`).
+Two Helix-private keys come from the portal backend: `x-helix-sound`
+(`s`, a sound theme name, or an absolute file, played with the banner)
+and `x-helix-transient` (`b`, true: the banner goes away without staying
+in the notification list). Notifications stay in the
 notification list as `org.freedesktop.Notifications.md` ("The
 notification list") describes, until withdrawn, activated or dismissed.
