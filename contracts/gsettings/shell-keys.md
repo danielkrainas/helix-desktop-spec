@@ -177,13 +177,35 @@ Changes to the keys of `org.gnome.shell.keybindings`,
 `org.gnome.settings-daemon.plugins.media-keys` (including custom shortcuts)
 and `org.gnome.desktop.wm.keybindings` apply at once.
 
+## Eject and radios
+
+`org.gnome.settings-daemon.plugins.media-keys` (each with a `-static`
+twin: `XF86Eject`; `XF86WLAN`, `XF86UWB`, `XF86RFKill`; `XF86Bluetooth`):
+
+- `eject` ejects a drive: the first connected drive that can be ejected
+  whose device is an optical drive (`/dev/sr*`), else the first that can
+  be ejected; the shell shows `media-eject-symbolic` (without a label).
+  The drive is ejected as the dock's "Eject" does
+  (`removable-media.md`): questions about busy files are asked, a failure
+  is a notification "Cannot eject <name>". Without such a drive nothing
+  happens.
+- `rfkill` turns airplane mode on or off (as the quick settings switch
+  does: Wi-Fi, mobile broadband and Bluetooth off, or Wi-Fi and Bluetooth
+  on) and shows `airplane-mode-symbolic` "Airplane Mode On" or
+  `airplane-mode-disabled-symbolic` "Airplane Mode Off". Without Wi-Fi
+  and Bluetooth nothing happens.
+- `rfkill-bluetooth` turns Bluetooth on or off (every adapter's
+  `Powered`) and shows `bluetooth-active-symbolic` "Bluetooth On" or
+  `bluetooth-disabled-symbolic` "Bluetooth Off". Without an adapter
+  nothing happens.
+
 ## Not supported
 
 `rotate-video-lock` (each with a `-static` twin) flips
 `org.gnome.settings-daemon.peripherals.touchscreen` `orientation-lock` (see
 `org.gnome.Mutter.DisplayConfig.md`, "Automatic rotation"); the shell shows
 `rotation-locked-symbolic` "Rotation Locked" or `rotation-allowed-symbolic`
-"Auto Rotate". `eject`, `rfkill` and `rfkill-bluetooth` do nothing.
+"Auto Rotate".
 GNOME 51 has no `org.gnome.SettingsDaemon.MediaKeys` D-Bus interface (apps
 grabbing the media keys); players are controlled through MPRIS only.
 
