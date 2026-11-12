@@ -612,7 +612,8 @@ in the overview (which has its dash) or the launcher.
   (`primary`, the default). On the edge `dock-position` names (`BOTTOM` by default;
   `TOP` is below the panel). Centered on the edge, or along all of it with
   `extend-height` (then the icons start at the edge's beginning unless
-  `always-center-icons`). `height-fraction` is not used.
+  `always-center-icons`). Otherwise it is at most `height-fraction`
+  (default 0.9) of the edge's length less twice the panel's height.
 - **What.** In order: the Show Apps button when `show-apps-at-top`; the
   favorites (`show-favorites`); apps with windows that are not favorites,
   in the order their first window opened (`show-running`; with
@@ -658,8 +659,13 @@ in the overview (which has its dash) or the launcher.
   up, starting over when more than a second passes between pushes or the
   pointer leaves the strip, and the dock shows at once when it reaches
   `pressure-threshold` pixels; without it the dock shows after
-  `show-delay` seconds on the strip. The dock does not slide
-  (`animation-time` is not used).
+  `show-delay` seconds on the strip. Showing and hiding, the bar
+  slides in from beyond its edge and back out over `animation-time`
+  seconds (default 0.2, eased out; at most 2); a dock asked to show
+  while sliding out turns back from where it is. It appears and goes at
+  once when `org.gnome.desktop.interface enable-animations` is off, and
+  when it is taken down for the overview, the launcher or the lock
+  screen.
 - **Clicking an app.** `click-action` (left button) and
   `middle-click-action` decide (`shift-click-action` is not used: the
   shell does not see modifiers on dock clicks): `cycle-windows` activates
