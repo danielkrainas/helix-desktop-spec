@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.PortalDialog — Helix-private (CC0). Dialogs and app state the
+  portal backends ask the shell for. Served by the shell (org.gnome.Shell)
+  at /org/helix/PortalDialog. Notes in org.freedesktop.impl.portal.md
+  ("Access", "Account", "AppChooser", "Background").
+-->
+<node>
+  <interface name="org.helix.PortalDialog">
+    <!-- A question; check_label empty: no check box. -->
+    <method name="Ask">
+      <arg name="title" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+      <arg name="description" type="s" direction="in"/>
+      <arg name="grant_label" type="s" direction="in"/>
+      <arg name="deny_label" type="s" direction="in"/>
+      <arg name="check_label" type="s" direction="in"/>
+      <arg name="check" type="b" direction="in"/>
+      <arg name="granted" type="b" direction="out"/>
+      <arg name="checked" type="b" direction="out"/>
+    </method>
+    <!-- Pick one of items (desktop ids with names); "" when canceled. -->
+    <method name="ChooseApp">
+      <arg name="title" type="s" direction="in"/>
+      <arg name="message" type="s" direction="in"/>
+      <arg name="items" type="a(ss)" direction="in"/>
+      <arg name="selected" type="s" direction="in"/>
+      <arg name="choice" type="s" direction="out"/>
+    </method>
+    <!-- Apps with windows: app id to 1 (running) or 2 (focused). -->
+    <method name="RunningApps">
+      <arg name="apps" type="a{su}" direction="out"/>
+    </method>
+    <signal name="RunningAppsChanged"/>
+  </interface>
+</node>

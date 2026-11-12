@@ -289,3 +289,82 @@ emitted with it. `version` is 1.
   through (option names with `_` instead of `-`); for a session that does
   not share the clipboard the methods fail with
   `org.freedesktop.DBus.Error.Failed`.
+
+## Access (`org.freedesktop.impl.portal.Access`)
+
+`AccessDialog(handle, app_id, parent_window, title, subtitle, body,
+options) -> (response, results)`: the frontend's generic permission
+question (used, for example, before letting an app use the camera).
+Options: `modal` (`b`), `deny_label` and `grant_label` (`s`), `icon`
+(`s`), `choices` (`a(ssa(ss)s)`: id, label, options as (id, label), and
+the initial value; a choice without options is a check box, its value
+`"true"` or `"false"`). Response 0 granted, 1 denied, 2 other; results:
+`choices` (`a(ss)`, id and value).
+
+### Helix
+
+The shell's dialog (`org.helix.PortalDialog.Ask`): title the `title`,
+message the `subtitle`, description the `body`, buttons `grant_label`
+(default "Allow") and `deny_label` (default "Deny"). The first check-box
+choice is shown as the dialog's check box; every other choice is answered
+with its initial value. Response 0 when allowed, 1 when denied or closed.
+
+## Account (`org.freedesktop.impl.portal.Account`)
+
+`GetUserInformation(handle, app_id, window, options) -> (response,
+results)`: options `reason` (`s`); results `id` (user name), `name` (real
+name) and `image` (a `file://` URI of the user's picture).
+
+### Helix
+
+A dialog "Share Details" with "<app> wants to know your name." (`app` the
+app's name from its desktop file, else its id), the description the
+`reason` when given, then "Name: <real name> (<user name>)", buttons
+"Share" and "Cancel". The real name is the GECOS name of the password
+database (up to the first comma), else the user name; the picture is
+AccountsService's `IconFile` for the user when that file exists, else
+`~/.face` when it exists, else `image` is left out.
+
+## AppChooser (`org.freedesktop.impl.portal.AppChooser`)
+
+`ChooseApplication(handle, app_id, parent_window, choices, options) ->
+(response, results)`: `choices` are desktop ids without `.desktop`;
+options `last_choice` (`s`), `modal` (`b`), `content_type` (`s`), `uri`,
+`filename` (`s`), `activation_token` (`s`); results `choice` (`s`) and
+`activation_token` (`s`). `UpdateChoices(handle, choices)` replaces the
+list while the dialog is open.
+
+### Helix
+
+A dialog "Open With" with a list of the choices by name (apps without an
+installed desktop file are left out), the `last_choice` selected at first
+(else the first), message "Choose an app to open <file name>." (from
+`uri` or `filename`, else "Choose an app."), buttons "Open" and "Cancel".
+Response 0 with `choice` the selected id; 1 when canceled or when no
+choice is left. `UpdateChoices` is accepted and ignored (see `gaps.md`).
+
+## Background (`org.freedesktop.impl.portal.Background`)
+
+- `GetAppState() -> apps`: `a{sv}`, app id to `u` state: 0 background
+  (running without windows), 1 running, 2 active (focused).
+- `NotifyBackground(handle, app_id, name) -> (response, results)`: an app
+  keeps running with no windows; results `result` (`u`): 0 forbid, 1
+  allow, 2 allow once.
+- `EnableAutostart(app_id, enable, commandline, flags) -> result`: start
+  the app at login with `commandline`; flags 1: D-Bus activatable.
+- Signal `RunningApplicationsChanged`: the state changed.
+
+### Helix
+
+- States come from the shell's windows (`org.helix.PortalDialog.RunningApps`):
+  apps with windows are 1, the focused one 2. Apps without windows are not
+  listed (the shell does not know them; see `gaps.md`).
+  `RunningApplicationsChanged` follows the shell's `RunningAppsChanged`.
+- `NotifyBackground`: a dialog "Background Activity" with "<name> is
+  running in the background.", buttons "Allow" and "Forbid": result 1 or
+  0.
+- `EnableAutostart`: writes (or with `enable` false removes)
+  `$XDG_CONFIG_HOME/autostart/<app_id>.desktop`: `Type=Application`,
+  `Name=<app_id>`, `Exec=` the command line (each argument quoted as the
+  Desktop Entry specification says), `X-Flatpak=<app_id>`, and
+  `DBusActivatable=true` with flag 1; result true when that worked.

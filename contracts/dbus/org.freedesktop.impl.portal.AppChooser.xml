@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!-- Portal backend interface (xdg-desktop-portal); notes in org.freedesktop.impl.portal.md -->
+<node>
+  <interface name="org.freedesktop.impl.portal.AppChooser">
+    <method name="ChooseApplication">
+      <arg name="handle" type="o" direction="in"/>
+      <arg name="app_id" type="s" direction="in"/>
+      <arg name="parent_window" type="s" direction="in"/>
+      <arg name="choices" type="as" direction="in"/>
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <method name="UpdateChoices">
+      <arg name="handle" type="o" direction="in"/>
+      <arg name="choices" type="as" direction="in"/>
+    </method>
+  </interface>
+</node>
