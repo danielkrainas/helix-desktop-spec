@@ -487,7 +487,8 @@ panel's right end, holding, from the top:
 - Switches, highlighted while on, in rows of three: **Wi-Fi** (when
   NetworkManager runs; its label is the connected network's name while
   connected), **Bluetooth** (when BlueZ has an adapter), **Airplane
-  Mode** (when either is there), **Night Light**
+  Mode** (when either is there), **Auto Rotate** (when iio-sensor-proxy
+  has an accelerometer: `orientation-lock`, inverted), **Night Light**
   (`org.gnome.settings-daemon.plugins.color night-light-enabled`), **Dark
   Style** (`org.gnome.desktop.interface color-scheme` `prefer-dark`, else
   `default`) and **Do Not Disturb** (`org.gnome.desktop.notifications

@@ -50,6 +50,7 @@ rather than copied from schema sources:
 - [`org.gnome.desktop.search-providers`](org.gnome.desktop.search-providers.md) — see `contracts/dbus/org.gnome.Shell.SearchProvider2.md`
 - [`org.gnome.desktop.app-folders`](org.gnome.desktop.app-folders.md) — see `contracts/wayland/README.md`, "Favorites and app folders"
 - [`org.gnome.shell`](org.gnome.shell.md) — `favorite-apps`: see the same section
+- [`org.gnome.settings-daemon.peripherals.touchscreen`](org.gnome.settings-daemon.peripherals.touchscreen.md) — see `org.gnome.Mutter.DisplayConfig.md`, "Automatic rotation"
 - [`org.gnome.desktop.interface`](org.gnome.desktop.interface.md)
 - [`org.gnome.desktop.a11y`](org.gnome.desktop.a11y.md)
 - [`org.gnome.desktop.a11y.applications`](org.gnome.desktop.a11y.applications.md)

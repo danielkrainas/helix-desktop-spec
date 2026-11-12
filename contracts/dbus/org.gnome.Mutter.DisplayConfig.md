@@ -244,3 +244,19 @@ range.
 - The serial changes only when the set of entries changes (monitors
   added, removed or reconfigured), not when a value changes.
 - External monitors (DDC/CI) are not controlled.
+
+## Automatic rotation (Helix)
+
+While `org.gnome.settings-daemon.peripherals.touchscreen` `orientation-lock`
+(`contracts/gsettings/org.gnome.settings-daemon.peripherals.touchscreen.md`)
+is false and iio-sensor-proxy (`net.hadess.SensorProxy` at
+`/net/hadess/SensorProxy`, system bus) reports `HasAccelerometer`, the
+compositor claims the accelerometer (`ClaimAccelerometer`, released with
+`ReleaseAccelerometer` when the lock goes on) and follows
+`AccelerometerOrientation`: the built-in panel (`is-builtin`) gets the
+transform `normal` 0, `left-up` 1 (90°), `bottom-up` 2 (180°), `right-up`
+3 (270°); `undefined` changes nothing. The change is applied like a
+temporary `ApplyMonitorsConfig` (no confirmation; `MonitorsChanged`
+follows); other monitors keep their places. Without a built-in panel
+nothing rotates.
+

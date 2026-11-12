@@ -179,7 +179,11 @@ and `org.gnome.desktop.wm.keybindings` apply at once.
 
 ## Not supported
 
-`eject`, `rfkill`, `rfkill-bluetooth` and `rotate-video-lock` do nothing.
+`rotate-video-lock` (each with a `-static` twin) flips
+`org.gnome.settings-daemon.peripherals.touchscreen` `orientation-lock` (see
+`org.gnome.Mutter.DisplayConfig.md`, "Automatic rotation"); the shell shows
+`rotation-locked-symbolic` "Rotation Locked" or `rotation-allowed-symbolic`
+"Auto Rotate". `eject`, `rfkill` and `rfkill-bluetooth` do nothing.
 GNOME 51 has no `org.gnome.SettingsDaemon.MediaKeys` D-Bus interface (apps
 grabbing the media keys); players are controlled through MPRIS only.
 
