@@ -358,7 +358,12 @@ installed desktop file are left out), the `last_choice` selected at first
 (else the first), message "Choose an app to open <file name>." (from
 `uri` or `filename`, else "Choose an app."), buttons "Open" and "Cancel".
 Response 0 with `choice` the selected id; 1 when canceled or when no
-choice is left. `UpdateChoices` is accepted and ignored (see `gaps.md`).
+choice is left. `UpdateChoices` for a request whose dialog is open
+replaces the list (the shell's `UpdateApps`, `org.helix.PortalDialog.xml`;
+installed apps only, the selection staying on the same app when it is
+still listed, else the first); with no installed app left the dialog is
+canceled (response 1). For any other handle it fails with
+`org.freedesktop.DBus.Error.InvalidArgs`.
 
 ## Background (`org.freedesktop.impl.portal.Background`)
 

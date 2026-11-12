@@ -28,6 +28,13 @@
       <arg name="selected" type="s" direction="in"/>
       <arg name="choice" type="s" direction="out"/>
     </method>
+    <!-- New items for the open ChooseApp dialog (its selection stays on
+         the same name when still listed; no items cancel it). Returns
+         false when no ChooseApp dialog is open. -->
+    <method name="UpdateApps">
+      <arg name="items" type="a(ss)" direction="in"/>
+      <arg name="updated" type="b" direction="out"/>
+    </method>
     <!--
       A general dialog, described by options (all optional):
         title, message, description (s); accept, cancel (s): button labels;
