@@ -601,9 +601,13 @@ in the overview (which has its dash) or the launcher.
 - **Dragging** an app's icon along the dock moves it among the favorites
   (a running app dropped there becomes a favorite at that place);
   dropping a favorite more than 60 pixels away from the dock unpins it.
-- `hot-keys`, `app-hotkey-*`, the window previews, launcher counts and
-  progress (`com.canonical.Unity.LauncherEntry`), urgent-app animation
-  and the remaining keys are not used.
+- Apps' counts, progress and urgency from
+  `com.canonical.Unity.LauncherEntry` show on their icons
+  (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`); an app's count
+  replaces its notification count. Urgent apps get an orange background
+  (`dance-urgent-applications` animation is not done).
+- `hot-keys`, `app-hotkey-*`, the window previews and the remaining keys
+  are not used.
 
 **App folders** are `org.gnome.desktop.app-folders` `folder-children`; each
 child `<id>` is a `org.gnome.desktop.app-folders.folder` at
