@@ -106,10 +106,83 @@ Keys of `org.gnome.settings-daemon.plugins.media-keys`, each with a
 | `next` | `Next` |
 | `previous` | `Previous` |
 
+| `playback-rewind` | `Seek` 10 seconds back |
+| `playback-forward` | `Seek` 10 seconds ahead |
+| `playback-repeat` | set `LoopStatus` to the next of `None`, `Playlist`, `Track` (then `None` again) |
+| `playback-random` | flip `Shuffle` |
+
 The player is chosen as in `contracts/dbus/org.mpris.MediaPlayer2.Player.md`.
-Nothing happens when no player is running. GNOME also lets apps grab these
-keys through gnome-settings-daemon's `org.gnome.SettingsDaemon.MediaKeys`;
-Helix does not offer that interface (see `gaps.md`).
+Nothing happens when no player is running.
+
+## Launching
+
+Keys of `org.gnome.settings-daemon.plugins.media-keys`, each with a
+`-static` twin:
+
+| Key | Opens |
+|-----|-------|
+| `www` | the default web browser (the app for `x-scheme-handler/https`) |
+| `email` | the default mail app (`x-scheme-handler/mailto`) |
+| `calculator` | `org.gnome.Calculator`, else the first app in the `Calculator` category |
+| `control-center` | `org.gnome.Settings` |
+| `home` | the home folder, in the app for folders |
+| `media` | the default music player (the app for `audio/x-vorbis+ogg`) |
+| `help` | `help:gnome-help` |
+| `search` | the application launcher (as `toggle-application-view`) |
+
+Nothing happens when there is no such app.
+
+## Session
+
+| Key | Action |
+|-----|--------|
+| `screensaver` | lock the screen |
+| `logout` | `org.gnome.SessionManager` `Logout(0)` (asks first) |
+| `shutdown`, `power` | `Shutdown()` (asks first) |
+| `reboot` | `Reboot()` (asks first) |
+| `suspend` | `Suspend()` |
+| `hibernate` | logind `Hibernate(false)`, when `CanHibernate` is `yes` |
+
+## Text size, contrast, touchpad
+
+| Key | Action |
+|-----|--------|
+| `increase-text-size`, `decrease-text-size` | `org.gnome.desktop.interface` `text-scaling-factor` up / down by 0.25, between 0.5 and 3 |
+| `toggle-contrast` | flip `org.gnome.desktop.a11y.interface` `high-contrast` |
+| `touchpad-on`, `touchpad-off`, `touchpad-toggle` | set `org.gnome.desktop.peripherals.touchpad` `send-events` to `enabled` / `disabled` / the other one; the shell shows `input-touchpad-symbolic` or `touchpad-disabled-symbolic` |
+
+## Keyboard backlight and battery
+
+Through UPower (`org.freedesktop.UPower`, system bus):
+
+- `keyboard-brightness-up`, `-down`: `KbdBacklight` `SetBrightness` one
+  step (a tenth of `GetMaxBrightness`, at least 1) up or down;
+  `keyboard-brightness-toggle`: to 0, or from 0 back to the last other
+  value (else the maximum). The shell shows `keyboard-brightness-symbolic`
+  and the level.
+- `battery-status`: the shell shows the display device's `IconName` and
+  `Percentage` (nothing without a battery).
+
+## Custom shortcuts
+
+`custom-keybindings` lists object paths; each holds a
+`org.gnome.settings-daemon.plugins.media-keys.custom-keybinding` (relocatable
+schema: `name`, `command`, `binding`). Pressing `binding` runs `command`,
+split into arguments with shell quoting rules but without a shell, in the
+shell's environment. Entries with an empty `binding` or `command` do
+nothing.
+
+## Changes
+
+Changes to the keys of `org.gnome.shell.keybindings`,
+`org.gnome.settings-daemon.plugins.media-keys` (including custom shortcuts)
+and `org.gnome.desktop.wm.keybindings` apply at once.
+
+## Not supported
+
+`eject`, `rfkill`, `rfkill-bluetooth` and `rotate-video-lock` do nothing.
+GNOME 51 has no `org.gnome.SettingsDaemon.MediaKeys` D-Bus interface (apps
+grabbing the media keys); players are controlled through MPRIS only.
 
 ## Accessibility
 
@@ -119,6 +192,7 @@ are described in `a11y-magnifier.md`.
 
 ## While locked
 
-Volume, brightness, playback and accessibility keys keep working while
-the session is locked (the on-screen display is not shown on the lock screen). Screenshot
+Volume, brightness, keyboard backlight, playback, accessibility,
+`suspend`, `hibernate` and `battery-status` keys keep working while the
+session is locked (the on-screen display is not shown on the lock screen). Screenshot
 keys do not.
