@@ -1,0 +1,14 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+ "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!-- Helix-private. Served by the compositor on its
+     org.gnome.Mutter.DisplayConfig bus name at /org/helix/ClickType.
+     Behavior: contracts/gsettings/a11y-mouse.md, "Click type window". -->
+<node>
+  <interface name="org.helix.ClickType">
+    <!-- single, double, drag or secondary: what the next dwell click does. -->
+    <method name="SetClickType">
+      <arg name="click_type" type="s" direction="in"/>
+    </method>
+    <property name="ClickType" type="s" access="read"/>
+  </interface>
+</node>
