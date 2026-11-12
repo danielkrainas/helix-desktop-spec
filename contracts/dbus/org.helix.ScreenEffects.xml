@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.ScreenEffects — Helix-private (CC0). Whole-screen effects the
+  shell asks the compositor for. Served by the compositor next to
+  org.gnome.Mutter.DisplayConfig. Behavior notes in
+  contracts/gsettings/wellbeing.md.
+-->
+<node>
+  <interface name="org.helix.ScreenEffects">
+    <method name="SetGrayscale">
+      <arg name="on" type="b" direction="in"/>
+    </method>
+    <property name="Grayscale" type="b" access="read"/>
+  </interface>
+</node>

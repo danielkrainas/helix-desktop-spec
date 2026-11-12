@@ -1,14 +1,13 @@
 # `org.gnome.desktop.media-handling`
 
-Key surface of the `org.gnome.desktop.media-handling` GSettings schema,
-described through GSettings introspection of a compiled schema. The
-compiled schema available was gsettings-desktop-schemas 46 with a
-distribution's defaults, not 51.0; see `gaps.md`.
+Key surface of the `org.gnome.desktop.media-handling` GSettings schema in
+gsettings-desktop-schemas 51.0, described through GSettings introspection
+of the compiled schema.
 
 Path: `/org/gnome/desktop/media-handling/`
 
-| Key | Type | Default (as found) | Allowed values |
-|-----|------|--------------------|----------------|
+| Key | Type | Default | Allowed values |
+|-----|------|---------|----------------|
 | `automount` | `b` | `true` |  |
 | `automount-open` | `b` | `true` |  |
 | `autorun-never` | `b` | `true` |  |
