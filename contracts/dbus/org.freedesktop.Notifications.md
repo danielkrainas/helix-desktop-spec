@@ -140,7 +140,17 @@ oldest beyond that is closed (reason 1).
 Clicking the clock in the panel opens the list below it, newest first:
 each notification's icon, app, summary and up to two lines of body, with a
 × that dismisses it (reason 2). Clicking a notification acts as clicking
-its banner. The list also has "Clear" (dismisses all) and a "Do Not
+its banner.
+
+Notifications are grouped by app (its app id, see "Per-application
+settings"; without one, its app name). Groups come in the order of their
+newest notification. A group of one is shown as its notification alone.
+A larger group has a header row: an arrow, the app name, "<n>
+notifications" and a × that dismisses all of the group's notifications
+(reason 2 each); below it, only the newest notification while the group is
+closed, all of them (indented) when open. Clicking the header opens or
+closes the group; groups start closed each time the list opens. The list
+scrolls by rows (headers and notifications). The list also has "Clear" (dismisses all) and a "Do Not
 Disturb" switch (`org.gnome.desktop.notifications show-banners`, inverted).
 Escape or a click outside closes it. Beside the list are the date, a
 calendar, world clocks and the media player (`contracts/gsettings/calendar.md`).
