@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.freedesktop.PolicyKit1.AuthenticationAgent
+  Source: https://github.com/polkit-org/polkit/blob/main/data/org.freedesktop.PolicyKit1.AuthenticationAgent.xml
+  Interface shape only (polkit 124); behavior notes in
+  org.freedesktop.PolicyKit1.AuthenticationAgent.md.
+-->
+<node>
+  <interface name="org.freedesktop.PolicyKit1.AuthenticationAgent">
+    <method name="BeginAuthentication">
+      <arg name="action_id" type="s" direction="in" />
+      <arg name="message" type="s" direction="in" />
+      <arg name="icon_name" type="s" direction="in" />
+      <arg name="details" type="a{ss}" direction="in" />
+      <arg name="cookie" type="s" direction="in" />
+      <arg name="identities" type="a(sa{sv})" direction="in" />
+    </method>
+    <method name="CancelAuthentication">
+      <arg name="cookie" type="s" direction="in" />
+    </method>
+  </interface>
+</node>
