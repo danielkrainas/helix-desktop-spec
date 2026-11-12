@@ -585,6 +585,22 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   starting with `.` are hidden; files are shown when the current filter
   matches them (globs ignore case; MIME types by the type guessed from the
   name).
+- Left of the rows, a column of places: "Recent" (only when opening
+  files), "Home", the user's standard folders (Desktop, Documents,
+  Downloads, Music, Pictures, Videos, as `user-dirs.dirs` names them,
+  except the home folder itself), GTK bookmarks
+  (`$XDG_CONFIG_HOME/gtk-3.0/bookmarks`: local `file:` URIs, named by
+  their label or the folder's name), drives mounted under
+  `/media/<user>/` and `/run/media/<user>/` (by folder name), and
+  "Computer" (`/`); folders that do not exist are left out, and a folder
+  is listed once. The place showing is marked. Clicking a place shows it
+  (when saving, the name typed so far is kept). Recent lists recently
+  used files (`$XDG_DATA_HOME/recently-used.xbel`), newest first by when
+  they were last modified there (else added), at most 100, only local
+  files that still exist and pass the current filter, each as "<name> —
+  <folder name>"; the message then reads "Recent". Recent files are chosen
+  (and, with `multiple`, picked) as files are. The file type row is
+  shown there too; there is no Parent Folder.
 - The start folder: `current_folder`, else `current_file`'s folder, else
   the folder the app last chose in (this session), else the home folder.
   The first filter is current unless `current_filter` names one (added

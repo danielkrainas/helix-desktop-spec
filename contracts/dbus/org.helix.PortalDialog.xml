@@ -40,9 +40,13 @@
           one; the current row is outlined), except those in
         unpickable (ai);
         activate-rows (b): clicking the current row again accepts (not for
-          pickable rows).
+          pickable rows);
+        places (as), place-current (i): a column of places left of the
+          rows (at most 14), the current one marked; clicking a place
+          accepts.
       response: 0 accepted, 1 canceled. results: check (b), selected (i),
-      entry (s, with a text field), picked (ai, with multiple).
+      entry (s, with a text field), picked (ai, with multiple), place (i,
+      when a place was clicked).
     -->
     <method name="Dialog">
       <arg name="options" type="a{sv}" direction="in"/>
