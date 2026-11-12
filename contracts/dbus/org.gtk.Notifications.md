@@ -41,6 +41,10 @@ name `app_id`, object path derived from it (`org.gnome.Calculator` →
 - any other action (not exported on the app's `app.` action group) →
   the `ActionInvoked(app_id, id, action, parameter, platform_data)`
   signal instead, with `parameter` holding the target if there is one.
+- Helix: when an `app.` action cannot be delivered because the app cannot
+  be reached at its bus name (the call fails with `ServiceUnknown`,
+  `NameHasNoOwner` or an unknown object or interface), the shell sends
+  `ActionInvoked` for it too, with the full action name (`app.NAME`).
 
 The notification is then removed.
 
@@ -53,6 +57,9 @@ non-exported action is activated" (see `gaps.md`).
 
 The `icon` (a serialized `GIcon`: themed icon names, a file, or image
 bytes) is shown, else the application's own icon (its desktop file
-`app_id.desktop`); the body is plain text. Notifications stay in the
+`app_id.desktop`); the app's name is its desktop file's name, else
+`app_id`. The body is plain text; a `markup-body` (`s`, notification
+markup as in `org.freedesktop.Notifications.md`) is shown instead when
+given (the Notification portal's key; see `org.freedesktop.impl.portal.md`). Notifications stay in the
 notification list as `org.freedesktop.Notifications.md` ("The
 notification list") describes, until withdrawn, activated or dismissed.

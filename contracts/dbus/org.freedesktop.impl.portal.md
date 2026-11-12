@@ -408,3 +408,35 @@ same-named keys of `org.gnome.desktop.privacy` (key tables in
 `contracts/gsettings/`). Setting a property writes the key (an error when
 the key is not writable). `PropertiesChanged` is emitted when a key
 changes.
+
+## Notification (`org.freedesktop.impl.portal.Notification`)
+
+- `AddNotification(app_id, id, notification)`: show (or replace) app
+  `app_id`'s notification `id`. `notification` holds the keys GLib's
+  `GNotification` uses (`title`, `body`, `icon`, `priority`,
+  `default-action`, `default-action-target`, `buttons`; see
+  `org.gtk.Notifications.md`); version 2 of the interface adds more
+  (`markup-body`, `sound`, `category`, `display-hint`, icons and sounds as
+  file descriptors).
+- `RemoveNotification(app_id, id)`: withdraw it.
+- Signal `ActionInvoked(app_id, id, action, parameter)`: the user chose
+  `action` (with its target in `parameter`, if any); the frontend passes
+  it to the app.
+- Property `version`.
+
+### Helix
+
+- `version` is 1, so the frontend sends version 1 notifications; Helix
+  also takes `markup-body` (shown with notification markup in place of
+  `body`). Other keys are dropped.
+- The notification is passed to the shell's `org.gtk.Notifications`
+  `AddNotification` (and `RemoveNotification`) unchanged, so it looks and
+  behaves as a GTK notification of app `app_id`, with that app's
+  notification settings.
+- Actions: the shell activates `app.` actions over
+  `org.freedesktop.Application` at the app's bus name; when the app cannot
+  be reached there (no owner and not activatable, as for many portal
+  clients), the shell sends `org.gtk.Notifications.ActionInvoked` instead
+  (`org.gtk.Notifications.md`, "Activation"). The backend passes those for
+  the notifications it added on as this interface's `ActionInvoked`, with
+  the same action name and parameter.
