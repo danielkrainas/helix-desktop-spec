@@ -23,6 +23,15 @@ dialog looks like the rest of the shell and appears above everything.
   window list (`helix_window_list_v1`, and the `window-id` of
   `org.gnome.Mutter.ScreenCast` `RecordWindow`). Cancel, Escape or the
   session locking returns `(false, 0, "", 0)`.
+- `ChooseSources(app_id, monitors, options)`: as `ChooseSource`, with
+  two more options: `virtual` (`b`): also offer "New virtual monitor";
+  `multiple` (`b`): rows have check boxes and are picked by clicking,
+  and a **Share** button (active once something is picked) shares them,
+  in the order picked; without it a click shares that row at once.
+  Returns `(true, sources)`, each `(type, connector, window)` with type
+  1 monitor, 2 window, 4 virtual (connector and window as for
+  `ChooseSource`), or `(false, [])`. Enter shares what is picked (else
+  the first row).
 - `AllowRemoteControl(app_id, devices)`: a remote desktop session
   without screen sharing. `devices` lists device names as above. The
   shell asks "Allow remote control?": the app wants to control the listed

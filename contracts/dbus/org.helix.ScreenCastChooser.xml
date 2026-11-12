@@ -18,6 +18,13 @@
       <arg type="b" name="found" direction="out"/>
       <arg type="u" name="window" direction="out"/>
     </method>
+    <method name="ChooseSources">
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="a(ss)" name="monitors" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="b" name="chosen" direction="out"/>
+      <arg type="a(usu)" name="sources" direction="out"/>
+    </method>
     <method name="ChooseSource">
       <arg type="s" name="app_id" direction="in"/>
       <arg type="a(ss)" name="monitors" direction="in"/>

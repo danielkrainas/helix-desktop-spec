@@ -149,19 +149,23 @@ within one second.
 - `AvailableSourceTypes` 7 (monitors, windows, virtual),
   `AvailableCursorModes` 7 (hidden, embedded, metadata), `version` 4.
 - `SelectSources` answers 2 when `types` has none of these, or
-  `cursor_mode` is not 1, 2 or 4 (closing the session). `multiple` is
-  accepted, but one source is shared.
+  `cursor_mode` is not 1, 2 or 4 (closing the session).
 - When `types` is only virtual (4), `Start` shares a new virtual monitor
   (`RecordVirtual`) without asking: nothing that exists is shown. Its
-  stream has `position`, `size` and `source_type` 4. Otherwise virtual
-  is not offered.
+  stream has `position`, `size` and `source_type` 4. When virtual comes
+  with other types, the chooser offers "New virtual monitor" beside the
+  monitors and windows.
+- With `multiple`, the user may choose several sources; `Start` records
+  them all in one compositor session and returns one stream per source,
+  in the order chosen. Without it, one source.
 - `Start` asks the user through the shell
   (`org.helix.ScreenCastChooser.md`), offering the types asked for, and
   answers 1 when they cancel. Then it records the choice with
   `org.gnome.Mutter.ScreenCast` (`org.gnome.Mutter.ScreenCast.md`) and
-  returns one stream with `size` and `source_type` (and `position` for a
-  monitor).
-- Remembering: when `persist_mode` is 1 or 2 and a monitor is shared,
+  returns the streams, each with `size` and `source_type` (and `position`
+  for a monitor or virtual monitor).
+- Remembering: when `persist_mode` is 1 or 2 and one monitor is shared
+  (several sources are not remembered: the user is asked again),
   `Start` returns the same `persist_mode` and `restore_data`
   `("Helix", 1, <a{sv}>)` with the monitor's `connector`, `vendor`,
   `product` and `serial` (all `s`). Given such `restore_data` in
