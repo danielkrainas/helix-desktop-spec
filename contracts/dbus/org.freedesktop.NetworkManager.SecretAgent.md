@@ -33,10 +33,17 @@ Helix answers, when interaction is allowed:
   `psk`; `none` (WEP): asks for `wep-key0`; `none` or `ieee8021x` with
   `auth-alg` `leap`: asks for `leap-username` and `leap-password`.
 - `802-1x` (WPA and WPA2/3 Enterprise, dynamic WEP, wired 802.1X): when
-  the first of `eap` is `tls`, asks for `identity` and
-  `private-key-password`; otherwise (PEAP, TTLS, PWD, FAST, LEAP, MD5)
-  for `identity` and `password`. The certificates themselves are not
-  asked for.
+  `hints` name one of `pin`, `private-key-password`,
+  `phase2-private-key-password`, `client-cert-password`,
+  `phase2-client-cert-password`, `ca-cert-password` or
+  `phase2-ca-cert-password` (the first in that order), asks for that
+  secret alone: "The smart card's PIN is needed to connect to “<name>”."
+  ("PIN"), "The password of your private key …" ("Private key
+  password") or "The certificate's password …" ("Certificate
+  password"). Otherwise, when the first of `eap` is `tls`, asks for
+  `identity` and `private-key-password`; otherwise (PEAP, TTLS, PWD,
+  FAST, LEAP, MD5) for `identity` and `password`. Certificate files are
+  connection settings, not secrets; the agent does not choose them.
 - `gsm` and `cdma` (mobile broadband): asks for `password`; when
   `hints` holds `pin`, for the SIM card's `pin` (in `gsm`) instead.
 - `pppoe` (DSL): asks for `username` (filled with the connection's) and
@@ -79,8 +86,29 @@ Helix answers, when interaction is allowed:
   Without interaction: `NoSecrets`.
 - `CancelGetSecrets` closes the dialog that is open for that connection
   and setting (the pending call answers `AgentCanceled`).
-- `SaveSecrets` and `DeleteSecrets` succeed without storing anything:
-  Helix keeps no secrets itself (NetworkManager keeps system-owned ones).
+- `SaveSecrets` and `DeleteSecrets`: see "Agent-owned secrets".
+
+### Agent-owned secrets
+
+Secrets whose `<key>-flags` has bit 0x1 (agent-owned) are the agent's to
+keep; Helix keeps them in the Secret Service (`org.freedesktop.secrets`
+on the session bus, a `plain` session, the default collection
+`/org/freedesktop/secrets/aliases/default`), one item per secret, with
+the attributes libnm names: `connection-uuid`, `setting-name`,
+`setting-key`, and `xdg:schema` `org.freedesktop.NetworkManager.Connection`;
+label "Network secret for <connection id>/<setting>/<key>".
+
+- `SaveSecrets(connection, path)`: every agent-owned secret present in
+  `connection` is stored (replacing an item with the same attributes).
+  VPN secrets are `vpn` `secrets` entries whose `<name>-flags` in `vpn`
+  `data` has bit 0x1.
+- `GetSecrets`: unless `flags` has 0x2 (new secrets wanted), items with
+  the connection's `uuid` and the asked `setting_name` answer at once,
+  without a dialog and also without interaction allowed (`vpn`: as
+  `{"vpn": {"secrets": {<key>: <value>}}}`). Locked items are unlocked
+  only when that needs no prompt.
+- `DeleteSecrets(connection, path)`: all items with the connection's
+  `uuid` are deleted.
 
 ## VPN secrets
 
