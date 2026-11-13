@@ -11,8 +11,10 @@ dialogs.
 - Object: `/org/gtk/MountOperationHandler`
 - Interface: `org.Gtk.MountOperationHandler` (capital G)
 
-The argument types were observed from GTK 3.24 and 4.14's calls (the
-interface is not otherwise documented outside GTK and gnome-shell).
+The argument types were observed from GTK 3.24 and 4.14's calls, and the
+answer keys GTK 3.24 reads by answering a `GtkMountOperation` from a test
+handler with candidate keys and reading the operation's properties back
+(the interface is not otherwise documented outside GTK and gnome-shell).
 
 ## Calls
 
@@ -33,9 +35,12 @@ interface is not otherwise documented outside GTK and gnome-shell).
   cancelled), 2 unhandled. GTK ignores an answer of 2 (it waits for
   another answer, as after a repeated call). `response_details`:
   - `AskPassword`: `password` (`s`), `password_save` (`u`, GIO's
-    `GPasswordSave`: 0 never, 1 for the session, 2 permanently), which
-    GTK was seen to read. Which keys GTK reads for TCRYPT volumes is not
-    recorded here.
+    `GPasswordSave`: 0 never, 1 for the session, 2 permanently), and for
+    TCRYPT volumes `hidden_volume` (`b`), `system_volume` (`b`) and `pim`
+    (`u`), which set the operation's `is-tcrypt-hidden-volume`,
+    `is-tcrypt-system-volume` and `pim`. GTK reads no key for anonymous
+    login (`anonymous` (`b`) was tried and left the operation's
+    `anonymous` false), nor `username` or `domain`.
   - `AskQuestion`, `ShowProcesses`: `choice` (`i`), the index in `choices`.
 - `Close()`: the app no longer needs the dialog (GTK calls it after each
   answer, and when the operation ends without one, e.g. the disk stopped
@@ -59,10 +64,14 @@ icon (none when empty or not in the icon theme).
   `password_save` 2 when "Remember Password" was checked, else 0, and
   (for other callers than GTK) `username` and `domain` (`s`): the text up
   to the first `\` is the domain, the rest the user name; without `\` the
-  domain is `default_domain`. Anonymous login (16) is not offered here
-  and TCRYPT volumes (32) get the password only: how a handler returns
-  those answers is not documented. (Helix's own mount dialogs offer
-  them, see `contracts/gsettings/removable-media.md`, "Questions".)
+  domain is `default_domain`. For a TCRYPT volume (32) the dialog also
+  has, as Helix's own mount dialogs do
+  (`contracts/gsettings/removable-media.md`, "Questions"), a "PIM
+  (optional)" field when there is no user name field, and "Hidden
+  Volume" and "Windows System Volume" check boxes; the answer adds
+  `hidden_volume` and `system_volume` as checked and `pim` (the field's
+  number, 0 when empty or not a number). Anonymous login (16) is not
+  offered here: GTK would not see the answer.
 - **Questions.** With one or two choices they are the dialog's buttons:
   the first continues (answer 0, `choice` 0), the second is the cancel
   button and answers its index (Escape too); with one choice the cancel
