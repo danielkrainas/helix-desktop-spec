@@ -570,6 +570,32 @@ window itself (the focused one when the app is unknown).
 pressing and releasing `locate-pointer-key` (default `Control_L`) alone
 shows shrinking circles around the pointer for half a second.
 
+## Windows wanting attention (Helix)
+
+A window wants attention when:
+
+- it asks to be activated (`xdg_activation_v1`) and Helix does not grant
+  it: Helix activates a window only for a token made within the last 10
+  seconds (an app launched from the shell, a notification click);
+- an X11 window sets the urgency flag of its `WM_HINTS` (and stops
+  wanting it when it clears the flag);
+- an X11 client asks to add, remove or toggle
+  `_NET_WM_STATE_DEMANDS_ATTENTION` on its window (a `_NET_WM_STATE`
+  client message to the root window).
+
+A window with keyboard focus never wants attention, and one stops when it
+gets focus or closes. While a window wants it:
+
+- a notification "<window title> is ready" (the app's name and icon from
+  its desktop file, else the window's app id) is shown, following the
+  app's notification settings; clicking it activates the window. It is
+  withdrawn when the window stops wanting attention.
+- the dock marks its app as urgent (as LauncherEntry urgency does, see
+  "Dock").
+
+How GNOME words its notification and which activation requests it turns
+into attention are not documented here; these are Helix's.
+
 ## Unresponsive apps (Helix)
 
 When a window gets focus, Helix checks that its app still responds: a
@@ -804,8 +830,11 @@ in the overview (which has its dash) or the launcher.
   When an app turns urgent, the dock shows for 2 seconds
   (`show-dock-urgent-notify`, the default) and its icon wiggles along
   the bar for 1.6 seconds (`dance-urgent-applications`, the default; not
-  with animations off). Only LauncherEntry urgency counts: Helix has no
-  urgent windows, so `workspace-agnostic-urgent-windows` has no effect.
+  with animations off). An app is urgent when its LauncherEntry says so
+  or one of its windows wants attention (see "Windows wanting
+  attention"); with `workspace-agnostic-urgent-windows` (the default),
+  such windows count on every workspace, also with `isolate-workspaces`
+  (the app shows, and clicking it reaches that window).
 - `isolate-locations` has no effect: drives and the Trash never own file
   manager windows in Helix's dock (the file manager's windows are its
   own, whatever they show).
