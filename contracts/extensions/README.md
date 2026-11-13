@@ -395,7 +395,7 @@ Backspace clears it. A combination already in use is refused, and the
 row says so.
 
 When it declares settings, a "Settings" button shows them below it
-(sorted by key):
+(in the manifest's order):
 
 - `bool`: a switch;
 - `enum`: a button showing the value, which steps to the next choice;
