@@ -531,8 +531,9 @@ through a barrier they set, and get it as an EIS (libei) receiver.
   does.
 - Starting asks with the shell's dialog (`org.helix.PortalDialog`):
   "Allow Input Capture?", "<app name> wants to take over the pointer and
-  keyboard when the pointer leaves the screen. Super+Escape gives them
-  back.", "Deny" (answer 1) and "Allow". Allowed, the compositor makes the
+  keyboard when the pointer leaves the screen. <key> gives them
+  back." (`<key>`: the first `org.gnome.mutter.keybindings`
+  `cancel-input-capture` accelerator written as `Super+Shift+Escape`), "Deny" (answer 1) and "Allow". Allowed, the compositor makes the
   session (`org.helix.InputCapture.xml`); asking for no capability Helix
   has answers 2.
 - The zones are the monitors' logical areas; the zone set changes when
@@ -556,8 +557,11 @@ through a barrier they set, and get it as an EIS (libei) receiver.
   frame.
 - `Release` with the current activation id ends the capture (the pointer
   goes to `cursor_position`, kept on the monitors) and emits
-  `Deactivated`; `Disable` ends a capture too. Super+Escape ends a capture
-  at any time: the client gets the Super key's release, the session is
+  `Deactivated`; `Disable` ends a capture too. `cancel-input-capture`
+  (default Super+Shift+Escape; its modifiers are taken from the keys
+  held, its key from the layout's symbol without modifiers) ends a
+  capture at any time: the client gets the release of the other keys it
+  saw held, the session is
   disabled, and `Deactivated` then `Disabled` are emitted. A capture also
   ends when its EIS client disconnects.
 - Closing the portal session closes the compositor's, and the other way

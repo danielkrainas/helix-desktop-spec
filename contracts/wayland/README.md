@@ -497,8 +497,24 @@ previews the half it would fill (a translucent rectangle); releasing there
 tiles it. Touching the top edge previews and then maximizes. Moving away
 from the edge drops the preview.
 
-`switch-monitor`, `rotate-monitor` and `cancel-input-capture` are not
-handled.
+`switch-monitor` is not handled. The compositor itself handles:
+
+- `org.gnome.mutter.wayland.keybindings` `switch-to-session-1` … `-12`
+  (default Ctrl+Alt+F1 … F12): switch to that virtual terminal (bare
+  hardware only). They also work while an app inhibits shortcuts and
+  while the session is locked.
+- `org.gnome.mutter.keybindings` `rotate-monitor` (default
+  `XF86RotateWindows`): turns the built-in panel to the next quarter turn
+  (DisplayConfig transforms 0 → 1 → 2 → 3 → 0; a flipped panel stays
+  flipped), applied like automatic rotation
+  (`org.gnome.Mutter.DisplayConfig.md`, "Automatic rotation"), even
+  while `orientation-lock` is on. Nothing happens without a built-in
+  panel or while locked.
+- `cancel-input-capture` (default `<Super><Shift>Escape`): ends an input
+  capture (`org.freedesktop.impl.portal.md`, "InputCapture").
+- Ctrl+Alt+Backspace always quits Helix; it cannot be changed.
+
+Changes to these keys apply at once.
 
 ## Window-management settings (Helix)
 
