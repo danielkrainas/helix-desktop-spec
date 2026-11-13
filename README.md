@@ -21,7 +21,7 @@ Specification phase.
 - Sufficient Wayland protocol usage for normal desktop operation
 - Ability to host existing GTK / libadwaita applications
 
-Full GNOME Shell extension API compatibility is explicitly out of scope (extensions rely on unstable internal APIs).
+Full GNOME Shell extension API compatibility is explicitly out of scope (extensions rely on unstable internal APIs). Helix's own extension system is proposed in `proposals/0001-extensions.md`.
 
 This is a clean-room effort focused on public contracts, not a fork of GNOME source code.
 
@@ -31,5 +31,6 @@ This is a clean-room effort focused on public contracts, not a fork of GNOME sou
 - `components/` — high-level component breakdown
 - `contracts/` — structured contract data (D-Bus XML, GSettings schemas, Wayland notes)
 - `gaps.md` — living log of missing or unclear contracts
+- `proposals/` — designs for Helix's own features (for example its extension system), before they become contracts
 
 The specification is living. It will grow and be refined as implementation work discovers additional or clarified contracts.
