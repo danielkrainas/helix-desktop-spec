@@ -816,12 +816,8 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
 - Opening: the text field is "Location": a path typed there (relative to
   the folder shown, or absolute, or starting with `~`) opens a folder or
   chooses a file; otherwise, when opening files and the text has no
-  `/`, it searches: the folder shown and the folders below it (hidden
-  ones skipped) for files whose names hold the text (ignoring case) and
-  pass the current filter, nearest folders first, then by name; after
-  them, text files (by their content type; at most 256 KiB each, the
-  first 500 such files met) whose content holds the text (ignoring
-  case); at most 200 results, after looking at 20 000 entries at most. The results are
+  `/`, it searches the folder shown and the folders below it (see
+  "Searching files" below). The results are
   rows "<name> — <folder name>" (chosen as files are) under the message
   "Search for “<text>” in <folder>"; with none, the warning "No files
   named like “<text>”.". Clicking a place ends the search. Otherwise the
@@ -842,3 +838,33 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
 - Results: `uris` as `file:` URIs; `choices` with every choice's value
   (the check box's as `true`/`false`); `current_filter` when there are
   filters.
+
+### Searching files
+
+When a file index runs on the session bus (localsearch,
+`org.freedesktop.LocalSearch3`, else Tracker 3's
+`org.freedesktop.Tracker3.Miner.Files`; neither is started for a
+search), the chooser asks it first, through its SPARQL endpoint
+(`org.freedesktop.Tracker3.Endpoint` at `/org/freedesktop/Tracker3/Endpoint`,
+`Query(s sparql, h fd, a{sv} options) → as`: the column names; the
+results are written to `fd`). Helix's query asks for the `nie:url` of
+files (up to 1000) below the folder whose file name (`nfo:fileName`) or
+whose content (an information element with `nie:isStoredAs` the file)
+`fts:match`es the text's words, each as a word prefix (`budg` finds
+"budget"), all of them required; characters other than letters and digits
+separate words. As observed with Tracker 3.7, the results written to `fd`
+are, per row: the number of columns, each column's value type, each
+value's end offset counted from the first value's start, then the
+values, each ending in a NUL byte; the numbers are 32-bit integers in
+the machine's byte order. Of the files found, those still there, not in
+a hidden folder below the folder shown and passing the current filter
+are shown, those whose names hold the text first, then by depth and
+name; at most 200.
+
+With no index running, or when it finds none of them, the chooser
+scans: the folder shown and the folders below it (hidden ones skipped)
+for files whose names hold the text (ignoring case) and pass the current
+filter, nearest folders first, then by name; after them, text files (by
+their content type; at most 256 KiB each, the first 500 such files met)
+whose content holds the text (ignoring case); at most 200 results, after
+looking at 20 000 entries at most.
