@@ -166,5 +166,7 @@ OpenVPN plugin's auth dialog (network-manager-openvpn 1.10).
   interaction. The auth dialog then gets `QUIT`.
 - `CancelGetSecrets` for the connection's `vpn` setting stops the auth
   dialog and closes Helix's dialog (`AgentCanceled`).
-- Helix does not keep VPN secrets: those the user wants saved are for the
-  plugin's dialog or NetworkManager to keep.
+- VPN secrets the plugin's dialog returns are passed on as they are;
+  those whose flags make them agent-owned are kept by `SaveSecrets` and
+  answered from the keyring later (see "Agent-owned secrets"); others
+  are NetworkManager's to keep.

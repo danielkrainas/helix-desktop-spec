@@ -20,6 +20,8 @@ tried them with the real hardware. Remove an entry once it has been.
 - User switching (`contracts/gsettings/org.gnome.desktop.lockdown.md`, "User switching"): tested against fake GDM, LightDM and AccountsService services only, not with a real display manager.
 - Read-only removable drives (`org.gnome.desktop.lockdown.md`): left to GVfs; not tried with a real drive.
 - Ambient light brightness (`contracts/gsettings/power.md`, "Ambient light"): tested against a fake iio-sensor-proxy and backlight only.
+- Privacy screens (`org.gnome.desktop.privacy.md`, "Privacy screen"): the connector property is set as described; no panel with a privacy screen was tried.
+- USB protection (`org.gnome.desktop.privacy.md`, "USB protection"): tested against a fake USBGuard only; its object path comes from USBGuard's service, not its interface description.
 
 ## Open gaps
 

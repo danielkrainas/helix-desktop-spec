@@ -59,10 +59,44 @@ How gnome-settings-daemon decides what is old (which times it looks at)
 and how often it cleans up are not documented here; these rules are
 Helix's.
 
+### Privacy screen
+
+With `privacy-screen` true, every monitor connector that has the kernel's
+`privacy-screen sw-state` property is set to `Enabled` (else `Disabled`),
+when the key changes and when a monitor appears (bare hardware only). A
+hardware-locked privacy screen (its `privacy-screen hw-state`) may not
+follow. How mutter reports privacy screens to GNOME Settings is not
+documented here; Helix reports nothing about them in DisplayConfig. Not
+tried on a panel with a privacy screen.
+
+### USB protection
+
+With `usb-protection` on, the shell follows USBGuard (bus name
+`org.usbguard1` on the system bus; `org.usbguard.Devices1` at
+`/org/usbguard1/Devices`): for each `DevicePresenceChanged` with event 1
+(inserted), while the screen is locked (`usb-protection-level`
+`lockscreen`) or always (`always`), it calls `applyDevicePolicy(id, 2,
+false)` (reject, not remembered) and shows a notification "USB device
+blocked". Devices whose rule names a HID boot keyboard interface
+(`03:01:01`) are left alone, so a keyboard can still unlock the screen;
+devices already present are left alone. Without USBGuard nothing
+happens. Only on bare hardware. How gnome-settings-daemon applies these
+keys (USBGuard parameters it changes, its notifications) is not
+documented here; these rules are Helix's. Tested against a fake
+USBGuard only.
+
+### App usage
+
+With `remember-app-usage` (the default), each launch from the shell (the
+launcher, the app grid, the dash and the dock) is counted in
+`$XDG_DATA_HOME/helix/app-usage` (lines `<desktop id>\t<count>\t<last
+launch, Unix seconds>`). The launcher's search orders apps that match
+equally well by use: their launches, each weighing half as much for
+every 30 days since the last one. Turned off, nothing is counted, and the
+file is deleted. GNOME's own record (and its effect on its search and
+app grid) is not read or written.
+
 ### Other keys
 
-`remember-app-usage`, `hide-identity`, `privacy-screen`,
-`report-technical-problems`, `send-software-usage-stats`,
-`show-full-name-in-top-bar`, `usb-protection` and `usb-protection-level`
-have no effect in Helix (it records no app usage and has no privacy screen
-or USB protection support).
+`hide-identity`, `report-technical-problems`, `send-software-usage-stats`
+and `show-full-name-in-top-bar` have no effect in Helix.
