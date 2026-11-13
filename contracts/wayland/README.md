@@ -101,6 +101,8 @@ each change). It publishes, from GSettings:
 | `Gtk/DecorationLayout` | `org.gnome.desktop.wm.preferences button-layout` |
 | `Net/EnableEventSounds`, `Net/SoundThemeName` | `org.gnome.desktop.sound event-sounds`, `theme-name` |
 | `Net/DoubleClickTime` | `org.gnome.desktop.peripherals.mouse double-click` |
+| `Net/DndDragThreshold` | `org.gnome.desktop.peripherals.mouse drag-threshold` × scale |
+| `Net/EnableInputFeedbackSounds` | `org.gnome.desktop.sound input-feedback-sounds` (1 or 0) |
 | `Gtk/RecentFilesEnabled`, `Gtk/RecentFilesMaxAge` | `org.gnome.desktop.privacy remember-recent-files` (1 or 0), `recent-files-max-age` |
 
 (keys without a schema are in `org.gnome.desktop.interface`;
@@ -573,6 +575,18 @@ window itself (the focused one when the app is unknown).
 **Locate pointer.** With `org.gnome.desktop.interface locate-pointer`,
 pressing and releasing `locate-pointer-key` (default `Control_L`) alone
 shows shrinking circles around the pointer for half a second.
+
+## Drags and click sounds (Helix)
+
+- The shell's own drags (a dock icon, a window in the overview) start
+  once the pointer has moved `org.gnome.desktop.peripherals.mouse
+  drag-threshold` pixels (default 8) with the button down.
+- With `org.gnome.desktop.sound input-feedback-sounds` and `event-sounds`
+  on, a click on one of the shell's dialog buttons, quick settings or
+  the dock plays the sound theme's `button-pressed`. Apps make their own
+  feedback sounds (GTK reads the key; X11 apps get it as XSETTINGS).
+  Which of its controls GNOME's shell makes sounds for is not documented
+  here.
 
 ## Run a command (Helix)
 
