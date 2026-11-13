@@ -6,6 +6,21 @@ the date, a month calendar, the chosen day's events, world clocks and the
 media player. It is read when the tray opens and after changes made from
 it (another month, a media button); the clock times follow the minute.
 
+## Clock
+
+The top bar's clock, the lock screen's clock and the times in this list
+follow `org.gnome.desktop.interface`:
+
+- `clock-format`: `24h` writes times as `14:05`, `12h` as `2:05 PM`.
+- In the top bar only: `clock-show-weekday` puts the abbreviated weekday
+  first (`Thu`), `clock-show-date` the abbreviated month and the day
+  (`Nov 12`), and `clock-show-seconds` adds seconds (`14:05:09`). With
+  all three: `Thu Nov 12 14:05:09`.
+- The lock screen's clock is the time alone, without seconds.
+- Changes apply within a second. Names are English (the shell runs in
+  the C time locale). How GNOME arranges the date and time in its top
+  bar, per locale, is not documented here; this order is Helix's.
+
 ## Date and month
 
 - The weekday and the full date of today.
@@ -25,7 +40,7 @@ From Evolution Data Server (`contracts/dbus/org.gnome.evolution.dataserver.md`):
 the events of every enabled, selected calendar for the six weeks shown.
 Under the grid, a heading for the chosen day ("Today", "Tomorrow", or its
 weekday and date), then that day's events ordered by start: "All Day" or
-the start time (24-hour), and the summary; at most six, then "N more".
+the start time (as in "Clock" below), and the summary; at most six, then "N more".
 "No Events" when there are none.
 
 An event is on a day when it overlaps it in local time. Cancelled events
@@ -66,7 +81,7 @@ serialized GWeather location, `(uv)` with version 2 and
 `(ssba(dd)a(dd))`: name, weather station code, whether it is a city, the
 city's coordinates and the station's, as (latitude, longitude) in
 radians. Under a "World Clocks" heading, each location's name and its
-current time (24-hour), with the weekday when it differs from today's
+current time (as in "Clock" below), with the weekday when it differs from today's
 here. The time zone is the one whose principal city in the system's
 `zone1970.tab` is nearest to the location (see `gaps.md`).
 
