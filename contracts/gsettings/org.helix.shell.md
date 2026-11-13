@@ -19,8 +19,9 @@ Path: `/org/helix/shell/`
 - `quick-settings`: the switches in the quick settings menu, in order
   (see `contracts/wayland/README.md`, "Quick settings").
 
-Ids of the form `helix:<name>` are Helix's built-in items. Other ids are
-reserved for extensions (`proposals/0001-extensions.md`), as
-`<extension id>/<item id>`. Ids Helix does not know are kept in the key
+Ids of the form `helix:<name>` are Helix's built-in items. Extensions'
+items are `<extension id>/<item id>` (`contracts/extensions/README.md`):
+panel items in the panel keys, toggles and sliders in
+`quick-settings`. Ids Helix does not know are kept in the key
 but not shown, so a layout survives an extension being turned off or an
 older Helix reading a newer layout.

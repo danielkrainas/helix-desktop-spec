@@ -8,6 +8,7 @@ Features below are written to their published standards and checked with
 unit and integration tests against simulated devices, but nobody has yet
 tried them with the real hardware. Remove an entry once it has been.
 
+- Extensions in systemd scopes (`contracts/extensions/README.md`, "Processes and connections"): nested test sessions have no systemd user manager, so extensions were tested started directly; the `systemd-run --user --scope` path (unit name, `MemoryMax`, `CPUWeight`, descriptor 3 passed through) has not run.
 - Mirroring monitors with modes of different sizes (`org.gnome.Mutter.DisplayConfig.md`): each other monitor's output gets its own scale and position; checked by unit tests only (the nested session has one output). How Mutter rescales mirrored monitors of different sizes, and what it shows in the bars of a monitor of another shape, is not documented here; Helix's choice is in that file.
 - Underscanning (`org.gnome.Mutter.DisplayConfig.md`, "properties"): the DRM connector properties are set as described, but no monitor with an `underscan` property has been tried; the D-Bus side and GNOME Settings' switch were tested in a nested session with `HELIX_TEST_UNDERSCAN`.
 - DDC/CI brightness of external monitors (`contracts/dbus/org.gnome.Mutter.DisplayConfig.md`, "Backlight"): tested against a simulated MCCS monitor only.

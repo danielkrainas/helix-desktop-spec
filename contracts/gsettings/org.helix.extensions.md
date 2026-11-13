@@ -1,0 +1,23 @@
+# `org.helix.extensions`
+
+Helix's own extension settings (not a GNOME schema). Helix installs it as
+`org.helix.extensions.gschema.xml`, and this table is its contract.
+Behavior: `contracts/extensions/README.md`, "Enabling, approving and
+placing".
+
+Path: `/org/helix/extensions/`
+
+| Key | Type | Default |
+|-----|------|---------|
+| `enabled` | `as` | `[]` |
+| `disabled` | `as` | `[]` |
+| `disable-all` | `b` | `false` |
+| `approved` | `a{sas}` | `{}` |
+| `placed` | `as` | `[]` |
+
+- `enabled`: extension ids turned on.
+- `disabled`: system extensions with `enabled-by-default` turned off.
+- `disable-all`: no extension runs.
+- `approved`: by extension id, the permissions the user approved.
+- `placed`: `<extension id>/<item id>` of items once added to the
+  layout.

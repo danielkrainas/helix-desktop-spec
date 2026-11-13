@@ -1,6 +1,6 @@
 # 0001 — Helix extensions
 
-- **Status**: Draft (Phase 0 implemented)
+- **Status**: Accepted; Phase 0 and API 1.0 (Phase 1) implemented, contract in `contracts/extensions/`
 - **Summary**: A way to add things to the Helix desktop: panel items,
   status indicators, quick-settings toggles and sliders, dock items,
   commands and settings pages. An extension declares what it adds in a
@@ -262,7 +262,7 @@ the Trash: a folder stack, a running service, a "now playing" item.
 
 ### Menus (`org.helix.Extension1.Menu`)
 
-A menu is one property, `Layout`: a tree of items. Each item has an id,
+A menu is one property, `Layout`: a tree of items (in the contract, a flat list where each entry names its parent, since D-Bus types cannot nest without bound). Each item has an id,
 a kind (normal, check, radio, separator, section heading or submenu),
 a label, an optional icon, `enabled` and `checked`. There is one method,
 `Activated(id)`. Because the whole tree is a single property, the shell
@@ -293,8 +293,9 @@ The manifest's `[settings]` table declares typed keys:
   `choices`) and `string-list`.
 - **Each key has**: `default`, an optional `min`/`max`, a `label` and
   optional `help`.
-- **Storage**: the host keeps the values (in dconf, under
-  `/org/helix/extensions/<id>/`). The extension reads and writes them
+- **Storage**: the host keeps the values (in a file per extension,
+  `$XDG_CONFIG_HOME/helix/extensions/<id>.toml`: GSettings would need a
+  compiled schema per extension). The extension reads and writes them
   through `Host1.GetSetting`, `SetSetting` and the `SettingChanged`
   signal.
 - **Settings page**: the Settings app's page for the extension is
@@ -421,8 +422,8 @@ start; it does not yet protect the **user** from a malicious extension.
   `disabled` for system extensions that are on by default
   (`enabled-by-default = true` in their manifest).
   `org.helix.extensions` `disable-all` turns every extension off, for
-  troubleshooting. Holding Shift while logging in does the same for one
-  session.
+  troubleshooting. (Holding Shift while logging in to do the same for
+  one session is left for later.)
 - **Tools**: a `helix-extensions` command (list, info, enable, disable,
   install from an archive or directory, remove, logs), and an
   Extensions page in Settings that lists them, toggles them, shows

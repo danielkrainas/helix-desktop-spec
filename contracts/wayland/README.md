@@ -1030,8 +1030,13 @@ in the center, then `helix:tray`, `helix:accessibility`,
   are centered on the panel, but moved right of the left items or left
   of the right items when they would overlap them. A center item that
   still does not fit is left out.
+- **Extensions.** `<extension id>/<item id>` is an enabled extension's
+  panel item (`contracts/extensions/README.md`); it is shown in a zone
+  its manifest allows (else not at all). The editor lists them by their
+  manifest names, and its Hidden list offers those not shown (added at
+  the end of the first zone they suit).
 - **Ids.** An id Helix does not know (another Helix version's, or an
-  extension that is not running) is kept in the key but not shown. An id
+  extension that is not enabled) is kept in the key but not shown. An id
   in more than one place is shown at its first place (left, center,
   right, in order). An item in no zone is not shown, except
   `helix:power`: without it, there would be no way to reach quick
@@ -1114,8 +1119,11 @@ panel's right end, holding, from the top:
 - **Brightness**, when a monitor's backlight can be controlled
   (DisplayConfig `Backlight`): a slider setting every such monitor to the
   same fraction of its range.
+- Extensions' sliders (`contracts/extensions/README.md`), in the order
+  of `org.helix.shell` `quick-settings`.
 - Switches, highlighted while on, in rows of three, in the order of
-  `org.helix.shell` `quick-settings` (only those listed; ids
+  `org.helix.shell` `quick-settings` (only those listed; extensions'
+  toggles too; ids
   `helix:wifi`, `helix:bluetooth`, `helix:airplane-mode`,
   `helix:auto-rotate`, `helix:night-light`, `helix:dark-style`,
   `helix:do-not-disturb`; default: all, in this order): **Wi-Fi** (when

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.Extensions1
+  Helix's own interface (extensions API 1.0); behavior in README.md.
+-->
+<node>
+  <interface name="org.helix.Extensions1">
+    <method name="ListExtensions">
+      <arg type="a{sa{sv}}" direction="out" name="extensions"/>
+    </method>
+    <method name="Enable">
+      <arg type="s" direction="in" name="id"/>
+      <arg type="b" direction="in" name="approve"/>
+    </method>
+    <method name="Disable">
+      <arg type="s" direction="in" name="id"/>
+    </method>
+    <method name="Restart">
+      <arg type="s" direction="in" name="id"/>
+    </method>
+    <method name="GetLog">
+      <arg type="s" direction="in" name="id"/>
+      <arg type="as" direction="out" name="lines"/>
+    </method>
+    <method name="SetSetting">
+      <arg type="s" direction="in" name="id"/>
+      <arg type="s" direction="in" name="key"/>
+      <arg type="v" direction="in" name="value"/>
+    </method>
+    <method name="RunDevelopment">
+      <arg type="s" direction="in" name="path"/>
+      <arg type="s" direction="out" name="id"/>
+    </method>
+    <method name="StopDevelopment">
+      <arg type="s" direction="in" name="id"/>
+    </method>
+    <signal name="Changed">
+      <arg type="s" name="id"/>
+    </signal>
+  </interface>
+</node>

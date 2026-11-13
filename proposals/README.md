@@ -17,4 +17,4 @@ open questions.
 
 | # | Proposal | Status |
 |---|----------|--------|
-| 0001 | [Helix extensions](0001-extensions.md) | Draft (Phase 0 implemented) |
+| 0001 | [Helix extensions](0001-extensions.md) | Accepted (Phase 0, API 1.0 implemented) |

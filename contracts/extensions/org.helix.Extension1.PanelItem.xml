@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.Extension1.PanelItem
+  Helix's own interface (extensions API 1.0); behavior in README.md.
+-->
+<node>
+  <interface name="org.helix.Extension1.PanelItem">
+    <property name="Icon" type="s" access="read"/>
+    <property name="IconData" type="ay" access="read"/>
+    <property name="Label" type="s" access="read"/>
+    <property name="Tooltip" type="s" access="read"/>
+    <property name="AccessibleName" type="s" access="read"/>
+    <property name="Visible" type="b" access="read"/>
+    <property name="Attention" type="b" access="read"/>
+    <property name="Meter" type="d" access="read"/>
+    <property name="Graph" type="ad" access="read"/>
+    <property name="Menu" type="o" access="read"/>
+    <method name="Activate">
+      <arg type="i" direction="in" name="x"/>
+      <arg type="i" direction="in" name="y"/>
+    </method>
+    <method name="SecondaryActivate">
+      <arg type="i" direction="in" name="x"/>
+      <arg type="i" direction="in" name="y"/>
+    </method>
+    <method name="Scroll">
+      <arg type="i" direction="in" name="delta"/>
+      <arg type="s" direction="in" name="orientation"/>
+    </method>
+  </interface>
+</node>
