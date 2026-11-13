@@ -67,8 +67,18 @@ Missing properties count as empty.
   - Without any icon, the item is not shown.
   - Status icons are drawn 16 pixels (scaled with the monitor) and 8
     pixels apart.
-- `OverlayIconName`/`OverlayIconPixmap`, `ToolTip`, `AttentionMovieName`
-  and `WindowId` are not used.
+- **Overlay.** `OverlayIconName` (looked up like the icon), else
+  `OverlayIconPixmap`, is drawn at half the icon's size over its
+  lower-right corner.
+- **Tooltip.** Resting the pointer on an icon for 0.6 seconds shows a box
+  below the panel, under the icon. Its first line, in bold, is
+  `ToolTip`'s title, else the item's `Title`. Below it come the lines of
+  `ToolTip`'s description, with its markup removed (tags dropped,
+  entities decoded), at most 6 lines. Without a title or a description
+  there is no tooltip. Its icon is not used. The box goes away when the
+  pointer leaves the icon or clicks. It follows `NewToolTip` while shown.
+  Pointer input passes through the box.
+- `AttentionMovieName` and `WindowId` are not used.
 
 ## Host: clicks
 
