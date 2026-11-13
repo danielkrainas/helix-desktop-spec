@@ -115,6 +115,18 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
 - An extension is **enabled** when its id is in `enabled`, or it is a
   system extension with `enabled-by-default` and its id is not in
   `disabled`. `disable-all` turns all extensions off.
+- **Holding Shift at login** turns all extensions off for that
+  session, without changing any setting. When the shell first starts,
+  the compositor reads which keys each keyboard holds (`EVIOCGKEY` on
+  the seat's input devices; on the DRM backend only). If a Shift key is
+  down, it starts the shell (and any restart of it in that session) with
+  `HELIX_EXTENSIONS_OFF=1`. The shell then starts no extension and
+  shows none of their items. A notification says "Extensions are off
+  for this session" ("Shift was held at login."), and the Extensions
+  dialog lists them as `disabled`, with "Off for this session" as the
+  reason. Turning one on there waits for the next session. (Nested
+  sessions: `HELIX_TEST_SHIFT=1` in the compositor's environment does
+  the same, for testing.)
 - An enabled extension runs only when its permissions are
   **approved**: the manifest's permissions are a subset of those
   recorded for it in `approved`. Enabling an extension from the

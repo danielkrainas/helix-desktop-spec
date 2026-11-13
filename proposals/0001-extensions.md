@@ -423,8 +423,8 @@ start; it does not yet protect the **user** from a malicious extension.
   `disabled` for system extensions that are on by default
   (`enabled-by-default = true` in their manifest).
   `org.helix.extensions` `disable-all` turns every extension off, for
-  troubleshooting. (Holding Shift while logging in to do the same for
-  one session is left for later.)
+  troubleshooting. Holding Shift while logging in does the same for
+  one session.
 - **Tools**: a `helix-extensions` command (list, info, enable, disable,
   install from an archive or directory, remove, logs), and an
   Extensions page in Settings that lists them, toggles them, shows
