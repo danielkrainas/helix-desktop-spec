@@ -754,7 +754,9 @@ the current one bright.
   layout is written back (each page's items with positions 0, 1, …)
   whenever the user rearranges something.
 - **Pages.** Scrolling, Page Up / Page Down or clicking a dot shows
-  another page.
+  another page. A dragged icon held beyond the grid's left or right side
+  turns the page that way after 0.7 seconds, and again every 0.9 seconds
+  while it stays there.
 - **Keys.** The arrow keys move the selection (Left / Right go on to the
   previous or next page at its ends), Return opens the selected item;
   typing starts a search.
@@ -762,11 +764,15 @@ the current one bright.
   launcher; a folder opens as a box over the dimmed grid, titled with its
   name, holding its apps (up to six a row). Clicking the title asks for
   a new name ("Rename Folder"), stored as the folder's `name` (with
-  `translate` false). Escape or a click outside the box closes it.
+  `translate` false). Escape or a click outside the box closes it. A
+  folder with more apps than the box's rows fit shows them in pages,
+  with dots at the box's bottom; scrolling, Page Up / Page Down or a dot
+  turns them.
 - **Dragging** an icon (past `drag-threshold`):
   - dropped beside another icon (or on its label), it moves before or
     after it; dropped on an empty part of the page, it goes to the end
-    of the page; dropped on a page dot, to the end of that page;
+    of the page; dropped on a page dot, to the end of that page (or held
+    at the side, see "Pages");
   - an app dropped on the middle of another app's icon makes a folder of
     the two at that app's place, named after a category both apps'
     desktop files list (other than GTK, GNOME, Qt and KDE), else
@@ -780,8 +786,8 @@ the current one bright.
     reset).
 
 How GNOME's app grid looks, how many items its pages hold, how it
-names new folders and how it moves items between pages while dragging
-are not documented here; Helix's choices are above.
+names new folders and how long it waits before turning a page while
+dragging are not documented here; Helix's choices are above.
 
 ## Dock (Helix)
 

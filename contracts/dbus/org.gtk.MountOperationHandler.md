@@ -59,9 +59,10 @@ icon (none when empty or not in the icon theme).
   `password_save` 2 when "Remember Password" was checked, else 0, and
   (for other callers than GTK) `username` and `domain` (`s`): the text up
   to the first `\` is the domain, the rest the user name; without `\` the
-  domain is `default_domain`. Anonymous login (16) is not offered;
-  TCRYPT volumes (32) get the password only (no hidden-volume, system
-  volume or PIM fields).
+  domain is `default_domain`. Anonymous login (16) is not offered here
+  and TCRYPT volumes (32) get the password only: how a handler returns
+  those answers is not documented. (Helix's own mount dialogs offer
+  them, see `contracts/gsettings/removable-media.md`, "Questions".)
 - **Questions.** With one or two choices they are the dialog's buttons:
   the first continues (answer 0, `choice` 0), the second is the cancel
   button and answers its index (Escape too); with one choice the cancel

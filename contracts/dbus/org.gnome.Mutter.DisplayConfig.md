@@ -370,7 +370,9 @@ the monitors do not allow, and shows its name in an on-screen display
 1. "Mirror" (`view-mirror-symbolic`): all monitors show one picture, at
    the largest size every one of them has a mode of (each at its fastest
    mode of that size), with the first monitor's scale (1 when that size
-   does not allow it) and transform; not offered without such a size.
+   does not allow it) and transform; not offered without such a size
+   (a logical monitor's monitors share one mode size and scale, so
+   monitors without a common size cannot be mirrored).
 2. "Join Displays" (`video-joined-displays-symbolic`): all monitors side
    by side, left to right, tops aligned, each at its preferred mode.
 3. "External Only" (`video-single-display-symbolic`): only the monitors

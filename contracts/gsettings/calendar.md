@@ -63,12 +63,13 @@ the days are the `BYDAY` weekdays of those weeks, else the start's
 weekday, limited by `BYMONTH` and `BYMONTHDAY`. `BYHOUR`, `BYMINUTE` and
 `BYSECOND` give each date its times (every combination, in order; parts
 not given keep the start's) for `DAILY` and longer frequencies, before
-`BYSETPOS`; for `HOURLY` and `MINUTELY` they only narrow which
-occurrences count. A rule with `FREQ=SECONDLY` is not expanded: the event
-happens at its start only.
+`BYSETPOS`; for `HOURLY`, `MINUTELY` and `SECONDLY` they only narrow
+which occurrences count (`SECONDLY` steps `INTERVAL` seconds).
 `RDATE`s (dates, date-times, or periods by their start; a date for a timed
 event takes the start's time of day) add occurrences, not counted by
-`COUNT`. `EXDATE`s remove occurrences (also those from `RDATE`), and
+`COUNT`. `EXDATE`s remove occurrences (also those from `RDATE`), as do
+the occurrences of `EXRULE`s (RFC 2445; expanded like `RRULE` from the
+same start), and
 detached instances (`RECURRENCE-ID`) replace them. An event's expansion
 stops after 5000 occurrences that may reach the time asked about
 (occurrences starting more than a year before it are not kept) or after

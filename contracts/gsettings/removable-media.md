@@ -30,7 +30,13 @@ keyring prompts use; prompts take turns):
   "Passwords": "User name (domain\name)", "User name" or "Domain", then
   "Password", and "Remember Password" when saving is supported: on,
   saved permanently; off, not saved), buttons "Unlock" and "Cancel".
-  Cancel aborts the mount.
+  Cancel aborts the mount. When anonymous access is supported, a
+  "Connect Anonymously" box (checked: the operation's `anonymous`). For a
+  VeraCrypt volume (`G_ASK_PASSWORD_TCRYPT`): a "PIM (optional)" field
+  first when no user name is asked (a number there becomes the
+  operation's `pim`; anything else is ignored), and "Hidden Volume" and
+  "Windows System Volume" boxes (`is_tcrypt_hidden_volume`,
+  `is_tcrypt_system_volume`).
 - **Question** (`ask-question`) and **busy files** (`show-processes`):
   title the medium's name, message the question; for busy files the
   description lists the programs using the medium (their process names,

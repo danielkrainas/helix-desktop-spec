@@ -199,13 +199,16 @@ twin: `XF86Eject`; `XF86WLAN`, `XF86UWB`, `XF86RFKill`; `XF86Bluetooth`):
   `bluetooth-disabled-symbolic` "Bluetooth Off". Without an adapter
   nothing happens.
 
-## Not supported
+## Rotation lock
 
 `rotate-video-lock` (each with a `-static` twin) flips
 `org.gnome.settings-daemon.peripherals.touchscreen` `orientation-lock` (see
 `org.gnome.Mutter.DisplayConfig.md`, "Automatic rotation"); the shell shows
 `rotation-locked-symbolic` "Rotation Locked" or `rotation-allowed-symbolic`
 "Auto Rotate".
+
+## Not supported
+
 GNOME 51 has no `org.gnome.SettingsDaemon.MediaKeys` D-Bus interface (apps
 grabbing the media keys); players are controlled through MPRIS only.
 
