@@ -718,7 +718,10 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   apps that have windows, most recently used first; a dot under an icon
   means the app has windows. Clicking an icon activates the app's most
   recently used window, or launches the app when it has none, and hides
-  the overview.
+  the overview. Dragging an icon (past `drag-threshold`) along the dash
+  moves it among the favorites (a running app dropped there becomes a
+  favorite at that place; it goes before the favorite it is dropped left
+  of); dropping a favorite more than 60 pixels above the dash unpins it.
 - **Switching to apps.** `org.gnome.shell.keybindings
   switch-to-application-1` … `-9` (default Super+1 … Super+9) act on the
   first to ninth app of the dash (favorites, then other running apps), as
@@ -729,10 +732,56 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   launch the Nth app again (a new window). While the dock is on with
   Dash to Dock's `hot-keys` (below), its keys are used instead of these
   two sets.
-- **Launcher.** With an empty search the launcher lists the favorites
-  first (tagged "Favorite"), then the app folders, then the other apps
-  that are in no folder, by name. Ctrl+D adds the selected app to the
-  end of the favorites, or removes it.
+- **Launcher.** Typing a search lists matching windows, apps and search
+  results. With an empty search it shows the app grid (below). Ctrl+D
+  adds the selected app of a search to the end of the favorites, or
+  removes it.
+
+### App grid
+
+The launcher with an empty search shows, below its search field, pages of
+icons with their names: the installed apps that are neither favorites nor
+in an app folder, and the app folders (a folder's icon shows its first
+four apps). A page has as many columns as fit (3 to 8, 120 pixels each)
+and rows (2 to 5, 118 pixels each); dots below the grid show the pages,
+the current one bright.
+
+- **Order.** `org.gnome.shell app-picker-layout` (`aa{sv}`: one dictionary
+  per page, item id → `{'position': <i>}`; an item id is an app's desktop
+  file id or a folder's id) gives the items' pages and order; items it no
+  longer has are left out, and items it does not list follow at the end,
+  by name. A page holding more than fits spills into the next. The
+  layout is written back (each page's items with positions 0, 1, …)
+  whenever the user rearranges something.
+- **Pages.** Scrolling, Page Up / Page Down or clicking a dot shows
+  another page.
+- **Keys.** The arrow keys move the selection (Left / Right go on to the
+  previous or next page at its ends), Return opens the selected item;
+  typing starts a search.
+- **Opening.** Clicking (or Return on) an app launches it and closes the
+  launcher; a folder opens as a box over the dimmed grid, titled with its
+  name, holding its apps (up to six a row). Clicking the title asks for
+  a new name ("Rename Folder"), stored as the folder's `name` (with
+  `translate` false). Escape or a click outside the box closes it.
+- **Dragging** an icon (past `drag-threshold`):
+  - dropped beside another icon (or on its label), it moves before or
+    after it; dropped on an empty part of the page, it goes to the end
+    of the page; dropped on a page dot, to the end of that page;
+  - an app dropped on the middle of another app's icon makes a folder of
+    the two at that app's place, named after a category both apps'
+    desktop files list (other than GTK, GNOME, Qt and KDE), else
+    "Unnamed Folder" (id: its name's letters and digits, made unique);
+  - an app dropped on a folder goes into it (`apps`, and out of
+    `excluded-apps`);
+  - an app dragged out of an open folder's box leaves the folder (out of
+    `apps`, and into `excluded-apps` when one of its categories is among
+    the folder's `categories`) and is then dropped as above; a folder
+    left without apps is removed (out of `folder-children`, its keys
+    reset).
+
+How GNOME's app grid looks, how many items its pages hold, how it
+names new folders and how it moves items between pages while dragging
+are not documented here; Helix's choices are above.
 
 ## Dock (Helix)
 

@@ -133,11 +133,7 @@ tried them with the real hardware. Remove an entry once it has been.
   `org.gnome.Shell.SearchProvider2.md`.
 - Animations: GNOME's animation curves, lengths and which surfaces it animates (and how it animates maximizing, full screen and tiling; Helix's way is its own) are not documented here; Helix's are in `contracts/wayland/README.md`, "Animations".
 - Dock: vanilla GNOME has no dock; Helix's follows Ubuntu's Dash to Dock settings, whose behavior (its animation curves, what exactly `height-fraction` measures, and the look of its previews and their hover popups; Helix shows previews on click, lists an app's window titles in its tooltip instead of hover previews, and shows quicklist submenus in place within the dock menu; how its hot key numbers look and which apps they count with several docks are its own) is documented only by that extension; Helix's subset is in `contracts/wayland/README.md` ("Dock").
-- Favorites and app folders: GNOME's app grid (pages, `app-picker-layout`,
-  dragging apps into folders) and dash (reordering by dragging, its context
-  menus) are not documented here; Helix shows favorites in a dash and the
-  launcher's list, and does not use `app-picker-layout`
-  (`contracts/wayland/README.md`, "Favorites and app folders").
+- Favorites and app folders: how GNOME's app grid and dash look and behave in detail (page size, folder naming, page turning while dragging, its folder dialog) is not documented here; Helix's grid and dash are in `contracts/wayland/README.md`, "Favorites and app folders" and "App grid".
 - Automatic rotation: when mutter rotates (it may limit it to tablet mode or
   to touchscreen devices) and how it moves other monitors is not documented
   here; Helix's choices are in `org.gnome.Mutter.DisplayConfig.md`
