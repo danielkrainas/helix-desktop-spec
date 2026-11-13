@@ -653,6 +653,10 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   a click on the dock does with `cycle-windows`: the app's newest window
   is activated, the next of its windows when one of them has focus, and an
   app without windows is launched.
+  `open-new-window-application-1` … `-9` (default Super+Ctrl+1 … 9)
+  launch the Nth app again (a new window). While the dock is on with
+  Dash to Dock's `hot-keys` (below), its keys are used instead of these
+  two sets.
 - **Launcher.** With an empty search the launcher lists the favorites
   first (tagged "Favorite"), then the app folders, then the other apps
   that are in no folder, by name. Ctrl+D adds the selected app to the
@@ -784,8 +788,17 @@ in the overview (which has its dash) or the launcher.
   (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`); an app's count
   replaces its notification count. Urgent apps get an orange background
   (`dance-urgent-applications` animation is not done).
-- `hot-keys`, `app-hotkey-*`, the window previews and the remaining keys
-  are not used.
+- **Keys.** With `hot-keys` (the default) and the dock on,
+  `app-hotkey-1` … `-10` (Super+1 … Super+0) act on the first to tenth
+  app of the dock (favorites, then running apps; on the first monitor's
+  dock) as a click does (`click-action`), `app-shift-hotkey-N` as a
+  Shift+click (`shift-click-action`) and `app-ctrl-hotkey-N` launch the
+  app again (a new window). After one of them, or `shortcut` (Super+Q),
+  for `shortcut-timeout` seconds (default 2) the apps' icons show their
+  numbers (1 … 9, then 0) at their top left (`hotkeys-overlay`) and the
+  dock is shown (`hotkeys-show-dock`; it hides again afterwards unless
+  the pointer is on it). `shortcut-text` is not used.
+- The remaining keys are not used.
 
 **App folders** are `org.gnome.desktop.app-folders` `folder-children`; each
 child `<id>` is a `org.gnome.desktop.app-folders.folder` at
