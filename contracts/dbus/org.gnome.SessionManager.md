@@ -153,9 +153,18 @@ specifications), among them:
   A file with any other condition is not started.
 - `Exec` is run directly with the components' environment; its field
   codes are dropped.
-- Not supported: `X-GNOME-Autostart-Phase`, `X-GNOME-Autostart-Delay`,
-  `X-GNOME-AutoRestart` (all autostart apps start at the same point, at
-  once, and are not restarted).
+- `X-GNOME-Autostart-Phase`: entries in a phase before `Applications`
+  (`EarlyInitialization`, `PreDisplayServer`, `DisplayServer`,
+  `Initialization`, `WindowManager`, `Panel`, `Desktop`) start first;
+  the others (`Applications`, no phase, or a phase Helix does not know)
+  1 second later (at once when no entry is early). Helix does not wait
+  for early apps to register.
+- `X-GNOME-Autostart-Delay`: the entry starts that many more seconds
+  later (at most 3600).
+- `X-GNOME-AutoRestart` `true`: when the app exits with a failure (a
+  non-zero status or a signal) it is started again 1 second later, at
+  most 5 times within a minute; an app that ends cleanly, or that a
+  condition stopped, is not restarted.
 
 ## Client and inhibitor objects
 

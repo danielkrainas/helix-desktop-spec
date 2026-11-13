@@ -94,9 +94,7 @@ tried them with the real hardware. Remove an entry once it has been.
   `contracts/gsettings/a11y-magnifier.md`. GNOME's lens size and
   frame, and how it picks the point it follows for focus and caret, are
   not documented; Helix's are in `a11y-magnifier.md`.
-- Autostart: gnome-session's autostart phases, delays, restarts and its
-  full list of `AutostartCondition` forms are not documented here;
-  Helix's subset is in `org.gnome.SessionManager.md` ("Autostart").
+- Autostart: gnome-session's autostart phases (how long it waits for each, and for registration), delays and restart rules, and its full list of `AutostartCondition` forms are not documented here; Helix's rules are in `org.gnome.SessionManager.md` ("Autostart").
 - Hot corner: GNOME triggers it by pointer pressure against a barrier;
   how much pressure and its timing are not documented. Helix's (100
   unaccelerated pixels within a second; reaching the corner for absolute
