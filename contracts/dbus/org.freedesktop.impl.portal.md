@@ -778,7 +778,10 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   used files (`$XDG_DATA_HOME/recently-used.xbel`), newest first by when
   they were last modified there (else added), at most 100, only local
   files that still exist and pass the current filter, each as "<name> —
-  <folder name>"; the message then reads "Recent". Recent files are chosen
+  <folder name>"; the message then reads "Recent". It lists nothing
+  while `org.gnome.desktop.privacy remember-recent-files` is false or
+  `recent-files-max-age` is 0, and with a positive age only files used
+  within that many days. Recent files are chosen
   (and, with `multiple`, picked) as files are. The file type row is
   shown there too; there is no Parent Folder.
 - Previews: when some rows are pictures (files, or recent files, whose

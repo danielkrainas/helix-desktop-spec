@@ -101,6 +101,7 @@ each change). It publishes, from GSettings:
 | `Gtk/DecorationLayout` | `org.gnome.desktop.wm.preferences button-layout` |
 | `Net/EnableEventSounds`, `Net/SoundThemeName` | `org.gnome.desktop.sound event-sounds`, `theme-name` |
 | `Net/DoubleClickTime` | `org.gnome.desktop.peripherals.mouse double-click` |
+| `Gtk/RecentFilesEnabled`, `Gtk/RecentFilesMaxAge` | `org.gnome.desktop.privacy remember-recent-files` (1 or 0), `recent-files-max-age` |
 
 (keys without a schema are in `org.gnome.desktop.interface`;
 `text-scaling-factor` is taken between 0.5 and 3). The root window's
