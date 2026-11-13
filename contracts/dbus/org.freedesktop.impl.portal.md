@@ -784,12 +784,27 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   within that many days. Recent files are chosen
   (and, with `multiple`, picked) as files are. The file type row is
   shown there too; there is no Parent Folder.
-- Previews: when some rows are pictures (files, or recent files, whose
-  name suggests PNG, JPEG, WebP, JPEG XL or SVG), an area below the rows
-  shows the selected row's picture, scaled down to fit 392 × 160 pixels,
-  or "No preview" (other rows, files larger than 32 MiB, or pictures
-  that cannot be read). The shell decodes each picture once per folder
-  view, without holding up the dialog.
+- Previews: when some rows can be previewed (files, or recent files,
+  that are pictures — PNG, JPEG, WebP, JPEG XL or SVG —, text, or of a
+  type an installed thumbnailer handles; by content type, from the name
+  and the first 4 KiB), an area below the rows shows the selected row's
+  preview, or "No preview":
+  - a picture scaled down to fit 392 × 160 pixels (not above 32 MiB);
+  - text: its first nine lines (of the first 8 KiB), tabs as four
+    spaces;
+  - other files: their thumbnail, from the freedesktop thumbnail cache
+    (`$XDG_CACHE_HOME/thumbnails/{x-large,large,normal}/<md5 of the
+    URI>.png`, used when not older than the file), else Helix's own cache
+    (`$XDG_CACHE_HOME/helix/thumbnails/`, same names), else made into
+    Helix's cache by the thumbnailer whose `.thumbnailer` file (in
+    `thumbnailers/` under the XDG data folders; skipped when its `TryExec`
+    is missing) lists the type, run with `%i` / `%u` (the file's path /
+    URI), `%o` (the output) and `%s` (256), and stopped after 10 seconds.
+    Helix does not write into the shared cache (its entries need metadata
+    Helix's thumbnails lack).
+
+  The shell makes each preview once per folder view, without holding up
+  the dialog.
 - The start folder: `current_folder`, else `current_file`'s folder, else
   the folder the app last chose in (this session), else the home folder.
   The first filter is current unless `current_filter` names one (added
@@ -803,8 +818,10 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
   chooses a file; otherwise, when opening files and the text has no
   `/`, it searches: the folder shown and the folders below it (hidden
   ones skipped) for files whose names hold the text (ignoring case) and
-  pass the current filter, nearest folders first, then by name; at most
-  200 results, after looking at 20 000 entries at most. The results are
+  pass the current filter, nearest folders first, then by name; after
+  them, text files (by their content type; at most 256 KiB each, the
+  first 500 such files met) whose content holds the text (ignoring
+  case); at most 200 results, after looking at 20 000 entries at most. The results are
   rows "<name> — <folder name>" (chosen as files are) under the message
   "Search for “<text>” in <folder>"; with none, the warning "No files
   named like “<text>”.". Clicking a place ends the search. Otherwise the
