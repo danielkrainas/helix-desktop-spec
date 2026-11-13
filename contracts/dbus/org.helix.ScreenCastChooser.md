@@ -6,7 +6,8 @@ dialog looks like the rest of the shell and appears above everything.
 
 - Bus name `org.gnome.Shell`, object `/org/helix/ScreenCastChooser`.
 - `ChooseSource(app_id, monitors, options)`: `monitors` lists
-  `(connector, label)` pairs to offer. `options`:
+  `(connector, label)` pairs to offer (the portal passes the monitors
+  DisplayConfig shows, without other casts' virtual monitors). `options`:
   - `windows` (`b`): also offer the open windows (the shell knows them;
     they are listed by title and application, most recently used first);
   - `monitors` (`b`, default true): offer the monitors;

@@ -77,6 +77,25 @@ lock screen) draw at the exact scale of their monitor.
 - `supports-changing-layout-mode` (`b`)
 - `global-scale-required` (`b`): all logical monitors must share one scale
 
+## Virtual monitors (Helix)
+
+The virtual monitors of screen casts (`RecordVirtual`, see
+`org.gnome.Mutter.ScreenCast.md`) are listed in `GetCurrentState` while
+their stream lives: connector `Virtual-N`, vendor `Helix`, product
+`Virtual`, serial `0`, `display-name` "Virtual monitor", `is-builtin`
+false, one mode (the size the consumer chose, at 60 Hz, current and
+preferred), color mode 0, no `is-underscanning`. Each is a logical
+monitor of its own at scale 1, never primary. Adding, resizing or
+removing one changes the serial and emits `MonitorsChanged`.
+
+They are not part of the set of monitors: remembered configurations,
+`HasExternalMonitor`, the display switcher, backlight and color profiles
+ignore them, and `GetResources` does not list them. They can't be
+configured: in `ApplyMonitorsConfig`, monitor entries naming one are
+left out, and a logical monitor showing only virtual monitors is left
+out, so a client may send the current state back as it is; leaving them
+out does not turn them off.
+
 ## `ApplyMonitorsConfig`
 
 `ApplyMonitorsConfig(u serial, u method, a(iiduba(ssa{sv})) logical_monitors,

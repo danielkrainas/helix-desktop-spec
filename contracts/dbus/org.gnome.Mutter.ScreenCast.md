@@ -45,11 +45,16 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
   the clipped rectangle (`output-name`: the monitor it mostly covers), and
   an area on no monitor (or empty) fails with
   `org.freedesktop.DBus.Error.InvalidArgs`. `RecordVirtual` adds a virtual
-  monitor of 1920×1080 at scale 1, to the right of the other monitors,
-  for as long as the stream lives; windows can be moved onto it (by
-  dragging, `move-to-monitor-*`) like any monitor, but it is not listed
-  in DisplayConfig. Its parameters have `position`, `size` and
-  `output-name` (`Virtual-N`). Cursor mode 2 adds PipeWire cursor metadata
+  monitor at scale 1, to the right of the other monitors, for as long as
+  the stream lives; windows can be moved onto it (by dragging,
+  `move-to-monitor-*`) like any monitor. Its size is the consumer's: the
+  stream's format offers any video size from 1×1 to 8192×8192, preferring
+  1920×1080, and the virtual monitor takes the size the consumer's format
+  fixes (1920×1080 when the consumer leaves it open). It is listed in
+  DisplayConfig (see "Virtual monitors" in
+  `org.gnome.Mutter.DisplayConfig.md`). Its parameters have `position`,
+  `size` and `output-name` (`Virtual-N`); `size` is the size before the
+  consumer chose one. Cursor mode 2 adds PipeWire cursor metadata
   (`SPA_META_Cursor`) to every buffer: the pointer's position and hotspot
   in stream pixels and, as a `spa_meta_bitmap`, a BGRA image (straight
   alpha, at most 64×64, cropped) of the pointer as Helix draws it (see
