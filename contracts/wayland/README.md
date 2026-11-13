@@ -1084,8 +1084,17 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   the layout gives it (the grave accent on a US layout).
 - `current-workspace-only` of `org.gnome.shell.app-switcher` and
   `org.gnome.shell.window-switcher` limits the switchers to the active
-  workspace (`contracts/gsettings/workspaces.md`); `app-icon-mode` is
-  ignored: Helix shows no thumbnails, and every entry has an icon.
+  workspace (`contracts/gsettings/workspaces.md`); `app-icon-mode` of
+  `org.gnome.shell.window-switcher` shapes the window switcher
+  (`switch-windows`, `switch-group`, and an application's windows reached
+  from the application switcher; not the application list itself): with
+  `thumbnail-only` or `both` (the default) it is a row of tiles, at most
+  eight (fewer when the monitor is narrower), each a picture of the
+  window (taken when the switcher opens, as for the overview; the
+  window's icon at 64 pixels until it comes) with the window's title
+  below, the selected tile highlighted; with `both` the window's icon (32
+  pixels) sits on the picture's bottom right corner. With `app-icon-only`
+  it is the list described above.
 - Switcher entries show a window's icon: the one its app set
   (`xdg_toplevel_icon_manager_v1`: an icon theme name, or the largest
   image it gave; for X11 windows the largest square image in
