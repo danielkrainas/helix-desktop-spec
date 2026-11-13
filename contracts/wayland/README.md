@@ -868,7 +868,8 @@ panel's right end, holding, from the top:
 - **Power Mode**, when power-profiles-daemon runs: one button per profile
   it offers (Power Saver, Balanced, Performance), the active one
   highlighted; clicking one makes it active.
-- The power actions logind allows: Lock Screen, Suspend, Log Out…,
+- The power actions logind allows: Lock Screen, Switch User… (see
+  `org.gnome.desktop.lockdown.md`, "User switching"), Suspend, Log Out…,
   Restart…, Power Off….
 
 Escape or a click outside closes it; choosing a power action closes it
