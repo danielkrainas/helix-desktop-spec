@@ -125,7 +125,8 @@ lists the apps named in `org.gnome.desktop.notifications`
   the text of its newest ones (`org.gnome.ScreenSaver.md`, "Lock screen
   (Helix)"). Both only matter while the global `show-in-lock-screen` is
   true. Apps without settings show counts only.
-- `force-expanded` has no effect (Helix's banners always show the body).
+- `force-expanded` true: the app's banners show up to eight lines of the
+  body instead of two (the list is unchanged).
 
 ### The notification list (persistence)
 
