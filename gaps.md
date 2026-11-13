@@ -62,10 +62,10 @@ tried them with the real hardware. Remove an entry once it has been.
   and later; the development machine has 1.6, so only their refusal has
   been tried).
 - Color management and HDR: Helix converts apps' described content
-  (parametric descriptions, Windows-scRGB, HLG, and matrix/curve ICC
-  profiles approximated as primaries plus one curve; not LUT-based ICC
-  profiles or the logarithmic transfer functions) into its composition
-  space; BT.2100 monitors get a half-float frame with headroom above
+  (parametric descriptions with the log, HLG and other named curves,
+  Windows-scRGB, matrix/curve ICC profiles with exact parametric curves,
+  and LUT-based ICC profiles approximated as primaries plus curves; not
+  `st240`, `xvycc` or `st428`) into its composition space; BT.2100 monitors get a half-float frame with headroom above
   SDR white, tone mapped to the monitor's peak, but 8 bits per channel
   out (Smithay 0.7 picks one scanout format for all of a GPU's
   monitors). How mutter tone maps, dithers or treats HLG's system gamma,

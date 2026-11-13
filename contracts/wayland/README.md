@@ -223,27 +223,36 @@ is then converted for the monitor ("Color modes" in
 
 - Advertised: the perceptual and relative render intents (drawn the
   same); the features `icc_v2_v4`, `parametric`, `set_primaries`,
-  `set_tf_power`, `set_luminances`, `set_mastering_display_primaries`
-  and `windows_scrgb`; the transfer functions `bt1886`, `gamma22`,
-  `gamma28`, `ext_linear`, `srgb`, `ext_srgb`, `st2084_pq` and `hlg`; the
-  primaries `srgb`, `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`,
-  `dci_p3`, `display_p3` and `adobe_rgb`. The logarithmic and other
-  transfer functions and `extended_target_volume` are not offered; other
-  named values are the creator's `invalid_tf` / `invalid_primaries_named`
-  errors.
+  `set_tf_power`, `set_luminances`, `set_mastering_display_primaries`,
+  `extended_target_volume` and `windows_scrgb`; the transfer functions
+  `bt1886`, `gamma22`, `gamma28`, `ext_linear`, `log_100`, `log_316`,
+  `srgb`, `ext_srgb`, `st2084_pq` and `hlg`; the primaries `srgb`,
+  `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`, `dci_p3`,
+  `display_p3` and `adobe_rgb`. `st240`, `xvycc` and `st428` are not
+  offered; other named values are the creator's `invalid_tf` /
+  `invalid_primaries_named` errors. Target volumes beyond the primary
+  volume are taken: the conversion is the same matrix, values outside
+  0–1 are converted, not clipped, and only the composition clips (below
+  0, and above reference white on SDR monitors).
 - **ICC profiles** (`create_icc_creator`): `set_icc_file` takes 1 byte
   to 32 MB (`bad_size`) of a regular file (`bad_fd`) within it
   (`out_of_file`), once (`already_set`); the profile is read then.
   `create` without it is `incomplete_set`. Matrix/curve RGB profiles
   (v2 and v4) are taken: the `rXYZ`, `gXYZ` and `bXYZ` colorants (D50,
   as ICC keeps them) as primaries with a D50 white (so they are adapted
-  to D65 like other primaries), and the `rTRC` curve as the transfer
-  function for all three channels: an identity curve as a power of 1,
-  a gamma as that power, a sampled curve as the power giving its value
-  at mid-gray, a parametric curve with sRGB's values as `srgb`, other
-  parametric curves as their gamma. Luminances are SDR's defaults. A
-  profile that is not RGB, has no colorants (LUT-based profiles) or no
-  usable curve gives a description that fails with `unsupported`; a
+  to D65 like other primaries), and the `rTRC`, `gTRC` and `bTRC` curves
+  (each, the red one standing in for a missing one): a parametric curve
+  (types 0–4) exactly, an identity or gamma curve exactly, a sampled
+  curve as the power giving its value at mid-gray. LUT-based profiles
+  (an `A2B0`, else `A2B1`, of type `mft1`, `mft2` or `mAB `, 3 in and 3
+  out, XYZ or Lab connection space) are evaluated: the primaries are the
+  chromaticities of full red, green and blue, the white that of full
+  white, and each channel's curve the power giving the luminance of its
+  half value relative to its full value; their colour lookup table is
+  not applied pixel by pixel, so profiles far from a matrix/curve model
+  are approximated. Luminances are SDR's defaults. A profile that is not
+  RGB, or has neither colorants nor such a table, or a curve or table
+  Helix cannot read, gives a description that fails with `unsupported`; a
   read error, `operating_system`. Such descriptions give no information.
 - Parametric descriptions follow the protocol: the transfer function and
   primaries are required (`incomplete_set`), each property is set once
@@ -274,7 +283,9 @@ is then converted for the monitor ("Color modes" in
   maximum) is drawn from its surfaces' textures, those surfaces through a
   shader: the transfer function is decoded (`st2084_pq` to cd/m², `bt1886`
   as a 2.4 power, `ext_linear` as is, `srgb` piecewise, a power as given;
-  negative values keep their sign; `hlg` through its inverse OETF to
+  negative values keep their sign; `log_100` and `log_316` as 10 to the
+  power of 2 (2.5) × (value − 1), 0 at 0; ICC curves as above; `hlg`
+  through its inverse OETF to
   scene light, then its OOTF: each channel times the luminance Ys —
   from the description's primaries — to the power γ − 1, with γ = 1.2 +
   0.42 log10(max luminance / 1000), and times the max luminance),
