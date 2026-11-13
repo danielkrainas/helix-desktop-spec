@@ -131,8 +131,6 @@ A configuration is valid when:
   monitor;
 - every connector is a connected monitor and appears only once, with one of
   its modes;
-- the monitors of one logical monitor (mirroring) use modes of the same
-  size;
 - the scale is one of the supported scales of the mode and the transform
   (0–7) is one the monitor supports;
 - exactly one logical monitor is primary;
@@ -141,6 +139,18 @@ A configuration is valid when:
   transforms (1, 3, 5, 7). The logical monitors must not overlap, must
   form one connected arrangement (each shares part of an edge with
   another), and the smallest x and the smallest y must be 0.
+
+The monitors of one logical monitor (mirroring) may use modes of
+different sizes. The logical monitor's size is its first monitor's (mode
+size and scale, as above). Each other monitor whose mode has another size
+shows the same area rescaled: its scale is the larger one that fits the
+logical monitor in its mode, keeping the logical monitor's shape. Its
+picture is centred on the logical monitor, so a monitor of another shape
+also shows the strips beyond two sides of the logical monitor: what lies
+there in the layout, else the background. The shell's panels on that
+monitor follow its own edges. `GetCurrentState` reports such a monitor
+with its logical monitor's position and scale. Applications see the
+monitor's `wl_output` at the scale and position it is drawn at.
 
 An invalid configuration is rejected and nothing changes. When an applied
 configuration changes anything, the serial changes and `MonitorsChanged` is
@@ -379,9 +389,9 @@ the monitors do not allow, and shows its name in an on-screen display
 1. "Mirror" (`view-mirror-symbolic`): all monitors show one picture, at
    the largest size every one of them has a mode of (each at its fastest
    mode of that size), with the first monitor's scale (1 when that size
-   does not allow it) and transform; not offered without such a size
-   (a logical monitor's monitors share one mode size and scale, so
-   monitors without a common size cannot be mirrored).
+   does not allow it) and transform. Without such a size each monitor
+   uses its preferred mode, and the others show the first one's picture
+   rescaled (see above).
 2. "Join Displays" (`video-joined-displays-symbolic`): all monitors side
    by side, left to right, tops aligned, each at its preferred mode.
 3. "External Only" (`video-single-display-symbolic`): only the monitors
