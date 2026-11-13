@@ -1,6 +1,6 @@
 # 0001 — Helix extensions
 
-- **Status**: Accepted; Phases 0–2 implemented (API 1.1), contract in `contracts/extensions/`
+- **Status**: Accepted; Phases 0–2 and phase 3's sandboxing implemented (API 1.2), contract in `contracts/extensions/`; the registry is still to come
 - **Summary**: A way to add things to the Helix desktop: panel items,
   status indicators, quick-settings toggles and sliders, dock items,
   commands and settings pages. An extension declares what it adds in a

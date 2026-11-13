@@ -21,10 +21,10 @@ directory:
 In item paths, `<id>` is the item's id with `-` written as `_` (D-Bus
 object paths cannot hold `-`).
 
-This document is API version **1.1**. Minor versions only add
+This document is API version **1.2**. Minor versions only add
 (properties, methods, contribution kinds, raised limits); nothing in 1.x
-is removed or changes meaning. What 1.1 added over 1.0 is marked
-"(1.1)"; a manifest asking for `api = "1.0"` cannot use it (those
+is removed or changes meaning. What 1.1 and 1.2 added is marked "(1.1)"
+or "(1.2)"; a manifest asking for an earlier `api` cannot use it (those
 manifest entries are ignored).
 
 ## Extension directories
@@ -48,6 +48,7 @@ url = "https://example.org"        # optional
 activation = ["onStartup"]         # optional, default ["onStartup"]
 permissions = ["inhibit-idle"]     # optional, default []
 enabled-by-default = false         # optional; system extensions only
+sandbox = true                     # optional (1.2): run in a sandbox
 
 [[contributes.panel-item]]
 id = "indicator"                   # [a-z0-9-], at most 32; unique in the extension
@@ -84,7 +85,7 @@ minutes = { type = "int", default = 0, min = 0, max = 480, label = "Minutes", he
 - `id`: two or more dot-separated parts of `A-Z a-z 0-9 _ -`, at most
   128 characters, equal to the directory's name.
 - `api`: `"1.N"`; Helix runs it when it supports API 1 at minor N or
-  later (this version: 1.0).
+  later (this version: 1.2).
 - `exec`: a relative program is resolved in the extension's directory.
 - `activation`: `onStartup` (when the session starts, or when the
   extension is enabled) or `onVisible` (when one of its items is first
@@ -202,6 +203,8 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
 
 ## Permissions
 
+API permissions limit what an extension can ask of the shell:
+
 | Name | Allows | Shown as |
 |------|--------|----------|
 | `notifications` | `Host.ShowNotice` | show notifications |
@@ -210,10 +213,49 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
 | `popover` (1.1) | panel items with `popover = true` | show its own panels |
 
 A call needing a permission the extension was not granted fails with
-`org.freedesktop.DBus.Error.AccessDenied`. These permissions limit what
-an extension can ask of the shell. In API 1 an extension is an ordinary
-program of the user: the shell does not sandbox what it does on its own
-(see the proposal).
+`org.freedesktop.DBus.Error.AccessDenied`.
+
+(1.2) System permissions say what a sandboxed extension may reach on its
+own (they mean nothing without `sandbox = true`, and need `api = "1.2"`):
+
+| Name | Gives the sandbox | Shown as |
+|------|-------------------|----------|
+| `network` | the network | use the network |
+| `files:home` | the home folder, writable | read and change all your files |
+| `files:documents`, `files:downloads`, `files:music`, `files:pictures`, `files:videos`, `files:desktop` | that XDG folder, writable | read and change your Documents (and so on) |
+| `session-bus` | the session bus (all of it) | talk to your other programs |
+| `system-bus` | the system bus (all of it) | talk to system services |
+
+## Sandboxes (1.2)
+
+An extension with `sandbox = true` runs under bubblewrap (`bwrap`), as a
+Flatpak app runs. It sees:
+
+- the system's `/usr` (with `/bin`, `/sbin`, `/lib*` as on the host,
+  whether directories or links into `/usr`) and `/etc`, read-only;
+- its own directory, read-only, as its working directory;
+- a home of its own, writable: `$XDG_DATA_HOME/helix/extension-data/<id>`
+  (created when needed), as `HOME`;
+- a private `/tmp`, `/proc`, a minimal `/dev`, and an empty
+  `$XDG_RUNTIME_DIR` holding only the Wayland socket when it has the
+  `popover` permission;
+- nothing else of the user's files, no network and no D-Bus buses,
+  except what its system permissions give;
+- its descriptor 3 (the connection to the shell), as without a sandbox.
+
+All namespaces are new (user, mount, PID, IPC, UTS, cgroup, and the
+network one unless `network`); it ends with the shell (`--die-with-parent`)
+and gets its own terminal session (`--new-session`). Without `bwrap`
+installed, a sandboxed extension does not start (state `invalid`,
+"needs bubblewrap (bwrap)").
+
+`org.helix.extensions` `require-sandbox` (an administrator's lock):
+while true, extensions without `sandbox = true` do not run (state
+`disabled`, "Only sandboxed extensions may run"); development
+extensions too.
+
+The Extensions dialog says "Sandboxed" for sandboxed extensions, else
+"Full access: it can do anything you can".
 
 ## The host (`org.helix.Extension1.Host`)
 
@@ -367,8 +409,9 @@ For tools (`helix-extensions`) and the Extensions dialog's state:
 - `ListExtensions() → a{sa{sv}}`: by id, `name`, `description`,
   `version`, `path`, `type` (`system`/`user`/`development`), `enabled`
   (`b`), `state` (`s`), `error` (`s`, the reason when invalid or
-  crashed), `permissions` (`as`), `approved` (`b`), and (1.1)
-  `commands` (`a(sss)`: command id, title, accelerator).
+  crashed), `permissions` (`as`), `approved` (`b`), (1.1)
+  `commands` (`a(sss)`: command id, title, accelerator), and (1.2)
+  `sandboxed` (`b`).
   - `state` is one of `running`, `starting`, `stopped`, `disabled`,
     `invalid`, `needs-approval` or `crashed`.
 - `Enable(id, approve)`: enables it. With `approve` true, also approves
