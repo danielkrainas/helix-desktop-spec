@@ -40,9 +40,11 @@ Path: `/org/gnome/desktop/lockdown/`
   through GIO, whose GVfs UDisks2 volume monitor reads this key and
   mounts removable drives read-only; Helix does nothing more. (Not tried
   with a real drive.)
-- The other keys (`disable-command-line`, `user-administration-disabled`,
-  …) have no effect in the shell: it has no run-command dialog or user
-  administration; GNOME Settings reads the latter itself.
+- `disable-command-line`: the run dialog (`contracts/wayland/README.md`,
+  "Run a command") does not open.
+- The other keys (`user-administration-disabled`, …) have no effect in
+  the shell: it has no user administration; GNOME Settings reads that
+  key itself.
 
 ## User switching
 

@@ -570,6 +570,33 @@ window itself (the focused one when the app is unknown).
 pressing and releasing `locate-pointer-key` (default `Control_L`) alone
 shows shrinking circles around the pointer for half a second.
 
+## Run a command (Helix)
+
+`org.gnome.desktop.wm.keybindings panel-run-dialog` (default Alt+F2)
+opens a dialog, "Run a Command", with a text field "Enter a Command" and
+"Cancel" / "Run" (Return runs, Escape cancels). Not with
+`org.gnome.desktop.lockdown disable-command-line`.
+
+- Up and Down in the field go back and forth through
+  `org.gnome.shell command-history` (oldest first; Down past the newest
+  empties the field). Tab completes the first word to the longest prefix
+  the matching programs on `$PATH` share (and a space after a single
+  match).
+- What was typed (a leading `~/` is the home folder):
+  - nothing: the dialog closes;
+  - a URI (`scheme://…`) or an existing folder's absolute path: it opens
+    with its default app;
+  - anything else: a command line, split as a shell would split it
+    (quotes, no variables or pipes) and started as an app launched from
+    a command line; when its program is not on `$PATH` (or is not an
+    existing file), the dialog stays with "Command not found: <program>"
+    in the warning color, and other failures show their message.
+- A command that ran is added to the end of `command-history` (an earlier
+  copy is removed; the newest 30 are kept).
+
+GNOME's own run dialog (its special commands such as `r` and `lg`, and
+how it completes) is not documented here; this one is Helix's.
+
 ## Windows wanting attention (Helix)
 
 A window wants attention when:
