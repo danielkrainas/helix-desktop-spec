@@ -21,6 +21,10 @@ Shows (or updates, if already open) the confirmation dialog.
 - `inhibitor_object_paths`: `org.gnome.SessionManager.Inhibitor` objects
   that block; the dialog lists their apps and reasons, and confirming then
   means "anyway".
+- Helix: when the user already confirmed a restart or power off on the
+  lock screen (`org.gnome.desktop.screensaver restart-enabled`), the next
+  `Open` of that type emits its confirmation signal at once and shows
+  nothing.
 
 ## Signals
 

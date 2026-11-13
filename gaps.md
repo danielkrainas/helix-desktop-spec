@@ -101,7 +101,7 @@ tried them with the real hardware. Remove an entry once it has been.
   how much pressure and its timing are not documented. Helix's (100
   unaccelerated pixels within a second; reaching the corner for absolute
   pointers) is in `contracts/wayland/README.md`, "Overview".
-- Lock screen: `org.gnome.desktop.screensaver restart-enabled` (Restart and Power Off from the lock screen) is not supported; GNOME's lock screen layout and where it puts "Switch User" are not documented here.
+- Lock screen: GNOME's lock screen layout (where it puts Restart, Power Off and "Switch User", and whether it lists apps inhibiting logout) and where it puts "Switch User" are not documented here.
 - User switching: how gnome-shell decides to offer "Switch User" and how it asks GDM (and other display managers) is not documented here; Helix's way is in `org.gnome.desktop.lockdown.md`, "User switching".
 - Polkit agent: what gnome-shell's dialog shows and how it lets the user
   pick among identities (a choice of users in the dialog; Helix asks

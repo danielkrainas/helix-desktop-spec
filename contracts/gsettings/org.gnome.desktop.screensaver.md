@@ -43,5 +43,11 @@ Besides `lock-enabled`, `lock-delay` and the picture keys (see
 - `show-full-name-in-top-bar` concerns GNOME's screen shield, shown
   before its unlock dialog; Helix's lock screen is the unlock dialog,
   which always shows the user name (as GNOME's does).
-- `restart-enabled` is not supported: Helix's lock screen offers no
-  Restart or Power Off.
+- `restart-enabled`: with it on, the lock screen has "Restart…" and
+  "Power Off…" buttons at its bottom left (each only when logind allows
+  it). Choosing one asks there ("Restart this computer?" / "Power off this
+  computer?", with "Cancel" and "Restart" / "Power Off"); confirming asks
+  the session manager to reboot or shut down (`Reboot` / `Shutdown`), and
+  the shell's end-session dialog answers that request as confirmed
+  without showing (apps inhibiting logout are not listed or waited for).
+  Read each time the lock screen is drawn.
