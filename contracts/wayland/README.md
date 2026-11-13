@@ -965,9 +965,17 @@ in the overview (which has its dash) or the launcher.
   attention"); with `workspace-agnostic-urgent-windows` (the default),
   such windows count on every workspace, also with `isolate-workspaces`
   (the app shows, and clicking it reaches that window).
-- `isolate-locations` has no effect: drives and the Trash never own file
-  manager windows in Helix's dock (the file manager's windows are its
-  own, whatever they show).
+- With `isolate-locations` (the default) a file manager window showing a
+  drive or the Trash belongs to that drive's or the Trash's item, not to
+  the file manager. That item gets the window's running dot and the
+  focused-app highlight, and a click on it brings the window up (the most
+  recently used one when there are several) instead of opening a new
+  one. The file manager is the app that opens folders (the default app
+  for `inode/directory`). Helix knows what a window shows only by its
+  title: the drive whose name it is, else the Trash when it is the Trash's
+  display name (`trash:///`'s `standard::display-name`) or "Trash". So a
+  folder named like a drive is taken for it. Without
+  `isolate-locations` all of the file manager's windows are its own.
 - **Keys.** With `hot-keys` (the default) and the dock on,
   `app-hotkey-1` … `-10` (Super+1 … Super+0) act on the first to tenth
   app of the dock (favorites, then running apps; on the first monitor's
