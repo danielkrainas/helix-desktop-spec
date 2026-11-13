@@ -1003,11 +1003,83 @@ A folder's row (tagged "Folder") opens it: the launcher then lists the
 folder's apps, its name in the search field's place. Backspace with an
 empty search, or Escape, goes back; typing searches all apps.
 
+## Panel layout (Helix)
+
+The top panel has three zones: left, center and right. Which items each
+zone shows, and in which order (left to right), are `org.helix.shell`
+`panel-left`, `panel-center` and `panel-right`
+(`contracts/gsettings/org.helix.shell.md`). The built-in items are:
+
+| Id | Item | Shown | A click |
+|----|------|-------|---------|
+| `helix:apps` | "Apps" | always | opens or closes the app launcher |
+| `helix:workspaces` | one dot per workspace, the active one wide (`contracts/gsettings/workspaces.md`) | with more than one workspace | nothing |
+| `helix:clock` | the date and time, with a dot while there are unseen notifications | always | opens or closes the notification list |
+| `helix:tray` | apps' status icons (`contracts/dbus/org.kde.StatusNotifierItem.md`) | while an item is shown | see that file |
+| `helix:accessibility` | the accessibility indicator ("Accessibility menu") | see "Accessibility menu" | opens its menu |
+| `helix:keyboard` | the input source indicator (`contracts/gsettings/input-settings.md`) | with two or more input sources | opens its menu |
+| `helix:status` | the system status icons ("System status") | while it has an icon | opens quick settings |
+| `helix:power` | "Power" | always | opens or closes quick settings |
+
+Default: `helix:apps` and `helix:workspaces` on the left, `helix:clock`
+in the center, then `helix:tray`, `helix:accessibility`,
+`helix:keyboard`, `helix:status` and `helix:power` on the right.
+
+- **Placing.** Left items are placed from the panel's left end, right
+  items from its right end, in their order, 4 pixels apart. Center items
+  are centered on the panel, but moved right of the left items or left
+  of the right items when they would overlap them. A center item that
+  still does not fit is left out.
+- **Ids.** An id Helix does not know (another Helix version's, or an
+  extension that is not running) is kept in the key but not shown. An id
+  in more than one place is shown at its first place (left, center,
+  right, in order). An item in no zone is not shown, except
+  `helix:power`: without it, there would be no way to reach quick
+  settings with the pointer. When it is in no zone, it is shown at the
+  right end.
+- **Privacy indicators.** "Recording" (a screen recording is running;
+  clicking it stops it) and "Sharing" (the screen is shared) are not
+  layout items and cannot be removed. They are shown left of the right
+  zone's items.
+- **On-screen display.** While an on-screen display (`ShowOSD`) is
+  shown, it covers the panel's center, in place of the center items.
+- **Keyboard.** `switch-panels` moves keyboard focus to the panel's
+  items that react to clicks, left to right. Each status icon in
+  `helix:tray` is one control. Enter or Space acts as a click.
+- **Popups.** The input source and accessibility menus, and status
+  icon menus, open below their item. Quick settings open at the panel's
+  right end and the notification list at its center, wherever their
+  items are.
+- **Changes** to the keys apply at once.
+
+**Editing.** A right click on the panel, outside a status icon (which
+has its own menu), opens a menu with "Customize Panel…". It opens a
+dialog with one column per zone (Left, Center, Right) and a fourth for
+the quick settings switches ("Quick Settings").
+
+- **Rows.** Each column lists its items by name, in order. Ids Helix
+  does not know are not listed, and keep their places when others move.
+  Each row has buttons to move the item up or down, to the neighboring
+  zone (left or right; zone columns only), and to remove it.
+  `helix:power` has no remove button.
+- **Hidden.** Below the columns, under "Hidden": the panel items in no
+  zone (under Right) and the switches not shown (under Quick Settings).
+  Each has an add button, which adds it at the end of the right zone,
+  or at the end of the switches.
+- **Reset** restores the defaults; **Done** or Escape closes the dialog.
+- Each change is written to the keys at once, and the panel follows.
+  The dialog's top edge stays where it is while rows come and go.
+- **Keyboard.** Tab and Shift+Tab (or the arrow keys) move between the
+  buttons in reading order, and Enter or Space presses one.
+- Without the `org.helix.shell` schema installed, the dialog says that
+  changes cannot be saved.
+
 ## Accessibility menu (Helix)
 
 While `org.gnome.desktop.a11y always-show-universal-access-status` is
 true, or any of its switches is on, the panel shows an accessibility
-indicator (a figure with arms out) left of the input source indicator.
+indicator (a figure with arms out; `helix:accessibility`, see "Panel
+layout"; by default left of the input source indicator).
 Clicking it opens a menu below it with a check box per switch, in this
 order (a switch whose key is not installed is left out):
 
@@ -1042,7 +1114,11 @@ panel's right end, holding, from the top:
 - **Brightness**, when a monitor's backlight can be controlled
   (DisplayConfig `Backlight`): a slider setting every such monitor to the
   same fraction of its range.
-- Switches, highlighted while on, in rows of three: **Wi-Fi** (when
+- Switches, highlighted while on, in rows of three, in the order of
+  `org.helix.shell` `quick-settings` (only those listed; ids
+  `helix:wifi`, `helix:bluetooth`, `helix:airplane-mode`,
+  `helix:auto-rotate`, `helix:night-light`, `helix:dark-style`,
+  `helix:do-not-disturb`; default: all, in this order): **Wi-Fi** (when
   NetworkManager runs; its label is the connected network's name while
   connected), **Bluetooth** (when BlueZ has an adapter), **Airplane
   Mode** (when either is there), **Auto Rotate** (when iio-sensor-proxy
@@ -1119,7 +1195,7 @@ The switches act on (all on the system bus):
 
 ## System status (Helix)
 
-Left of the Power button the panel shows, right to left:
+The system status item (`helix:status`, see "Panel layout"; by default left of the Power button) shows, right to left:
 
 - **Battery**, when UPower's display device
   (`/org/freedesktop/UPower/devices/DisplayDevice`) is present: its
@@ -1185,8 +1261,9 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   without a switcher), and a pause starts a new cycle. They follow
   `current-workspace-only` of `org.gnome.shell.window-switcher`.
 - `switch-panels` (Ctrl+Alt+Tab) moves keyboard focus to the panel: Left,
-  Right and Tab (and the key again) move between its controls (Apps,
-  Power), Enter or Space activates one, Escape leaves.
+  Right and Tab (and the key again) move between its controls (the
+  items that react to clicks, see "Panel layout"), Enter or Space
+  activates one, Escape leaves.
 - `Above_Tab` in an accelerator means the key above Tab, whatever symbol
   the layout gives it (the grave accent on a US layout).
 - `current-workspace-only` of `org.gnome.shell.app-switcher` and

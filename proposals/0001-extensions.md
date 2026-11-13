@@ -1,6 +1,6 @@
 # 0001 — Helix extensions
 
-- **Status**: Draft
+- **Status**: Draft (Phase 0 implemented)
 - **Summary**: A way to add things to the Helix desktop: panel items,
   status indicators, quick-settings toggles and sliders, dock items,
   commands and settings pages. An extension declares what it adds in a
@@ -205,13 +205,15 @@ Panel items are the Plasma/Xfce applet: something in the top panel.
 - **Zones**: the panel has left, center and right zones. The **panel
   layout** decides which items appear where, and in which order. It is
   an ordered list of item ids per zone, kept in GSettings
-  (`org.helix.shell.panel` `left`, `center`, `right`). Built-in items
-  have ids too: `helix:activities`, `helix:clock`, `helix:status`,
-  `helix:power`. So users arrange everything in one place, and can
+  (`org.helix.shell` `panel-left`, `panel-center`, `panel-right`;
+  `contracts/gsettings/org.helix.shell.md`). Built-in items have ids
+  too: `helix:apps`, `helix:clock`, `helix:status`, `helix:power` and
+  others (`contracts/wayland/README.md`, "Panel layout"). So users arrange everything in one place, and can
   remove built-ins they do not want.
 - A newly enabled extension's panel items are added at the end of the
-  first zone they suit. The user moves them in Settings (or by dragging
-  in the panel's edit mode, a later phase).
+  first zone they suit. The user moves them with the panel's "Customize
+  Panel…" dialog (or by dragging in the panel's edit mode, a later
+  phase).
 
 ### Indicators (StatusNotifierItem)
 
@@ -242,8 +244,8 @@ richer, checked equivalent.
   - Method: `SetValue(d)`. While dragging, at most one call per frame
     is sent.
 - Which toggles and sliders appear, and in which order, is part of the
-  user's quick-settings layout (`org.helix.shell.quick-settings`
-  `items`), which includes the built-in ones (`helix:wifi`,
+  user's quick-settings layout (`org.helix.shell` `quick-settings`),
+  which includes the built-in ones (`helix:wifi`,
   `helix:night-light`…).
 
 ### Dock items (`org.helix.Extension1.DockItem`)
@@ -493,9 +495,11 @@ items from looking second-class.
    - a StatusNotifierItem host;
    - panel and quick-settings layout settings, with ids for the
      built-ins;
-   - the layout editor in Settings.
+   - the layout editor. Helix has no Settings app of its own, so this
+     is the shell's "Customize Panel…" dialog.
 
-   This is useful on its own.
+   This is useful on its own. Its contracts: `org.helix.shell`, "Panel
+   layout" and `org.kde.StatusNotifierItem.md`.
 1. **API 1.0**:
    - the extension host;
    - the manifest, activation, the `Host` interface;

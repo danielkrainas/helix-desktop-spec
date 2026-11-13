@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  com.canonical.dbusmenu
+  Source: the interface documented by libdbusmenu
+  (https://git.launchpad.net/libdbusmenu/plain/libdbusmenu-glib/dbus-menu.xml).
+  Served by apps for their status icons' menus; Helix is the client.
+  Interface shape only; behavior notes in org.kde.StatusNotifierItem.md.
+-->
+<node>
+  <interface name="com.canonical.dbusmenu">
+    <property name="Version" type="u" access="read"/>
+    <property name="TextDirection" type="s" access="read"/>
+    <property name="Status" type="s" access="read"/>
+    <property name="IconThemePath" type="as" access="read"/>
+    <method name="GetLayout">
+      <arg type="i" direction="in" name="parentId"/>
+      <arg type="i" direction="in" name="recursionDepth"/>
+      <arg type="as" direction="in" name="propertyNames"/>
+      <arg type="u" direction="out" name="revision"/>
+      <arg type="(ia{sv}av)" direction="out" name="layout"/>
+    </method>
+    <method name="GetGroupProperties">
+      <arg type="ai" direction="in" name="ids"/>
+      <arg type="as" direction="in" name="propertyNames"/>
+      <arg type="a(ia{sv})" direction="out" name="properties"/>
+    </method>
+    <method name="GetProperty">
+      <arg type="i" direction="in" name="id"/>
+      <arg type="s" direction="in" name="name"/>
+      <arg type="v" direction="out" name="value"/>
+    </method>
+    <method name="Event">
+      <arg type="i" direction="in" name="id"/>
+      <arg type="s" direction="in" name="eventId"/>
+      <arg type="v" direction="in" name="data"/>
+      <arg type="u" direction="in" name="timestamp"/>
+    </method>
+    <method name="EventGroup">
+      <arg type="a(isvu)" direction="in" name="events"/>
+      <arg type="ai" direction="out" name="idErrors"/>
+    </method>
+    <method name="AboutToShow">
+      <arg type="i" direction="in" name="id"/>
+      <arg type="b" direction="out" name="needUpdate"/>
+    </method>
+    <method name="AboutToShowGroup">
+      <arg type="ai" direction="in" name="ids"/>
+      <arg type="ai" direction="out" name="updatesNeeded"/>
+      <arg type="ai" direction="out" name="idErrors"/>
+    </method>
+    <signal name="ItemsPropertiesUpdated">
+      <arg type="a(ia{sv})" name="updatedProps"/>
+      <arg type="a(ias)" name="removedProps"/>
+    </signal>
+    <signal name="LayoutUpdated">
+      <arg type="u" name="revision"/>
+      <arg type="i" name="parent"/>
+    </signal>
+    <signal name="ItemActivationRequested">
+      <arg type="i" name="id"/>
+      <arg type="u" name="timestamp"/>
+    </signal>
+  </interface>
+</node>

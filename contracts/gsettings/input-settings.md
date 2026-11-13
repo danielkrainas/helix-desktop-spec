@@ -76,7 +76,8 @@ While an `xkb` source is active, keys go straight to the app.
 ## Input source indicator (Helix)
 
 With two or more input sources, the panel shows the active one's short
-name left of the system status icons:
+name (`helix:keyboard`, see `contracts/wayland/README.md`, "Panel
+layout"; by default left of the system status icons):
 
 - an `xkb` source: its `shortDescription` in the XKB rules
   (`rules/evdev.xml`), the variant's, else its layout's (e.g. `en`, `de`);

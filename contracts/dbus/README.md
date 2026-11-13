@@ -19,6 +19,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.Shell.xml` — shell control (overview, OSD, accelerators)
 - `org.gnome.Shell.Screenshot.xml` — screenshots, area selection, color picking (served by the shell)
 - `org.gnome.Shell.Extensions.xml` — listing and switching GNOME Shell extensions, which Helix does not run (served by the shell)
+- `org.kde.StatusNotifierWatcher.xml`, `org.kde.StatusNotifierItem.xml`, `com.canonical.dbusmenu.xml` — apps' status icons and their menus (the watcher is served by the shell; items and menus by apps), notes in `org.kde.StatusNotifierItem.md`
 - `org.gnome.ScreenSaver.xml` — lock state and locking
 - `org.freedesktop.Notifications.xml`, `org.gtk.Notifications.xml` — notifications
 - `org.freedesktop.Application.xml` — application activation (called by the shell)
