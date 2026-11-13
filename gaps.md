@@ -19,6 +19,7 @@ tried them with the real hardware. Remove an entry once it has been.
 - Keyboard lock key lights (`contracts/gsettings/input-settings.md`, "Num Lock and lock key lights"): set through libinput on bare hardware; only the lock states were tested (nested), not the lights.
 - User switching (`contracts/gsettings/org.gnome.desktop.lockdown.md`, "User switching"): tested against fake GDM, LightDM and AccountsService services only, not with a real display manager.
 - Read-only removable drives (`org.gnome.desktop.lockdown.md`): left to GVfs; not tried with a real drive.
+- Ambient light brightness (`contracts/gsettings/power.md`, "Ambient light"): tested against a fake iio-sensor-proxy and backlight only.
 
 ## Open gaps
 
@@ -145,7 +146,7 @@ tried them with the real hardware. Remove an entry once it has been.
 - Power management: gnome-settings-daemon's dim timing, its idle actions'
   details, its battery notifications' wording and thresholds and its lid
   handling are not documented here; Helix's choices are in
-  `contracts/gsettings/power.md`. How mutter lays out monitors when the
+  `contracts/gsettings/power.md`. Its ambient light curve is not documented either; Helix's is in the same file, "Ambient light". How mutter lays out monitors when the
   lid closes or opens (it keeps per-lid-state configurations) is not
   documented here; Helix's simpler rule is in the same file.
 - Input source indicator: how gnome-shell abbreviates IBus engines (it uses

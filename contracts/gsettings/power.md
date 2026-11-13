@@ -74,6 +74,25 @@ From UPower's display device `WarningLevel`:
 - 4 (critical): "Battery critically low" ("Plug in soon…"), urgent;
 - the critical action itself is UPower's.
 
-## Not supported
+## Ambient light
 
-`ambient-enabled` (no ambient light sensor support).
+With `ambient-enabled` on, on bare hardware, when iio-sensor-proxy
+(`net.hadess.SensorProxy` at `/net/hadess/SensorProxy`, system bus)
+reports `HasAmbientLight`, the shell claims the sensor (`ClaimLight`;
+`ReleaseLight` when the key goes off) and follows `LightLevel`:
+
+- The wanted brightness is 10 % + 90 % × log10(1 + lux) / log10(2001)
+  (full at 2000 lux and above; with `LightLevelUnit` `vendor` the level
+  is taken as 0–100 % of the range instead), plus the user's offset,
+  kept within 1–100 %.
+- Twice a second the backlight (every DisplayConfig `Backlight` entry, as
+  the brightness keys set it) moves a third of the way there (at least 1
+  %); within 2 % it is left alone.
+- A brightness change made by someone else (the keys, Settings) is taken
+  as the user's choice: the offset becomes that brightness less the
+  curve's value for the current light, so it stays and moves with the
+  light from there.
+- Nothing changes while the screen is dimmed for idleness.
+
+How gnome-settings-daemon turns light into brightness is not documented
+here; this curve is Helix's. Not tried with a real sensor.
