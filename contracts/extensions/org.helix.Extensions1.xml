@@ -23,6 +23,10 @@
       <arg type="s" direction="in" name="id"/>
       <arg type="as" direction="out" name="lines"/>
     </method>
+    <method name="GetSettings">
+      <arg type="s" direction="in" name="id"/>
+      <arg type="a(ssva{sv})" direction="out" name="settings"/>
+    </method>
     <method name="SetSetting">
       <arg type="s" direction="in" name="id"/>
       <arg type="s" direction="in" name="key"/>

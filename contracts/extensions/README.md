@@ -130,11 +130,13 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
   the same, for testing.)
 - An enabled extension runs only when its permissions are
   **approved**: the manifest's permissions are a subset of those
-  recorded for it in `approved`. Enabling an extension from the
-  Extensions dialog or `helix-extensions enable` approves its current
-  permissions. An update that asks for more waits, shown as "needs
-  approval", until approved again. An extension without permissions
-  needs no approval.
+  recorded for it in `approved`. Turning an extension on in the shell's
+  own Extensions dialog approves its current permissions (the dialog
+  shows them next to the switch). Any other program (Settings,
+  `helix-extensions`) asks through `Enable` on the session bus, and the
+  shell then asks the user first (see "Approval prompt"). An update that
+  asks for more waits, shown as "needs approval", until approved again.
+  An extension without permissions needs no approval.
 - The first time an extension is enabled, its panel items are added to
   the end of the first zone they suit (`org.helix.shell`
   `panel-left`, `panel-center`, `panel-right`; in the right zone, before
@@ -404,7 +406,8 @@ toolkit.
 
 ## Session bus: `org.helix.Extensions1`
 
-For tools (`helix-extensions`) and the Extensions dialog's state:
+For tools (`helix-extensions`, the Settings app's Extensions panel) and
+the Extensions dialog's state:
 
 - `ListExtensions() → a{sa{sv}}`: by id, `name`, `description`,
   `version`, `path`, `type` (`system`/`user`/`development`), `enabled`
@@ -414,10 +417,23 @@ For tools (`helix-extensions`) and the Extensions dialog's state:
   `sandboxed` (`b`).
   - `state` is one of `running`, `starting`, `stopped`, `disabled`,
     `invalid`, `needs-approval` or `crashed`.
-- `Enable(id, approve)`: enables it. With `approve` true, also approves
-  its current permissions.
+- `Enable(id, approve)`: enables it. With `approve` true and permissions
+  not yet approved, the shell shows the approval prompt and answers once
+  the user did: allowed, the extension is enabled and its current
+  permissions approved; refused (or the prompt could not be shown), the
+  call fails with `org.freedesktop.DBus.Error.AccessDenied` and nothing
+  changes. With `approve` false, or nothing to approve, it only enables
+  (an extension waiting for approval then shows "needs approval").
+  Callers should allow for the user's time (no short reply timeout).
 - `Disable(id)`, `Restart(id)`.
 - `GetLog(id) → as`: its last log lines.
+- `GetSettings(id) → a(ssva{sv})`: its settings in the manifest's order:
+  key, type (`bool`, `int`, `double`, `string`, `enum`, `string-list`),
+  current value (`b`, `x`, `d`, `s`, `s`, `as`), and details: `label`
+  (`s`), `help` (`s`, may be empty), `default` (of the setting's
+  type, as the value), `min` and `max`
+  (`d`, when declared; `int` and `double`), `choices` (`as`, `enum`).
+  An unknown id fails with `org.freedesktop.DBus.Error.InvalidArgs`.
 - `SetSetting(id, key, value)`: as `Host.SetSetting`, for the
   extension's settings.
 - `RunDevelopment(path) → id`: runs the extension in directory `path`
@@ -434,20 +450,38 @@ For tools (`helix-extensions`) and the Extensions dialog's state:
   with `org.freedesktop.DBus.Error.InvalidArgs`.
 - Signal `Changed(id)`: an extension's entry changed.
 
+## Approval prompt
+
+When `Enable` asks to approve permissions, the shell shows a dialog
+over everything (like its other questions):
+
+- title "Turn on <name>?";
+- "It will be able to:" and one line per permission it asks for (the
+  texts of "Permissions"); for an extension that is not sandboxed, also
+  "It is not sandboxed: it can do anything you can.";
+- buttons "Cancel" and "Turn On"; Escape cancels, Enter turns it on.
+  There is no countdown.
+
+It is refused at once, without being shown, while the screen is locked
+or while another of the shell's questions is open. Locking the screen
+while it is shown refuses it.
+
 ## The Extensions dialog
 
 The panel's right-click menu has "Extensions…" under "Customize
-Panel…". It lists the extensions (development ones last). Each entry
+Panel…". When the Settings app is installed (`helix-settings-app` on
+`PATH`, from helix-apps), it opens Settings' Extensions panel
+(`helix-settings-app extensions`). Otherwise the shell shows its own
+dialog, described here.
+
+It lists the extensions (development ones last). Each entry
 shows its name, version and description, and its state. It has an on/off
 switch, which enables it and approves its permissions, or disables it.
 It lists what it can do ("Can: keep the screen on"). When it is invalid
 or crashed, it shows the reason or its last log line.
 
 (1.1) Its commands are listed under it with their keys ("None" when
-unbound). "Change" waits for the next key combination (with at least
-one of Ctrl, Alt or Super, or a function key); Escape cancels, and
-Backspace clears it. A combination already in use is refused, and the
-row says so.
+unbound); keys are changed in Settings or with `helix-extensions bind`.
 
 When it declares settings, a "Settings" button shows them below it
 (in the manifest's order):
@@ -466,8 +500,9 @@ Escape or "Done" closes it.
 A command for users and developers:
 
 - `list`, `info ID`;
-- `enable [--yes] ID`: shows the permissions and asks before approving
-  them (unless `--yes`);
+- `enable ID`: `Enable(ID, true)`: the shell asks the user before
+  approving anything (see "Approval prompt"); `--yes` is accepted and
+  ignored (earlier versions skipped their own question with it);
 - `disable ID`, `restart ID`;
 - `logs ID`;
 - `set ID KEY VALUE`: `true`/`false`, numbers, text; a string-list as
