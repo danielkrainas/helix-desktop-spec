@@ -113,6 +113,13 @@ manager and xdg-desktop-portal; apps use the portal.
   file (`<app_id>.desktop`).
 - Unregistered instances become cleanup ids, returned to the app's next
   `RegisterRestore` until it reports them deleted.
+- `org.gnome.desktop.session` `save-restore` (true without the key):
+  when false, no apps are started at login, instances still registered
+  when the session ends are given up instead of saved, and a
+  `RegisterRestore` gives up its app's instances left from earlier
+  sessions (they become cleanup ids; the app gets a new id and reason 1).
+  The value is read at each of these moments. Whether GNOME also skips
+  restoring after a crash when it is off is not documented; Helix does.
 - Ids look like `helix-<session>-<n>`, `<session>` random per login.
 
 ## Autostart
