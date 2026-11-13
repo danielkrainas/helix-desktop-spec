@@ -39,12 +39,17 @@ An `ibus` entry's id is an IBus engine name (e.g. `anthy`, `hangul`,
   `UpdateProperty`; the shell asks for them with capability 16): while an
   `ibus` source is active, the input source menu lists them below the
   sources, after a separator. Toggles are check boxes (checked at state
-  1), radio items show a dot when chosen, a menu's items stand in its
-  place between separators, separators separate; hidden and insensitive
+  1), radio items show a dot when chosen, a menu is a submenu (marked
+  with an arrow; it opens in place of the menu under a "Back" entry, as
+  the dock's quicklist submenus do; menus in menus too; a menu with no
+  entries left is left out), separators separate; hidden and insensitive
   properties are left out. Choosing one calls `PropertyActivate` (a
   toggle with the other state, a radio item with 1, others with 0). When
   a property named `InputMode` has a symbol (as `あ` or `A`), the panel's
   indicator shows that symbol, also with a single source.
+- Emoji and Unicode entry (IBus's own shortcuts, such as Ctrl+Shift+E
+  and Ctrl+Shift+U) are IBus's: its GTK extension shows their windows
+  as an app; the shell takes no part.
 - The keymap is the engine's own layout, as IBus describes the engine:
   its `<layout>`, `<layout_variant>` and `<layout_option>` in an IBus
   component file (`ibus/component/*.xml` under the system data
