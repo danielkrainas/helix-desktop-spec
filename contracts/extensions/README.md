@@ -235,7 +235,9 @@ Flatpak app runs. It sees:
 
 - the system's `/usr` (with `/bin`, `/sbin`, `/lib*` as on the host,
   whether directories or links into `/usr`) and `/etc`, read-only;
-- its own directory, read-only, as its working directory;
+- its own directory, read-only, as its working directory, and its
+  program read-only when that is outside the directory (an absolute
+  `exec`);
 - a home of its own, writable: `$XDG_DATA_HOME/helix/extension-data/<id>`
   (created when needed), as `HOME`;
 - a private `/tmp`, `/proc`, a minimal `/dev`, and an empty
@@ -247,9 +249,28 @@ Flatpak app runs. It sees:
 
 All namespaces are new (user, mount, PID, IPC, UTS, cgroup, and the
 network one unless `network`); it ends with the shell (`--die-with-parent`)
-and gets its own terminal session (`--new-session`). Without `bwrap`
-installed, a sandboxed extension does not start (state `invalid`,
-"needs bubblewrap (bwrap)").
+and gets its own terminal session (`--new-session`). With bubblewrap 0.8
+or later it can't make user namespaces of its own (`--disable-userns`).
+Without `bwrap` installed, a sandboxed extension does not start (state
+`invalid`, "needs bubblewrap (bwrap)").
+
+The shell starts bubblewrap through `helix-extension-sandbox`
+(installed in `/usr/libexec/helix/`; it runs `bwrap` with the arguments
+it was given). Where AppArmor restricts unprivileged user namespaces
+(`kernel.apparmor_restrict_unprivileged_userns` 1, as on Ubuntu 24.04),
+bubblewrap can only set up a sandbox under a profile that allows them:
+the packages install `/etc/apparmor.d/helix-extension-sandbox`, a
+profile attached to that program alone (unconfined, with `userns`),
+which bubblewrap and the extension inherit, and load it when installed.
+(Ubuntu 26.04 ships its own profile for `/usr/bin/bwrap` that allows
+this; Helix's profile is needed where none does, as on Ubuntu 24.04.)
+
+Before the first sandboxed extension starts, the shell tries an empty
+sandbox once. When that fails, sandboxed extensions do not start (state
+`invalid`, "the sandbox can't start: " and bubblewrap's first line of
+complaint; when the restriction above is on and bubblewrap was denied,
+"this system restricts user namespaces (AppArmor) and the
+helix-extension-sandbox profile is not loaded").
 
 `org.helix.extensions` `require-sandbox` (an administrator's lock):
 while true, extensions without `sandbox = true` do not run (state
