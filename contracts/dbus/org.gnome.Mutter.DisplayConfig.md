@@ -360,6 +360,34 @@ range.
 - **Not yet tested with real monitors.** The DDC/CI code is checked only
   against a simulated monitor in Helix's tests (`gaps.md`).
 
+## Display switcher (Helix)
+
+With two or more connected monitors, each press of `switch-monitor` steps
+to the next of these ways of using them, in this order, skipping those
+the monitors do not allow, and shows its name in an on-screen display
+(`org.gnome.Shell.ShowOSD`):
+
+1. "Mirror" (`view-mirror-symbolic`): all monitors show one picture, at
+   the largest size every one of them has a mode of (each at its fastest
+   mode of that size), with the first monitor's scale (1 when that size
+   does not allow it) and transform; not offered without such a size.
+2. "Join Displays" (`video-joined-displays-symbolic`): all monitors side
+   by side, left to right, tops aligned, each at its preferred mode.
+3. "External Only" (`video-single-display-symbolic`): only the monitors
+   other than the built-in panel, joined; only with a built-in panel and
+   another monitor.
+4. "Built-in Only" (`computer-symbolic`): only the built-in panel.
+
+Monitors are taken built-in panel first, then by their current position
+from the left; the first one is primary. Each keeps its scale when the
+new mode allows it (else 1), its transform, color mode and underscanning.
+The first press starts after the way the current configuration matches
+(from the start when it matches none). The mode shown is applied 1.5
+seconds after the last press, without asking for confirmation, and
+remembered for this set of monitors (as a confirmed persistent change
+is). How GNOME's switcher looks and which choices it offers are not
+documented here.
+
 ## Automatic rotation (Helix)
 
 While `org.gnome.settings-daemon.peripherals.touchscreen` `orientation-lock`

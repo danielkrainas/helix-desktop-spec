@@ -498,7 +498,11 @@ previews the half it would fill (a translucent rectangle); releasing there
 tiles it. Touching the top edge previews and then maximizes. Moving away
 from the edge drops the preview.
 
-`switch-monitor` is not handled. The compositor itself handles:
+The compositor itself handles:
+
+- `org.gnome.mutter.keybindings` `switch-monitor` (default Super+P and
+  `XF86Display`): the display switcher (`org.gnome.Mutter.DisplayConfig.md`,
+  "Display switcher"). Not while the session is locked.
 
 - `org.gnome.mutter.wayland.keybindings` `switch-to-session-1` … `-12`
   (default Ctrl+Alt+F1 … F12): switch to that virtual terminal (bare
