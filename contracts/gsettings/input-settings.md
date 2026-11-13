@@ -89,6 +89,16 @@ indicator follows source changes made elsewhere within a second.
 `repeat` turns it on or off; `delay` is the time in milliseconds before a
 held key repeats, `repeat-interval` the time between repeats.
 
+## Num Lock and lock key lights
+
+With `remember-numlock-state` on, Num Lock is set to `numlock-state` when
+the session starts, and each change of Num Lock (by key) is written back
+to `numlock-state`; with it off, neither happens. Num Lock and Caps Lock
+stay as they were when the keyboard layout changes. Keyboards' Num Lock,
+Caps Lock and Scroll Lock lights follow the lock states (bare hardware;
+a keyboard that appears gets the current state). The lights have not
+been tried on real keyboards (see `gaps.md`).
+
 ## Pointing devices
 
 On bare hardware (libinput devices). A pointer device that supports

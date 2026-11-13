@@ -16,6 +16,7 @@ tried them with the real hardware. Remove an entry once it has been.
 - Color profiles (`org.gnome.Mutter.DisplayConfig.md`, "Color profiles"): tested against a fake colord and made-up profiles; no calibrated monitor has been tried.
 - The eject key (`contracts/gsettings/shell-keys.md`, "Eject and radios"): the drive choice is unit tested; no drive was ejected (the rfkill keys were tried against fake NetworkManager and BlueZ services).
 - Drawing tablets (`contracts/gsettings/input-settings.md`, "Tablets"): the tablet protocol, pressure curves, pads and their settings are tested in-process and by unit tests; no tablet, stylus or pad has been tried. Stylus `keybinding` actions share the pad buttons' key typing and are unit-tested only. The eraser button setup needs libinput 1.29, which the development machine does not have (1.25): only the run-time lookup (absent there) is tested; configuring a real tool has never run.
+- Keyboard lock key lights (`contracts/gsettings/input-settings.md`, "Num Lock and lock key lights"): set through libinput on bare hardware; only the lock states were tested (nested), not the lights.
 
 ## Open gaps
 
