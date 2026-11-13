@@ -676,9 +676,12 @@ disabled-extensions` lists `ubuntu-dock@ubuntu.com` or
 in the overview (which has its dash) or the launcher.
 
 - **Where.** With `multi-monitor`, on every monitor (each its own dock,
-  shown and hidden on its own); otherwise on one monitor: the one whose
-  connector is `preferred-monitor-by-connector`, else the primary monitor
-  (`primary`, the default). On the edge `dock-position` names (`BOTTOM` by default;
+  shown and hidden on its own); otherwise on one monitor: with
+  `preferred-monitor` -2 (the default) the one whose connector is
+  `preferred-monitor-by-connector`, else the primary monitor (`primary`,
+  the default); with -1 the primary monitor; with 0 or more that monitor
+  in the order the compositor lists them (the primary monitor when there
+  is no such monitor). On the edge `dock-position` names (`BOTTOM` by default;
   `TOP` is below the panel). Centered on the edge, or along all of it with
   `extend-height` (then the icons start at the edge's beginning unless
   `always-center-icons`). Otherwise it is at most `height-fraction`
@@ -690,7 +693,10 @@ in the overview (which has its dash) or the launcher.
   `isolate-monitors`, only windows whose middle is on the dock's monitor,
   which also goes for the running marks and clicks);
   mounted drives that can be unmounted or ejected (`show-mounts`:
-  removable drives, discs, phones, network shares); the Trash
+  removable drives, discs, phones; network shares only with
+  `show-mounts-network`), and without `show-mounts-only-mounted` also
+  drives that are not mounted but can be (clicking one, or its menu's
+  "Mount", mounts it, and it then opens); the Trash
   (`show-trash`, its icon full or empty); the Show Apps button
   (`show-show-apps-button`) unless at the top. A thin line separates
   these groups.
@@ -758,6 +764,13 @@ in the overview (which has its dash) or the launcher.
 - **Scrolling** over the dock, by `scroll-action`: `cycle-windows`
   activates the next (or previous) window of the app under the pointer;
   `switch-workspace` switches to the workspace to the right (or left).
+  With `scroll-switch-workspace` (the default), scrolling that
+  `scroll-action` leaves unused (`do-nothing`, or `cycle-windows` away
+  from an app) switches workspaces too.
+- **Activating an app** (a click with `cycle-windows` and the like, or a
+  hot key) on an app without focus brings up only its newest used window
+  with `activate-single-window` (the default); without it, all its
+  windows come up, the newest used on top.
 - **Window previews** are a popup beside the app's icon (above a bottom
   dock): a tile per window, at most four in a row, each 220 pixels wide
   with the window's picture (taken when the popup opens, its outline until
@@ -787,8 +800,15 @@ in the overview (which has its dash) or the launcher.
 - Apps' counts, progress and urgency from
   `com.canonical.Unity.LauncherEntry` show on their icons
   (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`); an app's count
-  replaces its notification count. Urgent apps get an orange background
-  (`dance-urgent-applications` animation is not done).
+  replaces its notification count. Urgent apps get an orange background.
+  When an app turns urgent, the dock shows for 2 seconds
+  (`show-dock-urgent-notify`, the default) and its icon wiggles along
+  the bar for 1.6 seconds (`dance-urgent-applications`, the default; not
+  with animations off). Only LauncherEntry urgency counts: Helix has no
+  urgent windows, so `workspace-agnostic-urgent-windows` has no effect.
+- `isolate-locations` has no effect: drives and the Trash never own file
+  manager windows in Helix's dock (the file manager's windows are its
+  own, whatever they show).
 - **Keys.** With `hot-keys` (the default) and the dock on,
   `app-hotkey-1` … `-10` (Super+1 … Super+0) act on the first to tenth
   app of the dock (favorites, then running apps; on the first monitor's
