@@ -14,10 +14,13 @@ Path: `/org/helix/extensions/`
 | `disable-all` | `b` | `false` |
 | `approved` | `a{sas}` | `{}` |
 | `placed` | `as` | `[]` |
+| `command-keys` | `a{ss}` | `{}` |
 
 - `enabled`: extension ids turned on.
 - `disabled`: system extensions with `enabled-by-default` turned off.
 - `disable-all`: no extension runs.
 - `approved`: by extension id, the permissions the user approved.
 - `placed`: `<extension id>/<item id>` of items once added to the
-  layout.
+  layout (and of commands whose suggested key was considered).
+- `command-keys`: by `<extension id>/<command id>`, the command's
+  accelerator (`""`: none).

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helix.Extension1.DockItem
+  Helix's own interface (extensions API 1.1); behavior in README.md.
+-->
+<node>
+  <interface name="org.helix.Extension1.DockItem">
+    <property name="Icon" type="s" access="read"/>
+    <property name="IconData" type="ay" access="read"/>
+    <property name="Label" type="s" access="read"/>
+    <property name="Running" type="b" access="read"/>
+    <property name="Count" type="x" access="read"/>
+    <property name="Progress" type="d" access="read"/>
+    <property name="Urgent" type="b" access="read"/>
+    <property name="Menu" type="o" access="read"/>
+    <method name="Activate"/>
+    <method name="Drop">
+      <arg type="as" direction="in" name="uris"/>
+    </method>
+  </interface>
+</node>

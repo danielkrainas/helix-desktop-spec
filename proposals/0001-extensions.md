@@ -1,6 +1,6 @@
 # 0001 — Helix extensions
 
-- **Status**: Accepted; Phase 0 and API 1.0 (Phase 1) implemented, contract in `contracts/extensions/`
+- **Status**: Accepted; Phases 0–2 implemented (API 1.1), contract in `contracts/extensions/`
 - **Summary**: A way to add things to the Helix desktop: panel items,
   status indicators, quick-settings toggles and sliders, dock items,
   commands and settings pages. An extension declares what it adds in a
@@ -305,16 +305,17 @@ The manifest's `[settings]` table declares typed keys:
   declare `settings-exec`, a program that opens its own window. It is
   an ordinary app.
 
-### Popovers (later phase)
+### Popovers (API 1.1)
 
 Some extensions need their own content: a clipboard history with
 search, a calendar, a media player with artwork. For these, a panel
 item or dock item may declare `popover = true` and the `popover`
 permission. When the item is activated, the shell asks the extension
-to show a window through a private Wayland protocol
-(`helix_extension_popover_v1`). The shell places that window under the
-item, as it places its own menus, and closes it on Escape or a click
-outside. The extension draws it with any toolkit. It is an ordinary
+to show its popover where the shell says (`TogglePopover`). In the
+contract the popover is an ordinary layer-shell surface with a
+reserved namespace rather than a private protocol, so any toolkit with
+layer-shell support (gtk-layer-shell, for one) can draw it; the
+compositor closes it on a click outside. The extension draws it with any toolkit. It is an ordinary
 Wayland client surface in the extension's own process: it cannot see
 or draw over anything else, and a crash only closes the popover.
 

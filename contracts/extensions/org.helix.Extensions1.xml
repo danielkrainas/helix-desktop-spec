@@ -35,6 +35,14 @@
     <method name="StopDevelopment">
       <arg type="s" direction="in" name="id"/>
     </method>
+    <!-- 1.1 -->
+    <method name="RunCommand">
+      <arg type="s" direction="in" name="command"/>
+    </method>
+    <method name="BindCommand">
+      <arg type="s" direction="in" name="command"/>
+      <arg type="s" direction="in" name="accelerator"/>
+    </method>
     <signal name="Changed">
       <arg type="s" name="id"/>
     </signal>

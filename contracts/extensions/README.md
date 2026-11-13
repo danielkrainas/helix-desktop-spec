@@ -14,14 +14,18 @@ directory:
 | `org.helix.Extension1.Toggle.xml` | the extension | `/org/helix/Extension/toggle/<id>` |
 | `org.helix.Extension1.Slider.xml` | the extension | `/org/helix/Extension/slider/<id>` |
 | `org.helix.Extension1.Menu.xml` | the extension | any path the extension names |
+| `org.helix.Extension1.DockItem.xml` (1.1) | the extension | `/org/helix/Extension/dock_item/<id>` |
+| `org.helix.Extension1.Commands.xml` (1.1) | the extension | `/org/helix/Extension/commands` |
 | `org.helix.Extensions1.xml` | the shell, on the session bus | `/org/helix/Extensions1` (bus name `org.gnome.Shell`) |
 
 In item paths, `<id>` is the item's id with `-` written as `_` (D-Bus
 object paths cannot hold `-`).
 
-This document is API version **1.0**. Minor versions only add
+This document is API version **1.1**. Minor versions only add
 (properties, methods, contribution kinds, raised limits); nothing in 1.x
-is removed or changes meaning.
+is removed or changes meaning. What 1.1 added over 1.0 is marked
+"(1.1)"; a manifest asking for `api = "1.0"` cannot use it (those
+manifest entries are ignored).
 
 ## Extension directories
 
@@ -62,6 +66,17 @@ id = "strength"
 title = "Strength"
 icon = "my-cup-symbolic"           # optional
 
+[[contributes.dock-item]]           # (1.1)
+id = "stack"
+name = "Downloads Stack"           # shown in its menu and tooltip
+icon = "folder-download-symbolic"  # optional
+accepts-drops = true               # optional: files may be dropped on it
+
+[[contributes.command]]             # (1.1)
+id = "toggle"
+title = "Toggle Caffeine"          # at most 64 characters
+keybinding = "<Super><Shift>c"     # optional: a suggestion
+
 [settings]
 minutes = { type = "int", default = 0, min = 0, max = 480, label = "Minutes", help = "0: until turned off" }
 ```
@@ -74,7 +89,13 @@ minutes = { type = "int", default = 0, min = 0, max = 480, label = "Minutes", he
 - `activation`: `onStartup` (when the session starts, or when the
   extension is enabled) or `onVisible` (when one of its items is first
   shown: the panel item is in the layout, or quick settings open). Its
-  items are drawn from the manifest until it reports.
+  items are drawn from the manifest until it reports. (1.1)
+  `onDBusName:<name>`: when bus name `<name>` gets an owner on the
+  session bus (it is not stopped when the name goes away). Running one
+  of its commands always starts an extension.
+- (1.1) A panel item may say `popover = true`: its primary click shows
+  the extension's own panel (see "Popovers"). It needs the `popover`
+  permission.
 - `permissions`: see "Permissions"; unknown names make the manifest
   invalid.
 - Settings `type`: `bool`, `int`, `double`, `string`, `enum` (with
@@ -174,6 +195,7 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
 | `notifications` | `Host.ShowNotice` | show notifications |
 | `inhibit-idle` | `Host.InhibitIdle` | keep the screen on |
 | `launch-apps` | `Host.Launch` | start apps |
+| `popover` (1.1) | panel items with `popover = true` | show its own panels |
 
 A call needing a permission the extension was not granted fails with
 `org.freedesktop.DBus.Error.AccessDenied`. These permissions limit what
@@ -235,6 +257,31 @@ program of the user: the shell does not sandbox what it does on its own
 - Keyboard focus (`switch-panels`) reaches it; Enter acts as a primary
   click.
 
+## Popovers (1.1)
+
+A panel item with `popover = true` (and the `popover` permission) shows
+the extension's own panel when clicked, drawn by the extension with any
+toolkit.
+
+- A primary click calls the item's `TogglePopover(x, y, output)`
+  (`org.helix.Extension1.PanelItem`) instead of `Activate`. `x`, `y` are
+  where the popover's top-left corner goes, in the coordinates of the
+  monitor whose connector is `output`: under the item, moved left so
+  that 480 pixels fit. The extension opens its popover there, or closes
+  it if it is open.
+- The popover is a layer surface (`zwlr_layer_shell_v1`) on that
+  output: layer `overlay`, namespace `helix-extension-popover`,
+  anchored top and left with those margins, and exclusive zone -1 (so
+  the margins count from the monitor's edges, not from below the
+  panel). It may take the keyboard
+  (`exclusive` or `on_demand`). It is at most 480 by 640 pixels; a
+  larger one is closed.
+- The compositor closes it (the layer surface's `closed` event) when the
+  user clicks outside it, or when another popover opens. Closing it on
+  Escape is the extension's part.
+- While the session is locked, no popover is shown (they are closed at
+  locking).
+
 ## Quick settings (`org.helix.Extension1.Toggle`, `org.helix.Extension1.Slider`)
 
 - A **toggle** is a switch in the quick settings grid, at its place in
@@ -253,6 +300,44 @@ program of the user: the shell does not sandbox what it does on its own
     (`b`).
   - A click on its bar calls `SetValue` with the value at that point.
 
+## Dock items (`org.helix.Extension1.DockItem`) (1.1)
+
+- Shown in the dock after the drives and before the Trash, in the order
+  of the enabled extensions (by id) and their manifests, while the dock
+  shows those (`show-mounts`/`show-trash` do not apply to them).
+- **Properties**: `Icon` (`s`), `IconData` (`ay`), `Label` (`s`, its
+  name in tooltips; the manifest's `name` when empty), `Running` (`b`,
+  the running dot), `Count` (`x`, a badge when above 0), `Progress`
+  (`d`, a bar, 0–1; below 0, none), `Urgent` (`b`, as urgent apps are
+  shown), `Menu` (`o`, `/` for none).
+- **Clicks**:
+  - A click calls `Activate()`.
+  - A secondary click opens its menu, if it has one, as dock menus open.
+- **Drops**: with `accepts-drops`, files dropped on it (`text/uri-list`)
+  call `Drop(uris)`.
+- While its extension is not running it is drawn from the manifest,
+  dimmed.
+
+## Commands (`org.helix.Extension1.Commands`) (1.1)
+
+- Each `[[contributes.command]]` is a command `<extension id>/<command
+  id>`. Command ids follow the rules of item ids, but are their own: a
+  command may share an id with an item.
+- **Keys**: `org.helix.extensions` `command-keys` maps commands to
+  accelerators (GNOME's syntax; empty: none). The first time an
+  extension is enabled, a command's suggested `keybinding` is put there
+  if no shell, window manager, custom or other command key uses it.
+  Otherwise the command is left without one, and a notification says
+  so. The user can change or clear it in the Extensions dialog or with
+  `helix-extensions bind`.
+- **Running**: a command runs from its key, from the run dialog (Alt+F2:
+  typing its title exactly, any case, runs it; Tab completes titles), or
+  from `helix-extensions command`. The shell calls `Run(id)` (the
+  command's id without the extension's). If the extension is not
+  running, but is enabled and approved, it is started first, and
+  `Run` is called after its `Hello` (within its 10 seconds). No command
+  runs while the session is locked.
+
 ## Menus (`org.helix.Extension1.Menu`)
 
 - `Layout` (`a(iissbb)`): the entries, each `(id, parent, kind, label,
@@ -270,7 +355,8 @@ For tools (`helix-extensions`) and the Extensions dialog's state:
 - `ListExtensions() → a{sa{sv}}`: by id, `name`, `description`,
   `version`, `path`, `type` (`system`/`user`/`development`), `enabled`
   (`b`), `state` (`s`), `error` (`s`, the reason when invalid or
-  crashed), `permissions` (`as`), `approved` (`b`).
+  crashed), `permissions` (`as`), `approved` (`b`), and (1.1)
+  `commands` (`a(sss)`: command id, title, accelerator).
   - `state` is one of `running`, `starting`, `stopped`, `disabled`,
     `invalid`, `needs-approval` or `crashed`.
 - `Enable(id, approve)`: enables it. With `approve` true, also approves
@@ -287,6 +373,10 @@ For tools (`helix-extensions`) and the Extensions dialog's state:
   is restarted when a file in the directory changes (checked every
   second). It stops when the
   caller leaves the bus, or on `StopDevelopment(id)`.
+- (1.1) `RunCommand(command)`: runs `<extension id>/<command id>`.
+- (1.1) `BindCommand(command, accelerator)`: sets its key (`""`: none).
+  An accelerator that does not parse, or one another key uses, fails
+  with `org.freedesktop.DBus.Error.InvalidArgs`.
 - Signal `Changed(id)`: an extension's entry changed.
 
 ## The Extensions dialog
@@ -297,6 +387,12 @@ shows its name, version and description, and its state. It has an on/off
 switch, which enables it and approves its permissions, or disables it.
 It lists what it can do ("Can: keep the screen on"). When it is invalid
 or crashed, it shows the reason or its last log line.
+
+(1.1) Its commands are listed under it with their keys ("None" when
+unbound). "Change" waits for the next key combination (with at least
+one of Ctrl, Alt or Super, or a function key); Escape cancels, and
+Backspace clears it. A combination already in use is refused, and the
+row says so.
 
 When it declares settings, a "Settings" button shows them below it
 (sorted by key):
@@ -321,6 +417,8 @@ A command for users and developers:
 - `logs ID`;
 - `set ID KEY VALUE`: `true`/`false`, numbers, text; a string-list as
   comma-separated text;
+- (1.1) `command COMMAND`: runs `<extension id>/<command id>`;
+  `bind COMMAND ACCELERATOR|none`: sets or clears its key;
 - `install PATH`: copies a directory, or unpacks a `.tar`, `.tar.gz` or
   `.tar.xz` archive holding one directory, into the per-user directory,
   after checking its manifest (replacing an older copy);

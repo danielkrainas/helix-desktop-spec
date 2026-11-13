@@ -852,7 +852,8 @@ in the overview (which has its dash) or the launcher.
   removable drives, discs, phones; network shares only with
   `show-mounts-network`), and without `show-mounts-only-mounted` also
   drives that are not mounted but can be (clicking one, or its menu's
-  "Mount", mounts it, and it then opens); the Trash
+  "Mount", mounts it, and it then opens); extensions' dock items
+  (`contracts/extensions/README.md`, "Dock items"); the Trash
   (`show-trash`, its icon full or empty); the Show Apps button
   (`show-show-apps-button`) unless at the top. A thin line separates
   these groups.
@@ -1078,6 +1079,14 @@ the quick settings switches ("Quick Settings").
   buttons in reading order, and Enter or Space presses one.
 - Without the `org.helix.shell` schema installed, the dialog says that
   changes cannot be saved.
+- The dialog leaves the panel uncovered.
+- **Dragging** (while the dialog is open): a panel item can be dragged
+  along the panel. Pressing on it and moving at least 8 pixels picks it
+  up; an accent line shows where it would go (between two items of the
+  zone under the pointer, or at a zone's end; a zone an extension's item
+  does not allow shows no line). Releasing there moves it. Releasing
+  below the panel removes it (not `helix:power`). Escape cancels a
+  drag.
 
 ## Accessibility menu (Helix)
 
