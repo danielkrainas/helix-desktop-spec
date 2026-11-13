@@ -222,24 +222,37 @@ is then converted for the monitor ("Color modes" in
 `org.gnome.Mutter.DisplayConfig.md`).
 
 - Advertised: the perceptual and relative render intents (drawn the
-  same); the features `parametric`, `set_primaries`, `set_tf_power`,
-  `set_luminances`, `set_mastering_display_primaries` and
-  `windows_scrgb`; the transfer functions `bt1886`, `gamma22`, `gamma28`,
-  `ext_linear`, `srgb`, `ext_srgb` and `st2084_pq`; the primaries
-  `srgb`, `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`, `dci_p3`,
-  `display_p3` and `adobe_rgb`. ICC profiles (`create_icc_creator` is
-  the `unsupported_feature` error), HLG and the logarithmic and other
-  transfer functions, and `extended_target_volume` are not offered; other
+  same); the features `icc_v2_v4`, `parametric`, `set_primaries`,
+  `set_tf_power`, `set_luminances`, `set_mastering_display_primaries`
+  and `windows_scrgb`; the transfer functions `bt1886`, `gamma22`,
+  `gamma28`, `ext_linear`, `srgb`, `ext_srgb`, `st2084_pq` and `hlg`; the
+  primaries `srgb`, `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`,
+  `dci_p3`, `display_p3` and `adobe_rgb`. The logarithmic and other
+  transfer functions and `extended_target_volume` are not offered; other
   named values are the creator's `invalid_tf` / `invalid_primaries_named`
   errors.
+- **ICC profiles** (`create_icc_creator`): `set_icc_file` takes 1 byte
+  to 32 MB (`bad_size`) of a regular file (`bad_fd`) within it
+  (`out_of_file`), once (`already_set`); the profile is read then.
+  `create` without it is `incomplete_set`. Matrix/curve RGB profiles
+  (v2 and v4) are taken: the `rXYZ`, `gXYZ` and `bXYZ` colorants (D50,
+  as ICC keeps them) as primaries with a D50 white (so they are adapted
+  to D65 like other primaries), and the `rTRC` curve as the transfer
+  function for all three channels: an identity curve as a power of 1,
+  a gamma as that power, a sampled curve as the power giving its value
+  at mid-gray, a parametric curve with sRGB's values as `srgb`, other
+  parametric curves as their gamma. Luminances are SDR's defaults. A
+  profile that is not RGB, has no colorants (LUT-based profiles) or no
+  usable curve gives a description that fails with `unsupported`; a
+  read error, `operating_system`. Such descriptions give no information.
 - Parametric descriptions follow the protocol: the transfer function and
   primaries are required (`incomplete_set`), each property is set once
   (`already_set`), `set_tf_power` takes exponents from 1.0 to 10.0,
   luminances must lie above the minimum, and `max_cll` / `max_fall` must
   fit each other and the mastering luminance range
   (`invalid_luminance`). Unset luminances take the transfer function's
-  defaults (`st2084_pq`: 0.005 / 10000 / 203 cd/m²; others 0.2 / 80 /
-  80); with `st2084_pq` the maximum is the minimum plus 10000 cd/m². A
+  defaults (`st2084_pq`: 0.005 / 10000 / 203 cd/m²; `hlg`: 0.005 /
+  1000 / 203; others 0.2 / 80 / 80); with `st2084_pq` the maximum is the minimum plus 10000 cd/m². A
   created description is ready at once; equal descriptions share an
   identity. Descriptions from creators and `create_windows_scrgb` give
   no information (`no_information`); those of monitors and surface
@@ -261,11 +274,17 @@ is then converted for the monitor ("Color modes" in
   maximum) is drawn from its surfaces' textures, those surfaces through a
   shader: the transfer function is decoded (`st2084_pq` to cd/m², `bt1886`
   as a 2.4 power, `ext_linear` as is, `srgb` piecewise, a power as given;
-  negative values keep their sign), scaled so the description's
-  reference white is 1.0, converted to BT.709 (Bradford adaptation when
-  the white points differ), clipped to 0–1 (no tone mapping: anything
-  brighter than reference white is clipped, also on BT.2100 monitors),
-  and encoded with gamma 2.2. Such windows fade but do not grow or shrink
+  negative values keep their sign; `hlg` through its inverse OETF to
+  scene light, then its OOTF: each channel times the luminance Ys —
+  from the description's primaries — to the power γ − 1, with γ = 1.2 +
+  0.42 log10(max luminance / 1000), and times the max luminance),
+  scaled so the description's reference white is 1.0, converted to
+  BT.709 (Bradford adaptation when the white points differ), with
+  negative values made 0, and encoded with gamma 2.2. Values above 1.0
+  (brighter than reference white) are kept: a BT.2100 monitor's
+  half-float frame holds them and its pass tone maps them
+  (`org.gnome.Mutter.DisplayConfig.md`, "Color modes"); an SDR
+  monitor's 8-bit frame clips them. Such windows fade but do not grow or shrink
   as they open and close, and are drawn again in full each frame. Shell
   surfaces (layer surfaces) are not converted.
 - Monitors: in color mode 0 a monitor's description is sRGB (`srgb`

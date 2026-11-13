@@ -12,7 +12,7 @@ tried them with the real hardware. Remove an entry once it has been.
 - DDC/CI brightness of external monitors (`contracts/dbus/org.gnome.Mutter.DisplayConfig.md`, "Backlight"): tested against a simulated MCCS monitor only.
 - Bluetooth file sending and receiving (`contracts/dbus/org.bluez.obex.md`): tested against a fake obexd only.
 - Touchscreen and touchpad gestures (`contracts/wayland/README.md`, "Gestures"): unit tests, and touchscreen swipes through a remote desktop virtual touchscreen in a nested session; no real touchscreen or touchpad has been tried.
-- HDR monitors (`org.gnome.Mutter.DisplayConfig.md`, "Color modes"): EDID parsing, KMS metadata and the PQ conversion are checked by unit tests and the conversion pass in a nested session; no HDR monitor has been tried.
+- HDR monitors (`org.gnome.Mutter.DisplayConfig.md`, "Color modes"): EDID parsing, KMS metadata, the PQ conversion and tone mapping are checked by unit tests and the half-float conversion pass in a nested session (content at 1000 cd/m² came out above reference white as computed); no HDR monitor has been tried.
 - Color profiles (`org.gnome.Mutter.DisplayConfig.md`, "Color profiles"): tested against a fake colord and made-up profiles; no calibrated monitor has been tried.
 - The eject key (`contracts/gsettings/shell-keys.md`, "Eject and radios"): the drive choice is unit tested; no drive was ejected (the rfkill keys were tried against fake NetworkManager and BlueZ services).
 - Drawing tablets (`contracts/gsettings/input-settings.md`, "Tablets"): the tablet protocol, pressure curves, pads and their settings are tested in-process and by unit tests; no tablet, stylus or pad has been tried. Stylus `keybinding` actions share the pad buttons' key typing and are unit-tested only. The eraser button setup needs libinput 1.29, which the development machine does not have (1.25): only the run-time lookup (absent there) is tested; configuring a real tool has never run.
@@ -60,12 +60,15 @@ tried them with the real hardware. Remove an entry once it has been.
   and later; the development machine has 1.6, so only their refusal has
   been tried).
 - Color management and HDR: Helix converts apps' described content
-  (parametric descriptions and Windows-scRGB, not ICC profiles or HLG)
-  into its SDR composition space, clipping anything above reference
-  white even on BT.2100 monitors (no HDR headroom, no tone mapping), keeps
-  8 bits per channel for PQ output, and does not convert shell surfaces.
-  How mutter maps Windows-scRGB's reference white is not documented here
-  (Helix: 1.0 = 80 cd/m²). GNOME's reference white, the `output-luminance` range it
+  (parametric descriptions, Windows-scRGB, HLG, and matrix/curve ICC
+  profiles approximated as primaries plus one curve; not LUT-based ICC
+  profiles or the logarithmic transfer functions) into its composition
+  space; BT.2100 monitors get a half-float frame with headroom above
+  SDR white, tone mapped to the monitor's peak, but 8 bits per channel
+  out (Smithay 0.7 picks one scanout format for all of a GPU's
+  monitors). How mutter tone maps, dithers or treats HLG's system gamma,
+  and how it maps Windows-scRGB's reference white, is not documented
+  here (Helix: 1.0 = 80 cd/m²). GNOME's reference white, the `output-luminance` range it
   allows (Helix: SDR 10–100 % through the gamma ramps; BT.2100 25–300 %
   of 203 cd/m² as SDR white), the order of primaries in its HDR metadata
   (Helix: red, green, blue), how it derives the metadata's values, its

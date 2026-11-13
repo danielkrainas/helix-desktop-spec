@@ -240,11 +240,20 @@ When a monitor is put in BT.2100:
   `Colorspace` property becomes `BT2020_RGB`. Back in color mode 0, the
   metadata is removed and `Colorspace` is `Default`. A monitor without
   these properties cannot change color mode (the call fails);
-- each frame is composited as usual, then converted: the sRGB-encoded
-  values are decoded to linear light, converted from sRGB/BT.709
-  primaries to BT.2020 (the same white point), scaled so SDR white is at
-  the reference luminance, and encoded with PQ. The framebuffer keeps 8
-  bits per channel;
+- each frame is composited as usual into a half-float buffer (which
+  keeps values above 1.0, from content brighter than reference white;
+  an 8-bit buffer, clipping them, where the GPU cannot draw into half
+  floats), then converted: the sRGB-encoded values are decoded to
+  linear light, converted from sRGB/BT.709 primaries to BT.2020 (the
+  same white point), scaled so SDR white is at the reference luminance,
+  tone mapped, and encoded with PQ with a dither of up to half an 8-bit
+  step (an interleaved gradient noise pattern). **Tone mapping** works on
+  each pixel's brightest channel L (cd/m²) against the monitor's peak P
+  (its EDID's desired maximum luminance, else 1000 cd/m²): up to 0.75 P
+  unchanged, above it 0.75 P + 0.25 P × (1 − e^(−(L − 0.75 P) / 0.25 P)),
+  all three channels scaled alike. The framebuffer sent to the monitor
+  keeps 8 bits per channel (Smithay picks one pixel format for all of a
+  GPU's monitors);
 - the **reference luminance** (SDR white) is 203 cd/m² scaled by the
   monitor's `output-luminance` entry for color mode 1 (100 % is 203
   cd/m²), taken between 25 % and 300 %. Its gamma ramps are not scaled;
