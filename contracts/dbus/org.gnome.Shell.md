@@ -15,8 +15,9 @@ Companion to `org.gnome.Shell.xml`.
 - `ShellVersion` (`s`): a GNOME-style version string such as `51.0`.
   Helix reports the GNOME version whose surface it implements (`51.0`), not
   its own version, so clients that parse it see a GNOME release. Extension
-  tooling also reads it; Helix does not implement
-  `org.gnome.Shell.Extensions`, so extension installs fail cleanly.
+  tools also read it. The same object serves
+  `org.gnome.Shell.Extensions` (`org.gnome.Shell.Extensions.md`): it
+  lists and switches extensions, but Helix runs none.
 - `OverviewActive` (`b`, read/write): whether the overview is shown. Setting
   it shows or hides the overview.
 

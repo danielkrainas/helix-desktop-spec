@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.gnome.Shell.Extensions
+  Source: https://gitlab.gnome.org/GNOME/gnome-shell/-/blob/51.0/data/dbus-interfaces/org.gnome.Shell.Extensions.xml
+  Pinned against GNOME 51 surface. Interface shape only; behavior notes in
+  org.gnome.Shell.Extensions.md.
+-->
+<node>
+  <interface name="org.gnome.Shell.Extensions">
+    <method name="ListExtensions">
+      <arg type="a{sa{sv}}" direction="out" name="extensions"/>
+    </method>
+    <method name="GetExtensionInfo">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="a{sv}" direction="out" name="info"/>
+    </method>
+    <method name="GetExtensionErrors">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="as" direction="out" name="errors"/>
+    </method>
+    <method name="InstallRemoteExtension">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="s" direction="out" name="result"/>
+    </method>
+    <method name="UninstallExtension">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="b" direction="out" name="success"/>
+    </method>
+    <method name="ReloadExtension">
+      <arg type="s" direction="in" name="uuid"/>
+    </method>
+    <method name="EnableExtension">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="b" direction="out" name="success"/>
+    </method>
+    <method name="DisableExtension">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="b" direction="out" name="success"/>
+    </method>
+    <method name="LaunchExtensionPrefs">
+      <arg type="s" direction="in" name="uuid"/>
+    </method>
+    <method name="OpenExtensionPrefs">
+      <arg type="s" direction="in" name="uuid"/>
+      <arg type="s" direction="in" name="parent_window"/>
+      <arg type="a{sv}" direction="in" name="options"/>
+    </method>
+    <method name="CheckForUpdates"/>
+    <signal name="ExtensionStateChanged">
+      <arg type="s" name="uuid"/>
+      <arg type="a{sv}" name="state"/>
+    </signal>
+    <signal name="ExtensionStatusChanged">
+      <arg type="s" name="uuid"/>
+      <arg type="i" name="state"/>
+      <arg type="s" name="error"/>
+    </signal>
+    <property name="ShellVersion" type="s" access="read"/>
+    <property name="UserExtensionsEnabled" type="b" access="readwrite"/>
+  </interface>
+</node>
