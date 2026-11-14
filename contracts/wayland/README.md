@@ -815,9 +815,44 @@ the current one bright.
     left without apps is removed (out of `folder-children`, its keys
     reset).
 
+- **Right click** on an app opens a menu like the dock's (see "Dock",
+  "Right click"): its windows (each activates it) when it runs, "Open"
+  (no windows) or "New Window", the desktop file's actions, then "Pin to
+  Dash" or "Unpin" (adds it to or removes it from `favorite-apps`; a
+  pinned app leaves the grid for the dock), "App Details" (when
+  `gnome-software` is installed), and for a running app "Quit" or "Quit
+  <n> Windows". The menu opens at the pointer; the launcher stays open
+  under it. Folders have no menu. The Menu key (or Shift+F10) opens the
+  selected app's menu.
+- **Feedback** on the icons as in "Item feedback" below. When an app is
+  launched with animations on, the launcher stays shown for the launch
+  animation (0.25 seconds) and then closes.
+
 How GNOME's app grid looks, how many items its pages hold, how it
 names new folders and how long it waits before turning a page while
 dragging are not documented here; Helix's choices are above.
+
+### Item feedback (Helix)
+
+The app grid's icons and the dock's items answer the pointer and the
+keyboard, so a click feels like it landed:
+
+- **Hover and keyboard selection** light a rounded highlight behind the
+  item, and the icon grows to 108 % of its size, centered.
+- **Pressing** (a button held on the item) darkens the highlight and
+  shrinks the icon to 92 %, until the button is released or the pointer
+  leaves the item.
+- **Clicking** (releasing on the item) that launches or activates an
+  app sends a copy of its icon outwards: it grows to 180 % while fading
+  out.
+
+With `org.gnome.desktop.interface enable-animations` true these changes
+move: the highlight fades in over 0.12 seconds and out over 0.2, the
+icon eases to its hovered or pressed size over 0.12 seconds (ease-out)
+and springs back from pressed with a slight overshoot over 0.3 seconds,
+and the launch copy takes 0.25 seconds. With it false, hover and press
+show at once at their final look and there is no launch copy. Nothing
+moves while an item is being dragged.
 
 ## Dock (Helix)
 
@@ -955,6 +990,7 @@ in the overview (which has its dash) or the launcher.
   anything, "Empty Trash", which asks first ("Empty Trash?", "All items in
   the Trash will be permanently deleted.", "Cancel" / "Empty Trash") and
   then empties the trash of every mount (as `gio trash --empty` does).
+- **Feedback** on the items as in "Item feedback" (App grid section).
 - **Dragging** an app's icon along the dock moves it among the favorites
   (a running app dropped there becomes a favorite at that place);
   dropping a favorite more than 60 pixels away from the dock unpins it.
