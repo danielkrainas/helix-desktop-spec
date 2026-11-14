@@ -64,6 +64,23 @@ variable becomes part of the session's application launch environment:
 Processes that are already running keep their environment. Setting a
 variable again replaces its value.
 
+### The login's identity
+
+The D-Bus bus and the systemd user manager often outlive a login, so they
+can still hold the previous desktop's values (an X11 session's
+`XDG_SESSION_TYPE=x11`, its `DESKTOP_SESSION`, `XDG_MENU_PREFIX`). Apps
+the bus starts read these: some pick their display backend from
+`XDG_SESSION_TYPE`, and menus are looked up under `XDG_MENU_PREFIX`. So at
+startup, before any component starts, Helix publishes as if through
+`Setenv` the variables naming this login, with the values its own
+process environment has: `XDG_SESSION_TYPE`, `XDG_SESSION_ID`,
+`XDG_SESSION_CLASS`, `XDG_SEAT`, `XDG_VTNR`, `DESKTOP_SESSION`,
+`GDMSESSION`, `XDG_SESSION_DESKTOP` and `XDG_CURRENT_DESKTOP` (those the
+session configuration's `[environment]` names take its values). Ones the
+process environment lacks are left alone. `XDG_MENU_PREFIX` becomes
+`gnome-` (the application menu GNOME apps expect), for components too,
+unless the session configuration sets it.
+
 ## `GetLocale(i category)`
 
 `category` is the platform C library's `LC_*` constant (e.g. `LC_MESSAGES`).

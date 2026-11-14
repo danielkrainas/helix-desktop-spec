@@ -171,3 +171,14 @@ tried them with the real hardware. Remove an entry once it has been.
 - Weather: gnome-shell gets weather through libgweather (its providers, caching, and how `automatic-location` finds the place) and its weather section's look is not documented here; Helix asks MET Norway directly and names an automatic location after the nearest time zone city (`contracts/gsettings/calendar.md`, "Weather"). The `org.gnome.shell.weather` key table was taken from gnome-shell 46.
 - X11 scaling and XSETTINGS: how mutter picks the automatic Xwayland scale (`xwayland-scaling-factor` 0) and what gnome-settings-daemon's XSETTINGS plugin publishes (its full list, its DPI rules, whether it merges or replaces `RESOURCE_MANAGER`) are not documented here; Helix's choices are in `contracts/wayland/README.md` ("X11 apps: scaling and settings"). Helix scales Xwayland through the compositor (it does not use Xwayland's own HiDPI mode).
 - Accessibility menu: which switches gnome-shell's accessibility menu holds in GNOME 51, their order and the text scale it uses for Large Text are not documented here; Helix's are in `contracts/wayland/README.md` ("Accessibility menu").
+
+## X11 apps with client-side decorations
+
+Helix's X11 window manager does not claim the compositing manager
+selection (`_NET_WM_CM_S<n>`) or read `_GTK_FRAME_EXTENTS`. GTK draws
+X11 windows' rounded corners and shadows assuming a compositor that
+blends them, so on Helix an X11 GTK window can show dark corners outside
+its rounding. Wayland GTK windows are unaffected. Supporting it means
+claiming the selection, treating the frame extents as the window's
+visible bounds (placement, tiling, title bar), and blending the window's
+alpha.
