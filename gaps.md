@@ -251,6 +251,11 @@ focus and the caret on it for the magnifier. Missing or unclear:
   magnifier, high contrast) is not offered yet.
 - GDM's per-user session memory (AccountsService `Session`) is not read;
   the greeter remembers the last session itself.
+- The greeter's choices where GDM's are not documented here: user
+  pictures (initials instead of AccountsService `IconFile`), a fixed
+  24-hour clock (no `clock-format`), session names not localized, and
+  which monitor holds the login screen (the first one announced, not
+  the configured primary).
 - Packaged for Debian and Ubuntu only (`helix-greeter`): greetd's
   greeter user (`_greetd` there) and the greetd binary's path differ on
   Fedora and Arch Linux, and their packages are not written yet.

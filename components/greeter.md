@@ -45,9 +45,10 @@ order; the greeter makes no assumptions about them.
 ## What the screen shows
 
 On every monitor a dark background (a vertical gradient), and on the
-primary monitor:
+first monitor the compositor announces (the next one if it goes away):
 
-- **Clock** (time and date) at the top.
+- **Clock** at the top: the time (`%H:%M`) and the date (`%A, %B %-d`)
+  in the system locale.
 - **User list**: the people who can log in, by display name, most
   recently logged in first. A user is listed when AccountsService
   (`org.freedesktop.Accounts`, `ListCachedUsers`) knows them and they are
@@ -56,6 +57,9 @@ primary monitor:
   `nologin` or `false`). With `user-list = false` in the configuration,
   or when no users are found, a **Username** field is shown instead.
   The last user to log in through the greeter is selected at start.
+  Each user shows a coloured circle with their initial (account pictures
+  are not read). A list longer than the screen scrolls to keep the
+  selection in view.
 - Choosing a user (click, Return, or arrows then Return) begins a login
   (`create_session`). Each question greetd passes on is shown as a field
   labelled with the message text: `secret` questions hide what is typed
@@ -68,13 +72,17 @@ primary monitor:
   description.
 - **Session** button (bottom right): the sessions installed in
   `/usr/share/wayland-sessions` (desktop entries; `Hidden` or
-  `NoDisplay` true are left out; `TryExec` must exist), by `Name`. The
+  `NoDisplay` true are left out; `TryExec` must exist, looked up in
+  `PATH` when relative), by `Name` (not localized). The
   last session used is selected at start, else the Helix session, else
   the first. X11 sessions (`/usr/share/xsessions`) are not offered: greetd
   does not start an X server (recorded in `gaps.md`).
-- **Power** (bottom left): Restart and Power Off through logind
+- **Power** (bottom left): "Restart…" and "Power Off…" through logind
   (`org.freedesktop.login1.Manager` `Reboot` / `PowerOff`, interactive),
   offered when `CanReboot` / `CanPowerOff` answer `yes` or `challenge`.
+  Each asks first ("Restart this computer?" / "Power off this computer?"
+  with Cancel and the action, focus on the action), as the lock screen
+  does.
 - Optional **banner** text under the clock (`banner` in the
   configuration).
 
