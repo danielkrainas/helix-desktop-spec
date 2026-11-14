@@ -64,6 +64,19 @@ variable becomes part of the session's application launch environment:
 Processes that are already running keep their environment. Setting a
 variable again replaces its value.
 
+### The graphical session target
+
+Services that belong to a graphical session (portal backends, for
+example) are tied to systemd's `graphical-session.target`, which cannot
+be started by hand: a desktop's own target brings it up by binding it.
+Helix installs `helix-session.target` (`BindsTo=graphical-session.target`,
+after `graphical-session-pre.target`). Once the session's components are
+up and before autostart apps start, Helix starts the target named by the
+session configuration's `systemd_target` (`helix-session.target` in the
+installed configuration); when the session ends it stops it, before
+unsetting the environment. Without a systemd user manager, or with no
+`systemd_target` (nested test sessions), nothing is started.
+
 ### The login's identity
 
 The D-Bus bus and the systemd user manager often outlive a login, so they
