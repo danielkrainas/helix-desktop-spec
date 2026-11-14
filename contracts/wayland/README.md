@@ -1246,7 +1246,8 @@ The system status item (`helix:status`, see "Panel layout"; by default left of t
 
 Icons come from the icon theme (`org.gnome.desktop.interface
 icon-theme`, then `Adwaita`, then `hicolor`), drawn in the panel's text
-color. The status follows the services' property changes, and is read
+color. When `icon-theme` changes, every icon the shell shows (panel,
+dock, app grid, notifications) is looked up again in the new theme. The status follows the services' property changes, and is read
 again every 5 seconds; clicking it opens the quick settings.
 
 ## Window switching (Helix)
