@@ -886,15 +886,19 @@ in the overview (which has its dash) or the launcher.
   pointer leaves it (1.5 seconds after showing if the pointer never comes
   onto it). While the focused window covers the whole monitor (full
   screen) the dock is hidden, and shows at the edge only with
-  `autohide-in-fullscreen`. The edge is a one-pixel strip along the
-  screen edge. With `require-pressure-to-show` (the default) the dock
-  shows only when the pointer, on that strip, keeps pushing against the
-  edge: the pointer's unaccelerated motion towards the edge
+  `autohide-in-fullscreen`. The edge is a strip four logical pixels
+  deep along the screen edge, so the pointer need not reach the last
+  pixel (while the dock is hidden the strip takes pointer input there).
+  With `require-pressure-to-show` (the default) the pointer's
+  unaccelerated motion towards the edge while on the strip
   (`zwp_relative_pointer_v1`, which is not stopped by the edge) is added
   up, starting over when more than a second passes between pushes or the
   pointer leaves the strip, and the dock shows at once when it reaches
-  `pressure-threshold` pixels; without it the dock shows after
-  `show-delay` seconds on the strip. Showing and hiding, the bar
+  `pressure-threshold` pixels. A pointer resting on the strip also shows
+  it, after half a second or `show-delay` seconds, whichever is longer
+  (Helix's own choice: a slow approach should not need a shove). Without
+  `require-pressure-to-show` the dock shows after `show-delay` seconds on
+  the strip. Showing and hiding, the bar
   slides in from beyond its edge and back out over `animation-time`
   seconds (default 0.2, eased out; at most 2); a dock asked to show
   while sliding out turns back from where it is. It appears and goes at
