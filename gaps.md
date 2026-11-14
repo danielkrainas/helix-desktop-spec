@@ -191,12 +191,29 @@ Helix starts the accessibility bus the way GNOME does (at-spi2-core's
 otherwise activated through `org.a11y.Bus`), and the compositor follows
 focus and the caret on it for the magnifier. Missing or unclear:
 
-- **The shell's own interface is not on the bus.** The shell draws its
-  panel, quick settings, menus, overview and app grid, dock,
-  notifications, lock screen and dialogs itself, and publishes no
-  accessible objects for them, so a screen reader cannot read or operate
-  them. GNOME Shell publishes its whole interface as an AT-SPI
-  application. Apps (GTK, Qt) are unaffected.
+- **Parts of the shell's own interface are not on the bus.** The shell
+  publishes its lock screen, dialogs and prompts, panel, quick settings,
+  switcher, launcher (search, results, app grid), banners, notification
+  list and docks (`contracts/dbus/org.a11y.atspi.md`). Not yet published:
+  the window overview (window pictures and workspaces), menus the shell
+  pops up (panel status icon and extension menus, the dock's and app
+  grid's menus, the window menu, the input source and accessibility
+  menus), the workspace popup, the on-screen keyboard, the dwell click
+  type window, desktop icons, the screenshot and area picker, the break
+  screen, "Customize Panel…", the Extensions dialog, the OSD, panel
+  tooltips and monitor labels. Keyboard navigation inside quick
+  settings, the notification list and the dock does not exist, so these
+  have no focus to follow. Text fields expose their text but no
+  character extents, and `EditableText` changes nothing. The calendar's
+  month title and events are not exposed.
+- **The published interface is untested with a real screen reader.**
+  The tree, roles, names, states, focus and actions are tested over
+  AT-SPI against a private accessibility bus, but not with Orca on a
+  Helix session: whether Orca announces the windows and focus changes as
+  expected (window activation of layer surfaces, announcements of live
+  messages, the lock screen's password field) is unverified. Screen
+  positions of windows are computed from the layout (the primary
+  monitor, the dock's edge) rather than reported by the compositor.
 - **Keyboard monitor: details GNOME does not document.** The compositor
   serves `org.freedesktop.a11y.KeyboardMonitor`
   (`contracts/dbus/org.freedesktop.a11y.KeyboardMonitor.md`), so Orca

@@ -36,6 +36,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.gnome.SettingsDaemon.Color.xml` — Night Light state (served by the shell)
 - `org.freedesktop.IBus.xml` — the part of IBus Helix's shell calls as the input method; not implemented by Helix
 - `org.mpris.MediaPlayer2.Player.xml` — the part of MPRIS Helix calls on media players (playback keys); not implemented by Helix
+- `org.a11y.atspi.md` — what the shell publishes on the accessibility bus (AT-SPI's interfaces are at-spi2-core's; served by the shell)
 - `org.freedesktop.login1.xml` — the subset of systemd-logind Helix calls (power, sessions, sleep inhibitors, brightness); not implemented by Helix
 
 Behavioral notes that XML cannot express live in companion `.md` files
