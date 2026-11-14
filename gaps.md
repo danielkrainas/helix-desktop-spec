@@ -182,3 +182,26 @@ its rounding. Wayland GTK windows are unaffected. Supporting it means
 claiming the selection, treating the frame extents as the window's
 visible bounds (placement, tiling, title bar), and blending the window's
 alpha.
+
+## Accessibility bus (AT-SPI)
+
+Helix starts the accessibility bus the way GNOME does (at-spi2-core's
+`at-spi-bus-launcher`, autostarted at the Initialization phase and
+otherwise activated through `org.a11y.Bus`), and the compositor follows
+focus and the caret on it for the magnifier. Missing:
+
+- **The shell's own interface is not on the bus.** The shell draws its
+  panel, quick settings, menus, overview and app grid, dock,
+  notifications, lock screen and dialogs itself, and publishes no
+  accessible objects for them, so a screen reader cannot read or operate
+  them. GNOME Shell publishes its whole interface as an AT-SPI
+  application. Apps (GTK, Qt) are unaffected.
+- **No keyboard monitor for assistive technologies.** On Wayland a
+  screen reader cannot see keys pressed in other apps. GNOME's compositor
+  offers `org.freedesktop.a11y.Manager` (`org.freedesktop.a11y.KeyboardMonitor`)
+  so that Orca can watch key events and grab its own shortcuts and
+  modifier; Helix offers nothing, so Orca's commands do not work.
+- **A launcher that is already running is reported as failing.** When the
+  bus already runs (for example started by an earlier login), the
+  autostarted launcher exits at once with success; the session logs it as
+  an app that keeps failing.
