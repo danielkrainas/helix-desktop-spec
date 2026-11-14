@@ -57,8 +57,18 @@ the grab or `restore-shortcuts` is pressed.
   compositor's own Xwayland connection receives it; the answer lasts for
   that window id.
 
-**Window icons** (`xdg_toplevel_icon_manager_v1`): see "Window
-switching" for where they show.
+**Window icons** (`xdg_toplevel_icon_manager_v1`, version 1): see
+"Window switching" for where they show. Helix announces the image sizes
+it wants (`icon_size`, then `done`) when the manager is bound. An icon's
+images are copied when `add_buffer` arrives (the protocol forbids
+changing them afterwards), so a client may destroy the buffer at any
+time and `no_buffer` is never raised; a buffer that is not wl_shm or not
+square raises `invalid_buffer`, and `set_name` or `add_buffer` on an icon
+already given to a toplevel raises `immutable`. A later image of the same
+size and scale replaces the earlier one; images in formats other than
+ARGB8888 and XRGB8888 are left out. `set_icon` takes effect with the
+toplevel's next commit; an icon with neither a name nor images, or none,
+unsets it.
 
 **Xwayland options** (`org.gnome.mutter.wayland`, read when Xwayland
 starts, so changes take effect in the next session):
