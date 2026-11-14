@@ -29,6 +29,7 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
 - `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
 - `org.gnome.Mutter.RemoteDesktop.xml` — remote input, Notify* and EIS (served by the compositor)
+- `org.freedesktop.a11y.KeyboardMonitor.xml` — key events and key grabs for screen readers (served by the compositor)
 - `org.helix.ScreenEffects.xml` — Helix-private: grayscale for screen time limits (served by the compositor)
 - `org.helix.ClickType.xml` — Helix-private: the dwell click type (served by the compositor; described in `contracts/gsettings/a11y-mouse.md`)
 - `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
@@ -47,7 +48,7 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`,
 `org.gnome.SettingsDaemon.Color.md`, `org.freedesktop.GeoClue2.Agent.md`,
 `org.gnome.evolution.dataserver.md`, `org.freedesktop.NetworkManager.SecretAgent.md`, `org.bluez.Agent1.md`,
-`org.bluez.obex.md`).
+`org.bluez.obex.md`, `org.freedesktop.a11y.KeyboardMonitor.md`).
 
 ## Notes
 

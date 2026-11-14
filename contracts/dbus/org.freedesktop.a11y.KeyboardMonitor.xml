@@ -1,0 +1,48 @@
+<!--
+  org.freedesktop.a11y.KeyboardMonitor
+  Interface shape (member names, argument names, types and directions)
+  from the public interface description GNOME's compositor publishes
+  (mutter data/dbus-interfaces/org.freedesktop.a11y.xml, GNOME 48 and later),
+  checked 2026-11-14. Descriptions are Helix's own.
+  Served by the compositor on bus name org.freedesktop.a11y.Manager at
+  /org/freedesktop/a11y/Manager. Behavior: org.freedesktop.a11y.KeyboardMonitor.md.
+  The same description also has org.freedesktop.a11y.PointerLocator, which
+  Helix does not serve (see gaps.md).
+-->
+<!DOCTYPE node PUBLIC
+'-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
+'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+  <interface name="org.freedesktop.a11y.KeyboardMonitor">
+    <!-- Every key goes to the caller (KeyEvent) and nowhere else, until
+         UngrabKeyboard or the caller leaves the bus. -->
+    <method name="GrabKeyboard"/>
+    <!-- Ends the caller's GrabKeyboard; SetKeyGrabs and WatchKeyboard stay. -->
+    <method name="UngrabKeyboard"/>
+    <!-- Every key is reported to the caller (KeyEvent) and still handled
+         as usual, until UnwatchKeyboard or the caller leaves the bus. -->
+    <method name="WatchKeyboard"/>
+    <!-- Ends the caller's WatchKeyboard; grabs stay. -->
+    <method name="UnwatchKeyboard"/>
+    <!-- Replaces the caller's key grabs. modifiers: keysyms of keys the
+         caller uses as its own modifier (e.g. Insert, Caps_Lock); keys
+         pressed while one is held are grabbed too. keystrokes: (keysym,
+         XKB modifier mask) pairs. Grabbed keys are reported to the caller
+         and not handled otherwise. -->
+    <method name="SetKeyGrabs">
+      <arg name="modifiers" type="au" direction="in"/>
+      <arg name="keystrokes" type="a(uu)" direction="in"/>
+    </method>
+    <!-- A key went down (released false) or up. state: XKB modifier mask;
+         keysym: XKB keysym; unichar: the character it types, 0 if none;
+         keycode: the key's hardware keycode. Sent only to the clients it
+         concerns (with a destination). -->
+    <signal name="KeyEvent">
+      <arg name="released" type="b"/>
+      <arg name="state" type="u"/>
+      <arg name="keysym" type="u"/>
+      <arg name="unichar" type="u"/>
+      <arg name="keycode" type="q"/>
+    </signal>
+  </interface>
+</node>

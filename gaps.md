@@ -27,6 +27,7 @@ tried them with the real hardware. Remove an entry once it has been.
 - Ambient light brightness (`contracts/gsettings/power.md`, "Ambient light"): tested against a fake iio-sensor-proxy and backlight only.
 - Privacy screens (`org.gnome.desktop.privacy.md`, "Privacy screen"): the connector property is set as described; no panel with a privacy screen was tried.
 - USB protection (`org.gnome.desktop.privacy.md`, "USB protection"): tested against a fake USBGuard only; its object path comes from USBGuard's service, not its interface description.
+- Keyboard monitor for screen readers (`contracts/dbus/org.freedesktop.a11y.KeyboardMonitor.md`): the grab rules are unit tested and the D-Bus side was tested on a private bus with a fake screen reader; no real Orca has used it, so whether Orca's commands, its modifier (Insert or Caps Lock, double press) and its typing echo all work is not known.
 
 ## Open gaps
 
@@ -188,7 +189,7 @@ alpha.
 Helix starts the accessibility bus the way GNOME does (at-spi2-core's
 `at-spi-bus-launcher`, autostarted at the Initialization phase and
 otherwise activated through `org.a11y.Bus`), and the compositor follows
-focus and the caret on it for the magnifier. Missing:
+focus and the caret on it for the magnifier. Missing or unclear:
 
 - **The shell's own interface is not on the bus.** The shell draws its
   panel, quick settings, menus, overview and app grid, dock,
@@ -196,8 +197,28 @@ focus and the caret on it for the magnifier. Missing:
   accessible objects for them, so a screen reader cannot read or operate
   them. GNOME Shell publishes its whole interface as an AT-SPI
   application. Apps (GTK, Qt) are unaffected.
-- **No keyboard monitor for assistive technologies.** On Wayland a
-  screen reader cannot see keys pressed in other apps. GNOME's compositor
-  offers `org.freedesktop.a11y.Manager` (`org.freedesktop.a11y.KeyboardMonitor`)
-  so that Orca can watch key events and grab its own shortcuts and
-  modifier; Helix offers nothing, so Orca's commands do not work.
+- **Keyboard monitor: details GNOME does not document.** The compositor
+  serves `org.freedesktop.a11y.KeyboardMonitor`
+  (`contracts/dbus/org.freedesktop.a11y.KeyboardMonitor.md`), so Orca
+  can hear keys typed anywhere and grab its own commands. The interface
+  description leaves open, and Helix chose: which keycode `KeyEvent`
+  carries (Helix: the XKB keycode, kernel code + 8); whether `state` holds
+  locked modifiers too (Helix: pressed, latched and locked); how a
+  keystroke grab's keysym and mask are matched (Helix: the key's keysym or
+  its first-level keysym; masks compared without
+  Lock and Num Lock); whether the double-press window is measured from
+  the first press or its release (Helix: press to press, within the repeat
+  delay); what happens while the session is locked (Helix: the monitor
+  stands aside — no events, no grabs — so the password cannot be read by
+  whoever owns the screen reader's name; GNOME's behavior is unknown);
+  and whether a keyboard grab may take the VT switching keys (Helix: no).
+  GNOME admits only the owner of `org.gnome.Orca.KeyboardMonitor`, as
+  Helix does; any session program can take that name when no screen
+  reader runs, so this does not stop a malicious program from logging
+  keys outside the lock screen (published as a weakness of GNOME's and
+  KWin's monitors too). A stronger rule (e.g. also requiring
+  `org.gnome.desktop.a11y.applications screen-reader-enabled`) is not
+  used: whether Orca started by hand sets that key is not known here, and
+  requiring it could cut a running screen reader off.
+  `org.freedesktop.a11y.PointerLocator` (which accessible window is
+  under the pointer), on the same object in newer GNOME, is not served.
