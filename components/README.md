@@ -20,6 +20,11 @@ Every field the shell draws itself (lock screen password, authentication and sec
 - The focused field shows a caret where the next character goes: after the last character, or after the last dot of a hidden password. In an empty field it sits before the placeholder.
 - While a password is being checked the field takes no typing, so it loses the ring and caret until the check ends.
 
+### Greeter
+
+The login screen, run by greetd so that no GNOME component is needed to
+log in: see `components/greeter.md`.
+
 ## Session services
 
 Session management, idle monitoring, screen locking, and related session-level services.

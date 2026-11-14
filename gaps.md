@@ -239,3 +239,16 @@ focus and the caret on it for the magnifier. Missing or unclear:
   requiring it could cut a running screen reader off.
   `org.freedesktop.a11y.PointerLocator` (which accessible window is
   under the pointer), on the same object in newer GNOME, is not served.
+
+## Greeter
+
+- X11 sessions (`/usr/share/xsessions`) are not offered: greetd starts no
+  X server, so they would need a wrapper that starts one.
+- Not tested on real hardware through greetd: the greeter's DRM start as
+  `_greetd`, the logind `greeter` session, power actions from the
+  greeter and the hand-over to the user's session.
+- Accessibility on the login screen (screen reader, on-screen keyboard,
+  magnifier, high contrast) is not offered yet.
+- GDM's per-user session memory (AccountsService `Session`) is not read;
+  the greeter remembers the last session itself.
+
