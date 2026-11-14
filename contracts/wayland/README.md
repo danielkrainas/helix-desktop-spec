@@ -57,6 +57,22 @@ the grab or `restore-shortcuts` is pressed.
   compositor's own Xwayland connection receives it; the answer lasts for
   that window id.
 
+**App and theme icons** the shell draws (dock, app grid, search
+results, window switcher, notifications) are looked up as the icon theme
+specification describes: the theme named by `org.gnome.desktop.interface
+icon-theme`, then the themes it inherits from, then `hicolor`, the first
+theme holding the icon at any size winning, and within it a scalable
+image (SVG), else the smallest image at least as large as drawn, else
+the largest. A directory's size is its `Size` times its `Scale`, and a
+PNG is taken at its directory's size even where the theme calls the
+directory scalable (elementary-xfce marks its fixed-size PNG directories
+`Type=Scalable`). One departure (Helix's choice): when the winning theme only has images
+smaller than drawn, the search goes on through the remaining themes for
+a scalable image or one large enough, and uses the small one only if
+none is found, so a theme with only small app icons (elementary-xfce
+stops at 48 pixels for most apps) does not leave them blurred in the app
+grid.
+
 **Window icons** (`xdg_toplevel_icon_manager_v1`, version 1): see
 "Window switching" for where they show. Helix announces the image sizes
 it wants (`icon_size`, then `done`) when the manager is bound. An icon's
