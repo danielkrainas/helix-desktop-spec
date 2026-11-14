@@ -201,7 +201,3 @@ focus and the caret on it for the magnifier. Missing:
   offers `org.freedesktop.a11y.Manager` (`org.freedesktop.a11y.KeyboardMonitor`)
   so that Orca can watch key events and grab its own shortcuts and
   modifier; Helix offers nothing, so Orca's commands do not work.
-- **A launcher that is already running is reported as failing.** When the
-  bus already runs (for example started by an earlier login), the
-  autostarted launcher exits at once with success; the session logs it as
-  an app that keeps failing.
