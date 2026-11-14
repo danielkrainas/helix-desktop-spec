@@ -16,7 +16,15 @@ follow `org.gnome.desktop.interface`:
   first (`Thu`), `clock-show-date` the abbreviated month and the day
   (`Nov 12`), and `clock-show-seconds` adds seconds (`14:05:09`). With
   all three: `Thu Nov 12 14:05:09`.
-- The lock screen's clock is the time alone, without seconds.
+- The lock screen's clock is the time alone, without seconds, drawn
+  large (about 9% of the monitor's height, from 64 to 128 logical px) in
+  a light weight of the system font (bold when it has no light face),
+  with digits of equal width. In 12-hour format the AM/PM suffix is drawn
+  smaller and lighter after the digits.
+- Under it, the lock screen always shows the full date, "Saturday,
+  November 14" (weekday, month, day), whatever `clock-show-date` and
+  `clock-show-weekday` say (they concern the top bar). It changes at
+  midnight. Both are labels on the accessibility bus.
 - Changes apply within a second. Names are English (the shell runs in
   the C time locale). How GNOME arranges the date and time in its top
   bar, per locale, is not documented here; this order is Helix's.

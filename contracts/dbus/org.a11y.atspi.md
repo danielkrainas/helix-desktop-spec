@@ -38,9 +38,10 @@ publishes through them.
 - The window holding the keyboard is `active` and gets `window:activate`;
   focus inside it is the `focused` state on one descendant, with focus
   events as it moves.
-- While the session is locked only the lock screen is published (one
-  window, for the primary monitor's lock surface, though every monitor
-  shows one).
+- While the session is locked only the lock screen is published: one
+  window, for the lock surface with the prompt (see
+  `org.gnome.ScreenSaver.md`, "Monitors"), so there is a single password
+  field; the other monitors show only the time.
 
 | Window name | Surface | Has the keyboard |
 |---|---|---|
@@ -60,7 +61,10 @@ Names, states and places come from what the surface last painted, and
 change when it does. Objects keep their identity across changes (a
 changing clock is the same label; a toggled switch is the same switch).
 
-- **Lock screen**: labels for the clock and the user name; a
+- **Lock screen**: resting (before a key or click), labels for the clock
+  and the date, the media player and notifications as below, and a
+  focused `Unlock` button that shows the prompt. With the prompt: labels
+  for the clock, the date and the user name; a
   `password text` named `Password`, focused (insensitive while the
   password is checked); the message under it (`Checking…`, `Incorrect
   password. Try again.`) as a label announced when it appears or
@@ -68,8 +72,9 @@ changing clock is the same label; a toggled switch is the same switch).
   Track`, `Play`/`Pause`, `Next Track`); one label per app with
   notifications ("Mail: 2 notifications"); the `Restart…`, `Power Off…`
   and `Switch User…` buttons when shown, and when one was pressed the
-  question (announced), the busy apps, `Cancel` and the confirming
-  button, which has the focus.
+  question (announced), the busy apps, `Cancel` (which has the focus
+  until the keyboard moves it) and the confirming button. Buttons the
+  keyboard focused (Tab) have the focus instead of the password field.
 - **Question dialogs**: a modal `dialog` named by the title, the message
   as a label (or the header and a list of busy apps, each named by the
   app with its reason as description), the `Install pending software

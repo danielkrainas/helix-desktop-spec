@@ -75,5 +75,19 @@ XML) is a slideshow:
 
 The lock screen shows `org.gnome.desktop.screensaver` `picture-uri` the
 same way (with its `picture-options`, `picture-opacity`, `primary-color`,
-`secondary-color` and `color-shading-type`), dimmed by half under the clock
-and password field.
+`secondary-color` and `color-shading-type`), then blurred and toned so
+that text on it stays readable:
+
+- Blurred heavily (about a Gaussian of 24 logical pixels' deviation), with
+  the colors' saturation slightly lowered (85% kept) and the whole picture
+  slightly darkened.
+- Toned: each pixel's luminance is capped, smoothly, lower in the middle
+  column (where the clock, the user and the messages are) than at the
+  left and right edges. Light text (#EDEDEF) on it has at least 4.5:1
+  contrast everywhere, and the lock screen's secondary text (#C4C4CC) in
+  the middle column, whatever the picture.
+- It is made once per picture, monitor size and scale, not at each
+  repaint. The login screen (`components/greeter.md`) can use the same
+  treatment.
+- In high contrast (`a11y-interface.md`) the lock screen's background is
+  black instead.

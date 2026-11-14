@@ -372,7 +372,10 @@ Detailed protocol XML or behavioral notes will be added as gaps are identified.
 
 The lock screen uses the standard `ext-session-lock-v1` protocol: while
 locked, the compositor shows only the lock client's surfaces and sends input
-only to them, and stays locked if the lock client dies.
+only to them, and stays locked if the lock client dies. The lock screen's
+fades (`contracts/dbus/org.gnome.ScreenSaver.md`, "Transitions") are drawn
+by the shell in its own opaque lock surfaces: the compositor does not fade
+them, and unlocking happens after the fade-out.
 
 ## Monitors and windows (Helix)
 
