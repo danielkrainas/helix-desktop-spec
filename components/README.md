@@ -12,6 +12,14 @@ Window management, workspace handling, and display configuration. Corresponds ro
 
 The user-facing shell: overview, panels, notifications, system menus, and related UI. Corresponds roughly to GNOME Shell.
 
+### Text fields
+
+Every field the shell draws itself (lock screen password, authentication and secret prompts, the launcher's search) shows clearly when it takes typing:
+
+- The focused field has a ring in the accent color around it. Other fields have only a faint outline.
+- The focused field shows a caret where the next character goes: after the last character, or after the last dot of a hidden password. In an empty field it sits before the placeholder.
+- While a password is being checked the field takes no typing, so it loses the ring and caret until the check ends.
+
 ## Session services
 
 Session management, idle monitoring, screen locking, and related session-level services.
