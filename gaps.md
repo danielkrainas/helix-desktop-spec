@@ -251,4 +251,7 @@ focus and the caret on it for the magnifier. Missing or unclear:
   magnifier, high contrast) is not offered yet.
 - GDM's per-user session memory (AccountsService `Session`) is not read;
   the greeter remembers the last session itself.
+- Packaged for Debian and Ubuntu only (`helix-greeter`): greetd's
+  greeter user (`_greetd` there) and the greetd binary's path differ on
+  Fedora and Arch Linux, and their packages are not written yet.
 
