@@ -157,6 +157,34 @@ In high contrast each piece keeps its shape and uses lines instead of
 shades: rounded white outlines 1 px at rest and 2 px while hovered or
 pressed (3 px for a pressed row), as listed below.
 
+#### Hover and press
+
+Everything the shell draws that can be clicked answers the pointer
+before and during the click, so it is clear what is clickable and that
+the click landed:
+
+- The part under the pointer shows its hovered look (Hovered; a
+  notification, the soft #3A3A42; a slider's knob, a light halo) and,
+  while the button is held on it, its pressed look (Pressed; a
+  notification #424249; the knob a stronger halo).
+- A click acts when the button is released over the part it was pressed
+  on; moving off it before releasing cancels. Sliders act from the press
+  on and follow the pointer while held. A press outside a popover (quick
+  settings, the notification list, the switcher, the launcher) closes it
+  at once.
+- Nothing stays lit once the pointer leaves the surface.
+- This covers the panel's items, quick settings (its top row, sliders
+  and their mute button, switches and their "›" parts, list rows, power
+  actions), the notification list (notifications, group headers, close
+  buttons, Clear, Do Not Disturb), the calendar (days, month arrows,
+  media buttons), banners (the body, the close button, action buttons),
+  the launcher's results, the switcher's entries, dialog and prompt
+  buttons, check boxes, rows and "Show", the Extensions dialog and the
+  panel editor, besides the dock, the app grid, menus, the overview and
+  the on-screen keyboard (which have their own, under "Item feedback").
+- *GNOME does not document this; Helix's choice:* the looks change at
+  once, without a fade.
+
 ### Accent color
 
 The shell and the lock screen draw with the accent the user chose in
