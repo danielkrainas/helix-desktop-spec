@@ -116,7 +116,9 @@ it guarantees does not depend on the user's choice.
 - Quick settings' switches and Power Mode buttons are Control when off
   and Accent fill when on (their words in its text color); the Wi-Fi and Bluetooth lists sit in a Well;
   sliders show their whole Track.
-- The on-screen keyboard's keys and the screenshot toolbar's off toggles
+- The on-screen keyboard has its own key colors
+  (`contracts/gsettings/screen-keyboard.md`, "Look"). The screenshot
+  toolbar's off toggles
   are Control.
 - The keyboard focus ring is one look everywhere: a 2 logical px outline
   of the accent, 2 px outside the focused control (a gap between them),

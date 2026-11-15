@@ -38,6 +38,27 @@ first and second (Shift) levels. Keys whose levels give no character
 Above the rows is the suggestion bar (below), 40 pixels high, always
 reserved so the keyboard's height does not change.
 
+## Look
+
+*GNOME does not document this; Helix's choice:*
+
+- Keys are rounded (7 px corners). Character keys are lighter than the
+  keyboard (#6A6A74, 3:1 against it); modifier and special keys (all but
+  Space) are darker (#3A3A44) with a light 1 px edge (#8A8A94, 3:1), so
+  every key's boundary is seen and modifiers never look lighter than
+  characters. Text on both reaches 4.5:1.
+- Shift, Enter and Tab are drawn as symbols: Shift an arrow up, hollow,
+  filled (on the accent) while Shift is on; Enter a return arrow; Tab an
+  arrow to a bar. Emoji is `face-smile-symbolic`; ?123, ABC and AltGr
+  stay words.
+- A character key with accents (see "Accents") has a small dot in its top
+  right corner.
+- While a key is held it is drawn in the accent; a character key also
+  shows its character twice as large in a bubble above it, until it is
+  let go (or the pointer leaves the keyboard).
+- High contrast: black keys with white outlines (2 px for modifiers),
+  held keys and Shift on in the accent.
+
 ## Pages
 
 The letters page above, and two more; each keeps row 5 and ends its
