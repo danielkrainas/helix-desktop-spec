@@ -149,6 +149,13 @@ pieces apart is white lines rather than shades:
   calendar's month and media buttons, check boxes), list wells and
   slider tracks have a 1 px white outline; controls that are on keep the
   accent fill and the outline.
+- A disabled menu entry's words are white at 60 % opacity (#999999 on
+  black, still 7:1), so it is told from the enabled ones, which are
+  white.
+- The dock's bar and tooltip have a 1 px white outline; the item under
+  the pointer a 1 px white outline around its icon (2 px while
+  pressed), the keyboard's item the white focus ring outside that. App
+  grid cells: 2 px while lit (3 px pressed), and the focus ring.
 - The hovered or keyboard-selected menu row has a 2 px white outline;
   the open panel menu's button too.
 - The selected calendar day has a white ring; the Do Not Disturb switch
