@@ -54,6 +54,10 @@ Clients must not rely on features the server does not list.
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* how notifications are kept
+after their banner (the list, grouping, stacking, limits, `expire_timeout`
+and `transient`) and the paths of the per-application settings, as below.
+
 `GetCapabilities` returns `actions`, `body`, `body-hyperlinks`,
 `body-markup`, `icon-static`, `persistence` and `sound`.
 

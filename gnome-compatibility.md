@@ -3,8 +3,9 @@
 What a Helix session offers to software and users that expect GNOME 51:
 what it supports, what it does not (and why, where there is a reason),
 and where it behaves differently on purpose. It summarises the contracts
-in `contracts/` and the log in `gaps.md`; those stay the source of truth
-for details. `SCOPE.md` sets the boundaries this follows.
+in `contracts/`, which stay the source of truth for details; open work is
+tracked as issues in helix-desktop (labels `gap` and `needs-hardware`).
+`SCOPE.md` sets the boundaries this follows.
 
 In short: Helix aims to run unmodified GNOME applications and tools and
 to honour the user's GNOME settings, through GNOME's public D-Bus
@@ -99,23 +100,23 @@ desktop icons, removable-media handling, and privacy indicators.
 | GNOME Shell extensions (JavaScript) | They patch GNOME Shell's internal, unstable APIs; supporting them means continually reverse-engineering private code. `org.gnome.Shell.Extensions` lists them and keeps their keys so tools don't break, but none runs. Helix has its own isolated extension system instead (`proposals/0001-extensions.md`, `contracts/extensions/`). |
 | Exact visual, animation and theme parity with GNOME Shell | Out of scope by design (`SCOPE.md`); GNOME Shell's look is not a public contract. Applications keep GNOME's look because GTK and libadwaita draw them. |
 | GDM | GDM's login screen *is* GNOME Shell in a login mode, and distributions make GDM depend on it. Helix can still be chosen from GDM, and ships its own greetd greeter (`components/greeter.md`). |
-| X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one. |
-| Accessibility on the Helix login screen | Not written yet (screen reader, on-screen keyboard, magnifier, high contrast). |
-| Translations of the shell | Not written yet: the shell's text, clock and calendar names are English. |
-| Some shell UI on the accessibility bus | Not written yet: the overview, pop-up menus, workspace popup, on-screen keyboard, screenshot UI and a few dialogs are not published to screen readers (`gaps.md`, "Accessibility bus"). |
-| `org.freedesktop.a11y.PointerLocator` | Not served yet. |
+| X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helix-desktop#76). |
+| Accessibility on the Helix login screen | Not written yet (screen reader, on-screen keyboard, magnifier, high contrast; helix-desktop#77). |
+| Translations of the shell | Not written yet: the shell's text, clock and calendar names are English (helix-desktop#81). |
+| Some shell UI on the accessibility bus | Not written yet: the overview, pop-up menus, workspace popup, on-screen keyboard, screenshot UI and a few dialogs are not published to screen readers (`contracts/dbus/org.a11y.atspi.md`, "Not covered"; helix-desktop#73). |
+| `org.freedesktop.a11y.PointerLocator` | Not served yet (helix-desktop#75). |
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
 | Mutter's input capture interface (`org.gnome.Mutter.InputCapture`) | Undocumented; the InputCapture portal is served through Helix's own private interface instead. |
 | `ApplyMonitorsConfig` properties other than `color-mode` and `underscanning` (e.g. RGB range) | Their key names are not documented. |
-| Colour curves `st240`, `xvycc`, `st428` | Not written; other named curves, ICC profiles and Windows-scRGB are converted. HDR output is 8 bits per channel (Smithay picks one scanout format per GPU). |
+| Colour curves `st240`, `xvycc`, `st428` | Not written; other named curves, ICC profiles and Windows-scRGB are converted. HDR output is 8 bits per channel (Smithay picks one scanout format per GPU). Both are helix-desktop#80. |
 | Vertical workspace keys (`-up`/`-down`) | Workspaces are laid out in a row, as in GNOME 51, so they have nothing to do. |
 | `disable-workarounds` | Has no effect; Helix has no workarounds to disable. |
-| Compositing-manager selection for X11 apps | X11 GTK windows with client-side decorations can show dark corners: Helix does not claim `_NET_WM_CM_S<n>` or read `_GTK_FRAME_EXTENTS`. Wayland windows are unaffected. |
+| Compositing-manager selection for X11 apps | X11 GTK windows with client-side decorations can show dark corners: Helix does not claim `_NET_WM_CM_S<n>` or read `_GTK_FRAME_EXTENTS` (helix-desktop#72). Wayland windows are unaffected. |
 | Bluetooth device settings in the shell | Pairing and connecting only; device settings belong to Settings. |
 | Desktop Icons NG's own settings | That is an Ubuntu extension; Helix shows a simple set of desktop icons from `show-desktop-icons` only. |
 | GNOME's private helpers and files | Not public contracts: `gnome-shell-calendar-server` (Helix reads Evolution Data Server directly), libgweather (Helix asks MET Norway directly), the Wellbeing history file, IBus emoji and Unicode modes in the shell (left to IBus itself). |
-| Login screen details GDM has | AccountsService user pictures and per-user session memory, the `clock-format` setting and localised session names are not used by the greeter. |
-| Greeter on Fedora and Arch | Packaged for Debian and Ubuntu only so far; greetd's user and paths differ elsewhere. |
+| Login screen details GDM has | AccountsService user pictures and per-user session memory, the `clock-format` setting, the primary monitor and localised session names are not used by the greeter (helix-desktop#79). |
+| Greeter on Fedora and Arch | Packaged for Debian and Ubuntu only so far; greetd's user and paths differ elsewhere (helix-desktop#78). |
 
 ## Differs on purpose
 
@@ -202,15 +203,16 @@ code. The choices that users or developers are most likely to notice:
 - **Login screen**: the greeter shows initials instead of pictures, a
   24-hour clock, and remembers the last user and session itself.
 
-Each of these is written down in the contract the `gaps.md` entry names,
-so other implementations can follow or differ knowingly.
+Each of these is written down in its contract, marked *GNOME does not
+document this; Helix's choice:* where GNOME is silent, so other
+implementations can follow or differ knowingly.
 
 ## Not yet verified
 
 Some supported features are written to their published standards and
 tested against simulated devices or services, but not yet with the real
-thing. The full list is in `gaps.md`, "Implemented but not tested with
-real hardware"; the main ones are touchscreens and touchpad gestures,
+thing. Each contract says so where it applies, and the full list is the
+helix-desktop issues labelled `needs-hardware`; the main ones are touchscreens and touchpad gestures,
 drawing tablets, HDR and calibrated monitors, DDC/CI brightness, privacy
 screens, underscanning, offline updates, user switching with a real
 display manager, Bluetooth file transfer, USB protection, and the

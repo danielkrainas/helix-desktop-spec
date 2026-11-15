@@ -63,6 +63,10 @@ Exported by the shell at `/org/helix/ObexAgent` on the session bus.
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* GNOME's wording, when it
+accepts pushes (and from whom), and where it puts received files before
+they complete; Helix's are below.
+
 ### Receiving
 
 - The shell registers its agent with `AgentManager1` whenever
@@ -110,4 +114,4 @@ Exported by the shell at `/org/helix/ObexAgent` on the session bus.
 Sending and receiving are tested against a fake `org.bluez.obex` on a
 private bus, and the dialogs and notifications in a nested session with
 fake obexd and BlueZ services. **Not yet tested with a real Bluetooth
-device** (`gaps.md`).
+device** (helix-desktop#55).

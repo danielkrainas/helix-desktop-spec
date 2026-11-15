@@ -5,6 +5,11 @@ desktop for a password, e.g. to unlock the login keyring or for an SSH key's
 passphrase. In GNOME the shell serves it; without one, D-Bus activates
 gcr's own GTK prompter.
 
+The prompter interface and secret exchange are internal to gcr (not a
+stable API, documented only in its sources). *GNOME does not document
+this; Helix's choice:* how gnome-shell's prompt looks and rates password
+strength; Helix's is under "Helix".
+
 ## Names and objects
 
 - Bus name (session bus): `org.gnome.keyring.SystemPrompter`.

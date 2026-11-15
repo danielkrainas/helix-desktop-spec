@@ -17,8 +17,11 @@ Shows (or updates, if already open) the confirmation dialog.
 | 3 | Restart & Install Updates (Helix) | `ConfirmedReboot` |
 | 4 | Restart & Install Upgrade (Helix) | `ConfirmedReboot` |
 
+*GNOME does not document this; Helix's choice:* values beyond 0–2 (GNOME
+has update and upgrade dialogs too, opened by callers it does not name).
 Types 3 and 4 are Helix's numbering (see "Updates" below); other values
-show the Log Out dialog.
+show the Log Out dialog. Nothing in Helix opens 3 or 4 yet; software apps
+may.
 
 - `timestamp`: event time of the triggering input, for focus (may be 0).
 - `seconds_to_stay_open`: countdown. When it runs out with nothing
@@ -62,6 +65,8 @@ When the dialog opens for types 1–4 it reads the interface's properties
 - The countdown confirms as the user would, with the check box as it is.
 - PackageKit is only asked on bare hardware (DRM backend); a nested
   session never reads or schedules the host's updates.
+- Tested against a fake PackageKit on a private system bus only; no real
+  PackageKit has scheduled updates through it (helix-desktop#48).
 
 ## Signals
 

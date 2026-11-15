@@ -32,6 +32,19 @@ and lists its interfaces in `helix.portal`. It exits when its connection to
 the session bus closes, and on SIGTERM leaves the bus for at most two
 seconds (a dialog still waiting for the user does not hold it up).
 
+`helix-portals.conf` (used while `XDG_CURRENT_DESKTOP` contains `Helix`)
+has `default=helix;gtk;`: interfaces Helix does not serve go to the GTK
+backend when it is installed. GNOME's backend is not listed: it expects
+GNOME Shell, and since the frontend asks every listed backend for
+settings, a GNOME backend that could not start stalled apps for its
+25-second activation timeout.
+
+*GNOME does not document this; Helix's choice:* GNOME's backends do more
+than the documented interfaces (their dialogs and wording, how the mail
+app and its arguments are chosen, which apps get DynamicLauncher install
+tokens, what is done with the lockdown keys beyond the portal); Helix's
+behaviour is in each "Helix" section below.
+
 ## Request (`org.freedesktop.impl.portal.Request`)
 
 Methods that take a `handle` export a Request object at that path for the
@@ -42,6 +55,9 @@ which the object must be removed.
 
 Methods that take a `session_handle` export a Session object at that path.
 `Close` ends the session; `Closed` is emitted when the backend ends it.
+
+*GNOME does not document this; Helix's choice:* Helix's Session objects
+report `version` 1.
 
 ## Settings
 
@@ -64,7 +80,12 @@ Documented keys, all in namespace `org.freedesktop.appearance`:
 | `reduced-motion` | `u` | 0 no preference, 1 reduced motion |
 
 Unknown values are treated as 0. Backends may expose other namespaces; they
-are undocumented (see `gaps.md`).
+are undocumented, yet sandboxed GTK reads `org.gnome.desktop.interface`
+(and others) through the portal.
+
+*GNOME does not document this; Helix's choice:* which namespaces and keys
+are exposed, how `accent-color` names map to sRGB (the colours libadwaita
+documents), and the `version` property (1), as below.
 
 ### Helix
 
@@ -104,6 +125,8 @@ feedback sounds), `org.gnome.desktop.privacy` (recent files) and
 `org.gnome.desktop.peripherals.mouse` (double-click time, drag threshold),
 so sandboxed apps see the same settings as others. Schemas that are not
 installed are left out. `SettingChanged` follows every key.
+
+`version` is 1.
 
 ## Inhibit
 
@@ -145,6 +168,9 @@ within one second.
 - Closing the Session ends the screen cast.
 
 ### Helix
+
+*GNOME does not document this; Helix's choice:* GNOME's `restore_data`
+contents are its own; Helix's are below.
 
 - `AvailableSourceTypes` 7 (monitors, windows, virtual),
   `AvailableCursorModes` 7 (hidden, embedded, metadata), `version` 4.
@@ -255,6 +281,10 @@ picks, 4 an area the user selects, 8 the active window.
 `results["color"]` (`(ddd)`), sRGB values from 0 to 1.
 
 ### Helix
+
+*GNOME does not document this; Helix's choice:* where non-interactive
+screenshots are saved and when the user is asked, as below; the window
+pick is Helix's own design.
 
 - `AvailableTargets` is 15 (screen, window, area, active window);
   `version` is 3.
@@ -380,7 +410,7 @@ canceled (response 1). For any other handle it fails with
 
 - States come from the shell's windows (`org.helix.PortalDialog.RunningApps`):
   apps with windows are 1, the focused one 2. Apps without windows are not
-  listed (the shell does not know them; see `gaps.md`).
+  listed (the shell does not know them).
   `RunningApplicationsChanged` follows the shell's `RunningAppsChanged`.
 - `NotifyBackground`: a dialog "Background Activity" with "<name> is
   running in the background.", buttons "Allow" and "Forbid": result 1 or
@@ -518,6 +548,11 @@ through a barrier they set, and get it as an EIS (libei) receiver.
 
 ### Helix
 
+*GNOME does not document this; Helix's choice:* mutter's input capture
+interface (`org.gnome.Mutter.InputCapture`) is undocumented, so the
+compositor's side is Helix's private `org.helix.InputCapture`; how
+barriers, keys held at activation and escaping a capture work is as below.
+
 - `version` 2, `SupportedCapabilities` 3 (keyboard and pointer;
   touchscreens are not captured). `CreateSession2` makes the session
   (nothing is asked); `Start` asks and starts it. `CreateSession` (version
@@ -588,6 +623,10 @@ is told when they are pressed and released, whatever window has focus.
 
 ### Helix
 
+*GNOME does not document this; Helix's choice:* how the user is asked,
+where answers are kept, and the unit of the signals' `timestamp`
+(milliseconds), as below.
+
 - Version 1 (no `ConfigureShortcuts`; triggers cannot be changed).
 - `BindShortcuts` asks the user, unless the app's shortcuts were allowed
   before with the same triggers: a dialog "Allow Global Shortcuts?"
@@ -645,6 +684,10 @@ changes.
 - Property `version`.
 
 ### Helix
+
+*GNOME does not document this; Helix's choice:* how categories and
+display hints are shown, which sound `default` means, and which button
+purposes are offered, as below.
 
 - `version` is 2. Property `SupportedOptions` (`a{sv}`): `category`,
   the categories Helix takes: `im.received`, `alarm.ringing`,

@@ -38,6 +38,10 @@ shortcuts and the shell's bindings go to the app, except
 `<Super>Escape`), which ends the inhibition until the surface gets
 keyboard focus again, and switching virtual terminals.
 
+*GNOME does not document this; Helix's choice:* the permission store
+table and id (`gnome` / `shortcuts-inhibitor`), used so that GNOME Settings
+can show and revoke the answers.
+
 **Xwayland keyboard grabs** (`zwp_xwayland_keyboard_grab_manager_v1`,
 Xwayland only). With `org.gnome.mutter.wayland xwayland-allow-grabs`
 true, an X11 window may grab the keyboard when its `WM_CLASS` name or
@@ -56,6 +60,9 @@ the grab or `restore-shortcuts` is pressed.
   (substructure masks), `data32[0]` 1 to ask and 0 to stop asking. The
   compositor's own Xwayland connection receives it; the answer lasts for
   that window id.
+- *GNOME does not document this; Helix's choice:* mutter's built-in list
+  (the schema only names a placeholder) and how it handles the
+  `ClientMessage`; the list and handling above are Helix's.
 
 **App and theme icons** the shell draws (dock, app grid, search
 results, window switcher, notifications) are looked up as the icon theme
@@ -104,7 +111,8 @@ shows their windows *n* times smaller (Wayland apps are unaffected). The
 scale follows the setting and monitor changes while the session runs;
 X11 apps that cannot change scale while running look right after they are
 restarted. Apps that do not scale themselves look smaller at a scale
-above 1.
+above 1. Xwayland's own HiDPI mode is not used: the compositor does the
+scaling.
 
 Helix is the XSETTINGS manager of Xwayland's screen (it owns
 `_XSETTINGS_S0`, announces itself with a `MANAGER` client message, and
@@ -140,6 +148,11 @@ earlier lines of those names and keeping others. Both follow setting
 changes. If another XSETTINGS manager already owns the selection, Helix
 publishes nothing.
 
+*GNOME does not document this; Helix's choice:* how the automatic
+Xwayland scale is picked, and what is published over XSETTINGS and
+`RESOURCE_MANAGER` (gnome-settings-daemon's full list, its DPI rules,
+merging or replacing), as above.
+
 **Xwayland's display.** Helix lets Smithay pick the first free display
 from `:0` to `:32`; when all are taken it tries `:33` to `:99` in turn.
 
@@ -163,6 +176,9 @@ A finished swipe does one of:
 
 A cancelled swipe, or one while the session is locked, does nothing.
 
+*GNOME does not document this; Helix's choice:* the finger counts,
+distances, edges and what each swipe does, as here.
+
 - **Touchpads** (`zwp_pointer_gestures_v1`, bare hardware): swipes with 3
   or 4 fingers are Helix's, measured by libinput's swipe motion. Other
   gestures (two-finger swipes, pinches, holds) go to the surface under
@@ -182,7 +198,7 @@ A cancelled swipe, or one while the session is locked, does nothing.
   touch to the app.
 - Not yet tested with a real touchscreen or touchpad: the recognizer is
   checked by unit tests, and touchscreen swipes in a nested session with
-  a remote desktop virtual touchscreen (`gaps.md`).
+  a remote desktop virtual touchscreen (helix-desktop#56).
 
 **Frame timing.** `wp_presentation` feedback reports when a frame was
 shown (the monitor's vblank, its refresh interval and sequence) or that
@@ -255,7 +271,7 @@ is then converted for the monitor ("Color modes" in
   `srgb`, `ext_srgb`, `st2084_pq` and `hlg`; the primaries `srgb`,
   `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`, `dci_p3`,
   `display_p3` and `adobe_rgb`. `st240`, `xvycc` and `st428` are not
-  offered; other named values are the creator's `invalid_tf` /
+  offered (helix-desktop#80); other named values are the creator's `invalid_tf` /
   `invalid_primaries_named` errors. Target volumes beyond the primary
   volume are taken: the conversion is the same matrix, values outside
   0–1 are converted, not clipped, and only the composition clips (below
@@ -366,7 +382,7 @@ Many session interactions (screenshots, screencasts, inhibit, settings) should p
 
 Helix should implement the portal backends needed for GTK/libadwaita apps to function without modification.
 
-Detailed protocol XML or behavioral notes will be added as gaps are identified.
+Detailed protocol XML or behavioral notes will be added as missing behaviour is found.
 
 ## Session locking
 
@@ -491,6 +507,11 @@ Corners are where two borders meet, extended along each edge by the
 border width.
 
 `ScreenshotWindow` with `include_frame` true includes the title bar.
+
+X11 windows that draw their own decorations (GTK's client-side
+decorations) can show dark corners outside their rounding: Helix does not
+claim the compositing manager selection (`_NET_WM_CM_S<n>`) or read
+`_GTK_FRAME_EXTENTS` (helix-desktop#72). Wayland windows are unaffected.
 
 ## Window menu and window keys (Helix)
 
@@ -1125,7 +1146,8 @@ in the overview (which has its dash) or the launcher.
   recently used one when there are several) instead of opening a new
   one. The file manager is the app that opens folders (the default app
   for `inode/directory`). Helix knows what a window shows only by its
-  title: the drive whose name it is, else the Trash when it is the Trash's
+  title (the file manager's D-Bus window paths would need GTK's private,
+  undocumented `gtk_shell1` protocol): the drive whose name it is, else the Trash when it is the Trash's
   display name (`trash:///`'s `standard::display-name`) or "Trash". So a
   folder named like a drive is taken for it. Without
   `isolate-locations` all of the file manager's windows are its own.
@@ -1284,6 +1306,12 @@ to 3; other values are clamped):
   app grid's label room.
 - Icons keep their sizes.
 - The lock screen keeps its own sizes for now.
+
+Checked in renders at 1.25 and 1.5 on a 1280×720 screen: the panel,
+menus, quick settings, the notification list and calendar, and the
+question dialogs. The launcher and app grid, switcher, prompts, banners,
+dock tooltips and on-screen keyboard follow the factor but have not been
+rendered at it (helix-desktop#16).
 
 ## Quick settings (Helix)
 

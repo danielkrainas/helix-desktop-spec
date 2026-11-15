@@ -2,7 +2,7 @@
 
 Companion to `org.gnome.Mutter.DisplayConfig.xml`. Covers the read side used
 by settings tools and portals, and changing the monitor configuration with
-`ApplyMonitorsConfig`; see `gaps.md` for what is still missing.
+`ApplyMonitorsConfig`.
 
 ## Bus name and object
 
@@ -59,6 +59,9 @@ There is no switch for fractional scales: GNOME 51's `org.gnome.mutter`
 schema has no `experimental-features` key, so they are always offered.
 The preferred scale of every mode is 1.
 
+*GNOME does not document this; Helix's choice:* which fractional scales a
+mode offers and its preferred scale are as above.
+
 At a fractional scale, apps that support the fractional-scale protocol
 (`wp_fractional_scale_v1`) are told the exact scale and draw for it; other
 apps are told the next whole scale (`wl_output` and `wl_surface` preferred
@@ -103,7 +106,8 @@ a{sv} properties)` changes the monitor configuration. Only allowed when
 `ApplyMonitorsConfigAllowed` is true.
 
 `serial` must be the current one (from `GetCurrentState`); a stale serial
-is rejected and nothing changes.
+is rejected with `org.freedesktop.DBus.Error.InvalidArgs` and nothing
+changes.
 
 `method`:
 
@@ -139,10 +143,15 @@ drivers offer it for some HDMI outputs) and turns it `on` with
 `underscan hborder` and `underscan vborder` of 5 % of the mode's width
 and height (at most 128 pixels each), or `off`; it is off when the
 monitor appears. Other monitor property keys are ignored. Implemented
-but not tested with real hardware: no monitor with an `underscan`
-property was available; the D-Bus side is tested with the nested
-session's `HELIX_TEST_UNDERSCAN` (the window then claims it can
+but not tested with real hardware (helix-desktop#53): no monitor with an
+`underscan` property was available; the D-Bus side is tested with the
+nested session's `HELIX_TEST_UNDERSCAN` (the window then claims it can
 underscan; nothing changes on screen).
+
+*GNOME does not document this; Helix's choice:* only `color-mode` and
+`underscanning` are read (other keys, such as an RGB range, have no
+documented names and are ignored), and the underscan border is 5 % of the
+mode as above.
 
 A configuration is valid when:
 
@@ -171,7 +180,12 @@ monitor follow its own edges. `GetCurrentState` reports such a monitor
 with its logical monitor's position and scale. Applications see the
 monitor's `wl_output` at the scale and position it is drawn at.
 
-An invalid configuration is rejected and nothing changes. When an applied
+*GNOME does not document this; Helix's choice:* mirrored monitors of
+different sizes are rescaled and centred as above. Not yet tried on real
+hardware (helix-desktop#52).
+
+An invalid configuration is rejected with
+`org.freedesktop.DBus.Error.InvalidArgs` and nothing changes. When an applied
 configuration changes anything, the serial changes and `MonitorsChanged` is
 emitted before the call returns.
 
@@ -194,6 +208,10 @@ whether to keep it (Helix: through the shell's
   configuration from before the first unanswered change.
 
 Temporary configurations are never asked about.
+
+*GNOME does not document this; Helix's choice:* GNOME confirms inside
+gnome-shell; Helix asks through its own dialog, and only after persistent
+changes.
 
 ### Remembered configurations
 
@@ -237,7 +255,8 @@ ones `GetCrtcGamma` returns.
 - On bare hardware the ramps go to the CRTC (DRM gamma); their length is
   the CRTC's gamma size. A ramp set stays in effect across mode changes
   and switching back from another VT, until it is set again or the
-  monitor goes away.
+  monitor goes away. (*GNOME does not document this; Helix's choice:*
+  ramps are kept across mode changes.)
 - In the nested session the ramps are kept (256 entries, identity at
   first) but have no visible effect.
 - A monitor's `org.gnome.mutter output-luminance` (the entry with its
@@ -282,7 +301,7 @@ When a monitor is put in BT.2100:
   unchanged, above it 0.75 P + 0.25 P × (1 − e^(−(L − 0.75 P) / 0.25 P)),
   all three channels scaled alike. The framebuffer sent to the monitor
   keeps 8 bits per channel (Smithay picks one pixel format for all of a
-  GPU's monitors);
+  GPU's monitors; 10-bit output is helix-desktop#80);
 - the **reference luminance** (SDR white) is 203 cd/m² scaled by the
   monitor's `output-luminance` entry for color mode 1 (100 % is 203
   cd/m²), taken between 25 % and 300 %. Its gamma ramps are not scaled;
@@ -294,7 +313,7 @@ Not yet tried on an HDR monitor: the EDID parsing, the metadata, the
 conversion (checked against reference values, and run on the GPU in a
 nested session with `HELIX_TEST_HDR=1`, which converts the nested window
 as if it were an HDR monitor) and the D-Bus side are tested without one
-(`gaps.md`).
+(helix-desktop#57).
 
 ## Color profiles (Helix)
 
@@ -318,15 +337,17 @@ assign it profiles:
 - In the BT.2100 color mode no calibration is applied.
 
 Not yet tried with a calibrated monitor (tested against a fake colord;
-`gaps.md`).
+helix-desktop#58).
 
 ## Color transformation matrix
 
 `SetOutputCTM(serial, output, ctm)` sets the color transformation matrix
 of an output (an id from `GetResources`). It fails with
 `org.freedesktop.DBus.Error.InvalidArgs` for a serial other than the
-current `GetResources` serial or an unknown output. The interface does not
-document what the nine values mean (see `gaps.md`).
+current `GetResources` serial or an unknown output.
+
+*GNOME does not document this; Helix's choice:* what the nine values
+mean, as below.
 
 ### Helix
 
@@ -381,6 +402,8 @@ range.
   made elsewhere show up within a few seconds.
 - The serial changes only when the set of entries changes (monitors
   added, removed or reconfigured), not when a value changes.
+- *GNOME does not document this; Helix's choice:* the serial rule above,
+  `min` 1 for kernel backlight devices and `min` 0 for DDC/CI monitors.
 - External monitors are controlled over DDC/CI, on real hardware only
   (not in a nested session):
   - each active external connector's I²C bus is the `ddc` link in its
@@ -396,7 +419,7 @@ range.
     re-read every ten seconds; a change shows up as `PropertiesChanged`;
   - setting `HELIX_NO_DDC` in the environment turns DDC/CI off.
 - **Not yet tested with real monitors.** The DDC/CI code is checked only
-  against a simulated monitor in Helix's tests (`gaps.md`).
+  against a simulated monitor in Helix's tests (helix-desktop#54).
 
 ## Display switcher (Helix)
 

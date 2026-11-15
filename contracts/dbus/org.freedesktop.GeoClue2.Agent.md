@@ -19,7 +19,8 @@ them (`country` … `exact`).
   `AddAgent(id)` (`/org/freedesktop/GeoClue2/Manager`). GeoClue accepts
   only ids its configuration lists (`[agent] whitelist` in
   `/etc/geoclue/geoclue.conf`); Helix registers as `gnome-shell`, the id
-  configurations list for GNOME (see `gaps.md`).
+  configurations list for GNOME. A distribution that lists another id
+  for Helix would need that id instead.
 - One agent per user. When GeoClue starts again (its name gets a new
   owner) the agent registers again.
 
@@ -35,6 +36,10 @@ them (`country` … `exact`).
   apps it does not treat as system components; it waits for the answer.
 
 ## Helix's answers
+
+*GNOME does not document this; Helix's choice:* how gnome-shell's agent
+asks, how it stores decisions in the permission store (the value format
+of table `location`) and when it shows its indicator; Helix's are below.
 
 - Location services off (`enabled` false): not authorized, level 0.
 - An id with no installed desktop file: not authorized, without asking.

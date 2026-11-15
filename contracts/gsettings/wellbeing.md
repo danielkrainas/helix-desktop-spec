@@ -49,6 +49,7 @@ unlocked and idle less than 5 seconds.
   `$XDG_DATA_HOME/helix/screen-time` (lines `YYYY-MM-DD seconds`, at most
   90 days), written every minute and read at login, so a day's total
   survives logging out. Without it, the total lives only in the session.
+  GNOME's own history file is not read or written.
 - **Daily limit**: with `daily-limit-enabled`, when today's total reaches
   `daily-limit-seconds`, a notification "Screen Time Limit Reached" ("You
   have used the computer for H hours and M minutes today."), once a day;

@@ -17,8 +17,9 @@ these well-known names may use the interface; others get
   which asks the user or checks the app's permission first)
 - `org.gnome.Screenshot` (the GNOME Screenshot app)
 
-GNOME restricts this interface too, but which callers it allows is not part
-of the contract (see `gaps.md`); the list above is Helix's.
+*GNOME does not document this; Helix's choice:* GNOME restricts this
+interface too, but which callers it allows is not part of the contract;
+the list above is Helix's.
 
 ## File names
 
@@ -30,12 +31,16 @@ extension of that kind, and never overwrites a file: if the name is taken,
 it adds ` (2)`, ` (3)`, … before the extension. `filename_used` is the
 absolute path written.
 
+*GNOME does not document this; Helix's choice:* what happens when the name
+is taken (the ` (2)` suffix above).
+
 ## Captures
 
 All coordinates are logical (layout) pixels, the coordinate space of
 `org.gnome.Mutter.DisplayConfig`. Images have as many pixels per logical
 pixel as the highest scale among the monitors they cover; parts shown on a
-monitor with a lower scale are scaled up.
+monitor with a lower scale are scaled up. (*GNOME does not document
+this; Helix's choice:* the highest scale.)
 
 - `Screenshot(include_cursor, flash, filename)`: every monitor, one image
   covering the bounding box of the layout. Parts of the box no monitor
@@ -62,7 +67,8 @@ These show the shell's own UI and return when the user is done. Only one
 runs at a time; a second call while one is open fails with
 `org.freedesktop.DBus.Error.Failed`. When the user cancels (Escape, or the
 secondary button) the call fails with `org.freedesktop.DBus.Error.Failed`
-and the message `Operation was cancelled`.
+and the message `Operation was cancelled`. (*GNOME does not document
+this; Helix's choice:* the error for a cancelled call.)
 
 - `SelectArea()`: the user drags out a rectangle on one monitor; returns
   it in logical layout coordinates.

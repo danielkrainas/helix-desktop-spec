@@ -28,6 +28,10 @@ video file.
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* which callers may record,
+the `Error` names, what happens when the file exists, and the scale of a
+recording spanning monitors of different scales are as below.
+
 - The shell serves it. Callers are the ones `org.gnome.Shell.Screenshot`
   allows (`org.gnome.Shell.Screenshot.md`) and the shell itself; others get
   `org.freedesktop.DBus.Error.AccessDenied`.

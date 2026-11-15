@@ -67,7 +67,7 @@ when the key changes and when a monitor appears (bare hardware only). A
 hardware-locked privacy screen (its `privacy-screen hw-state`) may not
 follow. How mutter reports privacy screens to GNOME Settings is not
 documented here; Helix reports nothing about them in DisplayConfig. Not
-tried on a panel with a privacy screen.
+tried on a panel with a privacy screen (helix-desktop#65).
 
 ### USB protection
 
@@ -83,7 +83,8 @@ devices already present are left alone. Without USBGuard nothing
 happens. Only on bare hardware. How gnome-settings-daemon applies these
 keys (USBGuard parameters it changes, its notifications) is not
 documented here; these rules are Helix's. Tested against a fake
-USBGuard only.
+USBGuard only (helix-desktop#66); the object path comes from USBGuard's
+service, not its interface description.
 
 ### App usage
 

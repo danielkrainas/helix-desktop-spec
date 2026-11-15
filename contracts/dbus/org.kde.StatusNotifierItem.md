@@ -36,7 +36,14 @@ The shell is both the **watcher** (it keeps the list of items) and the
   (`StatusNotifierItemUnregistered`). Items cannot unregister otherwise.
 - `RegisterStatusNotifierHost(service)` is accepted and has no effect.
   `IsStatusNotifierHostRegistered` is true (the shell is a host);
-  `ProtocolVersion` is 0.
+  `ProtocolVersion` is 0. `StatusNotifierHostUnregistered`, which the
+  specification does not define, is never emitted.
+
+*GNOME does not document this; Helix's choice:* the specification leaves
+open the `org.kde.*` names apps actually use, `StatusNotifierHostUnregistered`,
+the unit of `Scroll`'s `delta` and the entries for items registered by
+object path; Helix's choices are in this file. (GNOME itself needs an
+extension to show these icons.)
 
 ## Host: showing items
 

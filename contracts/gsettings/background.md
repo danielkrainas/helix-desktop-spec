@@ -55,6 +55,8 @@ dock).
   default application.
 - There are no menus, renaming, dragging or keyboard use; trusted
   launcher marks (`metadata::trusted`) are not used.
+- GNOME's shell draws no desktop icons; Ubuntu's Desktop Icons NG
+  extension does, with settings of its own, which Helix does not read.
 
 ## Slideshows
 

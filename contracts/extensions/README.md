@@ -127,7 +127,8 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
   dialog lists them as `disabled`, with "Off for this session" as the
   reason. Turning one on there waits for the next session. (Nested
   sessions: `HELIX_TEST_SHIFT=1` in the compositor's environment does
-  the same, for testing.)
+  the same, for testing.) Not yet tried with a real keyboard
+  (helix-desktop#50).
 - An enabled extension runs only when its permissions are
   **approved**: the manifest's permissions are a subset of those
   recorded for it in `approved`. Turning an extension on in the shell's
@@ -158,7 +159,8 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
   exists), the program runs through `systemd-run --user --scope` in a
   scope named `app-helix\x2dextension-<id with . as _>-<pid of the shell>-<n>.scope`
   with `MemoryMax=256M` and `CPUWeight=50`. Otherwise it is started
-  directly.
+  directly. The scope path has not yet run in a real session (nested
+  test sessions have no systemd user manager; helix-desktop#51).
 - Its standard output and error, and its `Log` calls, go to its log: the
   last 200 lines are kept, and appended to
   `$XDG_STATE_HOME/helix/extensions/<id>.log` (cut to its last half when
@@ -264,6 +266,8 @@ profile attached to that program alone (unconfined, with `userns`),
 which bubblewrap and the extension inherit, and load it when installed.
 (Ubuntu 26.04 ships its own profile for `/usr/bin/bwrap` that allows
 this; Helix's profile is needed where none does, as on Ubuntu 24.04.)
+Helix's profile parses but has not yet been loaded on such a system
+(helix-desktop#49).
 
 Before the first sandboxed extension starts, the shell tries an empty
 sandbox once. When that fails, sandboxed extensions do not start (state

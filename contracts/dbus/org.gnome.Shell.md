@@ -56,7 +56,8 @@ same for a list, returning ids in order.
   overview, 4 lock screen, 8 unlock screen, 16 login screen, 32 system
   modal dialog, 64 looking glass, 128 top-bar popup; `0xFFFFFFFF`
   (all).
-- `grabFlags`: the key-binding flags of mutter's documented API
+- `grabFlags` (*GNOME does not document this; Helix's choice:* the
+  interface does not say what they are): the key-binding flags of mutter's documented API
   (`Meta.KeyBindingFlags`, which `Meta.Display.grab_accelerator` takes):
   1 per-window, 2 built-in, 4 reversed, 8 always active (non-maskable),
   16 ignore autorepeat, 32 not grabbed automatically, 64 custom trigger,

@@ -13,6 +13,10 @@ Clients (e.g. gnome-settings-daemon) find `Core` through the object manager.
 ## Semantics
 
 - Times are milliseconds.
+- User activity is every input event from any device (key, button,
+  pointer motion without buttons, scroll, touch, tablet), and input
+  injected by remote desktop sessions. *GNOME does not document this;
+  Helix's choice:* which input counts as activity.
 - `GetIdletime`: time since the last user activity.
 - `AddIdleWatch(interval)`: returns a watch id (non-zero). `WatchFired(id)`
   is emitted when the idle time reaches `interval` — immediately if it

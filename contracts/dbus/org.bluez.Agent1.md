@@ -13,6 +13,13 @@ The shell serves `org.bluez.Agent1` on the system bus at
 (`org.bluez.AgentManager1`). When BlueZ starts again (its name gets a new
 owner) the shell registers again. `Release()` is acknowledged.
 
+*GNOME does not document this; Helix's choice:* how gnome-shell and
+Settings word and lay out their pairing dialogs, which agent capability
+they register with, and how long discovery runs. Helix's dialogs are
+below; discovery runs while the device list is open
+(`contracts/wayland/README.md`, "Wi-Fi networks and Bluetooth devices").
+Helix offers no Bluetooth device settings.
+
 ## Requests
 
 Device names are the device's `Alias` (`org.bluez.Device1`), else its

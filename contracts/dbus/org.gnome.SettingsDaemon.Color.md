@@ -1,8 +1,12 @@
 # org.gnome.SettingsDaemon.Color — behavioral notes
 
 Companion to `org.gnome.SettingsDaemon.Color.xml`. Night Light's state, as
-GNOME Settings and quick-settings toggles read it. gnome-settings-daemon
-does not document it; what follows is Helix's behavior (see `gaps.md`).
+GNOME Settings and quick-settings toggles read it.
+
+*GNOME does not document this; Helix's choice:* gnome-settings-daemon does
+not document the interface's behaviour (what writing `Temperature` does,
+how long `DisabledUntilTomorrow` lasts, the preview's limits,
+`Sunrise`/`Sunset` without a location); what follows is Helix's.
 
 ## Bus name and object
 

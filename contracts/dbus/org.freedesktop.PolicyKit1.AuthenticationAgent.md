@@ -35,6 +35,11 @@ shell is the agent.
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* what gnome-shell's dialog
+shows and how it lets the user pick among identities (Helix asks first,
+in a dialog of its own). The helper's protocol above is private to
+libpolkit-agent and not in polkit's own documentation.
+
 - The shell registers for its own logind session (from logind
   `GetSessionByPID`) at `/org/helix/PolicyKit1/AuthenticationAgent`,
   with the locale of `LC_ALL`, else `LC_MESSAGES`, else `LANG`, else

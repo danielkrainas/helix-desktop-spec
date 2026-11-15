@@ -26,8 +26,14 @@ other caller gets `org.freedesktop.DBus.Error.AccessDenied` and nothing
 changes. Ownership is checked on each call; watches and grabs a client
 already has stay while it is connected, even if it gives the name up.
 
-Owning that name is easy for any program on the session bus, so the rule
-keeps ordinary well-behaved apps out, not malicious ones; see `gaps.md`.
+Owning that name is easy for any program on the session bus when no
+screen reader runs, so the rule keeps ordinary well-behaved apps out, not
+malicious ones: outside the lock screen such a program could log keys (a
+weakness published for GNOME's and KWin's monitors too). A stronger rule,
+such as also requiring `org.gnome.desktop.a11y.applications
+screen-reader-enabled`, is not used: whether Orca started by hand sets
+that key is not known, and requiring it could cut a running screen
+reader off.
 
 ## Clients
 
@@ -65,6 +71,9 @@ changes it:
   Mod5 128),
 - `keycode`: the XKB keycode (the kernel's key code plus 8).
 
+*GNOME does not document this; Helix's choice:* which keycode is sent,
+and that `state` holds locked modifiers too, as above.
+
 ## What happens to a key
 
 Checked in this order for a key press:
@@ -96,6 +105,11 @@ Checked in this order for a key press:
    (16, Num Lock) left out of both.
 6. Otherwise the key is handled as usual.
 
+*GNOME does not document this; Helix's choice:* how keystroke grabs
+match, that the double-press window runs from press to press, standing
+aside while locked (GNOME's behaviour there is unknown), and that the
+VT switching keys can never be grabbed.
+
 A **grabbed** key is reported to the clients it is grabbed for and does
 nothing else: the focused app does not get it, compositor shortcuts do not
 run, and lock and latch keys (Caps Lock, Num Lock, Scroll Lock, the XKB
@@ -116,4 +130,9 @@ it with the message's destination; nothing is broadcast.
 ## Not covered
 
 `org.freedesktop.a11y.PointerLocator` (the same object in GNOME, for
-finding what is under the pointer) is not served. See `gaps.md`.
+finding what is under the pointer) is not served (helix-desktop#75).
+
+The grab rules are unit tested and the D-Bus side was tested on a private
+bus with a fake screen reader; no real Orca has used it yet, so whether
+Orca's commands, its modifier (Insert or Caps Lock, double press) and its
+typing echo all work is not known (helix-desktop#67).

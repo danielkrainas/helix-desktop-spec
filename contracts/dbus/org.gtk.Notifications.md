@@ -48,10 +48,11 @@ name `app_id`, object path derived from it (`org.gnome.Calculator` →
 
 The notification is then removed.
 
-gnome-shell does not document `ActionInvoked` (new in GNOME 51). Helix
-gives it the meaning xdg-desktop-portal documents for the same signal of
-its Notification backend interface: it is sent "to the application when a
-non-exported action is activated" (see `gaps.md`).
+*GNOME does not document this; Helix's choice:* gnome-shell does not
+document `ActionInvoked` (new in GNOME 51). Helix gives it the meaning
+xdg-desktop-portal documents for the same signal of its Notification
+backend interface: it is sent "to the application when a non-exported
+action is activated".
 
 ## Helix
 

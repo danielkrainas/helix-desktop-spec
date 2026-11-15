@@ -35,6 +35,12 @@ workspace (from a switcher, the launcher, or an app asking for focus)
 switches to that workspace first. After switching, the window focused last
 on that workspace gets focus.
 
+*GNOME does not document this; Helix's choice:* the exact rules for
+dynamic workspaces (when an emptied workspace goes, focus after
+switching) and for `workspaces-only-on-primary`, as above. The overview
+(`contracts/wayland/README.md`, "Overview") and the workspace switch
+popup ("Indicator" below) are Helix's own design.
+
 ## Keys
 
 | Keys | Action |
@@ -46,8 +52,8 @@ on that workspace gets focus.
 
 | `toggle-on-all-workspaces` | show the focused window on every workspace, or only on the active one again |
 
-The workspaces are in a row, so the `-up` and `-down` keys do nothing
-(see `gaps.md`). A window on every workspace counts as on the active one
+The workspaces are in a row (as in GNOME 51), so the `-up` and `-down`
+keys do nothing. A window on every workspace counts as on the active one
 for switchers and for dynamic workspaces; when it stops being on every
 workspace it belongs to the active one.
 

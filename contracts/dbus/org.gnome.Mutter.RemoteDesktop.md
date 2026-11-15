@@ -48,6 +48,12 @@ backends (and, in GNOME, gnome-remote-desktop) use it.
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* mutter's `Version`, how
+keysyms become keys, how EIS devices are described, and the clipboard and
+keymap details GNOME leaves out (errors, `CurrentKeymap`'s `name`, how long
+a `SelectionTransfer` may wait, `SelectionOwnerChanged` on
+`EnableClipboard`) are as below.
+
 - Only the owner of `org.freedesktop.impl.portal.desktop.helix` (Helix's
   portal backend, which asks the user first) may call these methods;
   others get `org.freedesktop.DBus.Error.AccessDenied`. A session ends
@@ -110,7 +116,8 @@ and X11 apps; not the primary selection).
   supported-xkb-keymap-formats: [1]}` (XKB, text format version 1), or
   `[1, 2]` when the system's XKB library (libxkbcommon 1.11 or later)
   reads text format version 2; Helix finds out once, by compiling a small
-  keymap as version 2.
+  keymap as version 2. Only the refusal of version 2 has been tried (on
+  libxkbcommon 1.6; helix-desktop#70).
 - `SetKeymap(options)` with `keymap-type` 0 replaces the keymap of the
   session's keyboard, for everything (apps, shortcuts,
   `NotifyKeyboardKeysym`): `xkb-keymap` (`h`, required) is read to its

@@ -25,6 +25,10 @@ metadata's members whose values are strings (`s`), numbers (`d`),
 booleans (`b`) or string arrays (`as`), such as `version`, `url`,
 `settings-schema` and `gettext-domain`. Then these keys, set by Helix:
 
+*GNOME does not document this; Helix's choice:* the interface guarantees
+only `enabled`, `canChange` and `hasUpdate`; the other keys are Helix's
+reading of what tools use.
+
 - `uuid` (`s`), `path` (`s`): the directory.
 - `type` (`d`): 1 system, 2 per-user.
 - `state` (`d`) and `error` (`s`), see below.

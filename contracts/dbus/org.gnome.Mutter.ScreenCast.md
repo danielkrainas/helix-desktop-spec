@@ -30,6 +30,10 @@ Cursor modes (`cursor-mode`, `u`): 0 hidden, 1 embedded in the frames,
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* which callers may use the
+interface, the stream formats and frame pacing, and the virtual monitors'
+identity (see `org.gnome.Mutter.DisplayConfig.md`) are as below.
+
 - `Version` is 2. `RecordMonitor`, `RecordWindow`, `RecordArea` and
   `RecordVirtual` are implemented; the per-stream `Start` / `Stop` fail
   with `org.freedesktop.DBus.Error.NotSupported`. `RecordWindow` takes

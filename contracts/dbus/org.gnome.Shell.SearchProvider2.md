@@ -33,6 +33,10 @@ turned off; `enabled` lists `DefaultDisabled` providers turned on;
 
 ## Helix
 
+*GNOME does not document this; Helix's choice:* how many results are
+shown per provider, when subsearches are used, the timeouts and how
+results are shown, as below.
+
 - Providers come from `$XDG_DATA_HOME` and each of `$XDG_DATA_DIRS` (a file
   name found earlier wins), with `Version=2` and a `DesktopId` of an
   installed app; they are read when the launcher opens (also when typing

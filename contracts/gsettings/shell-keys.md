@@ -59,7 +59,13 @@ closing it. It still goes away when its time is up.
 The keys change every monitor that has a controllable `Backlight` entry
 (`org.gnome.Mutter.DisplayConfig.md`), through `SetBacklight`. A step is
 1/20 of the entry's `min`…`max` range (at least 1). The `-monitor`
-variants act like the plain keys in Helix (see `gaps.md`).
+variants act like the plain keys in Helix.
+
+*GNOME does not document this; Helix's choice:* the brightness step, which
+monitor "current monitor" means (every controllable one), the precise
+volume step (1 percent) and the OSD icon thresholds (33 and 66 percent),
+as in this file. So are the seek step, the text size step, the keyboard
+backlight step and what `power` does by default.
 
 The shell then shows an on-screen display with the icon
 `display-brightness-symbolic` and the new level, `(value - min) / (max -
@@ -198,6 +204,11 @@ twin: `XF86Eject`; `XF86WLAN`, `XF86UWB`, `XF86RFKill`; `XF86Bluetooth`):
   `Powered`) and shows `bluetooth-active-symbolic` "Bluetooth On" or
   `bluetooth-disabled-symbolic` "Bluetooth Off". Without an adapter
   nothing happens.
+
+*GNOME does not document this; Helix's choice:* which drive `eject` ejects
+and the rfkill on-screen displays, as above. The drive choice is unit
+tested only; no drive has been ejected with the key yet
+(helix-desktop#59).
 
 ## Rotation lock
 

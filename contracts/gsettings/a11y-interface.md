@@ -8,7 +8,11 @@ follows `org.gnome.desktop.a11y.interface`
   white; shapes (backgrounds, fields, buttons, borders) are black when dark
   (luminance below 0.4) and white when light; saturated colors (the accent,
   warnings) stay; opacity is kept. Pictures (wallpapers, window pictures,
-  app icons) are not changed. Apps follow the key themselves.
+  app icons) are not changed. Apps follow the key themselves. Since all
+  text is white, a disabled menu entry looks like an enabled one (the
+  keyboard still skips it; helix-desktop#74). Rendered and reviewed in
+  high contrast: the panel, quick settings, menus, the notification list
+  and calendar, and the question dialogs.
 - `reduced-motion` `reduce`: the compositor's animations only fade
   (`contracts/wayland/README.md`, "Animations").
 - `show-status-shapes`: the quick settings switches show their state

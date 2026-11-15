@@ -15,6 +15,7 @@ The argument types were observed from GTK 3.24 and 4.14's calls, and the
 answer keys GTK 3.24 reads by answering a `GtkMountOperation` from a test
 handler with candidate keys and reading the operation's properties back
 (the interface is not otherwise documented outside GTK and gnome-shell).
+GTK 4's answer keys were not checked.
 
 ## Calls
 
@@ -47,6 +48,11 @@ handler with candidate keys and reading the operation's properties back
   being busy). It names no operation.
 
 ## Helix
+
+*GNOME does not document this; Helix's choice:* how gnome-shell lays out
+these dialogs, which `response_details` keys it returns beyond GTK's, how
+it treats repeated calls and `Close`, and how it names busy apps (by their
+windows; Helix by process name); Helix's are below.
 
 The shell owns the name (once the object is exported) and asks with its
 prompt dialog, the one polkit, keyring and removable-media questions use

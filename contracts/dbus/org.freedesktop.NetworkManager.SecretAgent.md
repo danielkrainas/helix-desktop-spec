@@ -14,7 +14,8 @@ The shell serves the interface on the system bus at
 `/org/freedesktop/NetworkManager/AgentManager`
 (`org.freedesktop.NetworkManager.AgentManager`). When NetworkManager
 starts again (its name gets a new owner) the shell registers again.
-NetworkManager accepts one agent per identifier and user.
+NetworkManager accepts one agent per identifier and user. The identifier
+is the one GNOME's shell is known to use.
 
 ## GetSecrets
 

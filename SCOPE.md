@@ -23,6 +23,6 @@ This document defines what “GNOME-compatible” means for Helix.
 
 ## Living specification
 
-The specification is living. Contracts will be added and clarified as implementation work proceeds and missing or underspecified interfaces are discovered. Gaps are tracked in `gaps.md`; `gnome-compatibility.md` summarises the result for readers.
+The specification is living. Contracts will be added and clarified as implementation work proceeds and missing or underspecified interfaces are discovered. Missing or unclear behaviour is recorded in the relevant contract: where GNOME leaves something undocumented, the contract says so with the marker *GNOME does not document this; Helix's choice:* and states Helix's choice. Open work (missing features, things not yet tried on real hardware) is tracked as issues in helix-desktop, labelled `gap` or `needs-hardware`. `gnome-compatibility.md` summarises the result for readers.
 
 The goal is a practical compatibility surface that lets users run a Helix session and continue using their existing applications and tools, while remaining free to diverge in areas that do not break that surface.

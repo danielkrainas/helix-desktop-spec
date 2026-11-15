@@ -151,3 +151,24 @@ A slider's `Value.CurrentValue` (and increment/decrement by its step,
 5%) clicks the bar where that value is. Fields' `EditableText` calls
 change nothing: typing goes through the keyboard. Other actions are
 ignored.
+
+## Not covered
+
+- Not yet published (helix-desktop#73): the window overview (window
+  pictures and workspaces); menus the shell pops up (panel status icon
+  and extension menus, the dock's and app grid's menus, the window menu,
+  the input source and accessibility menus); the workspace popup; the
+  on-screen keyboard; the dwell click type window; desktop icons; the
+  screenshot UI and area picker; the break screen; "Customize Panel…";
+  the Extensions dialog; the OSD; panel tooltips and monitor labels. The
+  dock has no keyboard navigation, so it has no focus to follow. Text
+  fields expose their text but no character extents, and `EditableText`
+  changes nothing. The calendar's events are plain labels (no times or
+  durations as values).
+- Windows' screen positions are computed from the layout (the primary
+  monitor, the dock's edge) rather than reported by the compositor.
+- The tree, roles, names, states, focus and actions are tested over
+  AT-SPI on a private accessibility bus, but not yet with Orca on a
+  Helix session: whether Orca announces windows and focus changes as
+  intended (activation of layer surfaces, live messages, the lock
+  screen's password field) is unverified (helix-desktop#71).

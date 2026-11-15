@@ -76,7 +76,8 @@ first monitor the compositor announces (the next one if it goes away):
   `PATH` when relative), by `Name` (not localized). The
   last session used is selected at start, else the Helix session, else
   the first. X11 sessions (`/usr/share/xsessions`) are not offered: greetd
-  does not start an X server (recorded in `gaps.md`).
+  does not start an X server, so they would need a wrapper that starts
+  one (helix-desktop#76).
 - **Power** (bottom left): "Restart…" and "Power Off…" through logind
   (`org.freedesktop.login1.Manager` `Reboot` / `PowerOff`, interactive),
   offered when `CanReboot` / `CanPowerOff` answer `yes` or `challenge`.
@@ -123,9 +124,38 @@ accent = "blue"           # the accent color (focus rings, the confirming button
 It is drawn with the shades of `components/README.md`, "Accent color".
 Unset or an unknown name: blue (the unknown name is logged).
 
+## Where GDM differs
+
+*GNOME does not document this; Helix's choice:* GDM's behaviour here is
+not documented, and the greeter does these its own way:
+
+- user pictures: initials in a coloured circle instead of AccountsService
+  `IconFile`;
+- the clock: always 24-hour (`clock-format` is not read);
+- the session: the greeter remembers the last user and session itself
+  (AccountsService `Session` is not read); session names are not
+  localized;
+- the monitor: the login screen is on the first monitor the compositor
+  announces, not the configured primary.
+
+Using AccountsService pictures and sessions, `clock-format` and the
+primary monitor is helix-desktop#79.
+
+## Not yet done
+
+- Accessibility on the login screen (screen reader, on-screen keyboard,
+  magnifier, high contrast) is not offered yet (helix-desktop#77).
+- Not tested on real hardware through greetd: the DRM start as
+  `_greetd`, the logind `greeter` session, power actions from the
+  greeter and the hand-over to the user's session (helix-desktop#69).
+
 ## Installing and switching
 
 The `helix-greeter` package depends on `greetd` and `helix-desktop`. It
 does not change which display manager is active; switching is the
 administrator's step (for example `systemctl disable gdm3` then
 `systemctl enable greetd`), and switching back works the same way.
+
+Packaged for Debian and Ubuntu only: greetd's greeter user (`_greetd`
+there) and the greetd binary's path differ on Fedora and Arch Linux, and
+their packages are not written yet (helix-desktop#78).

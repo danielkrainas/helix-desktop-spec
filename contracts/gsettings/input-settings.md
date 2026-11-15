@@ -58,6 +58,9 @@ An `ibus` entry's id is an IBus engine name (e.g. `anthy`, `hangul`,
   no component file lists the engine (some components list their engines
   by running a program, which Helix does not do), the keymap stays that
   of the most recently used `xkb` source.
+- *GNOME does not document this; Helix's choice:* how an engine whose
+  layout is `default` is treated, how engine properties are shown (as
+  above) and leaving emoji and Unicode entry to IBus.
 
 While an `xkb` source is active, keys go straight to the app.
 - `switch-input-source` / `switch-input-source-backward` open the input
@@ -103,7 +106,7 @@ to `numlock-state`; with it off, neither happens. Num Lock and Caps Lock
 stay as they were when the keyboard layout changes. Keyboards' Num Lock,
 Caps Lock and Scroll Lock lights follow the lock states (bare hardware;
 a keyboard that appears gets the current state). The lights have not
-been tried on real keyboards (see `gaps.md`).
+been tried on real keyboards (helix-desktop#61).
 
 ## Pointing devices
 
@@ -143,13 +146,17 @@ Details:
   While it is held, moving the pointer scrolls; with `-lock`, a click
   toggles that instead.
 - `scroll-speed` multiplies the touchpad's finger scrolling (1 unchanged).
+- *GNOME does not document this; Helix's choice:* how
+  `custom-accel-config` maps to libinput's acceleration and how X button
+  numbers map to evdev buttons, as above.
 ## Touchscreens and tablets
 
 Key tables: [`org.gnome.desktop.peripherals.touchscreen`](org.gnome.desktop.peripherals.touchscreen.md),
 [`org.gnome.desktop.peripherals.tablet`](org.gnome.desktop.peripherals.tablet.md),
 [`org.gnome.desktop.peripherals.tablet.stylus`](org.gnome.desktop.peripherals.tablet.stylus.md).
-These schemas are relocatable, one copy per device. Where GNOME keeps the
-copies is not documented (see `gaps.md`); Helix reads them at:
+These schemas are relocatable, one copy per device. *GNOME does not
+document this; Helix's choice:* where the copies are kept. Helix reads
+them at:
 
 - touchscreens: `/org/gnome/desktop/peripherals/touchscreens/<vid>:<pid>/`
 - tablets: `/org/gnome/desktop/peripherals/tablets/<vid>:<pid>/`
@@ -183,6 +190,12 @@ each press). Pad button settings live below the tablet's, one per
 button: `/org/gnome/desktop/peripherals/tablets/<vid>:<pid>/button<N>/`,
 where `<N>` is `A` for the pad's first button, `B` for the second and so
 on (past `Z`, the button's number counting from 1).
+
+*GNOME does not document this; Helix's choice:* where pad button settings
+are kept, how a tablet is mapped to a monitor automatically, the pad help
+display, sending rings and strips to apps, exactly how `pressure-curve`
+applies, and which button an eraser button in `button` mode becomes (the
+third stylus button; `default` is back), all as below.
 
 #### Where a tool's input goes
 
@@ -292,4 +305,5 @@ rings and strips as libinput groups them, and its number of modes;
 - **Not yet tested with a real tablet.** The protocol is checked with a
   Wayland client in Helix's tests, and the pressure curve and pad
   settings by unit tests; no tablet hardware was available
-  (`gaps.md`).
+  (helix-desktop#60). Stylus `keybinding` actions are unit tested only,
+  and configuring a real eraser button (libinput 1.29) has never run.

@@ -95,4 +95,5 @@ reports `HasAmbientLight`, the shell claims the sensor (`ClaimLight`;
 - Nothing changes while the screen is dimmed for idleness.
 
 How gnome-settings-daemon turns light into brightness is not documented
-here; this curve is Helix's. Not tried with a real sensor.
+here; this curve is Helix's. Not tried with a real sensor; tested
+against a fake iio-sensor-proxy and backlight only (helix-desktop#64).

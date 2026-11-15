@@ -33,6 +33,10 @@ as they are.
 
 ## What it does
 
+*GNOME does not document this; Helix's choice:* how a temperature becomes
+gamma ramps, how changes fade and when the schedule is checked again, as
+below.
+
 While on, every monitor's colors are warmed to
 `night-light-temperature` (kelvin, clamped to 1000…10000); while off they
 are left at 6500 K, which changes nothing. Changes fade over 5 seconds.

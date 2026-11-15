@@ -26,8 +26,9 @@ follow `org.gnome.desktop.interface`:
   `clock-show-weekday` say (they concern the top bar). It changes at
   midnight. Both are labels on the accessibility bus.
 - Changes apply within a second. Names are English (the shell runs in
-  the C time locale). How GNOME arranges the date and time in its top
-  bar, per locale, is not documented here; this order is Helix's.
+  the C time locale; the shell is not translated yet, helix-desktop#81).
+  *GNOME does not document this; Helix's choice:* how the date and time
+  are arranged in the top bar, per locale; this order is Helix's.
 
 ## Date and month
 
@@ -92,7 +93,9 @@ city's coordinates and the station's, as (latitude, longitude) in
 radians. Under a "World Clocks" heading, each location's name and its
 current time (as in "Clock" below), with the weekday when it differs from today's
 here. The time zone is the one whose principal city in the system's
-`zone1970.tab` is nearest to the location (see `gaps.md`).
+`zone1970.tab` is nearest to the location, which can be wrong near zone
+borders. *GNOME does not document this; Helix's choice:* how a world
+clock's zone is found (GNOME uses GWeather's location database).
 
 ## Weather
 

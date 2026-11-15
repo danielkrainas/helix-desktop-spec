@@ -7,7 +7,7 @@
   Served by the compositor on bus name org.freedesktop.a11y.Manager at
   /org/freedesktop/a11y/Manager. Behavior: org.freedesktop.a11y.KeyboardMonitor.md.
   The same description also has org.freedesktop.a11y.PointerLocator, which
-  Helix does not serve (see gaps.md).
+  Helix does not serve (helix-desktop#75).
 -->
 <!DOCTYPE node PUBLIC
 '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'

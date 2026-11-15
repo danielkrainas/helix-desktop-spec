@@ -94,6 +94,15 @@ process environment lacks are left alone. `XDG_MENU_PREFIX` becomes
 `gnome-` (the application menu GNOME apps expect), for components too,
 unless the session configuration sets it.
 
+### Session startup (Helix)
+
+*GNOME does not document this; Helix's choice:* gnome-session's startup
+ordering (its systemd targets) is not followed. Helix's launcher starts
+the components its session configuration lists, in order, waiting for
+each to be ready: a component is ready once it owns a given bus name, or
+once it has called `Setenv` for a given variable (the compositor sets
+`WAYLAND_DISPLAY`). Then the session is initialized.
+
 ## `GetLocale(i category)`
 
 `category` is the platform C library's `LC_*` constant (e.g. `LC_MESSAGES`).
@@ -150,6 +159,10 @@ manager and xdg-desktop-portal; apps use the portal.
   sessions (they become cleanup ids; the app gets a new id and reason 1).
   The value is read at each of these moments. Whether GNOME also skips
   restoring after a crash when it is off is not documented; Helix does.
+- *GNOME does not document this; Helix's choice:* how the reason is
+  decided, when apps are relaunched and where records are kept, as
+  above. Whether xdg-desktop-portal uses this API under
+  `XDG_CURRENT_DESKTOP=Helix:GNOME` has not been tried.
 - Ids look like `helix-<session>-<n>`, `<session>` random per login.
 
 ## Autostart
@@ -168,6 +181,10 @@ specifications), among them:
 - `X-GNOME-Autostart-enabled=false`: do not start it.
 
 ### Helix
+
+*GNOME does not document this; Helix's choice:* gnome-session's autostart
+phases, waits, delays, restart rules and full list of conditions; Helix's
+are below.
 
 - Autostart runs only when the session config's `[session]` section says
   `autostart = true` (Helix's default config does).
@@ -204,6 +221,26 @@ inhibitor is exported at `/org/gnome/SessionManager/Inhibitor<cookie>`
 implementing `org.gnome.SessionManager.Inhibitor`: `GetAppId`, `GetReason`,
 `GetFlags`, and `GetClientId` (the inhibiting app's client object, or `/`
 if it has none). `GetInhibitors` lists these paths.
+
+*GNOME does not document this; Helix's choice:* when a caller's bus
+connection goes away, its clients and inhibitors are dropped (so a
+crashed app cannot block logout forever).
+
+## Errors
+
+*GNOME does not document this; Helix's choice:* errors are named under
+`org.gnome.SessionManager.Error`:
+
+| Name | When |
+|------|------|
+| `NotInInitialization` | `Setenv` or `InitializationError` after the initialization phase |
+| `AlreadyInitialized` | the session is initialized a second time |
+| `NotInRunning` | ending the session before it is running |
+| `NotRegistered` | an unknown client |
+| `InvalidCookie` | an unknown inhibit cookie |
+| `InvalidArgs` | an unknown `Logout` mode |
+| `Inhibited` | ending the session is blocked by an inhibitor |
+| `General` | anything else (no free inhibit cookie, the session already ending) |
 
 ## Ending the session
 
@@ -247,7 +284,10 @@ gets SIGTERM, it emits `SessionOver` and leaves the bus for at most two
 seconds before stopping the components, so a bus that stops answering
 cannot keep them running. Components also get SIGTERM if the session
 manager itself dies (Linux's parent-death signal), so they never outlive
-it. How gnome-session behaves in these cases is not documented here.
+it.
+
+*GNOME does not document this; Helix's choice:* how gnome-session (and
+systemd) behave in these cases is not documented; Helix's is above.
 
 ## `Suspend`
 
