@@ -821,6 +821,15 @@ on the right.
   way to what had the keyboard does not answer it. Password prompts take
   typing at once; only Enter waits.
 - On the accessibility bus the focused button is the one marked focused.
+- **Prompts** (authentication, keyring, network secrets, run a command,
+  and other prompts with fields): Tab and Shift+Tab move through the
+  fields, each password field's "Show" button right after its field, the
+  check boxes, then Cancel and the confirm button. On Cancel or the
+  confirm button Left and Right move between them and Space presses the
+  focused one; Space on "Show" shows or hides the password. Enter always
+  answers with the confirm button (the default, in the accent style),
+  Escape cancels. The buttons are rounded (as the question dialogs'),
+  the focused one with the focus ring.
 
 ## Overview (Helix)
 
