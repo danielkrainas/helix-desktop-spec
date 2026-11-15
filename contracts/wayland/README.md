@@ -1180,6 +1180,17 @@ in the overview (which has its dash) or the launcher.
   display name (`trash:///`'s `standard::display-name`) or "Trash". So a
   folder named like a drive is taken for it. Without
   `isolate-locations` all of the file manager's windows are its own.
+- **Keyboard.** `switch-panels` reaches the dock after the panel (see
+  "Window switching"); a hidden dock shows while it has the keyboard. The
+  first item (the last with `switch-panels-backward`) gets the focus
+  ring. Left and Right (Up and Down on a side edge) move along the
+  items, Home and End to the ends; Enter or Space acts as a click (with
+  `click-action`) and gives the keyboard back; Shift+F10 or the Menu key
+  opens the item's menu with its first entry selected (the menu is
+  operated as any menu; closing it returns to the dock); Escape gives the
+  keyboard back to the window that had it, and the dock hides again as
+  its settings say. The focused item is the focused object on the
+  accessibility bus.
 - **Keys.** With `hot-keys` (the default) and the dock on,
   `app-hotkey-1` … `-10` (Super+1 … Super+0) act on the first to tenth
   app of the dock (favorites, then running apps; on the first monitor's
@@ -1547,9 +1558,12 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   without a switcher), and a pause starts a new cycle. They follow
   `current-workspace-only` of `org.gnome.shell.window-switcher`.
 - `switch-panels` (Ctrl+Alt+Tab) moves keyboard focus to the panel: Left,
-  Right and Tab (and the key again) move between its controls (the
-  items that react to clicks, see "Panel layout"), Enter or Space
-  activates one, Escape leaves.
+  Right and Tab move between its controls (the items that react to
+  clicks, see "Panel layout"), Enter or Space activates one, Escape
+  leaves. The key again moves the focus on to the dock (when it is on;
+  see "Dock"), and from the dock back to the panel;
+  `switch-panels-backward` goes the other way (from nothing: to the
+  dock's last item).
 - `Above_Tab` in an accelerator means the key above Tab, whatever symbol
   the layout gives it (the grave accent on a US layout).
 - `current-workspace-only` of `org.gnome.shell.app-switcher` and

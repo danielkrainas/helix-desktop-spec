@@ -173,8 +173,7 @@ ignored.
   the input source and accessibility menus); the workspace popup; the
   on-screen keyboard; the dwell click type window; desktop icons; the
   screenshot UI and area picker; the break screen; "Customize Panel…";
-  the Extensions dialog; the OSD; panel tooltips and monitor labels. The
-  dock has no keyboard navigation, so it has no focus to follow. Text
+  the Extensions dialog; the OSD; panel tooltips and monitor labels. Text
   fields expose their text but no character extents, and `EditableText`
   changes nothing. The calendar's events are plain labels (no times or
   durations as values).
