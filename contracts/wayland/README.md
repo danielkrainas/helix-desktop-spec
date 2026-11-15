@@ -1624,7 +1624,17 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   window without an app id is an entry of its own. Entries show the
   application's name (from its desktop file, else the app id) and how many
   windows it has. Activating an entry activates the application's most
-  recently focused window.
+  recently focused window. It is a centered rounded box with a row of the
+  applications' icons (each its most recent window's icon, see below), as
+  large as fit the monitor: 96 logical px, shrinking to as little as 32
+  (twelve applications fit at 64 px or more on a 1280 px wide monitor);
+  the selected one in a light rounded square, one under the pointer in a
+  fainter one; the selected application's name in bold under the row; an
+  application with several windows has a small dot under its icon per
+  window (at most four). When even 32 px icons do not fit, it is a list
+  instead (a row per application with its icon, name and window count).
+  A click on an entry activates it (on release, see `components/README.md`
+  "Hover and press"); a click outside cancels.
 - `switch-windows` opens the window switcher: one entry per window, most
   recently focused first.
 - `switch-group` (defaults Alt+Above_Tab and Super+Above_Tab) opens the
