@@ -145,8 +145,11 @@ code. The choices that users or developers are most likely to notice:
 - **Shell design.** The panel, quick settings, notification list,
   overview, app grid, switchers, dialogs, lock screen, screenshot UI,
   on-screen keyboard and animations are Helix's own designs, built on
-  shared colour tokens and accessibility rules (WCAG AA text contrast,
-  visible focus rings, reduced motion). GNOME's are not public contracts.
+  shared colour, shape, type and spacing tokens and one set of components
+  (rounded popovers with soft shadows, buttons, rows, switches) and on
+  accessibility rules (WCAG AA text contrast, visible focus rings, reduced
+  motion). They follow GNOME 51's look in spirit; GNOME's are not public
+  contracts.
 - **A dock.** Vanilla GNOME has none; Helix's follows a subset of
   Ubuntu's Dash to Dock settings. It shows window titles in tooltips
   instead of hover previews, previews on click, and quicklists inside the

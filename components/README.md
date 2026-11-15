@@ -22,7 +22,7 @@ Every field the shell draws itself (lock screen password, authentication and sec
 - A password field that just failed a check has a red ring (#E01B24), focused or not, until the next key.
 - The lock screen's (and login screen's) password field warns while Caps Lock is on: a sign in the field and the words "Caps Lock is on" under it (`contracts/dbus/org.gnome.ScreenSaver.md`).
 
-The lock screen's (and the login screen's) password field is rounded (48 logical px tall, corners of 12): a translucent light fill on the blurred background (solid black in high contrast), the focus ring a 2 px anti-aliased outline outside it (white in high contrast), the faint outline 1 px. Hidden characters are 8 px dots 16 px apart (as many as fit), and the caret, 2 px wide, keeps at least 4 px from the last dot and from the placeholder. At its right end a round button with an arrow submits, as Enter does: accent-colored when something is typed, dim and inactive when the field is empty. It is a button named "Unlock" on the accessibility bus. The other fields (authentication and secret prompts, the launcher's search) keep their square box. There is no button to show the password on the lock screen (`org.gnome.desktop.lockdown.md`).
+The lock screen's (and the login screen's) password field is rounded (48 logical px tall, corners of 12): a translucent light fill on the blurred background (solid black in high contrast), the focus ring a 2 px anti-aliased outline outside it (white in high contrast), the faint outline 1 px. Hidden characters are 8 px dots 16 px apart (as many as fit), and the caret, 2 px wide, keeps at least 4 px from the last dot and from the placeholder. At its right end a round button with an arrow submits, as Enter does: accent-colored when something is typed, dim and inactive when the field is empty. It is a button named "Unlock" on the accessibility bus. The other fields (authentication and secret prompts, the launcher's and the overview's search) are the shell's own field (see "Shell look"): Control filled, corners of 8 (a pill for the search fields), the same accent focus ring 2 px outside and a faint 1 px outline inside the edge otherwise. There is no button to show the password on the lock screen (`org.gnome.desktop.lockdown.md`).
 
 ### Shell look
 
@@ -58,6 +58,71 @@ Text never sits on the plain accent (blue's #3584E4 is 3.2:1 with Text);
 buttons, selected rows and switches that are on use the accent fill, as
 do the lock and login screens' suggested buttons and the round "go"
 button at the end of their password field.
+
+A hovered notification in the list is lit with a softer shade, #3A3A42,
+on which Secondary text still reaches 4.5:1 (*GNOME does not document
+this; Helix's choice:* rows that carry secondary text get a highlight
+that keeps it readable). The screen behind a dialog is dimmed with
+#0C0C10 at 69 %.
+
+#### Shapes, space and shadows
+
+All surfaces draw from one set of shapes (helix-draw `theme`), so they
+read as one product:
+
+| Piece | Corner radius (logical px) |
+|-------|----------------------------|
+| Popovers, dialogs, banners, the switcher, menus, the screenshot toolbar | 12 |
+| Cards and pictures (window pictures, tiles) | 12 |
+| Buttons, switches' tracks, fields, wells, keys | 8 |
+| Rows inside a popover or list (menu entries, search results, list rows) | 6 |
+| Tooltips | 6 |
+| Check boxes | 4 |
+| Pills (panel items, the OSD, search fields, switches, round buttons) | half their height |
+
+Spacing comes from one scale: 4, 8, 12, 16, 24, 32, 48. Rows sit at
+least 4 px inside a popover's edge, so their rounded highlight clears its
+corners.
+
+A popover has a 1 px Border edge just outside it and a soft shadow: black
+at 38 % just outside its edge, fading to nothing 12 px out, the whole
+shadow 2 px lower than the box. High contrast draws no shadows (its
+edges are white lines).
+
+#### Components
+
+Every surface builds from the same pieces, each with its looks at rest,
+under the pointer (Hovered), while pressed (Pressed), on (the accent
+fill), focused from the keyboard (the focus ring) and, where it can be,
+unavailable (Control with its words dimmed):
+
+- **Popover**: the frame of menus, quick settings, the notification list
+  and calendar, dialogs and prompts, banners, the switcher, the
+  launcher's results, the screenshot toolbar, tooltips.
+- **Push button**: Control (normal), the accent fill (suggested: the
+  answer most people want), red (#C01C28, hovered #C92A35, pressed
+  #A51D2D: destroys or ends something), or flat (nothing at rest). Its
+  label is centered at the Body size. Dialog and prompt buttons, Clear,
+  banner actions, Done and Reset, Share.
+- **Round button**: flat (lit only under the pointer: close buttons,
+  the calendar's month arrows, small icon buttons) or filled (Control:
+  media buttons, a close button over a picture).
+- **Row**: a menu entry, a list row or a search result: nothing at rest,
+  Hovered under the pointer or the keyboard's selection, Pressed while
+  pressed, the accent fill when chosen.
+- **Switch**: a 40×22 pill, Track when off and the accent fill when on,
+  a round Text-colored knob at that end.
+- **Check box**: 16–18 px with corners of 4: the accent fill with a
+  check mark when checked, Control with a Secondary outline otherwise.
+- **Slider**, **field**, **well** and **separator** as described above
+  and under "Text fields".
+- **Symbols** are drawn, not typed: the close symbol (an ×) and
+  chevrons pointing left, right, up or down (submenus, month arrows, a
+  group's open state), so they do not depend on the font.
+
+In high contrast each piece keeps its shape and uses lines instead of
+shades: rounded white outlines 1 px at rest and 2 px while hovered or
+pressed (3 px for a pressed row), as listed below.
 
 ### Accent color
 
