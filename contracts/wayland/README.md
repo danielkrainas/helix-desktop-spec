@@ -1390,7 +1390,7 @@ prompts follow the factor but have not been rendered at it.
 
 ## Quick settings (Helix)
 
-The panel's **Power** button and `org.gnome.shell.keybindings
+The panel's system pill (`helix:power`) and `org.gnome.shell.keybindings
 toggle-quick-settings` (default Super+S) open or close a menu under the
 panel's right end, holding, from the top:
 
@@ -1404,6 +1404,8 @@ panel's right end, holding, from the top:
   same fraction of its range.
 - Extensions' sliders (`contracts/extensions/README.md`), in the order
   of `org.helix.shell` `quick-settings`.
+- Sliders are a rounded track (6 px) filled up to the value, with a round
+  knob (18 px) at the value; high contrast outlines the track and knob.
 - Switches, highlighted while on, in rows of three, in the order of
   `org.helix.shell` `quick-settings` (only those listed; extensions'
   toggles too; ids

@@ -115,7 +115,8 @@ it guarantees does not depend on the user's choice.
 - Menus light the hovered or keyboard-selected row with Hovered.
 - Quick settings' switches and Power Mode buttons are Control when off
   and Accent fill when on (their words in its text color); the Wi-Fi and Bluetooth lists sit in a Well;
-  sliders show their whole Track.
+  sliders show their whole Track, rounded, with a round Text-colored
+  knob at the value.
 - The on-screen keyboard has its own key colors
   (`contracts/gsettings/screen-keyboard.md`, "Look"). The screenshot
   toolbar's off toggles
