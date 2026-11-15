@@ -130,6 +130,41 @@ manager; systemd-oomd's pressure handling for `user@UID.service` does
 not reach them. Losing the session bus ends the session (see "When the
 bus goes away"), which is why the bus is protected.
 
+Apps the shell starts (from the launcher, app grid, dock, dash, launch
+keys, notifications, the run dialog, the welcome tour and extensions)
+each get a transient scope of their own under the user manager:
+`app-helix-<app id>-<pid>.scope` in `app.slice`, following systemd's
+naming for desktop environments (the app id is the desktop file id
+without `.desktop`, escaped as systemd escapes unit names, so `-` is
+`\x2d`). Right after GIO spawns the app, the shell calls
+`org.freedesktop.systemd1.Manager.StartTransientUnit` on the session bus
+(name, mode `fail`, properties `Description` "Application launched by
+helix-shell", `PIDs` the app's pid, `Slice` `app.slice`, `CollectMode`
+`inactive-or-failed`). This moves the app out of the session's scope
+into `user@UID.service`, where systemd-oomd's pressure handling sees it,
+so under memory pressure oomd has each app as a candidate of its own
+rather than the protected services. Apps started by D-Bus activation are
+started by the bus and are not moved. Without a user manager on the bus
+the call fails and the app stays where it was started.
+*GNOME does the same for apps it launches (`app-gnome-…`); the exact
+properties are Helix's choice.*
+
+Checking this by hand (it needs a machine or VM whose session may be
+logged out; not covered by automated tests):
+
+1. In a Helix session, open an app from the launcher and run
+   `systemctl --user list-units 'app-helix-*'`: it lists the app's scope,
+   and `systemctl --user status <scope>` shows it in `app.slice`.
+2. `systemctl --user show dbus.service -p ManagedOOMPreference` reports
+   `avoid`; `oomctl` lists `user@UID.service` among the cgroups monitored
+   for memory pressure.
+3. Start a memory hog from the launcher (for example an app entry running
+   `stress-ng --vm 1 --vm-bytes 95% --vm-keep`, or `tail /dev/zero` in a
+   terminal app), wait for pressure to pass the limit (`oomctl`), and
+   read `journalctl -u systemd-oomd`: oomd kills the hog's
+   `app-helix-*.scope` (or another app scope), the session bus stays, and
+   the session goes on.
+
 ## `GetLocale(i category)`
 
 `category` is the platform C library's `LC_*` constant (e.g. `LC_MESSAGES`).
