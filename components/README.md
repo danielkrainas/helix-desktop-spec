@@ -118,8 +118,25 @@ it guarantees does not depend on the user's choice.
   sliders show their whole Track.
 - The on-screen keyboard's keys and the screenshot toolbar's off toggles
   are Control.
-- The keyboard focus ring is 2 logical px of the accent just outside the
-  focused control (a ring around a calendar day).
+- The keyboard focus ring is one look everywhere: a 2 logical px outline
+  of the accent, 2 px outside the focused control (a gap between them),
+  following the control's corner radius (a pill around a panel item, a
+  rounded square around a dock item or app grid cell, a ring around a
+  calendar day); white in high contrast. Where a control reaches the
+  edge of its surface (a menu row, a notification banner), the ring is
+  drawn just inside it instead.
+- The ring shows keyboard focus only, never the pointer: it is drawn on
+  what the keyboard reached (panel items with `switch-panels`, menu rows
+  chosen with the arrow keys, app grid cells, dock items, quick settings
+  controls, notification rows, calendar days, the focused banner, dialog
+  and prompt buttons and check boxes, the overview's selected window).
+  The pointer gives a light highlight instead (menus: the Hovered row;
+  the app grid and dock: a light square; the overview: a light frame),
+  so after the pointer moves the keyboard's place is still told apart.
+- A menu row chosen with the keyboard has both the Hovered fill and the
+  ring; both go after `keyboard-focus-visible-timeout`
+  (`contracts/gsettings/a11y-interface.md`), each key starting that time
+  again, so focus never hides while keys are being pressed.
 
 In high contrast (`org.gnome.desktop.a11y.interface high-contrast`) text
 is white, surfaces and controls black, the accent kept (always blue's,
