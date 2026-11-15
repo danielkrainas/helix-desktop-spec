@@ -514,6 +514,25 @@ as the `menu` title bar action of X11 frames. It lists, top to bottom:
 
 The menu closes on a choice, Escape, or a click outside it.
 
+Keyboard, in the window menu and the shell's other menus (the panel's
+input source, accessibility, status icon and extension menus, the
+dock's and app grid's menus):
+
+- A menu asked for with a key (`activate-window-menu`, Enter on a panel
+  item while the panel has the keyboard, Shift+F10 or Menu in the app
+  grid) starts with its first enabled entry selected; opened by the
+  pointer, nothing is selected until the pointer or a key moves. The
+  window menu event of `helix_window_list_v1` (version 10) carries a
+  `keyboard` state bit for this.
+- Down and Up select the next and previous entry, wrapping; Home and
+  Page Up the first, End and Page Down the last. Disabled (dimmed)
+  entries are skipped and do not light up under the pointer.
+- Typing a letter or digit selects the next entry (after the selected
+  one, wrapping) whose label starts with it.
+- Right opens the selected entry's submenu (only on a submenu entry);
+  Left goes back from a submenu (only there).
+- Return, keypad Enter or Space chooses the selected entry; Escape closes.
+
 **Move** and **Resize** follow the pointer without a button held: Move
 keeps the window where the pointer took it, Resize moves the window's
 bottom-right corner. A click ends it; Escape puts the window back as it
@@ -717,6 +736,59 @@ to quit entirely.", with **Wait** and **Force Quit**.
   process) is killed with `SIGKILL`; an X11 app's connection to the display
   is closed (`XKillClient`).
 - An answer from the app closes the dialog.
+- **Wait** is the dialog's default: Enter waits. Force Quit is a red
+  (destructive) button and needs an explicit choice (a click, or Tab or
+  Right to it and then Enter). See "Shell dialogs".
+
+## Shell surfaces and the keyboard (Helix)
+
+The shell's surfaces are `zwlr_layer_shell_v1` surfaces; who has the
+keyboard follows their `keyboard_interactivity`:
+
+- A top or overlay surface asking for `exclusive` gets the keyboard as
+  soon as it is mapped (and after each commit, if something else took
+  it), until it goes away or stops asking.
+- An `on_demand` surface gets the keyboard when a pointer button is
+  pressed on it (a menu opened by a click), not when it appears.
+- A surface that has the keyboard and goes away, or commits asking for
+  `none` (the panel after `switch-panels` ends), gives it back: to the
+  topmost other top or overlay surface asking for `exclusive`, else to
+  the top window.
+- Quick settings and the notification list ask for `exclusive` when
+  opened from the keyboard and `on_demand` when opened by the pointer;
+  the other shell menus always ask for `exclusive`.
+
+## Shell dialogs (Helix)
+
+The shell's centered question dialogs (ending the session, keeping
+display settings, an unresponsive app, remote control, all keyboard
+shortcuts for an app, turning on an extension) take the keyboard while
+shown and have two buttons: the one that cancels on the left, the action
+on the right.
+
+- One button has the keyboard focus, drawn with the focus ring; Enter
+  (or keypad Enter) chooses it, Escape always cancels. Tab, Shift+Tab,
+  Left and Right move the focus between the two buttons.
+- The focus starts on the dialog's default, which never loses work or
+  grants a permission:
+
+  | Dialog | Default (Enter) |
+  |--------|-----------------|
+  | Log Out / Restart / Power Off (also "… Anyway") | the action |
+  | Keep the new display settings? | Keep |
+  | "… is not responding." | Wait |
+  | Allow remote control? | Deny |
+  | Allow APP to use all keyboard shortcuts? | Deny |
+  | Turn on EXTENSION? | Cancel |
+
+- The action button is accent-colored when it is the default, red when it
+  loses work (Force Quit, Log Out Anyway, Restart Anyway, Power Off
+  Anyway), and neutral otherwise.
+- Keys pressed during the first 300 ms after a dialog is first drawn (or
+  after its question is replaced by another) are ignored: a key on its
+  way to what had the keyboard does not answer it. Password prompts take
+  typing at once; only Enter waits.
+- On the accessibility bus the focused button is the one marked focused.
 
 ## Overview (Helix)
 
@@ -882,6 +954,16 @@ and springs back from pressed with a slight overshoot over 0.3 seconds,
 and the launch copy takes 0.25 seconds. With it false, hover and press
 show at once at their final look and there is no launch copy. Nothing
 moves while an item is being dragged.
+
+With `org.gnome.desktop.a11y.interface reduced-motion` `reduce` (and
+animations on), only fades play: the highlight fades in and out as
+above, but icons keep their size (no growing on hover, no shrinking on
+press, no spring), and a launch flashes the item's highlight, which then
+fades out over 0.2 seconds, instead of sending a growing copy. In the
+dock, with it, the dock appears and goes away at once instead of
+sliding, and urgent apps do not wiggle (`dance-urgent-applications`);
+they keep their urgent mark. The setting is followed when it changes
+(the app grid reads it each time it opens).
 
 ## Dock (Helix)
 
@@ -1183,6 +1265,25 @@ Choosing a switch turns it on or off and closes the menu. The menu
 follows changes made elsewhere (it shows the settings as they are when
 opened); the indicator comes and goes with them.
 
+### Large Text in the shell
+
+`org.gnome.desktop.interface text-scaling-factor` (Large Text sets 1.25)
+scales the shell's own text, followed at once when it changes (from 0.5
+to 3; other values are clamped):
+
+- Every text size the shell draws is multiplied by it: the panel, menus,
+  quick settings, the notification list and its calendar, banners,
+  dialogs and password prompts, the launcher and app grid, the switcher,
+  the dock's tooltips and the on-screen keyboard's labels.
+- The boxes that hold text grow by the same factor: the panel's height
+  (32 logical px at 1; its exclusive zone follows), menu widths and row
+  heights, quick settings' width, rows, switches and buttons, the
+  notification list's and calendar's columns and lines, banners, dialog
+  widths and lines, the launcher's search field and result rows, and the
+  app grid's label room.
+- Icons keep their sizes.
+- The lock screen keeps its own sizes for now.
+
 ## Quick settings (Helix)
 
 The panel's **Power** button and `org.gnome.shell.keybindings
@@ -1224,6 +1325,46 @@ panel's right end, holding, from the top:
 
 Escape or a click outside closes it; choosing a power action closes it
 too. The values are read when it opens and after each change.
+
+On short screens the menu is no taller than its monitor below the
+panel (8 logical px kept free at the bottom):
+
+- The Wi-Fi or Bluetooth list shows at most six rows; more scroll inside
+  it (the mouse wheel over it), with a thin bar showing where it is.
+- When the whole menu still does not fit, the part above the power
+  actions (sliders, switches, the list, Power Mode) scrolls with the
+  wheel, with a thin bar at its right edge; the power actions stay in
+  sight below it.
+- Moving the keyboard focus to a control out of sight scrolls it into
+  sight.
+
+Keyboard:
+
+- Opened from the keyboard (`toggle-quick-settings`, or Enter on the
+  panel's Power or status item while the panel has the keyboard, see
+  "Panel layout"), the menu takes the keyboard (its layer surface asks
+  for exclusive keyboard interactivity) and its first control has the
+  focus. Opened by a click it takes the keyboard on demand (when clicked);
+  the first Tab or arrow then focuses the first control (Shift+Tab, Up or
+  Left the last).
+- The focus goes, with Tab and Shift+Tab (wrapping), through: the sliders
+  (Volume, then "Volume" as a mute button, Brightness, extensions'
+  sliders), the switches row by row (each switch, then its "›"), the
+  open list's rows, the Power Mode buttons, the power actions. Up, Down,
+  Left and Right move to the nearest control that way (Left and Right
+  within a row).
+- On a slider, Left and Right change the value by its step (5 % of its
+  range), Page Down and Page Up by two steps, Home and End to its ends;
+  held keys repeat.
+- Space or Enter does what a click does: flips a switch, chooses a row,
+  a power mode or a power action. On a "›" it opens the list, focusing
+  its first row (or closes it).
+- Escape closes an open list first (its "›" taking the focus), then the
+  menu. Closed, the keyboard goes back to where it was: the panel item
+  the menu was opened from, else the window that had it.
+- The focused control has the focus ring (2 px of the accent just
+  outside it) and is the one marked focused on the accessibility bus;
+  every reachable control is focusable there.
 
 The switches act on (all on the system bus):
 

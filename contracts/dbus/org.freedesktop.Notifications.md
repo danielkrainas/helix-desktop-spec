@@ -158,3 +158,43 @@ calendar, world clocks and the media player (`contracts/gsettings/calendar.md`).
 While the list holds notifications
 that were posted since it was last opened, the panel shows a dot next to
 the clock.
+
+On short screens the list's box is no taller than its monitor below the
+panel (8 logical px kept free); the notifications scroll by rows as
+before, and the calendar column (date, month, events, world clocks,
+weather, media) scrolls with the wheel over it, a thin bar showing
+where it is. Focusing a calendar control out of sight from the keyboard
+scrolls it into sight.
+
+Keyboard (Helix):
+
+- Opened from the keyboard (`toggle-message-tray`, or Enter on the
+  panel's clock while the panel has the keyboard), the list takes the
+  keyboard (see `contracts/wayland/README.md`, "Shell surfaces and the
+  keyboard") and the first row (a notification or a group's header) has
+  the focus, else Do Not Disturb. Opened by a click, the first Tab or
+  arrow focuses the first row.
+- Tab and Shift+Tab go, wrapping, through Do Not Disturb, Clear, each row
+  followed by its × and its links, then the calendar's previous and next
+  month buttons, the selected day and the media buttons. Ctrl+Tab jumps
+  between the notifications and the calendar.
+- In the notifications: Up and Down move between rows (scrolling the
+  list as needed; Up from the first row reaches Do Not Disturb), Home
+  and End to the first and last row; Enter or Space acts as a click on
+  what has the focus (a row activates its notification, a header opens
+  or closes its group, a link opens); Delete dismisses the focused
+  notification or group; Right opens a group, Left closes it (from a
+  notification inside it too, the header taking the focus).
+- In the calendar: on the selected day, the arrow keys move it by a day
+  or a week (crossing into other months), Page Up and Page Down by a
+  month (same day, or the month's last), Home to today; on the month and
+  media buttons, Left and Right move along them, Down (from the month
+  buttons) or Up (from the media buttons) goes to the selected day, Enter
+  or Space presses them.
+- Escape closes the list; the clock gets the keyboard back when the list
+  was opened from it.
+- The focused control has the focus ring (a ring around the selected
+  day) and is the one marked focused on the accessibility bus. There the
+  calendar also has the month's title, the days (the selected one
+  selected) and a list of the selected day's events ("TIME: SUMMARY",
+  "All Day: SUMMARY", or "No Events").

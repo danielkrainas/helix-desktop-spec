@@ -202,11 +202,26 @@ focus and the caret on it for the magnifier. Missing or unclear:
   menus), the workspace popup, the on-screen keyboard, the dwell click
   type window, desktop icons, the screenshot and area picker, the break
   screen, "Customize Panel…", the Extensions dialog, the OSD, panel
-  tooltips and monitor labels. Keyboard navigation inside quick
-  settings, the notification list and the dock does not exist, so these
-  have no focus to follow. Text fields expose their text but no
-  character extents, and `EditableText` changes nothing. The calendar's
-  month title and events are not exposed.
+  tooltips and monitor labels. Keyboard navigation inside the dock
+  does not exist, so it has no focus to follow. Text fields expose their text but no
+  character extents, and `EditableText` changes nothing. The calendar's events are
+  exposed as plain labels (no times or durations as values).
+- **Large Text on the lock screen and some shell surfaces.** The shell
+  scales its text and the boxes holding it with `text-scaling-factor`
+  (`contracts/wayland/README.md`, "Large Text in the shell"), checked in
+  renders at 1.25 and 1.5 on a 1280×720 screen for the panel, menus,
+  quick settings, the notification list and calendar, and the question
+  dialogs. The launcher and app grid, switcher, prompts, banners, dock
+  tooltips and on-screen keyboard follow the factor but were not rendered
+  at it; the lock screen keeps its sizes. How GNOME Shell lays these out
+  at large text sizes (beyond scaling its stylesheet's font sizes) is not
+  documented here.
+- **High contrast details.** In high contrast all text is white, so a
+  disabled menu entry looks like an enabled one (it is still skipped by
+  the keyboard); how GNOME's high-contrast stylesheet marks disabled
+  items was not checked. Surfaces other than the panel, quick settings,
+  menus, the notification list and calendar, and the question dialogs
+  (rendered in high contrast) were not reviewed.
 - **The published interface is untested with a real screen reader.**
   The tree, roles, names, states, focus and actions are tested over
   AT-SPI against a private accessibility bus, but not with Orca on a
