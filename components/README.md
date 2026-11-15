@@ -211,7 +211,7 @@ above, with white outlines), whatever `accent-color` says, so that what
 it guarantees does not depend on the user's choice.
 
 - Menus light the hovered or keyboard-selected row with Hovered.
-- Quick settings' switches and Power Mode buttons are Control when off
+- Quick settings' switches (pills) and round buttons are Control when off
   and Accent fill when on (their words in its text color); the Wi-Fi and Bluetooth lists sit in a Well;
   sliders show their whole Track, rounded, with a round Text-colored
   knob at the value.
@@ -246,7 +246,7 @@ pieces apart is white lines rather than shades:
 
 - Popovers and dialogs have a 2 px white edge; separators and the
   notification list's column divider are white.
-- Controls that are off (switches, Power Mode buttons, buttons, the
+- Controls that are off (switches, quick settings' round buttons, buttons, the
   calendar's month and media buttons, check boxes), list wells and
   slider tracks have a 1 px white outline; controls that are on keep the
   accent fill and the outline.

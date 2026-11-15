@@ -1426,42 +1426,61 @@ prompts follow the factor but have not been rendered at it.
 
 The panel's system pill (`helix:power`) and `org.gnome.shell.keybindings
 toggle-quick-settings` (default Super+S) open or close a menu under the
-panel's right end, holding, from the top:
+panel's right end (400 logical px wide, growing with the text scale),
+holding, from the top:
 
-- **Volume**: a slider for the default output's volume (0 to 100 %, or to
-  150 % with `org.gnome.desktop.sound allow-volume-above-100-percent`) and
-  the level in percent; clicking the slider sets the volume where it was
-  clicked (and unmutes); clicking "Volume" mutes or unmutes. Without a
-  sound server (`pactl`) the row is left out.
+- **The top row**: the battery's icon and charge in percent (when UPower
+  has a battery), then round buttons with symbolic icons at the row's
+  end: **Take Screenshot** (closes the menu and opens the screenshot UI,
+  as `show-screenshot-ui`), **Settings** (closes the menu and opens
+  helix-settings-app, else gnome-control-center; left out when neither is
+  installed), **Lock Screen** (when locking is allowed) and **Power Off /
+  Log Out**, which opens (or closes) the other power actions logind
+  allows in a list just under the row: Switch User… (see
+  `org.gnome.desktop.lockdown.md`, "User switching"), Suspend, Log Out…,
+  Restart…, Power Off…. Screenshot and Settings are not shown on the lock
+  screen. The top row stays in sight while the rest scrolls.
+- **Volume**: a round flat button with the volume's icon (muted, low,
+  medium, high, overamplified) that mutes or unmutes, then a slider for
+  the default output's volume (0 to 100 %, or to 150 % with
+  `org.gnome.desktop.sound allow-volume-above-100-percent`) and the level
+  in percent; clicking the slider sets the volume where it was clicked
+  (and unmutes). Without a sound server (`pactl`) the row is left out.
 - **Brightness**, when a monitor's backlight can be controlled
-  (DisplayConfig `Backlight`): a slider setting every such monitor to the
-  same fraction of its range.
+  (DisplayConfig `Backlight`): the brightness icon and a slider setting
+  every such monitor to the same fraction of its range.
 - Extensions' sliders (`contracts/extensions/README.md`), in the order
   of `org.helix.shell` `quick-settings`.
 - Sliders are a rounded track (6 px) filled up to the value, with a round
   knob (18 px) at the value; high contrast outlines the track and knob.
-- Switches, highlighted while on, in rows of three, in the order of
+- Switches are pills (56 px tall), two to a row: an icon (in the color of
+  their words; an extension's own icon), a bold title and, when there is
+  one, a subtitle under it: the connected network's name for Wi-Fi, the
+  connected device (or how many) for Bluetooth, the active mode for
+  Power Mode, an extension's subtitle. They are Control when off and the
+  accent fill when on. A switch with a list or menu has its last 32 px as
+  a separate part with a chevron (pointing down while its list is open),
+  2 px apart. They come in the order of
   `org.helix.shell` `quick-settings` (only those listed; extensions'
   toggles too; ids
   `helix:wifi`, `helix:bluetooth`, `helix:airplane-mode`,
   `helix:auto-rotate`, `helix:night-light`, `helix:dark-style`,
   `helix:do-not-disturb`; default: all, in this order): **Wi-Fi** (when
-  NetworkManager runs; its label is the connected network's name while
-  connected), **Bluetooth** (when BlueZ has an adapter), **Airplane
+  NetworkManager runs), **Bluetooth** (when BlueZ has an adapter), **Airplane
   Mode** (when either is there), **Auto Rotate** (when iio-sensor-proxy
   has an accelerometer: `orientation-lock`, inverted), **Night Light**
   (`org.gnome.settings-daemon.plugins.color night-light-enabled`), **Dark
   Style** (`org.gnome.desktop.interface color-scheme` `prefer-dark`, else
   `default`) and **Do Not Disturb** (`org.gnome.desktop.notifications
-  show-banners`, inverted). The Wi-Fi and Bluetooth switches have a "›"
-  at their right end that opens (or closes) their list under the
-  switches; only one list is open at a time.
-- **Power Mode**, when power-profiles-daemon runs: one button per profile
-  it offers (Power Saver, Balanced, Performance), the active one
-  highlighted; clicking one makes it active.
-- The power actions logind allows: Lock Screen, Switch User… (see
-  `org.gnome.desktop.lockdown.md`, "User switching"), Suspend, Log Out…,
-  Restart…, Power Off….
+  show-banners`, inverted); then, after them, **Power Mode** when
+  power-profiles-daemon runs (*GNOME does not document this; Helix's
+  choice:* it is on while the mode is not Balanced; clicking it switches
+  between Balanced and Power Saver, or the first other mode offered). The
+  Wi-Fi, Bluetooth and Power Mode switches have a "›" part that opens (or
+  closes) their list under the switches; only one list is open at a
+  time. Power Mode's list has one row per profile offered (Power Saver,
+  Balanced, Performance) with its icon, the active one checked; choosing
+  one makes it active.
 
 Escape or a click outside closes it; choosing a power action closes it
 too. The values are read when it opens and after each change.
@@ -1471,10 +1490,9 @@ panel (8 logical px kept free at the bottom):
 
 - The Wi-Fi or Bluetooth list shows at most six rows; more scroll inside
   it (the mouse wheel over it), with a thin bar showing where it is.
-- When the whole menu still does not fit, the part above the power
-  actions (sliders, switches, the list, Power Mode) scrolls with the
-  wheel, with a thin bar at its right edge; the power actions stay in
-  sight below it.
+- When the whole menu still does not fit, the part under the top row
+  (the power actions when open, sliders, switches, the list) scrolls with
+  the wheel, with a thin bar at its right edge; the top row stays.
 - Moving the keyboard focus to a control out of sight scrolls it into
   sight.
 
@@ -1487,17 +1505,17 @@ Keyboard:
   focus. Opened by a click it takes the keyboard on demand (when clicked);
   the first Tab or arrow then focuses the first control (Shift+Tab, Up or
   Left the last).
-- The focus goes, with Tab and Shift+Tab (wrapping), through: the sliders
-  (Volume, then "Volume" as a mute button, Brightness, extensions'
-  sliders), the switches row by row (each switch, then its "›"), the
-  open list's rows, the Power Mode buttons, the power actions. Up, Down,
+- The focus goes, with Tab and Shift+Tab (wrapping), through: the top
+  row's buttons, the power actions (when open), the sliders (the mute
+  button, Volume, Brightness, extensions' sliders), the switches row by
+  row (each switch, then its "›"), the open list's rows. Up, Down,
   Left and Right move to the nearest control that way (Left and Right
   within a row).
 - On a slider, Left and Right change the value by its step (5 % of its
   range), Page Down and Page Up by two steps, Home and End to its ends;
   held keys repeat.
-- Space or Enter does what a click does: flips a switch, chooses a row,
-  a power mode or a power action. On a "›" it opens the list, focusing
+- Space or Enter does what a click does: flips a switch, presses a
+  button, chooses a row, a power mode or a power action. On a "›" it opens the list, focusing
   its first row (or closes it).
 - Escape closes an open list first (its "›" taking the focus), then the
   menu. Closed, the keyboard goes back to where it was: the panel item
