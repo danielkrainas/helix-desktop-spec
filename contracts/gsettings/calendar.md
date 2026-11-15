@@ -12,6 +12,9 @@ The top bar's clock, the lock screen's clock and the times in this list
 follow `org.gnome.desktop.interface`:
 
 - `clock-format`: `24h` writes times as `14:05`, `12h` as `2:05 PM`.
+  The patterns are translatable, and names (weekdays, months, AM/PM)
+  are the locale's, so other languages write these their own way
+  (`components/i18n.md`, "Formats"); the examples here are English.
 - In the top bar only: `clock-show-weekday` puts the abbreviated weekday
   first (`Thu`), `clock-show-date` the abbreviated month and the day
   (`Nov 12`), and `clock-show-seconds` adds seconds (`14:05:09`). With

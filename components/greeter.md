@@ -47,8 +47,8 @@ order; the greeter makes no assumptions about them.
 On every monitor a dark background (a vertical gradient), and on the
 first monitor the compositor announces (the next one if it goes away):
 
-- **Clock** at the top: the time (`%H:%M`) and the date (`%A, %B %-d`)
-  in the system locale.
+- **Clock** at the top: the time and the date (`%A, %B %-d`) in the
+  system locale (see "Language" and "Clock" below).
 - **User list**: the people who can log in, by display name, most
   recently logged in first. A user is listed when AccountsService
   (`org.freedesktop.Accounts`, `ListCachedUsers`) knows them and they are
@@ -73,7 +73,8 @@ first monitor the compositor announces (the next one if it goes away):
 - **Session** button (bottom right): the sessions installed in
   `/usr/share/wayland-sessions` (desktop entries; `Hidden` or
   `NoDisplay` true are left out; `TryExec` must exist, looked up in
-  `PATH` when relative), by `Name` (not localized). The
+  `PATH` when relative), by their name in the system language
+  (`Name[xx]`, see "Language"). The
   last session used is selected at start, else the Helix session, else
   the first. X11 sessions (`/usr/share/xsessions`) are not offered: greetd
   does not start an X server, so they would need a wrapper that starts
@@ -91,6 +92,38 @@ Keyboard focus starts in the user list (or the username field); Tab
 moves between the list or field, the session button and the power
 buttons. The look follows the lock screen's (centered column, text fields as
 in "Text fields" in `components/README.md`).
+
+## Language
+
+The login screen runs before anyone logs in, so it follows the system
+locale (`components/i18n.md`): the environment greetd gives it when that
+names a locale (`LANG`, `LC_ALL` or `LC_MESSAGES`), else
+`/etc/locale.conf` (systemd's, as `localectl set-locale` writes it), else
+`/etc/default/locale` (Debian's). Its own words ("Username", "Back",
+"Restart…", the power questions, the retry message) come from the
+`helix-desktop` catalogue; month and weekday names and the time format
+from the locale. A right-to-left language mirrors the screen
+(`components/i18n.md`, "Right-to-left languages").
+
+Each session's name is the entry's localized `Name[xx]` for the system
+locale, chosen as the Desktop Entry Specification orders them
+(`lang_COUNTRY@MODIFIER`, `lang_COUNTRY`, `lang@MODIFIER`, `lang`), else
+`Name`.
+
+## Clock
+
+The time is 12- or 24-hour from, in order:
+
+1. `clock-format` in the configuration (`12h` or `24h`);
+2. `org.gnome.desktop.interface clock-format` as the greeter user reads
+   it (the schema's default, vendor overrides and system dconf
+   databases: the login screen has no user settings of its own);
+3. the locale's own time format (12-hour when its `LC_TIME` time format
+   uses AM/PM, as `en_US` does).
+
+*GNOME does not document this; Helix's choice:* the order above. The
+patterns are translatable (`%H:%M`, `%l:%M %p`, the date's
+`%A, %B %-d`), so a language orders them its own way.
 
 ## Starting the session
 
@@ -116,6 +149,7 @@ under `/var/lib/greetd`), then exits with status 0.
 user-list = true          # false: always ask for the username
 banner = "Authorized use only."   # text under the clock
 accent = "blue"           # the accent color (focus rings, the confirming button)
+clock-format = "24h"      # 12h or 24h; unset: see "Clock"
 ```
 
 `accent` takes the names of `org.gnome.desktop.interface accent-color`
@@ -131,15 +165,16 @@ not documented, and the greeter does these its own way:
 
 - user pictures: initials in a coloured circle instead of AccountsService
   `IconFile`;
-- the clock: always 24-hour (`clock-format` is not read);
+- the clock: `clock-format` from the greeter's configuration, the
+  system's `org.gnome.desktop.interface` defaults or the locale (see
+  "Clock"), as there is no user whose setting it could read;
 - the session: the greeter remembers the last user and session itself
-  (AccountsService `Session` is not read); session names are not
-  localized;
+  (AccountsService `Session` is not read);
 - the monitor: the login screen is on the first monitor the compositor
   announces, not the configured primary.
 
-Using AccountsService pictures and sessions, `clock-format` and the
-primary monitor is helix-desktop#79.
+Using AccountsService pictures and sessions and the primary monitor is
+helix-desktop#79.
 
 ## Not yet done
 

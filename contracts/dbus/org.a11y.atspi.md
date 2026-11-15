@@ -61,6 +61,10 @@ publishes through them.
 Names, states and places come from what the surface last painted, and
 change when it does. Objects keep their identity across changes (a
 changing clock is the same label; a toggled switch is the same switch).
+Names, descriptions and announcements are in the user's language: the
+same translated strings the surface shows (`components/i18n.md`). On a
+surface mirrored for a right-to-left language, places are those of its
+left-to-right layout; actions still reach the control under them.
 
 - **Lock screen**: resting (before a key or click), labels for the clock
   and the date, the media player and notifications as below, and a

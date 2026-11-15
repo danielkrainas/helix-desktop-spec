@@ -171,6 +171,12 @@ pieces apart is white lines rather than shades:
 The login screen, run by greetd so that no GNOME component is needed to
 log in: see `components/greeter.md`.
 
+### Languages
+
+The shell, lock screen, dialogs, portals' dialogs and the login screen
+are translated and follow a locale for names and formats; right-to-left
+languages mirror the shell's layouts: see `components/i18n.md`.
+
 ## Session services
 
 Session management, idle monitoring, screen locking, and related session-level services.

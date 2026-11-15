@@ -94,6 +94,18 @@ magnifier, high contrast, Large Text, reduced motion, sticky/slow/bounce
 and mouse keys, dwell click, hot corner, Wellbeing break reminders,
 desktop icons, removable-media handling, and privacy indicators.
 
+### Languages
+
+The shell, lock screen, the system dialogs the shell draws, the portals'
+own dialogs and the login screen are translatable (gettext, one
+catalogue, with plural forms) and follow the user's locale, or the
+system's for the login screen: month and weekday names, translatable
+date and time patterns with `clock-format`, the locale's first weekday,
+number, percentage and size formats, and accessible names. Right-to-left
+languages mirror the shell's own layouts and draw bidirectional text
+(`components/i18n.md`). No language is translated yet: catalogues come
+from translators (`TRANSLATING.md` in helix-desktop).
+
 ## Not supported
 
 | What | Why |
@@ -103,7 +115,7 @@ desktop icons, removable-media handling, and privacy indicators.
 | GDM | GDM's login screen *is* GNOME Shell in a login mode, and distributions make GDM depend on it. Helix can still be chosen from GDM, and ships its own greetd greeter (`components/greeter.md`). |
 | X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helix-desktop#76). |
 | Accessibility on the Helix login screen | Not written yet (screen reader, on-screen keyboard, magnifier, high contrast; helix-desktop#77). |
-| Translations of the shell | Not written yet: the shell's text, clock and calendar names are English (helix-desktop#81). |
+| Text shaping for Arabic and Indic scripts | Helix's own text renderer has no shaping engine: those scripts draw letter by letter (Hebrew and scripts without shaping are fine). Right-to-left surfaces also publish left-to-right bounds on the accessibility bus and keep left-to-right arrow-key order (`components/i18n.md`, "Not done yet"). |
 | Some shell UI on the accessibility bus | Not written yet: the overview, pop-up menus, workspace popup, on-screen keyboard, screenshot UI and a few dialogs are not published to screen readers (`contracts/dbus/org.a11y.atspi.md`, "Not covered"; helix-desktop#73). |
 | `org.freedesktop.a11y.PointerLocator` | Not served yet (helix-desktop#75). |
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
@@ -116,7 +128,7 @@ desktop icons, removable-media handling, and privacy indicators.
 | Bluetooth device settings in the shell | Pairing and connecting only; device settings belong to Settings. |
 | Desktop Icons NG's own settings | That is an Ubuntu extension; Helix shows a simple set of desktop icons from `show-desktop-icons` only. |
 | GNOME's private helpers and files | Not public contracts: `gnome-shell-calendar-server` (Helix reads Evolution Data Server directly), libgweather (Helix asks MET Norway directly), the Wellbeing history file, IBus emoji and Unicode modes in the shell (left to IBus itself). |
-| Login screen details GDM has | AccountsService user pictures and per-user session memory, the `clock-format` setting, the primary monitor and localised session names are not used by the greeter (helix-desktop#79). |
+| Login screen details GDM has | AccountsService user pictures and per-user session memory and the primary monitor are not used by the greeter (helix-desktop#79). |
 | Greeter on Fedora and Arch | Packaged for Debian and Ubuntu only so far; greetd's user and paths differ elsewhere (helix-desktop#78). |
 
 ## Differs on purpose
