@@ -779,6 +779,16 @@ keyboard follows their `keyboard_interactivity`:
 - A top or overlay surface asking for `exclusive` gets the keyboard as
   soon as it is mapped (and after each commit, if something else took
   it), until it goes away or stops asking.
+- A pointer button pressed (or a touch) on a window or the bare desktop
+  while such a surface has the keyboard ends its claim: the keyboard
+  goes to what was clicked, and the surface's later commits don't take
+  it back. It gets the keyboard again when it is clicked, or when it
+  stops asking for `exclusive` and then asks again. The shell, seeing
+  the panel or dock lose the keyboard this way, leaves its keyboard
+  mode (the focus ring goes away) as if Escape had been pressed.
+  *wlr-layer-shell leaves this to the compositor and GNOME does not
+  document it; Helix's choice:* a click elsewhere always ends the
+  panel's or dock's keyboard mode.
 - An `on_demand` surface gets the keyboard when a pointer button is
   pressed on it (a menu opened by a click), not when it appears.
 - A surface that has the keyboard and goes away, or commits asking for
