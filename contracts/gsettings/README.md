@@ -39,6 +39,18 @@ Source: https://gitlab.gnome.org/GNOME/gsettings-desktop-schemas (tag 51.0)
 
 Additional shell-specific schemas live in `gnome-shell` (e.g. `org.gnome.shell`).
 
+### Older installed schemas (Helix)
+
+The installed GNOME schemas can be older than the GNOME 51 keys Helix
+knows (an older release, or a partial upgrade), or missing. *GNOME does
+not document this; Helix's choice:* the shell never stops over it. A
+schema that is not installed, or a key the installed schema lacks (or
+gives another type), reads as the type's empty value (`false`, `0`, an
+empty string or list) unless the reader names a better default, and is
+logged once; writes to such a key are skipped. Helix's own schemas work
+the same way with their documented defaults (`org.helix.shell.md`,
+"Older installed schemas").
+
 ## Key contracts
 
 Schemas Helix depends on directly have a key table (key, GVariant type,
