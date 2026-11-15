@@ -30,6 +30,7 @@ This is a clean-room effort focused on public contracts, not a fork of GNOME sou
 - `SCOPE.md` — what “compatible” means and current boundaries
 - `components/` — high-level component breakdown
 - `contracts/` — structured contract data (D-Bus XML, GSettings schemas, Wayland notes, and `contracts/extensions/` for Helix's own extension API)
+- `gnome-compatibility.md` — summary of what Helix supports from GNOME, what it doesn't (and why), and where it differs on purpose
 - `gaps.md` — living log of missing or unclear contracts
 - `proposals/` — designs for Helix's own features (for example its extension system), before they become contracts
 
