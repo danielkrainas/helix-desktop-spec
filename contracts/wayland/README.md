@@ -1376,16 +1376,17 @@ to 3; other values are clamped):
   (32 logical px at 1; its exclusive zone follows), menu widths and row
   heights, quick settings' width, rows, switches and buttons, the
   notification list's and calendar's columns and lines, banners, dialog
-  widths and lines, the launcher's search field and result rows, and the
-  app grid's label room.
+  widths and lines, the launcher's search field and result rows, the
+  window switcher's rows, the screen sharing dialog's rows and buttons,
+  the dock's tooltips, the on-screen display, and the app grid's cells.
 - Icons keep their sizes.
 - The lock screen keeps its own sizes for now.
 
 Checked in renders at 1.25 and 1.5 on a 1280×720 screen: the panel,
-menus, quick settings, the notification list and calendar, and the
-question dialogs. The launcher and app grid, switcher, prompts, banners,
-dock tooltips and on-screen keyboard follow the factor but have not been
-rendered at it (helix-desktop#16).
+menus, quick settings, the notification list and calendar, a banner with
+buttons, the question dialogs, the dock with a tooltip, app grid cells
+and the on-screen display. The launcher's results, the switcher and
+prompts follow the factor but have not been rendered at it.
 
 ## Quick settings (Helix)
 
