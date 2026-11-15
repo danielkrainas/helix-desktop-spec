@@ -1050,7 +1050,7 @@ in the overview (which has its dash) or the launcher.
   (or beside) each running app, one mark per window (at most four):
   `running-indicator-style` `DOTS` / `DEFAULT` dots, `SQUARES` / `BINARY`
   squares, `DASHES` / `SEGMENTED` dashes, `SOLID` / `METRO` one bar; the
-  other styles are dots. The focused app's icon is highlighted. With
+  other styles are dots. With
   `show-icons-notifications-counter`, an app with notifications in the
   list has a red badge with their number (9+ above nine). Pointing at an
   item shows its name (the app's, the drive's, "Trash", "Show Apps")
@@ -1058,6 +1058,18 @@ in the overview (which has its dash) or the launcher.
   windows' titles, as many as the dock counts for it (newest used first,
   at most five, then "N more"; "Untitled" for a window without one).
   With `hide-tooltip` nothing is shown on pointing.
+- **States.** *GNOME does not document this; Helix's choice:* three
+  states are told apart by shape as well as color. The item under the
+  pointer has a light square behind its icon (stronger while pressed;
+  a white outline in high contrast) and only it. The focused window's
+  app has its running marks joined into one wide pill (at least 18 px)
+  in the accent, whatever the indicator style. An app wanting attention
+  has an orange dot at its icon's top left corner (and wiggles, below).
+  The item with keyboard focus has the focus ring.
+- **Tooltips.** *GNOME does not document this; Helix's choice:* an
+  item's name shows once the pointer has rested on it for 300 ms; moving
+  on to another item while one is shown, or within half a second of it
+  going, shows the next at once.
 - **Showing and hiding.** With `dock-fixed` the dock is always shown and
   keeps its room (windows are not placed under it). Otherwise it is above
   windows, and with `intellihide` it hides while a window of the current
@@ -1147,7 +1159,7 @@ in the overview (which has its dash) or the launcher.
 - Apps' counts, progress and urgency from
   `com.canonical.Unity.LauncherEntry` show on their icons
   (`contracts/dbus/com.canonical.Unity.LauncherEntry.md`); an app's count
-  replaces its notification count. Urgent apps get an orange background.
+  replaces its notification count. Urgent apps get an orange dot.
   When an app turns urgent, the dock shows for 2 seconds
   (`show-dock-urgent-notify`, the default) and its icon wiggles along
   the bar for 1.6 seconds (`dance-urgent-applications`, the default; not
@@ -1159,7 +1171,7 @@ in the overview (which has its dash) or the launcher.
 - With `isolate-locations` (the default) a file manager window showing a
   drive or the Trash belongs to that drive's or the Trash's item, not to
   the file manager. That item gets the window's running dot and the
-  focused-app highlight, and a click on it brings the window up (the most
+  focused-app pill, and a click on it brings the window up (the most
   recently used one when there are several) instead of opening a new
   one. The file manager is the app that opens folders (the default app
   for `inode/directory`). Helix knows what a window shows only by its
