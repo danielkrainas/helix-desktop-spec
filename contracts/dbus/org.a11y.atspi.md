@@ -138,9 +138,22 @@ changing clock is the same label; a toggled switch is the same switch).
   `Clear`), "No Notifications" when empty; the calendar's `Previous
   Month`/`Next Month` and day buttons ("14 November 2026"), media
   buttons, `Clear`, and `Do Not Disturb` (a toggle button).
-- **Dock**: a `tool bar` `Dock` of buttons: apps by their names
-  (described `Running` with a window open), drives, extension items,
-  `Trash`, and `Show Apps` (pressed while the launcher is open).
+- **Dock**: a `tool bar` `Dock` of buttons: apps by their names,
+  drives, extension items, `Trash`, and `Show Apps` (pressed while the
+  launcher is open). Each item's description says what the dock paints
+  on it, in this order, comma-separated: its windows ("1 window", "3
+  windows"; at most four are counted, as there are at most four marks),
+  its badge ("4 new"), its progress bar ("45 % done") and wanting
+  attention ("needs attention"); empty when none applies. The item of
+  the focused window's app (or drive, or Trash) is `selected`. As the
+  dock is drawn again when any of these change, the change reaches
+  clients as AT-SPI events (`object:property-change:accessible-description`,
+  `object:state-changed:selected`), so a screen reader can announce
+  "Mail, 1 window, needs attention".
+  *GNOME does not document this; Helix's choice:* the words and their
+  order; AT-SPI's `active` state, which GNOME's dash does not use for
+  this either, is not available to the shell's AT-SPI layer, so the
+  focused app's item is `selected` instead.
 
 ## Actions
 
