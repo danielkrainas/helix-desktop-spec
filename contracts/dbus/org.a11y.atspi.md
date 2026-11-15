@@ -95,15 +95,16 @@ changing clock is the same label; a toggled switch is the same switch).
   one `list item` per monitor (connector as description; selected when
   picked, if several may be), `Cancel`, and `Share` when several may be.
 - **Top bar**, left to right as placed: `Apps` (a toggle button, pressed
-  while the launcher is open), `Workspace N of M` (when there are
-  several), the clock (a button named by the time, expanded while the
+  while the launcher is open, described `Workspace N of M`; a
+  `Workspaces` button alike when only `helix:workspaces` is shown), the clock (a button named by the time, expanded while the
   notification list is open; described "Notifications and calendar",
   plus ", unread notifications" while the dot shows), one button per
   status icon (named by its title, else its tooltip title; described by
   the tooltip text), `Accessibility`, the input source (named by its
   indicator), `System` (described by the status icons in words, e.g.
   "Wi-Fi Home, Volume muted, Battery 80%, charging, Microphone in use";
-  expanded while quick settings is open), `Power`, extension items (their
+  expanded while quick settings is open; the status icons and the power
+  icon are this one button), extension items (their
   accessible name, else label, tooltip or name), `Sharing` (a label) and
   `Recording` (a button that stops it). With `switch-panels`, the
   control with the focus ring is focused.

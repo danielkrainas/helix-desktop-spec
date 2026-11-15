@@ -1227,19 +1227,29 @@ zone shows, and in which order (left to right), are `org.helix.shell`
 
 | Id | Item | Shown | A click |
 |----|------|-------|---------|
-| `helix:apps` | "Apps" | always | opens or closes the app launcher |
-| `helix:workspaces` | one dot per workspace, the active one wide (`contracts/gsettings/workspaces.md`) | with more than one workspace | nothing |
-| `helix:clock` | the date and time, with a dot while there are unseen notifications | always | opens or closes the notification list |
+| `helix:apps` | the workspace indicator: one round dot per workspace (at most 12), the active one a wide pill (`contracts/gsettings/workspaces.md`); named "Apps" on the accessibility bus | always | opens or closes the app launcher |
+| `helix:workspaces` | the same indicator | with more than one workspace, and only when `helix:apps` is not in the panel | opens or closes the app launcher |
+| `helix:clock` | the date and time in bold, with a dot while there are unseen notifications | always | opens or closes the notification list |
 | `helix:tray` | apps' status icons (`contracts/dbus/org.kde.StatusNotifierItem.md`) | while an item is shown | see that file |
 | `helix:accessibility` | the accessibility indicator ("Accessibility menu") | see "Accessibility menu" | opens its menu |
 | `helix:keyboard` | the input source indicator (`contracts/gsettings/input-settings.md`) | with two or more input sources | opens its menu |
-| `helix:status` | the system status icons ("System status") | while it has an icon | opens quick settings |
-| `helix:power` | "Power" | always | opens or closes quick settings |
+| `helix:status` | the system status icons ("System status") | only when `helix:power` is not in the panel (it shows them) | opens quick settings |
+| `helix:power` | the system pill: the status icons, then a power icon (`system-shutdown-symbolic`); one button "System" on the accessibility bus | always | opens or closes quick settings |
 
 Default: `helix:apps` and `helix:workspaces` on the left, `helix:clock`
 in the center, then `helix:tray`, `helix:accessibility`,
 `helix:keyboard`, `helix:status` and `helix:power` on the right.
 
+- **Pills.** *GNOME does not document this; Helix's choice of
+  measures:* every item that reacts to clicks (all built-in items but
+  the status icons, which have their own, and the privacy indicators)
+  is a pill as tall as the panel less 4 px above and below: clear at
+  rest, a light fill (white at 15 %) under the pointer, a stronger one
+  (25 %) while pressed or while what it opens is open (the launcher,
+  the notification list, quick settings); a white outline in high
+  contrast (2 px for pressed or open). Keyboard focus is the focus ring
+  around the pill. A click acts when the button is let go over the item
+  it was pressed on; moving off while pressed cancels it.
 - **Placing.** Left items are placed from the panel's left end, right
   items from its right end, in their order, 4 pixels apart. Center items
   are centered on the panel, but moved right of the left items or left
