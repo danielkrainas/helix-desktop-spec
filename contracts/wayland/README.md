@@ -872,24 +872,35 @@ shows the active workspace's windows that are on it (by their middle),
 laid out the same way. It is shown by the overlay key, by
 `org.gnome.shell.keybindings toggle-overview`, and by setting
 `org.gnome.Shell` `OverviewActive`; the same key again, Escape, or setting
-`OverviewActive` false hides it. It holds, from the top:
+`OverviewActive` false hides it. On the primary monitor it lies under the
+panel, which stays in sight (its clock, status and privacy indicators
+keep working); on the other monitors it covers the whole monitor. It
+holds, from the top:
 
-- **A search field.** Typing opens the application launcher with what was
-  typed as its search (see "Window switching" for the launcher's window
-  results).
-- **Workspace thumbnails**, one per workspace in order: a small picture of
-  the primary monitor with the windows on that workspace where they are
-  (minimized windows left out; windows shown on every workspace in all of
-  them), the active workspace outlined. Clicking one switches to it; the
+- **A search field**, drawn as the launcher's (see `components/README.md`,
+  "Text fields"). Typing opens the application launcher with
+  what was typed as its search (see "Window switching" for the launcher's
+  window results).
+- **Workspace thumbnails**, one per workspace in order, with rounded
+  corners: a small picture of the primary monitor (its wallpaper, a solid
+  color without one, black in high contrast) with the windows on that
+  workspace where they are (minimized windows left out; windows shown on
+  every workspace in all of them), the active workspace outlined in the
+  accent. Clicking one switches to it; the
   overview stays open and shows that workspace's windows.
 - **The active workspace's windows** (minimized ones and those on every
   workspace included) of this monitor, as pictures renewed about twice a
   second while the overview is open, in rows, each keeping its proportions and at most
-  its real size, its title below. The focused window is selected (the
-  focus ring; the window under the pointer has a light frame). Clicking a window
-  activates it and hides the overview. Its × button (shown on the picture
-  under the pointer and on the selected one) closes the window, as its
-  close button would. Dragging a window onto a workspace thumbnail moves it
+  its real size, with corners of 12 and a soft shadow. The window's icon
+  (48 logical px, see "Window switching") sits over the picture's bottom
+  center, and its title under that (in a small rounded box while the
+  window is under the pointer or chosen). The focused window is selected
+  (the focus ring, following the corners; the window under the pointer
+  has a light rounded outline). Clicking a window activates it and hides
+  the overview. Its close button, a round button with the close symbol
+  centered on the picture's top right corner (shown on the picture under
+  the pointer and on the selected one), closes the window, as its close
+  button would. Dragging a window onto a workspace thumbnail moves it
   to that workspace.
 
 **Keyboard.** *GNOME does not document this; Helix's choice:* Tab and
