@@ -9,10 +9,16 @@ follows `org.gnome.desktop.a11y.interface`
   (luminance below 0.4) and white when light; saturated colors (the accent,
   warnings) stay; opacity is kept. Pictures (wallpapers, window pictures,
   app icons) are not changed. Apps follow the key themselves. Since all
-  text is white, a disabled menu entry looks like an enabled one (the
-  keyboard still skips it; helix-desktop#74). Rendered and reviewed in
-  high contrast: the panel, quick settings, menus, the notification list
-  and calendar, and the question dialogs.
+  other text is white, *Helix's choice (GNOME does not document this):*
+  the labels of disabled menu entries and buttons and the placeholders
+  of empty fields ("Type to search…") are white at 60 % opacity, still
+  7:1 on black. A window picture that is not available (switcher tiles)
+  is outlined in white. Rendered and reviewed in high contrast: the
+  panel, quick settings, menus, the notification list and calendar, the
+  question dialogs, the dock and app grid, the launcher, banners and the
+  OSD. Not yet rendered in high contrast: the window overview and the
+  switcher (reviewed in code only: the switcher's selected row is the
+  accent with white text, as menus are).
 - `reduced-motion` `reduce`: the compositor's animations only fade
   (`contracts/wayland/README.md`, "Animations").
 - `show-status-shapes`: the quick settings switches show their state
