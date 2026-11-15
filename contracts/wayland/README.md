@@ -420,6 +420,21 @@ them, and unlocking happens after the fade-out.
   remaining monitors, and windows that no longer touch any monitor move
   onto the primary one. Maximized and fullscreen windows follow the size
   of the monitor they are on.
+- A monitor is *in full screen* while its topmost window is fullscreen
+  (dialogs of that window above it don't change this). There the
+  top-layer shell surfaces are hidden: not drawn, not in screenshots or
+  screencasts, and they take no pointer input or keyboard focus. This
+  hides the panel, normal notification banners and other clients' bars
+  over a full-screen game or video, as GNOME hides its top bar there.
+  Overlay-layer surfaces stay above the full-screen window: OSDs
+  (volume, brightness), menus, the overview and launcher, dialogs, and
+  banners of critical notifications, which the shell puts on the overlay
+  layer for this reason. *GNOME does not document which shell surfaces
+  show over a full-screen window; Helix's choice:* the on-screen
+  keyboard (`helix-osk`) stays shown, so the full-screen app can be
+  typed into, and so do the dock and its reveal edge (`helix-dock`,
+  `helix-dock-edge`), which the shell hides itself in full screen unless
+  `autohide-in-fullscreen` lets the pointer reveal it (see "Dock").
 
 ## Animations (Helix)
 

@@ -159,6 +159,11 @@ in order.
 - When its time is up the banner moves its notification to the list (see
   below); the notification is not closed, and the app is not told,
   except for `transient` notifications, which close with reason 1.
+- On a monitor in full screen (its topmost window is fullscreen; see
+  `contracts/wayland/README.md`, "Monitors and windows") normal and
+  low-urgency banners are hidden, as GNOME holds banners back there;
+  their time still counts, so they end up in the list. Critical banners
+  show above the full-screen window.
 - Replacing the notification on screen (`replaces_id`) starts its count
   again. When the screen locks, the banner goes back to the front of the
   queue and shows again, counting from the start, after unlocking.
