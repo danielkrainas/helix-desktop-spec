@@ -72,7 +72,7 @@ read as one product:
 
 | Piece | Corner radius (logical px) |
 |-------|----------------------------|
-| Popovers, dialogs, banners, the switcher, menus, the screenshot toolbar | 12 |
+| Popovers, dialogs, banners, the switcher, menus | 12 |
 | Cards and pictures (window pictures, tiles) | 12 |
 | Buttons, switches' tracks, fields, wells, keys | 8 |
 | Rows inside a popover or list (menu entries, search results, list rows) | 6 |
@@ -245,8 +245,8 @@ it guarantees does not depend on the user's choice.
   knob at the value.
 - The on-screen keyboard has its own key colors
   (`contracts/gsettings/screen-keyboard.md`, "Look"). The screenshot
-  toolbar's off toggles
-  are Control.
+  toolbar (a pill) has flat icon toggles: nothing behind them when off,
+  the accent fill when on.
 - The keyboard focus ring is one look everywhere: a 2 logical px outline
   of the accent, 2 px outside the focused control (a gap between them),
   following the control's corner radius (a pill around a panel item, a

@@ -84,13 +84,27 @@ this; Helix's choice:* the error for a cancelled call.)
 
 Shown by `InteractiveScreenshot` and by the `show-screenshot-ui` and
 `show-screen-recording-ui` keys (`contracts/gsettings/shell-keys.md`). It
-covers every monitor; a toolbar at the bottom of the primary monitor
-holds, from the left:
+covers every monitor; a toolbar, a rounded panel 40 logical px above the
+bottom of the primary monitor, holds from the left round-cornered icon
+toggles in groups (Helix's own symbols: a selection's corners, a monitor,
+a window; a camera, a video camera; an arrow), the toggle that is on in
+the accent fill, then a large round capture button (a white disc in a
+ring; red while Record is chosen) and a round close button. Under the
+pointer a toggle is lit (Hovered; pressed: Pressed) and a tooltip above
+the toolbar names it and its key ("Area (S)", "Capture (Enter)", "Close
+(Esc)"); its key is also its description on the accessibility bus. A
+click acts on release over the button (`components/README.md`, "Hover
+and press"). The buttons:
 
 - three modes, one chosen (S, C, W):
   - **Area** (the start): dragging with the primary button selects a
     rectangle on one monitor, which is shown undimmed with the rest
-    dimmed; dragging again replaces it;
+    dimmed, outlined in the accent with eight round white handles (its
+    corners and the middles of its edges) and its size in pixels (the
+    monitor's, "1280 × 720") in a small pill under it (above it at the
+    monitor's bottom). Dragging a handle moves those sides (past the
+    opposite side the rectangle flips); dragging inside it moves it,
+    kept on its monitor; dragging elsewhere selects a new one;
   - **Screen**: every monitor, nothing dimmed;
   - **Window**: the window under the pointer (topmost of the active
     workspace's windows) is outlined; clicking one selects it;
@@ -99,13 +113,15 @@ holds, from the left:
   cannot be recorded (choosing Record leaves Window for Area);
 - **Show Pointer** (P): whether the pointer is in the image or recording
   (off at the start);
-- **Capture** (or **Record**), also Enter or Space: takes the screenshot
-  of the selection, or starts recording it
+- **Capture** (or **Start Recording**), also Enter or Space: takes the
+  screenshot of the selection, or starts recording it
   (`contracts/dbus/org.gnome.Shell.Screencast.md`). It does nothing in
   Area mode before a rectangle is selected, or in Window mode before a
   window is.
+- **Close**: cancels, as Escape.
 
-Escape or the secondary button cancels. The UI is not part of the
+No hint line is shown (the keys are in the tooltips). Escape or the
+secondary button cancels. The UI is not part of the
 capture. Images are saved as
 `Screenshot From YYYY-MM-DD HH-MM-SS.png` (local time) in a `Screenshots`
 folder inside the pictures directory (as for base names above), which is

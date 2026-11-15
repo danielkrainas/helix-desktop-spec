@@ -232,13 +232,14 @@ left-to-right layout; actions still reach the control under them.
   named by their names, described `Folder` or `Application` when they are
   one; the selected one selected. A click selects; clicking the selected
   item again opens it, as a double click does.
-- **Screenshot UI**: the hint as a label, the area or window to be
-  captured as a label "Selected: W × H" at its place, and a `Screenshot`
-  tool bar: `Area`, `Screen`, `Window`, and (when recording is allowed)
-  `Screenshot` and `Record` as `radio button`s checked as chosen (`Window`
-  insensitive while recording), `Show Pointer` a toggle button, and
-  `Capture` (`Start Recording`). The area, point and window pickers show
-  the hint only: choosing a point or an area needs the pointer.
+- **Screenshot UI**: the area or window to be captured as a label
+  "Selected: W × H" at its place, and a `Screenshot` tool bar: `Area`,
+  `Screen`, `Window`, and (when recording is allowed) `Screenshot` and
+  `Record` as `radio button`s checked as chosen (`Window` insensitive
+  while recording), `Show Pointer` a toggle button, `Capture` (`Start
+  Recording`) and `Close`, each described by its key ("Key: S"). The
+  area, point and window pickers show their hint as a label only:
+  choosing a point or an area needs the pointer.
 - **Break screen**: a modal `dialog` named by the break's title, its
   message (announced), the time left as a `timer` ("4:59") and the
   `Delay` and `Skip` buttons.
