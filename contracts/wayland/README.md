@@ -404,6 +404,11 @@ them, and unlocking happens after the fade-out.
   "Window-management settings").
 - Maximizing fills the work area of the monitor a window mostly covers;
   fullscreen covers that monitor, or the monitor the client asks for.
+- Every `xdg_toplevel` (version 5 and later) is told Helix's capabilities
+  (`wm_capabilities`: window menu, maximize, fullscreen, minimize), and
+  (version 4 and later) `configure_bounds` gives the size of the work
+  area of the monitor it opens on, sent again when that work area
+  changes (a panel appears or goes).
 - Popup menus are kept inside the monitor their window mostly covers.
 - When a monitor goes away (unplugged or turned off), its layer surfaces
   are closed (`closed` event), so the shell creates them again on the
@@ -649,7 +654,12 @@ is split into quarters). These clicks are not passed to the app.
 **New windows.** They open on the monitor under the pointer, cascading
 from the top-left corner of its work area, or centered in it with
 `center-new-windows`. With `auto-maximize`, a new window at least as
-large as the work area (title bar included) opens maximized. Dialogs
+large as the work area (title bar included) opens maximized. A window
+that asks to be maximized, fullscreen or tiled before its first frame
+(`xdg_toplevel.set_maximized` before its first buffer) is not placed
+again when that frame arrives, whatever size the frame has: it stays
+where taking it over put it, so its window geometry (not the shadow
+margin around it) starts exactly at the work area's top-left corner. Dialogs
 (windows with a parent) open centered over their parent; with
 `attach-modal-dialogs`, a modal dialog (`xdg_dialog_v1` modal) opens
 centered at its parent's top edge and moves with its parent.
