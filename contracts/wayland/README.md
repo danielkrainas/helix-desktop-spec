@@ -533,10 +533,18 @@ border width.
 
 `ScreenshotWindow` with `include_frame` true includes the title bar.
 
-X11 windows that draw their own decorations (GTK's client-side
-decorations) can show dark corners outside their rounding: Helix does not
-claim the compositing manager selection (`_NET_WM_CM_S<n>`) or read
-`_GTK_FRAME_EXTENTS` (helix-desktop#72). Wayland windows are unaffected.
+**X11 windows with transparency.** Helix's window manager owns the
+compositing manager selection (`_NET_WM_CM_S0`), so X11 apps know their
+windows are composited, and an X11 window with an alpha channel (a
+32-bit ARGB visual) is blended over what is behind it: its frame window
+(the parent Helix reparents it into) has the window's own depth and
+visual, so the alpha survives. GTK's rounded client-side decorations
+show the desktop outside their rounding, as on Wayland.
+*GNOME does not document this; Helix's choice:* `_GTK_FRAME_EXTENTS` is
+not in `_NET_SUPPORTED`, so GTK draws X11 windows without its
+client-side shadow (GTK 3 uses its square "solid" decorations; GTK 4
+keeps the rounded corners), and an X11 window's own size is its visible
+size for placement, maximizing, tiling and snapping.
 
 ## Window menu and window keys (Helix)
 

@@ -126,7 +126,7 @@ from translators (`TRANSLATING.md` in helix-desktop).
 | Colour curves `st240`, `xvycc`, `st428` | Not written; other named curves, ICC profiles and Windows-scRGB are converted. HDR output is 8 bits per channel (Smithay picks one scanout format per GPU). Both are helix-desktop#80. |
 | Vertical workspace keys (`-up`/`-down`) | Workspaces are laid out in a row, as in GNOME 51, so they have nothing to do. |
 | `disable-workarounds` | Has no effect; Helix has no workarounds to disable. |
-| Compositing-manager selection for X11 apps | X11 GTK windows with client-side decorations can show dark corners: Helix does not claim `_NET_WM_CM_S<n>` or read `_GTK_FRAME_EXTENTS` (helix-desktop#72). Wayland windows are unaffected. |
+| Client-side shadows of X11 GTK windows | Helix does not advertise `_GTK_FRAME_EXTENTS`, so X11 GTK windows draw no shadow of their own (their transparency, e.g. rounded corners, is blended). Wayland windows are unaffected. |
 | Bluetooth device settings in the shell | Pairing and connecting only; device settings belong to Settings. |
 | Desktop Icons NG's own settings | That is an Ubuntu extension; Helix shows a simple set of desktop icons from `show-desktop-icons` only. |
 | GNOME's private helpers and files | Not public contracts: `gnome-shell-calendar-server` (Helix reads Evolution Data Server directly), libgweather (Helix asks MET Norway directly), the Wellbeing history file, IBus emoji and Unicode modes in the shell (left to IBus itself). |
