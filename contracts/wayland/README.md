@@ -909,6 +909,13 @@ four apps). A page has as many columns as fit (3 to 8, 120 pixels each)
 and rows (2 to 5, 118 pixels each); dots below the grid show the pages,
 the current one bright.
 
+An app whose icon cannot be found (its desktop file names no icon, or
+the icon theme does not have it) shows the icon theme's
+`application-x-executable` (else `application-x-executable-symbolic`,
+light grey), here and wherever the shell shows apps: the dock, the
+overview's dash, the window switcher and the lock screen's notification
+summary. Until an icon has been decoded, nothing is drawn in its place.
+
 - **Order.** `org.gnome.shell app-picker-layout` (`aa{sv}`: one dictionary
   per page, item id → `{'position': <i>}`; an item id is an app's desktop
   file id or a folder's id) gives the items' pages and order; items it no
