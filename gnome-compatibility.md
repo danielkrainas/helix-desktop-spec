@@ -130,7 +130,6 @@ from translators (`TRANSLATING.md` in helix-desktop).
 | Bluetooth device settings in the shell | Pairing and connecting only; device settings belong to Settings. |
 | Desktop Icons NG's own settings | That is an Ubuntu extension; Helix shows a simple set of desktop icons from `show-desktop-icons` only. |
 | GNOME's private helpers and files | Not public contracts: `gnome-shell-calendar-server` (Helix reads Evolution Data Server directly), libgweather (Helix asks MET Norway directly), the Wellbeing history file, IBus emoji and Unicode modes in the shell (left to IBus itself). |
-| Login screen details GDM has | AccountsService user pictures and per-user session memory and the primary monitor are not used by the greeter (helix-desktop#79). |
 | Greeter on Fedora and Arch | Packaged for Debian and Ubuntu only so far; greetd's user and paths differ elsewhere (helix-desktop#78). |
 
 ## Differs on purpose
@@ -218,8 +217,10 @@ code. The choices that users or developers are most likely to notice:
   words kept in memory only.
 - **Status icons** use the `org.kde.*` names apps actually use, although
   the specification says `org.freedesktop.*`.
-- **Login screen**: the greeter shows initials instead of pictures, a
-  24-hour clock, and remembers the last user and session itself.
+- **Login screen**: the greeter reads each user's session from
+  AccountsService but remembers sessions itself (it cannot write them
+  there), and takes its clock format from its own configuration or the
+  system defaults.
 
 Each of these is written down in its contract, marked *GNOME does not
 document this; Helix's choice:* where GNOME is silent, so other

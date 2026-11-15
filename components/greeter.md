@@ -45,7 +45,7 @@ order; the greeter makes no assumptions about them.
 ## What the screen shows
 
 On every monitor a dark background (a vertical gradient), and on the
-first monitor the compositor announces (the next one if it goes away):
+primary monitor (see "The monitor" below):
 
 - **Clock** at the top: the time and the date (`%A, %B %-d`) in the
   system locale (see "Language" and "Clock" below).
@@ -57,9 +57,10 @@ first monitor the compositor announces (the next one if it goes away):
   `nologin` or `false`). With `user-list = false` in the configuration,
   or when no users are found, a **Username** field is shown instead.
   The last user to log in through the greeter is selected at start.
-  Each user shows a coloured circle with their initial (account pictures
-  are not read). A list longer than the screen scrolls to keep the
-  selection in view.
+  Each user shows their picture, AccountsService's `IconFile` (PNG or
+  JPEG, up to 4 MB) cropped to a circle, as GDM does; without one, a
+  coloured circle with their initials, as on the lock screen. A list
+  longer than the screen scrolls to keep the selection in view.
 - Choosing a user (click, Return, or arrows then Return) begins a login
   (`create_session`). Each question greetd passes on is shown as a field
   labelled with the message text: `secret` questions hide what is typed
@@ -74,9 +75,13 @@ first monitor the compositor announces (the next one if it goes away):
   `/usr/share/wayland-sessions` (desktop entries; `Hidden` or
   `NoDisplay` true are left out; `TryExec` must exist, looked up in
   `PATH` when relative), by their name in the system language
-  (`Name[xx]`, see "Language"). The
-  last session used is selected at start, else the Helix session, else
-  the first. X11 sessions (`/usr/share/xsessions`) are not offered: greetd
+  (`Name[xx]`, see "Language"). The session follows the selected user,
+  as GDM's does: the session that user last started through the greeter,
+  else the one AccountsService remembers for them (`Session`, else
+  `XSession`, as GDM records it), when installed; else the last session
+  started through the greeter, else the Helix session, else the first.
+  A session picked from the menu stays picked while the selection moves.
+  X11 sessions (`/usr/share/xsessions`) are not offered: greetd
   does not start an X server, so they would need a wrapper that starts
   one (helix-desktop#76).
 - **Power** (bottom left): "Restart…" and "Power Off…" through logind
@@ -137,9 +142,24 @@ Once authentication succeeds, the greeter sends `start_session` with:
   `XDG_CURRENT_DESKTOP` (the entry's `DesktopNames`, `;` replaced by `:`)
   when it has one.
 
-It remembers the user and session in its state file
-(`$XDG_STATE_HOME/helix-greeter/state.json` of the greeter user, i.e.
-under `/var/lib/greetd`), then exits with status 0.
+It remembers the user, the session, and that session as the user's own
+in its state file (`$XDG_STATE_HOME/helix-greeter/state.json` of the
+greeter user, i.e. under `/var/lib/greetd`), then exits with status 0.
+*GNOME does not document this; Helix's choice:* the greeter does not
+write the session to AccountsService (`SetSession` needs an
+administrator's authorization, which the greeter user lacks; GDM's
+daemon does it as root), so it keeps its own per-user memory and reads
+AccountsService's as a fallback.
+
+## The monitor
+
+The login screen (clock, user list, buttons) is on the primary monitor:
+the logical monitor the compositor's `org.gnome.Mutter.DisplayConfig`
+`GetCurrentState` marks primary (on the greeter's private session bus;
+the greeter user's own `monitors.xml`, else the leftmost monitor), found
+among the Wayland outputs by connector name (`wl_output.name`). The
+greeter asks again when a monitor comes or goes. Without an answer, the
+first monitor announced. Other monitors show the background.
 
 ## Configuration
 
@@ -163,18 +183,12 @@ Unset or an unknown name: blue (the unknown name is logged).
 *GNOME does not document this; Helix's choice:* GDM's behaviour here is
 not documented, and the greeter does these its own way:
 
-- user pictures: initials in a coloured circle instead of AccountsService
-  `IconFile`;
 - the clock: `clock-format` from the greeter's configuration, the
   system's `org.gnome.desktop.interface` defaults or the locale (see
   "Clock"), as there is no user whose setting it could read;
-- the session: the greeter remembers the last user and session itself
-  (AccountsService `Session` is not read);
-- the monitor: the login screen is on the first monitor the compositor
-  announces, not the configured primary.
-
-Using AccountsService pictures and sessions and the primary monitor is
-helix-desktop#79.
+- the session: read from AccountsService but not written there; the
+  greeter's own per-user memory comes first (see "Starting the
+  session").
 
 ## Not yet done
 
