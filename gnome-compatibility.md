@@ -61,7 +61,10 @@ panels, GNOME apps and command-line tools work against Helix:
   (badges and progress in the dock), IBus input methods, calendar events
   from Evolution Data Server.
 - Accessibility: the AT-SPI bus is started as GNOME does, the shell
-  publishes its UI on it, and the compositor serves
+  publishes all of its UI on it (panel, menus, overview, launcher,
+  dialogs, notifications, dock, on-screen keyboard, screenshot UI; text
+  fields with character extents and editing; `contracts/dbus/org.a11y.atspi.md`),
+  and the compositor serves
   `org.freedesktop.a11y.KeyboardMonitor` for screen readers.
 
 ### Settings
@@ -116,7 +119,6 @@ from translators (`TRANSLATING.md` in helix-desktop).
 | X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helix-desktop#76). |
 | Accessibility on the Helix login screen | Not written yet (screen reader, on-screen keyboard, magnifier, high contrast; helix-desktop#77). |
 | Text shaping for Arabic and Indic scripts | Helix's own text renderer has no shaping engine: those scripts draw letter by letter (Hebrew and scripts without shaping are fine). Right-to-left surfaces also publish left-to-right bounds on the accessibility bus and keep left-to-right arrow-key order (`components/i18n.md`, "Not done yet"). |
-| Some shell UI on the accessibility bus | Not written yet: the overview, pop-up menus, workspace popup, on-screen keyboard, screenshot UI and a few dialogs are not published to screen readers (`contracts/dbus/org.a11y.atspi.md`, "Not covered"; helix-desktop#73). |
 | `org.freedesktop.a11y.PointerLocator` | Not served yet (helix-desktop#75). |
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
 | Mutter's input capture interface (`org.gnome.Mutter.InputCapture`) | Undocumented; the InputCapture portal is served through Helix's own private interface instead. |

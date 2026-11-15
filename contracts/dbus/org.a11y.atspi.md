@@ -55,6 +55,23 @@ publishes through them.
 | `Notification` | a banner | with `focus-active-notification` |
 | `Dock` | each monitor's dock | with `switch-panels` focus |
 | `On-screen display` | the OSD while shown | never |
+| `Overview` | the window overview, one window per monitor (the primary monitor's first) | the primary monitor's, always |
+| the menu's name (below) | a shell menu | always |
+| `Workspace Switcher` | the workspace popup | never |
+| `On-screen Keyboard` | the on-screen keyboard | never (it types into the focused app) |
+| `Click Type` | the dwell click type window | never |
+| `Desktop` | the desktop icons | never |
+| `Screenshot` | the screenshot UI and the area, point and window pickers (the primary monitor's surface) | always |
+| the break's title | the break screen | with the keyboard |
+| `Customize Panel` | "Customize Panel…" | always |
+| `Extensions` | the Extensions dialog | always |
+| `Tooltip` | a panel tooltip | never |
+| `Monitor N` | each monitor's label (`ShowMonitorLabels`) | never |
+
+Which window has the keyboard follows the order keys go in: the lock
+screen, a menu, the screenshot UI, dialogs, the switcher, the overview,
+the break screen, "Customize Panel…", the Extensions dialog, the
+launcher, quick settings, the notification list, the panel.
 
 ## What each window holds
 
@@ -161,6 +178,115 @@ left-to-right layout; actions still reach the control under them.
   this either, is not available to the shell's AT-SPI layer, so the
   focused app's item is `selected` instead.
 
+- **Window overview**: a `Search` entry (it opens the launcher when
+  typed into); a `Workspaces` list box of the workspace thumbnails, named
+  by `workspace-names` ("Workspace 2" otherwise), the active one
+  selected; a `Windows` list box of the window pictures, each named by
+  its window's title and described by its app's name ("No open windows"
+  when empty), the chosen one selected; and a `Dash` tool bar of app
+  buttons (described "Running" when the app has windows). The keyboard's
+  place has the focus, with focus events as Tab moves between the parts
+  and the arrows inside them: the chosen window, the workspace or dash
+  icon the arrows reached, else the entry. Other monitors' overviews have
+  their `Windows` list only.
+  *GNOME does not document this; Helix's choice:* window pictures are
+  list items of a list box (selection is the chosen window), workspace
+  thumbnails list items whose selection is the active workspace.
+- **Menus** (panel status icon and extension item menus, the dock's and
+  app grid's app menus, the window menu, the input source and
+  accessibility menus, the panel's context menu): a `menu` named by what
+  it is for (the status icon or extension item, the app, the drive or
+  `Trash`, `Input Sources`, `Accessibility`, `Top Bar`, `Window Menu`) of
+  its entries where painted, with `separator`s between groups. Entries
+  with a check box are `check menu item`s, checked as set; a set of
+  choices (input sources, engine modes) are `radio menu item`s, the
+  current one checked; an entry with a submenu is expandable (its
+  submenu replaces the menu, with `Back` first); disabled entries are
+  insensitive. The selected entry (keyboard or pointer) is selected and
+  has the focus, with a focus event at each move; with none, the menu has
+  the focus. A dock app's window previews are a `menu` (named `Windows`)
+  of each window's entry, named by its title, and its `Close`, described
+  by the title.
+- **Workspace popup**: the workspace switched to, as a live `status bar`
+  (announced), and a `Workspaces` list of the workspaces, the active one
+  selected.
+- **On-screen keyboard**: the suggestion bar (`Suggestions`, or `Accents`
+  for a letter's accents) as a tool bar of buttons, then a `Keyboard`
+  panel of the keys where painted. Character keys are buttons named by
+  the character they type (shifted when Shift is latched); Shift and the
+  page keys (`Symbols`, `Emoji`, `AltGr`) are toggle buttons, pressed while
+  latched or on their page; `Backspace`, `Enter`, `Tab`, `Space`, `Left`,
+  `Right` and `Hide Keyboard` are buttons.
+  *GNOME does not document this; Helix's choice:* the key names and the
+  page keys as toggle buttons; the window never takes the keyboard, so it
+  is never active and has no focus.
+- **Click type window**: a `Click Type` panel of four `radio button`s
+  (`Single`, `Double`, `Drag`, `Secondary`), the current type checked.
+- **Desktop icons**: a `Desktop` list box of the items in their cells,
+  named by their names, described `Folder` or `Application` when they are
+  one; the selected one selected. A click selects; clicking the selected
+  item again opens it, as a double click does.
+- **Screenshot UI**: the hint as a label, the area or window to be
+  captured as a label "Selected: W × H" at its place, and a `Screenshot`
+  tool bar: `Area`, `Screen`, `Window`, and (when recording is allowed)
+  `Screenshot` and `Record` as `radio button`s checked as chosen (`Window`
+  insensitive while recording), `Show Pointer` a toggle button, and
+  `Capture` (`Start Recording`). The area, point and window pickers show
+  the hint only: choosing a point or an area needs the pointer.
+- **Break screen**: a modal `dialog` named by the break's title, its
+  message (announced), the time left as a `timer` ("4:59") and the
+  `Delay` and `Skip` buttons.
+- **Customize Panel…**: a modal `dialog` with a `list` per column (`Left`,
+  `Center`, `Right`, `Quick Settings`) of its items (list items) holding
+  their buttons (`Move Up`, `Move Down`, `Move Left`, `Move Right`,
+  `Remove`, each described by the item's name); a `Hidden` list of the
+  hidden items with `Add`; `Reset` and `Done`. The button Tab reached has
+  the focus.
+- **Extensions dialog**: a modal `dialog` with a list of the extensions in
+  view, each a list item named by its name and version, described by its
+  description, state and what it may do; holding its on/off switch (a
+  toggle button named by the extension, pressed when on), `Settings`
+  (expanded while open), its commands with their keys (labels) and, when
+  open, its settings: switches, choices (buttons described by the value),
+  numbers (`Decrease` and `Increase`, described "Size: 3") and text
+  (labels). "Scroll for more" when some are out of view; `Done`. The
+  control Tab reached has the focus.
+- **OSD**: a live `status bar` named by what it shows ("Volume 40%");
+  each change reaches clients as a name change and is announced.
+- **Panel tooltips**: a `tool tip` named by the tooltip's first line and
+  described by the rest. The panel button it belongs to is described by
+  the same text.
+- **Monitor labels**: a label with the monitor's number, described by its
+  connector.
+- **Calendar events**: the selected day's events are list items of the
+  `Events` list, each named by its summary and described by when it is
+  and how long it lasts: "10:00 to 11:30, 1 hour 30 minutes", "10:00"
+  (no end), "All Day", "All day, 3 days".
+  *GNOME does not document this; Helix's choice:* the times and the
+  length are the description, in the user's clock format.
+
+## Text fields
+
+The shell's text fields (the launcher's search, the run dialog, the
+prompts' text fields, password fields) offer `Text` and `EditableText`.
+
+- `Text` holds what the field shows: the typed text, or for a password
+  field one `•` per character (`password text` role); the password itself
+  is never published. A field turned to "Show" is a `text` holding its
+  text.
+- `GetCharacterExtents` and `GetRangeExtents` give each character's box
+  as painted: a letter's advance on the line, a password dot's box. A
+  field that scrolls keeps the characters before its start to its left.
+- `SetTextContents` replaces the field's text. `InsertText` and
+  `DeleteText` change it in place; on a password field the change is made
+  to the password at the same offsets. Control characters are dropped. A
+  field that is checking (the lock screen while the password is
+  verified, a prompt that was answered) ignores changes. `CopyText`,
+  `CutText` and `PasteText` are not supported (the shell's fields have no
+  clipboard).
+  *GNOME does not document this; Helix's choice:* edits never submit the
+  field (Enter, or the action of the continue button, does).
+
 ## Actions
 
 Every object that reacts to clicks offers one action, `click`; doing it
@@ -168,21 +294,14 @@ does what a click at the middle of the object's place does (the same
 code runs). Focusing a text field (`Component.GrabFocus`) clicks it too.
 A slider's `Value.CurrentValue` (and increment/decrement by its step,
 5%) clicks the bar where that value is. Fields' `EditableText` calls
-change nothing: typing goes through the keyboard. Other actions are
-ignored.
+are described under "Text fields". Other actions are ignored.
 
 ## Not covered
 
-- Not yet published (helix-desktop#73): the window overview (window
-  pictures and workspaces); menus the shell pops up (panel status icon
-  and extension menus, the dock's and app grid's menus, the window menu,
-  the input source and accessibility menus); the workspace popup; the
-  on-screen keyboard; the dwell click type window; desktop icons; the
-  screenshot UI and area picker; the break screen; "Customize Panel…";
-  the Extensions dialog; panel tooltips and monitor labels. Text
-  fields expose their text but no character extents, and `EditableText`
-  changes nothing. The calendar's events are plain labels (no times or
-  durations as values).
+- Pickers that need the pointer (choosing an area or a point for a
+  screenshot, dragging windows between workspaces in the overview) have
+  no accessible way to do it; the screenshot UI's Screen and Window modes
+  work from the tool bar and keys.
 - Windows' screen positions are computed from the layout (the primary
   monitor, the dock's edge) rather than reported by the compositor.
 - The tree, roles, names, states, focus and actions are tested over
