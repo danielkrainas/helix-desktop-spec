@@ -842,8 +842,11 @@ prompts' fields, the lock screen's password) use the seat's
 - Pasted text is one line: line breaks become spaces, other control
   characters are dropped.
 - Password fields take a paste but are never copied or cut.
-- The primary selection (middle-click paste) is not supported in the
-  shell's fields.
+- A middle click on the surface of the field the keyboard types into
+  pastes the primary selection (`zwp_primary_selection_device_v1`) at
+  the field's end, the same way (a password field takes it too). The
+  fields have no selection of their own, so the shell never sets the
+  primary selection.
 
 ## Shell dialogs (Helix)
 
