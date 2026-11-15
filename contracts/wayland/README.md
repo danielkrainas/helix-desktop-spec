@@ -409,6 +409,11 @@ them, and unlocking happens after the fade-out.
   (version 4 and later) `configure_bounds` gives the size of the work
   area of the monitor it opens on, sent again when that work area
   changes (a panel appears or goes).
+- A new `xdg_toplevel` gets no configure, and no keyboard focus, before
+  its initial (bufferless) commit. Whatever it asked for until then
+  (maximized, fullscreen, parent, app id) and whatever Helix decided for
+  it (focus, so the `activated` state; bounds; capabilities) goes out in
+  one first configure answering that commit, as xdg-shell describes.
 - Popup menus are kept inside the monitor their window mostly covers.
 - When a monitor goes away (unplugged or turned off), its layer surfaces
   are closed (`closed` event), so the shell creates them again on the
