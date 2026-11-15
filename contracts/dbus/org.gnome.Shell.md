@@ -35,6 +35,22 @@ Companion to `org.gnome.Shell.xml`.
   - `level` (`d`): current level, 0 to `max_level`
   - `max_level` (`d`): defaults to 1
   - `connector` (`s`): monitor connector to show it on (all if absent)
+
+  Helix: the OSD is a pill floating near the bottom of the monitor
+  (centered, 72 logical px above the edge, 300 wide, 52 tall; 72 with a
+  label and a level), above everything including full-screen windows,
+  and the pointer goes through it. It shows the icon (an icon name or a
+  serialized themed GIcon; the first name the icon theme has, in its
+  symbolic form), then a rounded level bar with the percentage (with a
+  label: the label above the bar), or the label alone (or, without a
+  label, words for the shell's own icons, e.g. "Microphone off"). With
+  `max_level` above 1, a mark on the bar shows where 100 % is. Unknown
+  `connector`: every monitor. It stays 2 seconds after the last
+  `ShowOSD`; a new one replaces it at once. On the accessibility bus it
+  is a window "On-screen display" holding one live `status` object named
+  by what it shows ("Volume 45 %"), so each change is announced.
+  *GNOME does not document this; Helix's choice:* the sizes, place and
+  duration.
 - `ShowMonitorLabels(params)` / `HideMonitorLabels`: show/hide labels
   identifying monitors; `params` maps connector names (`s`) to label numbers
   (`i`, wrapped in `v`). Each call replaces the labels shown; monitors not

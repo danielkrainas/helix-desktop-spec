@@ -53,7 +53,8 @@ publishes through them.
 | `Notifications` | the notification list and calendar | while open |
 | `Top Bar` | the panel | with `switch-panels` focus |
 | `Notification` | a banner | with `focus-active-notification` |
-| `Dock` | each monitor's dock | never |
+| `Dock` | each monitor's dock | with `switch-panels` focus |
+| `On-screen display` | the OSD while shown | never |
 
 ## What each window holds
 
@@ -174,7 +175,7 @@ ignored.
   the input source and accessibility menus); the workspace popup; the
   on-screen keyboard; the dwell click type window; desktop icons; the
   screenshot UI and area picker; the break screen; "Customize Panel…";
-  the Extensions dialog; the OSD; panel tooltips and monitor labels. Text
+  the Extensions dialog; panel tooltips and monitor labels. Text
   fields expose their text but no character extents, and `EditableText`
   changes nothing. The calendar's events are plain labels (no times or
   durations as values).

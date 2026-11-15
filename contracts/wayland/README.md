@@ -1271,8 +1271,9 @@ in the center, then `helix:tray`, `helix:accessibility`,
   clicking it stops it) and "Sharing" (the screen is shared) are not
   layout items and cannot be removed. They are shown left of the right
   zone's items.
-- **On-screen display.** While an on-screen display (`ShowOSD`) is
-  shown, it covers the panel's center, in place of the center items.
+- **On-screen display.** On-screen displays (`ShowOSD`) float above
+  windows near the bottom of the monitor (`contracts/dbus/org.gnome.Shell.md`);
+  they never cover the panel or the clock.
 - **Keyboard.** `switch-panels` moves keyboard focus to the panel's
   items that react to clicks, left to right. Each status icon in
   `helix:tray` is one control. Enter or Space acts as a click.
