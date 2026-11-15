@@ -1,8 +1,8 @@
 # Scope
 
-This document defines what “GNOME-compatible” means for the initial living specification of Helix.
+This document defines what “GNOME-compatible” means for Helix.
 
-## In scope for v0
+## In scope
 
 - Major session and service D-Bus interfaces expected by a GNOME-like session:
   - Shell-related interfaces
@@ -19,7 +19,7 @@ This document defines what “GNOME-compatible” means for the initial living s
 - Full GNOME Shell extension API compatibility. Extensions patch unstable internal Shell APIs; supporting them would require continuous reverse-engineering of private interfaces. Helix's own, isolated extension system is proposed in `proposals/0001-extensions.md`.
 - Exact visual, animation, or theming parity with GNOME Shell.
 - Reimplementation of GTK, libadwaita, or the GObject type system.
-- Complete coverage of every optional or rarely used D-Bus interface on day one.
+- Complete coverage of every optional or rarely used D-Bus interface. Interfaces are added as software is found to need them.
 
 ## Living specification
 

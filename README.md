@@ -2,11 +2,16 @@
 
 **Helix** is a Rust desktop environment that begins with compatibility against GNOME’s public contracts and is designed to evolve beyond them.
 
-This repository (`helix-desktop-spec`) holds the living specification and contract source of truth only. Implementation will live elsewhere.
+This repository (`helix-desktop-spec`) holds the living specification and contract source of truth. The implementation is in [helix-desktop](https://github.com/danielkrainas/helix-desktop) (compositor, shell, session, portals, login screen), and Helix's own applications are in [helix-apps](https://github.com/danielkrainas/helix-apps). Both are tested against these contracts.
 
 ## Status
 
-Specification phase.
+**Implemented and in daily use.** The contracts here are implemented by
+helix-desktop, which runs as a full desktop session on real hardware and
+is used as a primary desktop. The specification keeps growing: new
+features are specified here first, and every place where GNOME's
+behaviour is undocumented records Helix's own choice in the contract.
+`gnome-compatibility.md` summarises where Helix stands against GNOME 51.
 
 ## Target
 
@@ -14,7 +19,7 @@ Specification phase.
 - **Language**: Rust
 - **License**: CC0-1.0
 
-## Compatibility goals (v0)
+## Compatibility goals
 
 - Major session and service D-Bus interfaces (Shell, Mutter DisplayConfig / IdleMonitor / ScreenCast, SessionManager, key portals)
 - GSettings schemas used by the desktop and common tools
@@ -28,10 +33,10 @@ This is a clean-room effort focused on public contracts, not a fork of GNOME sou
 ## Structure
 
 - `SCOPE.md` — what “compatible” means and current boundaries
-- `components/` — high-level component breakdown
+- `components/` — high-level component breakdown, the shell's shared look, and the login screen (`components/greeter.md`)
 - `contracts/` — structured contract data (D-Bus XML, GSettings schemas, Wayland notes, and `contracts/extensions/` for Helix's own extension API)
 - `gnome-compatibility.md` — summary of what Helix supports from GNOME, what it doesn't (and why), and where it differs on purpose
 - `gaps.md` — living log of missing or unclear contracts
 - `proposals/` — designs for Helix's own features (for example its extension system), before they become contracts
 
-The specification is living. It will grow and be refined as implementation work discovers additional or clarified contracts.
+The specification is living: it is refined whenever implementation work discovers missing or underspecified contracts, and changes land here before (or with) the code that follows them.
