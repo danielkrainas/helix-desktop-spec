@@ -1284,7 +1284,8 @@ in the center, then `helix:tray`, `helix:accessibility`,
   is a pill as tall as the panel less 4 px above and below: clear at
   rest, a light fill (white at 15 %) under the pointer, a stronger one
   (25 %) while pressed or while what it opens is open (the launcher,
-  the notification list, quick settings); a white outline in high
+  the notification list, quick settings, the input source menu, the
+  accessibility menu); a white outline in high
   contrast (2 px for pressed or open). Keyboard focus is the focus ring
   around the pill. A click acts when the button is let go over the item
   it was pressed on; moving off while pressed cancels it.
