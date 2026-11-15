@@ -40,7 +40,9 @@ follow `org.gnome.desktop.interface`:
   buttons for the previous and next month; a row of weekday initials; six
   weeks of day numbers, days of other months dimmed.
 - The week starts on the locale's first weekday (glibc's `LC_TIME`
-  `first_weekday`, counted from `week-1stday`); Sunday when unknown.
+  `first_weekday`, counted from `week-1stday`, read from the locale
+  data in the process rather than by running `locale`); Monday when the
+  locale gives none.
 - With `org.gnome.desktop.calendar show-weekdate` true, a column of ISO
   week numbers comes first.
 - Today is marked; clicking a day chooses it (today at first). Days with
