@@ -178,6 +178,16 @@ each notification's icon, app, summary and up to two lines of body, with a
 × that dismisses it (reason 2). Clicking a notification acts as clicking
 its banner.
 
+Banners and list rows say when the notification arrived (or was last
+replaced), after the app's name: "Chat · now". *GNOME does not document
+this; Helix's choice:* the words are "now" (under a minute), "5 min"
+(under an hour), "2 h" (earlier today), "Yesterday", the weekday (within
+the last six days), then the date ("2 Oct", with the year when it is not
+this year). They move on each minute while the list is open. On the
+accessibility bus a row's description starts with the long form ("just
+now", "5 minutes ago", "2 hours ago", "Yesterday", …). The time is kept
+while the shell runs (the list itself is not kept across restarts).
+
 Notifications are grouped by app (its app id, see "Per-application
 settings"; without one, its app name). Groups come in the order of their
 newest notification. A group of one is shown as its notification alone.
