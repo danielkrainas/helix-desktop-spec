@@ -48,14 +48,14 @@ publishes through them.
 | `Lock Screen` | the lock screen | always |
 | the dialog's title | a dialog (end session, display change, not responding, shortcuts, remote control, extension approval, screen sharing, prompts) | always |
 | `Windows`, `Applications` or `Input Sources` | the switcher (Alt+Tab and friends) | always |
-| `Overview` | the launcher (search and app grid) | always |
+| `Launcher` | the launcher (search and app grid) | always |
 | `System Menu` | quick settings | while open |
 | `Notifications` | the notification list and calendar | while open |
 | `Top Bar` | the panel | with `switch-panels` focus |
 | `Notification` | a banner | with `focus-active-notification` |
 | `Dock` | each monitor's dock | with `switch-panels` focus |
 | `On-screen display` | the OSD while shown | never |
-| `Overview` | the window overview, one window per monitor (the primary monitor's first) | the primary monitor's, always |
+| `Window Overview` | the window overview, one window per monitor (the primary monitor's first) | the primary monitor's, always |
 | the menu's name (below) | a shell menu | always |
 | `Workspace Switcher` | the workspace popup | never |
 | `On-screen Keyboard` | the on-screen keyboard | never (it types into the focused app) |
@@ -67,6 +67,12 @@ publishes through them.
 | `Extensions` | the Extensions dialog | always |
 | `Tooltip` | a panel tooltip | never |
 | `Monitor N` | each monitor's label (`ShowMonitorLabels`) | never |
+
+Window names are translated. *GNOME does not document its window names;
+Helix's choice:* the launcher and the window overview have names of
+their own (`Launcher`, `Window Overview`), distinct from each other
+and from the switcher's, so a screen reader user (or a script looking a
+window up by name) can tell which one is open.
 
 Which window has the keyboard follows the order keys go in: the lock
 screen, a menu, the screenshot UI, dialogs, the switcher, the overview,
@@ -143,7 +149,7 @@ left-to-right layout; actions still reach the control under them.
 - **Switcher**: a `list box` of the entries shown, named by their
   labels with their detail as description; the selected one is selected
   and focused.
-- **Overview**: a `Search` entry holding the query. With a query, a
+- **Launcher**: a `Search` entry holding the query. With a query, a
   `Search Results` list box of the rows shown (named as shown, described
   by their tag: "Open window", "Folder", "Favorite", or a provider
   result's description and app), the selected row focused; with none,
