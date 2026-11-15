@@ -89,6 +89,39 @@ at 38 % just outside its edge, fading to nothing 12 px out, the whole
 shadow 2 px lower than the box. High contrast draws no shadows (its
 edges are white lines).
 
+#### Type
+
+The shell draws its text in the interface font: the family of
+`org.gnome.desktop.interface font-name` (its first family, without style
+words and size: "Cantarell 11" is Cantarell), followed while the shell
+runs; without the key, or when fontconfig has nothing for the family, the
+system's sans-serif font. Its bold face (fontconfig's bold of that family)
+sets the panel clock, titles of dialogs, prompts and popovers, headings
+(notification summaries, group and calendar headings, quick settings'
+toggle titles) and bold markup. Characters the font lacks come from
+fontconfig's best font for them. *GNOME does not document this; Helix's
+choice:* the size in `font-name` is not used; the shell keeps its own
+type scale (multiplied by `text-scaling-factor`).
+
+Every size text is drawn at is one of a named scale (logical px, before
+Large Text's factor):
+
+| Name | Size | Use |
+|------|------|-----|
+| Tiny | 11 | counts on badges, week numbers (glanced at, never sentences) |
+| Caption | 13 | secondary lines: app names and times, percentages, subtitles, hints, weekday initials; the smallest size for words to be read |
+| Label | 14 | the panel, menu entries, list rows, controls' words, notification bodies |
+| Body | 15 | messages, results, push buttons, list entries |
+| Heading | 15, bold | notification summaries, group headers, toggle titles |
+| Entry | 17 | what is typed in a search field; a folder's name |
+| Subtitle | 18, bold | the calendar's date |
+| Title | 20, bold | titles of dialogs, prompts and popovers |
+| Large title | 30, bold | the break screen's |
+| Display | 40 | a monitor's number |
+
+Close buttons are round flat buttons with a drawn close symbol (not a
+typed "×"): dim at rest, lit with Hovered under the pointer.
+
 #### Components
 
 Every surface builds from the same pieces, each with its looks at rest,
