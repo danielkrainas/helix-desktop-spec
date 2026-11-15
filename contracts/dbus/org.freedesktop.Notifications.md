@@ -23,7 +23,7 @@ Hints (`a{sv}`) used by GNOME clients:
 
 | Hint | Type | Meaning |
 |------|------|---------|
-| `urgency` | `y` | 0 low, 1 normal, 2 critical. Critical notifications do not expire. |
+| `urgency` | `y` | 0 low, 1 normal, 2 critical. Critical notifications do not expire (Helix: see "How long banners stay"). |
 | `resident` | `b` | stay after an action is invoked |
 | `transient` | `b` | do not keep after display |
 | `category` | `s` | e.g. `email.arrived` |
@@ -131,6 +131,37 @@ lists the apps named in `org.gnome.desktop.notifications`
   true. Apps without settings show counts only.
 - `force-expanded` true: the app's banners show up to eight lines of the
   body instead of two (the list is unchanged).
+
+### How long banners stay
+
+*GNOME does not document this; Helix's choice:* when a banner leaves the
+screen is Helix's, as follows. One banner shows at a time; the rest wait
+in order.
+
+- A banner's time counts only while the user is active: there was
+  keyboard, pointer or touch input in the last 5 seconds (by the
+  compositor's `org.gnome.Mutter.IdleMonitor` `GetIdletime`; without an
+  idle monitor the user counts as active). A banner that arrives while
+  the user is away is still there when they come back, and then counts
+  as usual.
+- It does not count while the pointer is over the banner or the banner
+  has keyboard focus.
+- A normal or low-urgency notification's banner stays for its
+  `expire_timeout` (5 seconds for -1) of counted time.
+- A banner with `expire_timeout` 0 (no timeout) stays for
+  `banner-ignore-timeout` seconds of counted time
+  (`contracts/gsettings/org.helix.shell.md`, default 10).
+- A critical notification's banner ignores `expire_timeout` and stays for
+  `critical-banner-ignore-timeout` seconds of counted time (default 30).
+  It shows even with do not disturb on.
+- With either key 0, those banners stay until the user acts on them.
+  Changes to the keys apply at once.
+- When its time is up the banner moves its notification to the list (see
+  below); the notification is not closed, and the app is not told,
+  except for `transient` notifications, which close with reason 1.
+- Replacing the notification on screen (`replaces_id`) starts its count
+  again. When the screen locks, the banner goes back to the front of the
+  queue and shows again, counting from the start, after unlocking.
 
 ### The notification list (persistence)
 
