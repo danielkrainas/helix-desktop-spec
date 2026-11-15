@@ -287,11 +287,16 @@ prompts' text fields, password fields) offer `Text` and `EditableText`.
   `DeleteText` change it in place; on a password field the change is made
   to the password at the same offsets. Control characters are dropped. A
   field that is checking (the lock screen while the password is
-  verified, a prompt that was answered) ignores changes. `CopyText`,
-  `CutText` and `PasteText` are not supported (the shell's fields have no
-  clipboard).
+  verified, a prompt that was answered) ignores changes.
   *GNOME does not document this; Helix's choice:* edits never submit the
   field (Enter, or the action of the continue button, does).
+- `CopyText` puts the characters in the range on the clipboard,
+  `CutText` does that and removes them, `PasteText` inserts the
+  clipboard's text at the offset (line breaks become spaces, other
+  control characters are dropped). A password field takes a paste but
+  is never copied or cut: `CopyText` and `CutText` on it change nothing.
+  It is the clipboard the keys use (`contracts/wayland/README.md`,
+  "Shell text fields and the clipboard").
 
 ## Actions
 

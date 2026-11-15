@@ -804,6 +804,24 @@ keyboard follows their `keyboard_interactivity`:
   opened from the keyboard and `on_demand` when opened by the pointer;
   the other shell menus always ask for `exclusive`.
 
+## Shell text fields and the clipboard (Helix)
+
+The shell's own text fields (the launcher's search, the run dialog, the
+prompts' fields, the lock screen's password) use the seat's
+`wl_data_device` clipboard like any client:
+
+- *GNOME does not document this; Helix's choice:* the fields have no
+  selection and type at their end, so Ctrl+C (or Ctrl+Insert) copies
+  the field's whole text, Ctrl+X (or Shift+Delete) cuts it all, and
+  Ctrl+V (or Shift+Insert) adds the clipboard's text at the end, offered
+  as `text/plain;charset=utf-8`, `UTF8_STRING`, `text/plain` or `STRING`
+  (read in that order of preference).
+- Pasted text is one line: line breaks become spaces, other control
+  characters are dropped.
+- Password fields take a paste but are never copied or cut.
+- The primary selection (middle-click paste) is not supported in the
+  shell's fields.
+
 ## Shell dialogs (Helix)
 
 The shell's centered question dialogs (ending the session, keeping
