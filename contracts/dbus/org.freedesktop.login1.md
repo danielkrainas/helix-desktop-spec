@@ -9,7 +9,11 @@ manager and the shell call. Helix does not implement this interface.
 - `PowerOff(interactive)`, `Reboot(interactive)`, `Suspend(interactive)`
   ask the system to do it. With `interactive` false, logind refuses rather
   than asking the user to authenticate.
-- `CanPowerOff`, `CanReboot`, `CanSuspend` answer one of:
+- `SetRebootToFirmwareSetup(enable)` asks that the next boot start in
+  the firmware's setup screen (or cancels that). It does not restart; a
+  later `Reboot` does. logind checks with polkit whether the caller may.
+- `CanPowerOff`, `CanReboot`, `CanSuspend`, `CanRebootToFirmwareSetup`
+  answer one of:
   - `yes`: allowed without authentication
   - `challenge`: allowed after authenticating
   - `no`: not allowed

@@ -314,6 +314,26 @@ of 2 or 3 while an inhibitor has the suspend bit, as suspending is then
 blocked. Logout inhibitors do not change `CanShutdown` / `CanReboot`, as
 the end-session dialog lets the user go ahead anyway.
 
+## `SetRebootToFirmwareSetup(b enable)`, `CanRebootToFirmwareSetup`
+
+`SetRebootToFirmwareSetup` asks that the next restart open the
+firmware's setup screen (`enable` true), or no longer (false). It does
+not restart by itself; the user then restarts as usual (`Reboot`, or the
+end-session dialog). `CanRebootToFirmwareSetup` tells a UI whether to
+offer this.
+
+### Helix
+
+Both go to logind's methods of the same names. `CanRebootToFirmwareSetup`
+is true when logind answers `yes` or `challenge` (the request may then
+need authentication, which logind arranges), false otherwise and
+without logind. `SetRebootToFirmwareSetup` returns logind's refusal as
+an error, and fails when there is no logind.
+
+*GNOME does not document this; Helix's choice:* whether `challenge`
+counts as available is not documented; Helix offers the action and lets
+logind ask for authentication.
+
 ## `SessionIsActive`
 
 Follows the `Active` property of the logind session the session manager
