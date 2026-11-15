@@ -781,8 +781,9 @@ on the right.
   | Allow APP to use all keyboard shortcuts? | Deny |
   | Turn on EXTENSION? | Cancel |
 
-- The action button is accent-colored when it is the default, red when it
-  loses work (Force Quit, Log Out Anyway, Restart Anyway, Power Off
+- The action button is accent-colored (the accent fill of the user's
+  `accent-color`, `components/README.md`, "Accent color") when it is the
+  default, red when it loses work (Force Quit, Log Out Anyway, Restart Anyway, Power Off
   Anyway), and neutral otherwise.
 - Keys pressed during the first 300 ms after a dialog is first drawn (or
   after its question is replaced by another) are ignored: a key on its
@@ -1362,8 +1363,8 @@ Keyboard:
 - Escape closes an open list first (its "›" taking the focus), then the
   menu. Closed, the keyboard goes back to where it was: the panel item
   the menu was opened from, else the window that had it.
-- The focused control has the focus ring (2 px of the accent just
-  outside it) and is the one marked focused on the accessibility bus;
+- The focused control has the focus ring (2 px of the accent, as chosen
+  with `accent-color`, just outside it) and is the one marked focused on the accessibility bus;
   every reachable control is focusable there.
 
 The switches act on (all on the system bus):

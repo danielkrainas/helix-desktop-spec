@@ -101,7 +101,6 @@ desktop icons, removable-media handling, and privacy indicators.
 | GDM | GDM's login screen *is* GNOME Shell in a login mode, and distributions make GDM depend on it. Helix can still be chosen from GDM, and ships its own greetd greeter (`components/greeter.md`). |
 | X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one. |
 | Accessibility on the Helix login screen | Not written yet (screen reader, on-screen keyboard, magnifier, high contrast). |
-| Following the system accent colour in the shell's own UI | Not written yet (helix-desktop#47). Applications do follow it, through the portal. |
 | Translations of the shell | Not written yet: the shell's text, clock and calendar names are English. |
 | Some shell UI on the accessibility bus | Not written yet: the overview, pop-up menus, workspace popup, on-screen keyboard, screenshot UI and a few dialogs are not published to screen readers (`gaps.md`, "Accessibility bus"). |
 | `org.freedesktop.a11y.PointerLocator` | Not served yet. |

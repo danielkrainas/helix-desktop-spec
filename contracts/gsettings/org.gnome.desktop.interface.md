@@ -52,3 +52,13 @@ Path: `/org/gnome/desktop/interface/`
 | `toolbar-icons-size` | `s` | `'large'` | `small`, `large` |
 | `toolbar-style` | `s` | `'both-horiz'` | `both`, `both-horiz`, `icons`, `text` |
 | `toolkit-accessibility` | `b` | `false` |  |
+
+## Helix
+
+`accent-color`: Helix's shell draws its own UI (and the lock screen) in
+the chosen accent and follows changes to the key while running, as
+applications do through the Settings portal. The nine names map to one
+table of colors shared with the portal; how the shell derives its shades
+from them, and why high contrast keeps its own, is in
+`components/README.md`, "Accent color". The login screen takes its
+accent from its own configuration (`components/greeter.md`).

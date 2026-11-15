@@ -114,7 +114,14 @@ under `/var/lib/greetd`), then exits with status 0.
 ```toml
 user-list = true          # false: always ask for the username
 banner = "Authorized use only."   # text under the clock
+accent = "blue"           # the accent color (focus rings, the confirming button)
 ```
+
+`accent` takes the names of `org.gnome.desktop.interface accent-color`
+(`blue`, `teal`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`,
+`slate`); the login screen has no user whose settings it could follow.
+It is drawn with the shades of `components/README.md`, "Accent color".
+Unset or an unknown name: blue (the unknown name is logged).
 
 ## Installing and switching
 

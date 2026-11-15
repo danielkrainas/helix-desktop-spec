@@ -41,26 +41,80 @@ ring against a popover):
 | Pressed | #686872 | a control while pressed |
 | Track | #5E5E68 | a slider's empty part (its filled part is the accent) |
 | Well | #1E1E24 | a list set into a popover (networks, devices) |
-| Accent | #3584E4 | focus rings, a slider's filled part, indicators (not under text) |
-| Accent fill | #1A64C0 (hovered #1D69C6, pressed #1856A8) | a switch that is on, the selected row, a suggested button: anything with text on it |
+| Accent | from `accent-color` (blue: #3584E4) | focus rings, a slider's filled part, indicators (not under text) |
+| Accent fill | from `accent-color` (blue: #2965AF, hovered #336CB3, pressed #235594) | a switch that is on, the selected row, a suggested button: anything with text on it |
 
 Text colors, each reaching WCAG AA (4.5:1) on the surfaces it is used
 on (the panel, popovers, dialogs, wells):
 
 | Name | Color | Use |
 |------|-------|-----|
-| Text | #EDEDEF | everything, also on controls and on the accent fill |
+| Text | #EDEDEF | everything, also on controls and on the accent fill (except a light accent's, see "Accent color") |
 | Secondary | #A4A4AD | app names, bodies, percentages, weekday initials, dialog messages, disabled entries (not on controls) |
 | Error | #FF7B63 | error messages, the panel's "Sharing" and "Recording" (their dots stay #E01B24) |
-| Accent text | #78AEED | links, "Connected" |
+| Accent text | from `accent-color` (blue: #68A3EB) | links, "Connected" |
 
-Text never sits on the plain accent (#3584E4, 3.2:1 with Text); buttons,
-selected rows and switches that are on use the accent fill, as do the
-lock and login screens' suggested buttons.
+Text never sits on the plain accent (blue's #3584E4 is 3.2:1 with Text);
+buttons, selected rows and switches that are on use the accent fill, as
+do the lock and login screens' suggested buttons and the round "go"
+button at the end of their password field.
+
+### Accent color
+
+The shell and the lock screen draw with the accent the user chose in
+`org.gnome.desktop.interface accent-color` (one of the nine names; an
+unknown name or a schema without the key means blue), and follow it
+while running: changing the key redraws every surface showing it
+(panel, menus, quick settings, the notification list, dialogs, prompts,
+the dock, the app grid, the overview, the lock screen, the on-screen
+keyboard) without a restart. The login screen has no user settings and
+takes `accent` from its own configuration (`components/greeter.md`).
+The compositor's own rings (locate-pointer) stay blue.
+
+There is one table of the nine accents in Helix: the values libadwaita
+documents for its accent colors, which the Settings portal also hands to
+applications (`contracts/dbus/org.freedesktop.impl.portal.md`). From
+each, Helix derives the shades it draws with, checking each against the
+surfaces of "Shell look" (WCAG contrast ratio):
+
+- **Accent** (rings, indicators, a slider's fill, check marks): the
+  named color, mixed toward white only as far as it takes to reach 3:1
+  on a popover (and 1.5:1 on a slider's track).
+- **Text on the fill**: light (Text) when the named color needs to be
+  darkened by at most a quarter of the way to black for Text to reach
+  4.5:1 on it; otherwise dark (#1E1E24).
+- **Accent fill**: the named color moved away from its text color
+  (darker under light text, lighter under dark text) until that text
+  reaches 5:1. Hovered moves it up to 6/64 of the way toward white,
+  pressed up to 10/64 toward black, each stopping before its text drops
+  under 4.5:1.
+- **Accent text** (words on the dark surfaces): the named color mixed
+  at least a quarter of the way toward white, then further until it
+  reaches 4.5:1 on a popover.
+- A selected desktop icon's highlight is Accent at one-third opacity.
+
+The results (Text #EDEDEF unless noted; ratios are Text on fill, Accent
+on Popover, Accent text on Popover):
+
+| Name | Accent | Accent fill (hovered, pressed) | Text on fill | Accent text |
+|------|--------|-------------------------------|--------------|-------------|
+| `blue` | #3584E4 (3.6) | #2965AF (#336CB3, #235594) | Text (5.0) | #68A3EB (5.1) |
+| `teal` | #2190A4 (3.6) | #196E7E (#247584, #155D6A) | Text (5.0) | #59ACBB (5.2) |
+| `green` | #3A944A (3.5) | #2C7139 (#367842, #255F30) | Text (5.1) | #6BAF77 (5.1) |
+| `yellow` | #C88800 (4.5) | #C88800 (#CD9318, #B57B00) | #1E1E24 (5.5) | #D6A640 (6.0) |
+| `orange` | #ED5B00 (3.9) | #AA4100 (#AF4D10, #8F3700) | Text (5.2) | #F28440 (5.2) |
+| `red` | #E73448 (3.2) | #BE2537 (#C33647, #A01F2E) | Text (5.1) | #EE6F7D (4.6) |
+| `pink` | #D56199 (3.8) | #9C4770 (#A15077, #843C5F) | Text (5.1) | #E089B3 (5.4) |
+| `purple` | #A462BA (3.2) | #9141AC (#964AB0, #7A3791) | Text (5.1) | #B782C9 (4.5) |
+| `slate` | #6F8396 (3.4) | #576675 (#5F6D7B, #495663) | Text (5.0) | #93A2B0 (5.2) |
+
+High contrast ignores the accent: it keeps its own colors (blue's row
+above, with white outlines), whatever `accent-color` says, so that what
+it guarantees does not depend on the user's choice.
 
 - Menus light the hovered or keyboard-selected row with Hovered.
 - Quick settings' switches and Power Mode buttons are Control when off
-  and Accent fill when on; the Wi-Fi and Bluetooth lists sit in a Well;
+  and Accent fill when on (their words in its text color); the Wi-Fi and Bluetooth lists sit in a Well;
   sliders show their whole Track.
 - The on-screen keyboard's keys and the screenshot toolbar's off toggles
   are Control.
@@ -68,7 +122,8 @@ lock and login screens' suggested buttons.
   focused control (a ring around a calendar day).
 
 In high contrast (`org.gnome.desktop.a11y.interface high-contrast`) text
-is white, surfaces and controls black, the accent kept; what tells
+is white, surfaces and controls black, the accent kept (always blue's,
+see "Accent color"); what tells
 pieces apart is white lines rather than shades:
 
 - Popovers and dialogs have a 2 px white edge; separators and the
