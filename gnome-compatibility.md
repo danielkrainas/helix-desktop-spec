@@ -38,7 +38,8 @@ GNOME's own interfaces, so that GNOME Settings, gnome-control-center
 panels, GNOME apps and command-line tools work against Helix:
 
 - Session: `org.gnome.SessionManager` (clients, inhibitors, logout,
-  restart and power off through logind, autostart, session restore) and
+  restart and power off through logind, restarting into the firmware
+  setup, autostart, session restore) and
   its end-session dialog.
 - Shell: `org.gnome.Shell` (accelerator grabs, OSD, overview state;
   `Eval` always refused), `org.gnome.Shell.Screenshot`,
