@@ -51,12 +51,14 @@ results are shown, as below.
   `GetInitialResultSet`. A provider that has not answered within 5
   seconds, or whose answer is for an older text, is left out.
 - Up to 3 results per provider are shown, after the windows and apps,
-  grouped by provider in order: each its icon (`icon`, else `icon-data`;
-  20 pixels, at the row's start), its `name`, its `description` (in a
-  dimmer color) and, at the row's end, the provider's app name. Choosing
+  grouped by provider in order, each provider's under a heading with its
+  app's icon and name: each result its icon (`icon`, else `icon-data`,
+  else the provider app's icon; 32 pixels, at the row's start), its
+  `name` and its `description` (in a dimmer color). Choosing
   one (Enter or a click) puts its `clipboardText`, if any, on the
   clipboard, calls `ActivateResult` (timestamp 0) and closes the
   launcher.
-- After each provider's results comes a row "Search for “text” in App";
+- After each provider's results comes a row "Search for “text” in App",
+  with the search symbol;
   choosing it calls `LaunchSearch` with the terms (timestamp 0) and
   closes the launcher.

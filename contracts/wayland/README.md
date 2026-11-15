@@ -963,7 +963,15 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   Dash to Dock's `hot-keys` (below), its keys are used instead of these
   two sets.
 - **Launcher.** Typing a search lists matching windows, apps and search
-  results. With an empty search it shows the app grid (below). Ctrl+D
+  results in a rounded box under the search field, in sections each
+  under a small heading: "Open Windows", "Apps", then each search
+  provider (its app's icon and name; see
+  `contracts/dbus/org.gnome.Shell.SearchProvider2.md`). Every row starts
+  with a 32 logical px icon: an app's icon, a window's icon (see "Window
+  switching") with a small window sign on its corner, a result's icon;
+  rows are 48 px tall. The list keeps the selected row in sight, showing
+  as many rows as fit above the screen's bottom. With an empty search it
+  shows the app grid (below). Ctrl+D
   adds the selected app of a search to the end of the favorites, or
   removes it.
 
