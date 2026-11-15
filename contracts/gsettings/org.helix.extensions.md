@@ -26,3 +26,8 @@ Path: `/org/helix/extensions/`
 - `command-keys`: by `<extension id>/<command id>`, the command's
   accelerator (`""`: none).
 - `require-sandbox`: only extensions with `sandbox = true` run.
+
+Keys added after the first release (`placed`, `command-keys`,
+`require-sandbox`) may be missing from an older installed schema; they
+then read as their defaults (see `org.helix.shell.md`, "Older installed
+schemas").

@@ -35,3 +35,13 @@ panel items in the panel keys, toggles and sliders in
 `quick-settings`. Ids Helix does not know are kept in the key
 but not shown, so a layout survives an extension being turned off or an
 older Helix reading a newer layout.
+
+## Older installed schemas
+
+The installed copy of this schema (and of `org.helix.extensions`) can be
+older than the programs reading it, after a partial upgrade or when a
+newer build runs against an older package. Helix's programs keep
+working then: a key the installed schema lacks, or gives another type,
+reads as its default from the table above and is not written, and the
+first such read is logged once. Losing a newer key's setting is
+acceptable; stopping the shell is not.
