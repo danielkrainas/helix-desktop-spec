@@ -852,12 +852,26 @@ laid out the same way. It is shown by the overlay key, by
 - **The active workspace's windows** (minimized ones and those on every
   workspace included) of this monitor, as pictures renewed about twice a
   second while the overview is open, in rows, each keeping its proportions and at most
-  its real size, its title below. The focused window is selected; the
-  arrow keys move the selection and Enter activates it. Clicking a window
+  its real size, its title below. The focused window is selected (the
+  focus ring; the window under the pointer has a light frame). Clicking a window
   activates it and hides the overview. Its × button (shown on the picture
   under the pointer and on the selected one) closes the window, as its
   close button would. Dragging a window onto a workspace thumbnail moves it
   to that workspace.
+
+**Keyboard.** *GNOME does not document this; Helix's choice:* Tab and
+Shift+Tab move the keyboard between three parts, passing empty ones: the
+windows, the workspace thumbnails and the dash; the chosen item of each
+has the focus ring.
+
+- Windows: the arrow keys move to the nearest window picture that way
+  (on screen, not in list order); Enter activates it; Delete or Ctrl+W
+  closes it (the choice moves to another window); Ctrl+Alt+← / → or
+  Shift+Page Up / Page Down move it to the previous or next workspace.
+- Workspace thumbnails: ← / → (↑ / ↓) move between them, Enter or Space
+  switches to the chosen one.
+- Dash: ← / → move between the icons, Enter or Space acts as a click.
+- Escape closes the overview; typing starts a search in the launcher.
 
 **Hot corner.** While `org.gnome.desktop.interface` `enable-hot-corners`
 is true, pushing the pointer into the top-left corner of the primary
