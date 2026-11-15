@@ -103,6 +103,33 @@ each to be ready: a component is ready once it owns a given bus name, or
 once it has called `Setenv` for a given variable (the compositor sets
 `WAYLAND_DISPLAY`). Then the session is initialized.
 
+### Memory pressure (Helix)
+
+*GNOME does not document this; Helix's choice:* how a session should
+protect itself from systemd-oomd is not documented. Helix's packages
+install a drop-in (`<unit>.d/50-helix-oomd-avoid.conf` under
+`/usr/lib/systemd/user/`) for the user services a session cannot lose:
+the session bus (`dbus.service`, `dbus-broker.service`), the
+accessibility bus (`at-spi-dbus-bus.service`) and the portal services
+(`xdg-desktop-portal.service`, `xdg-document-portal.service`,
+`xdg-permission-store.service`). It sets:
+
+- `ManagedOOMPreference=avoid`: when the user manager
+  (`user@UID.service`) is under memory pressure, systemd-oomd chooses
+  other units (applications, builds, other services) first. systemd
+  honours the preference for user units because the unit's cgroup and the
+  monitored `user@UID.service` belong to the same user.
+- `OOMScoreAdjust=100`: the user manager's own level, below the 200 that
+  user services get by default, so the kernel's OOM killer also prefers
+  other processes of the user.
+
+The compositor, shell, portals backend and other session components are
+children of `helix-session`, which runs in the login's session scope
+(`session-N.scope`, created by logind) rather than under the user
+manager; systemd-oomd's pressure handling for `user@UID.service` does
+not reach them. Losing the session bus ends the session (see "When the
+bus goes away"), which is why the bus is protected.
+
 ## `GetLocale(i category)`
 
 `category` is the platform C library's `LC_*` constant (e.g. `LC_MESSAGES`).
