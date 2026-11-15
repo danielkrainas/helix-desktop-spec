@@ -970,7 +970,12 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   with a 32 logical px icon: an app's icon, a window's icon (see "Window
   switching") with a small window sign on its corner, a result's icon;
   rows are 48 px tall. The list keeps the selected row in sight, showing
-  as many rows as fit above the screen's bottom. With an empty search it
+  as many rows as fit above the screen's bottom. *GNOME does not document
+  this; Helix's choice:* the row under the pointer is lit with Hovered
+  (Pressed while held) apart from the keyboard's selection, which keeps
+  the accent fill and does not move with the pointer (Enter still opens
+  the selected row); the light goes when the pointer leaves the row or
+  the launcher, and a click opens the row on release over it. With an empty search it
   shows the app grid (below). Ctrl+D
   adds the selected app of a search to the end of the favorites, or
   removes it.
@@ -1068,6 +1073,14 @@ and springs back from pressed with a slight overshoot over 0.3 seconds,
 and the launch copy takes 0.25 seconds. With it false, hover and press
 show at once at their final look and there is no launch copy. Nothing
 moves while an item is being dragged.
+
+The feedback keeps up with the pointer: pointer motion is taken a
+pointer frame at a time (one drawing per frame however many motions it
+holds), and a change of hover, press or a fade's step redraws only the
+app grid's cells whose look changed (on the rest of the frame as last
+drawn), telling the compositor only those parts changed; the whole
+launcher is drawn again only when something else changed (a page, the
+search, an icon arriving, a folder opening, a drag).
 
 With `org.gnome.desktop.a11y.interface reduced-motion` `reduce` (and
 animations on), only fades play: the highlight fades in and out as
