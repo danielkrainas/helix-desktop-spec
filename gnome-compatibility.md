@@ -117,7 +117,7 @@ from translators (`TRANSLATING.md` in helix-desktop).
 | Exact visual, animation and theme parity with GNOME Shell | Out of scope by design (`SCOPE.md`); GNOME Shell's look is not a public contract. Applications keep GNOME's look because GTK and libadwaita draw them. |
 | GDM | GDM's login screen *is* GNOME Shell in a login mode, and distributions make GDM depend on it. Helix can still be chosen from GDM, and ships its own greetd greeter (`components/greeter.md`). |
 | X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helix-desktop#76). |
-| Accessibility on the Helix login screen | Not written yet (screen reader, on-screen keyboard, magnifier, high contrast; helix-desktop#77). |
+| Magnifier on the Helix login screen | The greeter offers high contrast, large text, the screen reader and its own on-screen keyboard, but no zoom (`components/greeter.md`, "Accessibility"). |
 | Text shaping for Arabic and Indic scripts | Helix's own text renderer has no shaping engine: those scripts draw letter by letter (Hebrew and scripts without shaping are fine). Right-to-left surfaces also publish left-to-right bounds on the accessibility bus and keep left-to-right arrow-key order (`components/i18n.md`, "Not done yet"). |
 | `org.freedesktop.a11y.PointerLocator` | Not served yet (helix-desktop#75). |
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
@@ -220,7 +220,9 @@ code. The choices that users or developers are most likely to notice:
 - **Login screen**: the greeter reads each user's session from
   AccountsService but remembers sessions itself (it cannot write them
   there), and takes its clock format from its own configuration or the
-  system defaults.
+  system defaults. Its accessibility menu (high contrast, large text,
+  the screen reader, its own on-screen keyboard) is remembered by the
+  greeter itself.
 
 Each of these is written down in its contract, marked *GNOME does not
 document this; Helix's choice:* where GNOME is silent, so other
