@@ -192,15 +192,19 @@ patterns are translatable (`%H:%M`, `%l:%M %p`, the date's
 
 Once authentication succeeds, the greeter sends `start_session` with:
 
-- `cmd`: `/bin/sh -c 'exec <Exec>'`, so the entry's `Exec` line is
-  interpreted as the desktop entry specification allows (arguments,
-  quoting, `env NAME=value` prefixes). When `/usr/bin/systemd-cat` exists
-  the command runs under it, `systemd-cat --identifier=<session id> --
-  /bin/sh -c 'exec <Exec>'`: greetd keeps no session output, so this is
-  how the session's messages (and those of everything it starts) reach the
-  journal, as they do under GDM. *GNOME does not document this; Helix's
-  choice.* The greeter's own compositor logs the same way, as
-  `helix-greeter`;
+- `cmd`: one string, the entry's `Exec` line. greetd does not treat `cmd`
+  as an argument list: it joins the items with spaces and runs
+  `/bin/sh -c '<source /etc/profile and ~/.profile>; exec <joined>'`, so a
+  single string is interpreted by that shell as the desktop entry
+  specification allows (arguments, quoting, `env NAME=value` prefixes).
+  (Splitting it into `/bin/sh`, `-c`, `exec …` becomes `exec /bin/sh -c
+  exec …` once joined, a shell that runs a bare `exec` and exits without
+  starting anything.) When `/usr/bin/systemd-cat` exists the line is
+  prefixed with `/usr/bin/systemd-cat --identifier=<session id> --`:
+  greetd keeps no session output, so this is how the session's messages
+  (and those of everything it starts) reach the journal, as they do under
+  GDM. *GNOME does not document this; Helix's choice.* The greeter's own
+  compositor logs the same way, as `helix-greeter`;
 - `env`: `XDG_SESSION_TYPE=wayland`, `XDG_SESSION_DESKTOP` (the entry's
   file name without `.desktop`), `DESKTOP_SESSION` (the same), and
   `XDG_CURRENT_DESKTOP` (the entry's `DesktopNames`, `;` replaced by `:`)
