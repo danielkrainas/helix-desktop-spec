@@ -108,8 +108,13 @@ system's for the login screen: month and weekday names, translatable
 date and time patterns with `clock-format`, the locale's first weekday,
 number, percentage and size formats, and accessible names. Right-to-left
 languages mirror the shell's own layouts and draw bidirectional text
-(`components/i18n.md`). No language is translated yet: catalogues come
-from translators (`TRANSLATING.md` in helix-desktop).
+(`components/i18n.md`). Helix ships translations for Spanish, French,
+German, Brazilian Portuguese, Russian, Simplified Chinese, Japanese,
+Italian, Polish, Dutch, Korean and Ukrainian; *differs on purpose*: they
+are machine translations shipped before review by native speakers
+(GNOME's come from its translation teams), labelled as unreviewed in
+each catalogue and in `TRANSLATING.md`. Chinese and Japanese text wraps
+between characters; CJK text needs the Noto CJK fonts.
 
 ## Not supported
 
