@@ -570,7 +570,7 @@ The menu closes on a choice, Escape, or a click outside it.
 
 Keyboard, in the window menu and the shell's other menus (the panel's
 input source, accessibility, status icon and extension menus, the
-dock's and app grid's menus):
+dock's and app grid's menus, the background menu):
 
 - A menu asked for with a key (`activate-window-menu`, Enter on a panel
   item while the panel has the keyboard, Shift+F10 or Menu in the app
@@ -611,6 +611,60 @@ Keys from `org.gnome.desktop.wm.keybindings` acting on the focused window:
 | `move-to-side-n` / `-s` / `-e` / `-w`, `move-to-corner-ne` / `-nw` / `-se` / `-sw` | against that edge or corner of the work area |
 | `raise`, `lower`, `raise-or-lower` | above all windows, below all, or whichever it is not (lowering focuses the new top window) |
 | `show-desktop` | minimize every window on the workspace; again (before any is shown) shows them back |
+
+## Background menu
+
+As in GNOME Shell (`js/ui/backgroundMenu.js`), the desktop background has
+a menu. It lists, top to bottom:
+
+- **Change Background…**: opens Settings at its background panel;
+- a separator;
+- **Display Settings**: opens Settings at its displays panel;
+- **Settings**: opens Settings.
+
+**When it opens.** On the desktop background only: the shell's
+`helix-background` surface of any monitor, or an empty spot (no icon) of
+the desktop icons surface (`contracts/gsettings/background.md`,
+"Desktop icons"), which GNOME's background menu is under too when Desktop
+Icons NG is not installed. Windows, the panel, the dock, the overview,
+the app grid and the shell's other surfaces above the background keep
+their own clicks, so it never opens over them; nor on the lock screen,
+whose background is another surface.
+
+- A press of the secondary (right) button opens it at once, at the
+  pointer (GNOME opens on the press too).
+- A long press opens it at the point pressed: the primary button or a
+  touch held for 500 ms without moving more than 8 logical pixels. A
+  release or a longer move first is an ordinary click, and does
+  nothing. *GNOME does not document this; Helix's choice:* the times
+  Clutter's long-press gesture defaults to (`long-press-duration` 500 ms,
+  the drag threshold of 8 pixels).
+- No key opens it. GNOME's background takes no keyboard focus, so it has
+  no Menu or Shift+F10 binding there; Helix has none either. Once open,
+  the menu is used with the keyboard like the shell's other menus (see
+  "Window menu and window keys").
+
+It opens below and to the right of the point (left in a right-to-left
+interface), kept on that monitor, and closes on a choice, Escape or a
+click outside it. It is a `menu` named `Background` on the accessibility
+bus (`contracts/dbus/org.a11y.atspi.md`).
+
+**What the entries start.** Choosing an entry closes the overview or app
+grid, if open, and starts Settings as the shell starts apps (each in its
+own scope; `contracts/dbus/org.gnome.SessionManager.md`).
+*GNOME does not document this; Helix's choice:* the settings app is chosen as for quick settings' Settings button:
+Helix's settings app when `helix-settings-app` is installed, started as
+`helix-settings-app background`, `helix-settings-app display` and
+`helix-settings-app`; else GNOME's desktop files, as GNOME Shell starts
+them: `gnome-background-panel.desktop`, `gnome-display-panel.desktop`
+and `org.gnome.Settings.desktop` (each falling back to
+`gnome-control-center background` / `display` / no argument when its
+desktop file is missing). As in GNOME, the entries are shown even when
+no settings app is installed; choosing one then only logs a warning.
+
+The labels are GNOME's messages ("Change Background…" with a real
+ellipsis, "Display Settings", "Settings"), translated through the shell's
+catalogue.
 
 ## Tiling (Helix)
 

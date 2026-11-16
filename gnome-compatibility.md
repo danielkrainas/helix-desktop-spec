@@ -95,7 +95,9 @@ folders, a dock, application and window switchers, window tiling,
 screenshots and screen recording, the lock screen, an on-screen keyboard,
 magnifier, high contrast, Large Text, reduced motion, sticky/slow/bounce
 and mouse keys, dwell click, hot corner, Wellbeing break reminders,
-desktop icons, removable-media handling, and privacy indicators.
+desktop icons, the desktop background's menu (Change Background…,
+Display Settings, Settings), removable-media handling, and privacy
+indicators.
 
 ### Languages
 

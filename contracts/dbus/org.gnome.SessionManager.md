@@ -131,7 +131,8 @@ not reach them. Losing the session bus ends the session (see "When the
 bus goes away"), which is why the bus is protected.
 
 Apps the shell starts (from the launcher, app grid, dock, dash, launch
-keys, notifications, the run dialog, the welcome tour and extensions)
+keys, notifications, the run dialog, the welcome tour, the background
+menu and extensions)
 each get a transient scope of their own under the user manager:
 `app-helix-<app id>-<pid>.scope` in `app.slice`, following systemd's
 naming for desktop environments (the app id is the desktop file id

@@ -53,7 +53,10 @@ dock).
   it: a `.desktop` file of `Type=Application` that is executable starts
   its application (through `gio launch`), anything else opens with its
   default application.
-- There are no menus, renaming, dragging or keyboard use; trusted
+- A right click or long press on an empty spot (no icon) opens the
+  background menu (`contracts/wayland/README.md`, "Background menu"); a
+  right click on an icon does nothing.
+- Files have no menus, renaming, dragging or keyboard use; trusted
   launcher marks (`metadata::trusted`) are not used.
 - GNOME's shell draws no desktop icons; Ubuntu's Desktop Icons NG
   extension does, with settings of its own, which Helix does not read.
