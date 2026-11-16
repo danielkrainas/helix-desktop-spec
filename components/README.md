@@ -147,8 +147,9 @@ unavailable (Control with its words dimmed):
   the calendar's month arrows, small icon buttons) or filled (Control:
   media buttons, a close button over a picture).
 - **Row**: a menu entry, a list row or a search result: nothing at rest,
-  Hovered under the pointer or the keyboard's selection, Pressed while
-  pressed, the accent fill when chosen.
+  Hovered under the pointer or the keyboard's selection (which also has
+  the focus ring inside it), Pressed while pressed, the accent fill when
+  chosen.
 - **Switch**: a 40×22 pill, Track when off and the accent fill when on,
   a round Text-colored knob at that end.
 - **Check box**: 16–18 px with corners of 4: the accent fill with a
@@ -264,10 +265,19 @@ it guarantees does not depend on the user's choice.
   what the keyboard reached (panel items with `switch-panels`, menu rows
   chosen with the arrow keys, app grid cells, dock items, quick settings
   controls, notification rows, calendar days, the focused banner, dialog
-  and prompt buttons and check boxes, the overview's selected window).
-  The pointer gives a light highlight instead (menus: the Hovered row;
-  the app grid and dock: a light square; the overview: a light frame),
-  so after the pointer moves the keyboard's place is still told apart.
+  and prompt buttons and check boxes, the overview's selected window,
+  the launcher's selected result, the switcher's selected entry).
+  The pointer gives a light highlight instead (menus, the launcher's
+  results and the switcher's list: the Hovered row; the app grid, dock
+  and the switcher's icons and tiles: a light square; the overview: a
+  light frame), so after the pointer moves the keyboard's place is still
+  told apart.
+- *GNOME does not document this; Helix's choice:* the launcher's
+  selected result and the switcher's selected entry are lit as the
+  pointer's hover is (Hovered) and carry the focus ring, inside the row
+  for a list row (as for a menu row), around the square for an icon or
+  a tile, always (their selection is only ever the keyboard's, or the
+  click that ends them); the accent fill is not used for them.
 - A menu row chosen with the keyboard has both the Hovered fill and the
   ring; both go after `keyboard-focus-visible-timeout`
   (`contracts/gsettings/a11y-interface.md`), each key starting that time
@@ -291,8 +301,11 @@ pieces apart is white lines rather than shades:
   the pointer a 1 px white outline around its icon (2 px while
   pressed), the keyboard's item the white focus ring outside that. App
   grid cells: 2 px while lit (3 px pressed), and the focus ring.
-- The hovered or keyboard-selected menu row has a 2 px white outline;
-  the open panel menu's button too.
+- The hovered or keyboard-selected menu row, launcher result or
+  switcher row has a 2 px white outline, the keyboard's one the white
+  focus ring inside that too; the open panel menu's button has the
+  outline. The switcher's selected icon or tile has the white focus ring
+  around its outlined square.
 - The selected calendar day has a white ring; the Do Not Disturb switch
   an outline.
 - The panel's inactive workspace dots are hollow, the active one filled

@@ -998,8 +998,9 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   rows are 48 px tall. The list keeps the selected row in sight, showing
   as many rows as fit above the screen's bottom. *GNOME does not document
   this; Helix's choice:* the row under the pointer is lit with Hovered
-  (Pressed while held) apart from the keyboard's selection, which keeps
-  the accent fill and does not move with the pointer (Enter still opens
+  (Pressed while held) apart from the keyboard's selection, which is lit
+  the same way with the focus ring inside it (`components/README.md`,
+  "Shell look") and does not move with the pointer (Enter still opens
   the selected row); the light goes when the pointer leaves the row or
   the launcher, and a click opens the row on release over it. With an empty search it
   shows the app grid (below). Ctrl+D
@@ -1686,8 +1687,8 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   applications' icons (each its most recent window's icon, see below), as
   large as fit the monitor: 96 logical px, shrinking to as little as 32
   (twelve applications fit at 64 px or more on a 1280 px wide monitor);
-  the selected one in a light rounded square, one under the pointer in a
-  fainter one; the selected application's name in bold under the row; an
+  the selected one in a light rounded square with the focus ring around
+  it, one under the pointer in a fainter one; the selected application's name in bold under the row; an
   application with several windows has a small dot under its icon per
   window (at most four). When even 32 px icons do not fit, it is a list
   instead (a row per application with its icon, name and window count).
@@ -1733,7 +1734,8 @@ Keys of `org.gnome.desktop.wm.keybindings` (and `-backward` variants):
   eight (fewer when the monitor is narrower), each a picture of the
   window (taken when the switcher opens, as for the overview; the
   window's icon at 64 pixels until it comes) with the window's title
-  below, the selected tile highlighted; with `both` the window's icon (32
+  below, the selected tile highlighted with the focus ring around it (a
+  tile under the pointer highlighted alone); with `both` the window's icon (32
   pixels) sits on the picture's bottom right corner. With `app-icon-only`
   it is the list described above.
 - Switcher entries show a window's icon: the one its app set
