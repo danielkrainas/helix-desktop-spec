@@ -188,6 +188,17 @@ code. The choices that users or developers are most likely to notice:
   (`contracts/wayland/README.md`, "Tearing"). Not yet tried on real GPUs
   (helix-desktop#110).
 
+- **File chooser.** The FileChooser portal's dialog is drawn by the
+  shell in Helix's look, modelled on GTK 4's chooser (path bar, places,
+  a list with Name, Size and Modified sorted by the headers, type-ahead,
+  double-click, a file type menu, Save's name at the top, New Folder),
+  and shares the sort order and hidden files with GTK 4 through
+  `org.gtk.gtk4.Settings.FileChooser`. Its size comes from the screen
+  (it is not resizable), folders are read off the UI thread with a
+  "Loading…" state, and it has no grid view, Type column, Starred, Trash
+  or Other Locations, or eject buttons yet (helix-desktop#118;
+  `contracts/dbus/org.freedesktop.impl.portal.md`, "FileChooser").
+
 ### Safety and robustness
 
 - **Dialogs default to the safe button.** Enter means Wait for an
@@ -270,6 +281,8 @@ display manager, Bluetooth file transfer and USB protection. The
 greeter has been verified on real hardware through greetd. Screen-reader support is tested over
 AT-SPI on a private bus and was read with Orca 50 on a headless Helix
 session (private buses, speech read from Orca's log; what it said is in
-`contracts/dbus/org.a11y.atspi.md`, "Verified with Orca"); Orca's mouse
+`contracts/dbus/org.a11y.atspi.md`, "Verified with Orca"); The file
+chooser's accessible tree is tested over AT-SPI but has not been read
+with Orca yet (helix-desktop#71). Orca's mouse
 review does not work yet (the compositor does not tell where the
 pointer is), and Orca has not been used on real hardware with speech.

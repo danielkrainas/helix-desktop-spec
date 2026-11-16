@@ -97,6 +97,8 @@ From other GNOME 51.0 packages, described the same way:
 - [`org.gnome.mutter.wayland.keybindings`](org.gnome.mutter.wayland.keybindings.md) (mutter)
 - [`org.gnome.settings-daemon.plugins.color`](org.gnome.settings-daemon.plugins.color.md)
   (gnome-settings-daemon)
+- [`org.gtk.gtk4.Settings.FileChooser`](org.gtk.gtk4.Settings.FileChooser.md)
+  (GTK 4.22): the file chooser's sort order and hidden files
 
 Helix reuses the system dconf and the installed GNOME schemas, so these
 tables are what the installed schemas must provide; they are not a

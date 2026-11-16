@@ -108,10 +108,28 @@ left-to-right layout; actions still reach the control under them.
   app with its reason as description), the `Install pending software
   updates` check box when offered, and the two buttons. The action
   button has the focus (Enter answers with it).
+- **The file chooser** (`org.freedesktop.impl.portal.md`,
+  "FileChooser"): a modal `dialog` named by the title (the same object
+  while it is shown, whatever folder it shows); a `tool bar` "Location"
+  with Back, Forward and a button per folder of the path bar (the folder
+  shown toggled), or the location, search or new folder field; the
+  places as a `list box` "Places"; the files as a `list box` named
+  "Files in <folder>" (or "Recent Files", "Search results for “<text>”")
+  with a `list item` per row (all rows up to 1000, else those near the
+  screen), named by the file name without a trailing `/`, described
+  "Folder" or by size, then "Modified <when>" (and the folder in Recent
+  and search results), with `posinset`/`setsize` among all rows; the
+  current row has the focus while the list does and is selected; a live
+  `status bar` "<folder>, <n> items" or "Loading…"; the Name field when
+  saving; the check box; "File Type" as a `combo box` (its value as
+  description, expandable to a list of types); the warning, announced;
+  Cancel and the accept button. "Replace File?" is an `alert` with
+  Replace focused. Tested over AT-SPI on a private bus; not yet read
+  with Orca (helix-desktop#71).
 - **Prompt dialogs** (polkit, keyring, network secrets, mount questions,
   portal dialogs, the run dialog): a modal `dialog` named by the title;
-  the message and description as labels; places and list rows (`list
-  item`s, selected as picked); the text field (`text`) and password
+  the message and description as labels; list rows (`list item`s,
+  selected as picked); the text field (`text`) and password
   fields (`password text`, named by their labels; a field turned to
   "Show" is a `text`); `Show Password` toggle buttons; the check boxes
   (`check box`, checked as set); the status line (`Authenticating…`

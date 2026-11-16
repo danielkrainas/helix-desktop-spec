@@ -789,52 +789,105 @@ purposes are offered, as below.
 
 ### Helix
 
-The shell's dialog (`org.helix.PortalDialog.Dialog`) shows one folder at a
-time: the title (or the accept label), the folder as the message (`~` for
-the home folder), a list of rows, a text field, the check box of the first
-choice without options (the others keep their initial values), and Cancel
-and accept buttons (`accept_label`, else "Open", "Select" for folders,
-"Save"). Clicking the current row again acts as accepting it.
+The backend asks the shell's file chooser (`org.helix.PortalDialog.ChooseFiles`,
+`org.helix.PortalDialog.xml`) once per request: one dialog stays up for
+the whole choice, browsing folders itself, and answers with the chosen
+paths. Polkit and keyring prompts wait until it is answered. The backend
+turns the paths into `file:` URIs and remembers the folder.
 
-- The rows, in order: "Select This Folder" (folders) or "Save Here"
-  (saving); "Parent Folder" (except at `/`); "File type: <name> (choose to
-  change)" when there are two or more filters (not for folders or
-  `SaveFiles`); the folders (`<name>/`), then the files (not when choosing
-  folders or for `SaveFiles`), each sorted by name ignoring case. Names
-  starting with `.` are hidden; files are shown when the current filter
-  matches them (globs ignore case; MIME types by the type guessed from the
-  name).
-- Left of the rows, a column of places: "Recent" (only when opening
-  files), "Home", the user's standard folders (Desktop, Documents,
-  Downloads, Music, Pictures, Videos, as `user-dirs.dirs` names them,
-  except the home folder itself), GTK bookmarks
-  (`$XDG_CONFIG_HOME/gtk-3.0/bookmarks`: local `file:` URIs, named by
-  their label or the folder's name), drives mounted under
-  `/media/<user>/` and `/run/media/<user>/` (by folder name), network
-  places the user connected to (GVfs's FUSE folders under
-  `$XDG_RUNTIME_DIR/gvfs/`, named "<share> on <server>" for
+- What is passed: the title (else the accept label), the accept label
+  (`accept_label`, else "Open", "Select" for folders, "Save"), what is
+  chosen (files, possibly several with `multiple`; a folder with
+  `directory`; a name for `SaveFile`; a folder for `SaveFiles`), the
+  filters with the current one (`current_filter`, added when it is not
+  among `filters`, else the first), the name (`current_name`, else
+  `current_file`'s name), the check box of the first choice without
+  options (the others keep their initial values), and the start folder:
+  `current_folder`, else `current_file`'s folder, else the folder the app
+  last chose in (this session). Without one, opening files starts in
+  Recent when `org.gtk.gtk4.Settings.FileChooser startup-mode` is
+  `recent` (GTK's default), else everything starts in the home folder.
+- Size and place: about 80 % of the screen's width (at least 600, at
+  most 1180 logical pixels) and 85 % of its height (at least 440, at most
+  900), centered, from the screen's size alone: it neither moves nor
+  changes size between folders, and with Large Text the rows grow and
+  fewer show while the title, fields and buttons stay on the screen.
+  *GNOME does not document this; Helix's choice.*
+- Layout: the title; a row with Back, Forward, the path bar and, when
+  opening files, Search, or when saving or choosing a folder, New
+  Folder; when saving, "Name" with the name field; then the places, the
+  file list and (while the selected file's type can be previewed) a
+  preview pane; at the bottom the check box, a warning line, the file
+  type button and Cancel and the accept button (the default).
+- Path bar: the home folder (or `/`, "Computer") with its icon, then a
+  button per folder down to the one shown, which is bold and pressed;
+  going up keeps the folders below as buttons (as GTK's path bar does)
+  until another branch is entered. When they do not fit, the first ones
+  give way to a "…" button that goes to the deepest folder not shown.
+  Clicking a folder's button goes there (with the folder below it
+  selected). In Recent the bar reads "Recent", in a search "Search for
+  “<text>”".
+- Places (left): Recent (when opening files or saving), Home, the user's
+  standard folders (Desktop, Documents, Downloads, Music, Pictures,
+  Videos, as `user-dirs.dirs` names them, except the home folder
+  itself), GTK bookmarks (`$XDG_CONFIG_HOME/gtk-3.0/bookmarks`: local
+  `file:` URIs, named by their label or the folder's name), drives
+  mounted under `/media/<user>/` and `/run/media/<user>/` (by folder
+  name), network places the user connected to (GVfs's FUSE folders
+  under `$XDG_RUNTIME_DIR/gvfs/`, named "<share> on <server>" for
   `smb-share:server=…,share=…`, "<user> on <host>" or "<host>" for others,
   else by folder name; checked with unit tests only), and "Computer"
-  (`/`); folders that do not exist are left out, and a folder
-  is listed once. The place showing is marked. Clicking a place shows it
-  (when saving, the name typed so far is kept). Recent lists recently
-  used files (`$XDG_DATA_HOME/recently-used.xbel`), newest first by when
-  they were last modified there (else added), at most 100, only local
-  files that still exist and pass the current filter, each as "<name> —
-  <folder name>"; the message then reads "Recent". It lists nothing
-  while `org.gnome.desktop.privacy remember-recent-files` is false or
-  `recent-files-max-age` is 0, and with a positive age only files used
-  within that many days. Recent files are chosen
-  (and, with `multiple`, picked) as files are. The file type row is
-  shown there too; there is no Parent Folder.
-- Previews: when some rows can be previewed (files, or recent files,
-  that are pictures — PNG, JPEG, WebP, JPEG XL or SVG —, text, or of a
-  type an installed thumbnailer handles; by content type, from the name
-  and the first 4 KiB), an area below the rows shows the selected row's
-  preview, or "No preview":
-  - a picture scaled down to fit 392 × 160 pixels (not above 32 MiB);
-  - text: its first nine lines (of the first 8 KiB), tabs as four
-    spaces;
+  (`/`), each with a symbolic icon, separated into groups (standard
+  folders, bookmarks, drives and network places, Computer); folders that
+  do not exist are left out and a folder is listed once. They are read
+  once when the dialog opens. They scroll with the wheel when they do
+  not fit. The place shown is marked: the one shown, else the deepest one
+  holding the folder shown. Clicking a place shows it.
+- The list: columns Name (a symbolic icon for the type: `folder-symbolic`
+  for folders, else the generic icon of the type guessed from the name,
+  e.g. `image-x-generic-symbolic`), Size (files only, as `g_format_size`
+  writes it, right-aligned; not shown when `show-size-column` is false)
+  and Modified (the time for today, as `clock-format` asks, "Yesterday",
+  the day and month this year, else with the year); in Recent and search
+  results a Location column (the folder, `~` for the home folder) takes
+  the Size column's place. Long names are shortened in the middle,
+  keeping their end. Columns go when the list is too narrow (Size or
+  Location first). Folders come first (`sort-directories-first`), sorted
+  by the column header clicked (name, size or modified; clicking the same
+  header again flips the order; Recent is always newest first); names
+  sort naturally (`file2` before `file10`, case and accents ignored, as
+  `g_utf8_collate_key_for_filename` orders them), ties by name. The sort
+  and hidden files are GTK's settings
+  (`contracts/gsettings/org.gtk.gtk4.Settings.FileChooser.md`). Hidden
+  entries (names starting with `.` or ending with `~`) are not listed
+  unless `show-hidden`. Files are listed when the mode lists files (not
+  when choosing folders or for `SaveFiles`) and pass the current file
+  type (globs ignore case; MIME types by the type guessed from the name).
+  Only the rows that show are drawn; the list scrolls with the wheel or
+  touchpad (three rows a notch) and has a scrollbar that can be dragged
+  or clicked. With nothing to show: "Folder is empty", "No recent files",
+  "No results found", or "This folder cannot be shown: <error>".
+- Reading folders: a folder is listed on a worker thread from its
+  entries' metadata only (no file is opened or read; the type comes from
+  the name, as GTK's `standard::fast-content-type`), so unreadable files
+  are listed and a slow drive does not hold the dialog up. Going to a
+  folder empties the list at once (the path bar already shows the new
+  folder); after 200 ms without an answer the list says "Loading…" with a
+  spinner. The places, Cancel and every other part work while a folder
+  loads; a listing that comes after the user went elsewhere is dropped.
+  *GNOME does not document this; Helix's choice.*
+- Recent lists recently used files (`$XDG_DATA_HOME/recently-used.xbel`),
+  newest first by when they were last modified there (else added), at
+  most 100, only local files that still exist and pass the current file
+  type. It lists nothing while `org.gnome.desktop.privacy
+  remember-recent-files` is false or `recent-files-max-age` is 0, and
+  with a positive age only files used within that many days.
+- Previews: while the selected file is of a type that can be previewed
+  (from its name: pictures — PNG, JPEG, WebP, JPEG XL or SVG —, text, or a
+  type an installed thumbnailer handles), a pane right of the list shows
+  it, decoded off the UI thread for that file only:
+  - a picture scaled down to fit the pane (not above 32 MiB);
+  - text: its first lines (of the first 8 KiB), tabs as four spaces;
   - other files: their thumbnail, from the freedesktop thumbnail cache
     (`$XDG_CACHE_HOME/thumbnails/{x-large,large,normal}/<md5 of the
     URI>.png`, used when not older than the file), else Helix's own cache
@@ -846,48 +899,95 @@ and accept buttons (`accept_label`, else "Open", "Select" for folders,
     Helix does not write into the shared cache (its entries need metadata
     Helix's thumbnails lack).
 
-  The shell makes each preview once per folder view, without holding up
-  the dialog.
-- The start folder: `current_folder`, else `current_file`'s folder, else
-  the folder the app last chose in (this session), else the home folder.
-  The first filter is current unless `current_filter` names one (added
-  when it is not among `filters`).
-- Accepting a row: Parent Folder goes up (with the folder left as the
-  current row); a folder opens; the file type row steps to the next
-  filter; Select This Folder chooses the folder shown; a file is chosen
-  (when saving: its name is put in the Name field).
-- Opening: the text field is "Location": a path typed there (relative to
-  the folder shown, or absolute, or starting with `~`) opens a folder or
-  chooses a file; otherwise, when opening files and the text has no
-  `/`, it searches the folder shown and the folders below it (see
-  "Searching files" below). The results are
-  rows "<name> — <folder name>" (chosen as files are) under the message
-  "Search for “<text>” in <folder>"; with none, the warning "No files
-  named like “<text>”.". Clicking a place ends the search. Otherwise the
-  warning "“<text>” was not found.". With
-  `multiple`, files are picked by clicking them (or Space) and accepting
-  chooses all picked files; folders and the other rows are not picked.
-- Saving: the text field is "Name" (`current_name`, else `current_file`'s
-  name). Save Here saves under that name in the folder shown (a name with
-  `/` is a path as above; a folder name opens it); an empty name gives the
-  warning "Type a name for the file.", a missing folder "That folder does
-  not exist.". An existing file needs confirming: "Replace File?", "A file
-  named “<name>” already exists in “<folder>”. Replacing it overwrites
-  its contents.", buttons "Cancel" (back to the chooser) and "Replace".
-  `SaveFiles`: Save Here answers each of `files`' names in the folder
-  shown (existing files are not asked about).
+  When it cannot be shown the pane reads "No preview".
+- File type: a button with the current type's name and a menu above it
+  listing every type (the current one checked); choosing one filters the
+  list at once (a search runs again). It is shown when there are types
+  and files are listed.
+- Mouse: a press on a row selects it; a second press on the same row
+  within `org.gnome.desktop.peripherals.mouse double-click` milliseconds
+  activates it (a folder opens; a file is chosen, or when saving, saved
+  over after asking). With `multiple`: a click selects one file, Ctrl
+  toggles one, Shift picks the range from the last one clicked.
+- Keyboard: Tab and Shift+Tab move between the name field (saving), the
+  path bar's field (when open), the list, the check box, the file type
+  button, Cancel and the accept button. In the list: Up, Down, Page Up,
+  Page Down, Home and End move (with Shift, picking the range with
+  `multiple`); Enter activates the row (when saving, Enter always saves
+  under the name typed); Backspace goes to the parent folder (with the
+  folder left selected); Space picks the row (with `multiple`); Ctrl+A
+  picks every file (with `multiple`); typing selects the first row whose
+  name starts with what was typed (case and accents ignored; typing the
+  same letter again goes to the next one; forgotten after 1.5 seconds),
+  shown in a bubble; `/` or `~` open the location field with it.
+  Anywhere: Alt+Up the parent folder, Alt+Left and Alt+Right back and
+  forward, Alt+Home the home folder, Ctrl+L or Alt+D the location field
+  (with the folder shown), Ctrl+H hidden files on or off (stored in
+  `show-hidden`), Ctrl+F search (opening files), Escape closes the
+  location, search or new folder field, else cancels. In the name and
+  path bar fields: Left, Right, Home, End (with Shift selecting),
+  Backspace, Delete, Ctrl+A, and typing replaces the selection; copy,
+  cut and paste work as in the shell's other fields. Enter is taken only
+  once the dialog has been up for 300 ms. On the file type button, Space
+  or Down opens its menu (Up, Down, Enter, Escape).
+- Opening: the accept button chooses the selected file (with `multiple`,
+  the files picked); with a folder selected it opens the folder (as GTK
+  does). Choosing a folder: the accept button chooses the folder selected
+  in the list, else the folder shown.
+- Location field (Ctrl+L): a path (relative to the folder shown, absolute
+  or starting with `~`) opens a folder or chooses a file (opening), or
+  when saving goes to its folder with its name in the Name field;
+  otherwise the warning "“<text>” was not found.".
+- Search (opening files; Ctrl+F or the search button): Enter searches the
+  folder shown and the folders below it (see "Searching files" below);
+  the results show with their Location; Escape (or the search button)
+  goes back to the folder.
+- Saving: the Name field is at the top with the base name selected (up to
+  its last `.`, so typing replaces "Untitled document" and keeps ".odt").
+  Clicking a file puts its name there. The accept button (and Enter)
+  saves under that name in the folder shown (in Recent, in the selected
+  file's folder): an empty name gives the warning "Type a name for the
+  file.", a name with `/` is a path as above (a missing folder: "That
+  folder does not exist."), a folder's name opens it. An existing file
+  needs confirming over the dialog: "Replace File?", "A file named
+  “<name>” already exists in “<folder>”. Replacing it overwrites its
+  contents.", buttons "Cancel" (back to the chooser) and "Replace" (the
+  default). `SaveFiles`: the accept button answers each of `files`'
+  names in the folder shown (existing files are not asked about).
+- New Folder (saving and choosing folders): a field in the path bar's
+  place, "New folder name"; Enter makes the folder in the folder shown
+  (on a worker thread) and goes into it. Warnings: "Type a name for the
+  folder.", "Folder names cannot contain “/”.", "That name cannot be
+  used." (`.` and `..`), "A file or folder with that name already
+  exists.", "The folder could not be made: <error>".
 - With `org.gnome.desktop.lockdown` `disable-save-to-disk` true, `SaveFile`
   and `SaveFiles` answer 2 without a dialog.
 - Results: `uris` as `file:` URIs; `choices` with every choice's value
   (the check box's as `true`/`false`); `current_filter` when there are
   filters.
+- Accessibility (`org.a11y.atspi.md`): one dialog object, `file-chooser`,
+  for the dialog's whole life, with the path bar (a tool bar of buttons,
+  the folder shown toggled), the places (a list box), the file list (a
+  list box named "Files in <folder>", "Recent Files" or "Search results
+  for “<text>”"; every row while there are at most 1000, else those near
+  the screen; each row named by the file's name, described "Folder" or
+  its size, then "Modified <when>" and in Recent and search results its
+  folder, with its place among all rows (`posinset`/`setsize`); the
+  current row has the focus while the list does), a live status
+  "<folder>, <n> items" (or "Loading…") read out when the folder
+  changes, the fields, the file type (a combo box), and the buttons. Not
+  yet tried with Orca (helix-desktop#71).
+- Not offered (helix-desktop#118): a grid view, a Type column, Starred,
+  Trash and Other Locations places, eject buttons beside drives, a
+  resizable dialog, and reading the places again when drives come and
+  go while the dialog is open.
 
 ### Searching files
 
-When a file index runs on the session bus (localsearch,
-`org.freedesktop.LocalSearch3`, else Tracker 3's
-`org.freedesktop.Tracker3.Miner.Files`; neither is started for a
-search), the chooser asks it first, through its SPARQL endpoint
+The shell runs searches off the UI thread. When a file index runs on
+the session bus (localsearch, `org.freedesktop.LocalSearch3`, else
+Tracker 3's `org.freedesktop.Tracker3.Miner.Files`; neither is started
+for a search), the chooser asks it first, through its SPARQL endpoint
 (`org.freedesktop.Tracker3.Endpoint` at `/org/freedesktop/Tracker3/Endpoint`,
 `Query(s sparql, h fd, a{sv} options) → as`: the column names; the
 results are written to `fd`). Helix's query asks for the `nie:url` of

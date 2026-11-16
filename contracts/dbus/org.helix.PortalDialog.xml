@@ -47,18 +47,41 @@
           one; the current row is outlined), except those in
         unpickable (ai);
         activate-rows (b): clicking the current row again accepts (not for
-          pickable rows);
-        places (as), place-current (i): a column of places left of the
-          rows (at most 14), the current one marked; clicking a place
-          accepts.
-        previews (as): a file per row ("" for none); with any, an area
-          below the rows shows the selected row's file as a picture
-          (decoded by the shell; "No preview" when it cannot be).
+          pickable rows).
+      Rows that do not fit on the screen (large text) scroll; the dialog
+      keeps its top edge while it is shown.
       response: 0 accepted, 1 canceled. results: check (b), selected (i),
-      entry (s, with a text field), picked (ai, with multiple), place (i,
-      when a place was clicked).
+      entry (s, with a text field), picked (ai, with multiple).
     -->
     <method name="Dialog">
+      <arg name="options" type="a{sv}" direction="in"/>
+      <arg name="response" type="u" direction="out"/>
+      <arg name="results" type="a{sv}" direction="out"/>
+    </method>
+    <!--
+      The file chooser: one dialog for the whole choice, which browses
+      folders itself (notes in org.freedesktop.impl.portal.md,
+      "FileChooser", "Helix"). It returns once the user chose or canceled;
+      polkit and keyring prompts wait meanwhile. Options (all optional):
+        title (s), accept (s): the title and the accept button's label
+          (default "Open", "Select" for folders, "Save");
+        mode (s): "open" (files), "folder", "save" (a name to save
+          under) or "save-files" (a folder to save files into);
+        multiple (b): with "open", several files may be chosen;
+        folder (ay): the absolute folder to start in (absent: Recent
+          when opening files and org.gtk.gtk4.Settings.FileChooser
+          startup-mode is "recent", else the home folder);
+        name (s): with "save", the name to start with;
+        filters (a(sa(us))): file types, each a name and patterns (0, a
+          glob; 1, a MIME type); filter (i): the one shown (-1: none);
+        check-label (s), check (b): a check box below the list.
+      response: 0 chosen, 1 canceled. results: paths (aay): the files
+      chosen (with "folder" and "save-files", one folder; with "save",
+      the file to write, which the user agreed to replace when it
+      exists); folder (ay): the folder shown last; filter (i): the file
+      type shown last (-1: none); check (b).
+    -->
+    <method name="ChooseFiles">
       <arg name="options" type="a{sv}" direction="in"/>
       <arg name="response" type="u" direction="out"/>
       <arg name="results" type="a{sv}" direction="out"/>
