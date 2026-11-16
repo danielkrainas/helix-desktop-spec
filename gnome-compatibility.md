@@ -238,4 +238,8 @@ drawing tablets, HDR and calibrated monitors, DDC/CI brightness, privacy
 screens, underscanning, offline updates, user switching with a real
 display manager, Bluetooth file transfer, USB protection, and the
 greeter's start through greetd. Screen-reader support is tested over
-AT-SPI on a private bus but not yet with Orca on a Helix session.
+AT-SPI on a private bus and was read with Orca 50 on a headless Helix
+session (private buses, speech read from Orca's log; what it said is in
+`contracts/dbus/org.a11y.atspi.md`, "Verified with Orca"); Orca's mouse
+review does not work yet (the compositor does not tell where the
+pointer is), and Orca has not been used on real hardware with speech.

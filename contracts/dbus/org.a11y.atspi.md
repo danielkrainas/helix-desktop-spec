@@ -114,11 +114,13 @@ left-to-right layout; actions still reach the control under them.
   item`s, selected as picked); the text field (`text`) and password
   fields (`password text`, named by their labels; a field turned to
   "Show" is a `text`); `Show Password` toggle buttons; the check boxes
-  (`check box`, checked as set); the status line (`Authenticating…` or
-  the warning) announced; and the cancel and continue buttons (continue
-  insensitive while answering). Focus follows Tab among the fields and
-  check boxes; with no field, the list's current row, else the continue
-  button, has it.
+  (`check box`, checked as set); the status line (`Authenticating…`
+  while a password is checked, or the warning) announced; and the
+  cancel and continue buttons (continue insensitive while answering).
+  Focus follows Tab among the fields and check boxes; with no field,
+  the list's current row, else the continue button, has it. Enter
+  answers with the continue button (after the first 300 ms, as for
+  every dialog: `contracts/wayland/README.md`).
 - **Screen sharing**: a modal `dialog` `Share your screen?`, the message,
   one `list item` per monitor (connector as description; selected when
   picked, if several may be), `Cancel`, and `Share` when several may be.
@@ -158,9 +160,15 @@ left-to-right layout; actions still reach the control under them.
   focused, else the entry is), the open folder's apps instead (a group
   named by the folder), and `Page N` buttons when there are several
   pages.
-- **Banner**: a `notification` named by the summary, described by the
-  body (markup removed), announced; the app name, `Close`, the action
-  buttons by their labels and the body's links (`link`).
+- **Banner**: a `notification` named by the summary, holding the app
+  name and the body (markup removed) as labels, `Close`, the action
+  buttons by their labels and the body's links (`link`); beside it a
+  label "App: summary. body", announced when the banner appears or
+  changes.
+  *GNOME does not document this; Helix's choice:* one announcement says
+  it all, because Orca drops a second announcement from the same
+  application within a tenth of a second; the body is a label rather
+  than the description, which Orca read twice.
 - **Notifications**: a `Notifications` list of notifications (list
   items named "App: summary", described by the body, each with its
   `Close` and links) and group headers ("App, N notifications", with
@@ -272,6 +280,26 @@ left-to-right layout; actions still reach the control under them.
   *GNOME does not document this; Helix's choice:* the times and the
   length are the description, in the user's clock format.
 
+## Announcements
+
+Live objects (the lock screen's message and Caps Lock warning, a prompt's
+status line, the banner's line, the OSD, the workspace popup, the break
+screen's message) are announced (`object:announcement`, polite) when they
+appear and whenever their words change. A window that appears with live
+objects in it (a banner, the OSD, the workspace popup, a prompt shown
+with a warning) announces them too: it is first published with them
+silent and wordless, then with their words.
+*GNOME does not document this; Helix's choice:* a screen reader reads
+nothing for a window that appears without taking the keyboard, so
+without this a new banner, OSD or workspace popup would go unsaid.
+
+A screen reader may drop the second of two announcements that come at
+once (Orca ignores one that follows another from the same application
+within a tenth of a second), so a change announces one thing: the lock
+screen's Caps Lock warning stays published while the password is
+checked (only the painting hides it), so that coming back it is not
+announced again in place of "Incorrect password. Try again.".
+
 ## Text fields
 
 The shell's text fields (the launcher's search, the run dialog, the
@@ -316,8 +344,62 @@ are described under "Text fields". Other actions are ignored.
   work from the tool bar and keys.
 - Windows' screen positions are computed from the layout (the primary
   monitor, the dock's edge) rather than reported by the compositor.
-- The tree, roles, names, states, focus and actions are tested over
-  AT-SPI on a private accessibility bus, but not yet with Orca on a
-  Helix session: whether Orca announces windows and focus changes as
-  intended (activation of layer surfaces, live messages, the lock
-  screen's password field) is unverified (helix-desktop#71).
+  Orca's flat review reads by them correctly (the top bar's line reads
+  left to right); Orca's mouse review cannot work yet: at-spi 2.60 asks
+  the compositor where the pointer is (`org.freedesktop.a11y.PointerLocator`
+  on `org.freedesktop.a11y.Manager`), which helix-comp does not offer.
+
+## Verified with Orca
+
+The shell was read with Orca 50.3 (helix-desktop#71) in a headless Helix
+session (helix-comp's headless backend with helix-shell) with a private
+session bus, a private accessibility bus (`at-spi-bus-launcher` on that
+bus, in a scratch home and runtime directory) and a private Orca with
+no speech server and no sound, reading what Orca would say from its
+debug log (`SPEECH OUTPUT`). Keys came through the headless backend's
+test input. What Orca said:
+
+- **Top bar** (`switch-panels`): "Top Bar", then each control as focus
+  moves: "Apps toggle button not pressed. Workspace 1 of 4.", the
+  clock "collapsed button. Notifications and calendar.",
+  "Accessibility button.", "System collapsed button.".
+- **Quick settings** (Enter on System): "System Menu", "System menu.",
+  "Take Screenshot button."; Tab and the arrows read each button and
+  toggle ("Dark Style toggle button not pressed."); Escape goes back to
+  "System collapsed button.".
+- **Launcher** (Super+A): "Launcher", "Search entry."; typing: "Search
+  Results List with 5 items", "Terminal."; Down reads each result.
+- **Window overview** (Super): "Window Overview frame", "Search entry.";
+  Tab: "Workspaces List with 4 items", "Workspace 1." (Right: "Workspace
+  2."), then the windows ("Windows List with 1 item", the window's
+  title and app) and the dash's buttons.
+- **Workspace popup** (Super+Page Down): "Workspace 2".
+- **Run dialog** (Alt+F2): "Run a Command dialog", "Enter a Command
+  entry."; Enter on a command that does not exist: the dialog again with
+  "Command not found: …" (read with the dialog and announced).
+- **Notifications**: a new banner: "Test App: Backup finished. All 12
+  files were copied."; focused (Super+N): "notification Backup
+  finished. All 12 files were copied."; the list (Super+V):
+  "Notifications List with 1 item", "Test App: Backup finished.",
+  "Close button.", "just now. All 12 files were copied.".
+- **End-session dialog**: "Log Out dialog The session will end
+  automatically in 60 seconds.", "Log Out button."; Tab: "Cancel
+  button.".
+- **Lock screen** (Super+L): "Lock Screen frame", "Unlock button. Press
+  a key or click to unlock."; then "Password password text"; Caps Lock:
+  "Caps Lock is on"; Enter: "Checking…", "Incorrect password. Try
+  again.".
+- An app's window (a GTK dialog) is read when the overview closes and
+  it gets the keyboard back.
+
+Found and fixed by this reading: a new banner, OSD and workspace popup
+said nothing; Enter did not answer prompt dialogs (the run dialog);
+"Authenticating…" was announced for prompts without a password; a wrong
+password was announced as "Caps Lock is on"; a focused banner's body
+was read twice.
+
+Not verified with Orca: Orca's own keys need the compositor's key
+monitor (`org.freedesktop.a11y.KeyboardMonitor.md`), which was in use
+(flat review's keys worked) but not exercised further; braille; the
+switcher with several apps; an app's own accessibility (it is the
+app's).
