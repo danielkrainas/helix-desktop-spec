@@ -67,13 +67,30 @@ Missing properties count as empty.
 - **Icon.**
   - The icon is `IconName` looked up first in `IconThemePath` (when not
     empty), then in the icon theme like the panel's other icons.
+    *GNOME does not document this; Helix's choice:* when
+    `IconThemePath`, the icon theme (with the themes it inherits and
+    hicolor) or Adwaita has the name's `-symbolic` form, that is drawn
+    instead, in the panel's text color like the other status icons
+    (keeping the image's own transparency). Otherwise the full-colour
+    image comes from a source at least twice the size the icon is drawn
+    (an SVG, rendered at that size, or the smallest PNG at least twice as
+    large; the largest there is when none is), shrunk to the drawn size
+    with each pixel the average of those it covers. A theme's PNG that
+    only matches the drawn size is not used while a larger one exists,
+    and a small image is never chosen to be scaled up when a larger one
+    exists. (Themes such as Yaru have only fixed-size PNGs for app status
+    icons; at 16 pixels their rounded shapes break into blocks.)
   - Failing that, it is `IconPixmap`: of its images, the smallest that
-    is at least as large as the icon is drawn (else the largest).
-    Pixmaps are ARGB32, in network byte order. Images larger than
-    256×256, or whose data length does not match, are ignored.
+    is at least twice as large as the icon is drawn (else the largest),
+    shrunk the same way. Pixmaps are ARGB32, in network byte order.
+    Images larger than 256×256, or whose data length does not match, are
+    ignored.
   - Without any icon, the item is not shown.
   - Status icons are drawn 16 pixels (scaled with the monitor) and 8
-    pixels apart.
+    pixels apart. *GNOME does not document this; Helix's choice:*
+    full-colour icons are drawn the same 16 pixels as symbolic ones, so
+    the tray's spacing, click targets and overlay (half size) stay those
+    of the other status icons.
 - **Overlay.** `OverlayIconName` (looked up like the icon), else
   `OverlayIconPixmap`, is drawn at half the icon's size over its
   lower-right corner.
