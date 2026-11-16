@@ -220,6 +220,49 @@ is connected again (monitors are told apart by connector, vendor, product
 and serial), including after a restart. A temporary one lasts until the
 monitors change.
 
+Where they are looked up, for the set of monitors connected now (the
+first file that has a configuration for that set wins):
+
+1. The user's own file, `$XDG_CONFIG_HOME/helix/monitors.toml` (default
+   `~/.config/helix/monitors.toml`).
+2. `helix/monitors.toml` in each directory of `$XDG_CONFIG_DIRS`, in
+   order (default `/etc/xdg/helix/monitors.toml`); relative entries are
+   ignored. These system-wide files are only read.
+
+A configuration that is not valid for the monitors (the rules under
+`ApplyMonitorsConfig`) is ignored and the monitors stay as they are. An
+unreadable file counts as empty. Configurations are remembered only in
+the user's own file, never in a system-wide one.
+
+This is how the login screen gets a layout: the greeter's compositor runs
+as the greeter's own user, which normally has no file of its own, so it
+uses the system-wide one (`components/greeter.md`, "The monitor"). Every
+session without a configuration of its own for a set of monitors uses it
+too.
+
+The file is TOML: one `[[configuration]]` table per set of monitors,
+
+- `monitors` (string): the set of monitors, each as
+  `connector|vendor|product|serial` (as in `GetCurrentState`), sorted as
+  strings and joined with `;`; virtual monitors are not part of it
+- `[[configuration.logical]]`: each logical monitor turned on, with `x`,
+  `y` (integers), `scale` (float), `transform` (integer, 0–7), `primary`
+  (boolean), and `[[configuration.logical.monitors]]`: each monitor it
+  shows, with `connector`, `width`, `height`, `refresh_mhz` (the refresh
+  rate in mHz, integers), `color_mode` (integer, default 0) and
+  `underscan` (boolean, default false)
+
+Monitors of the set not in any logical monitor are off.
+
+*GNOME does not document this; Helix's choice:* Mutter keeps
+`monitors.xml` in the user's configuration directory and reads
+`/etc/xdg/monitors.xml` as a system-wide default, and GDM's documented
+way of giving the login screen a layout is copying a user's
+`monitors.xml` into GDM's home by hand. Helix keeps its own file format
+and file name (`helix/monitors.toml`), searches every `$XDG_CONFIG_DIRS`
+directory, and offers a helper to set the system-wide layout
+(`components/greeter.md`, "The monitor").
+
 ## `GetResources` (legacy)
 
 - `crtcs` `a(uxiiiiiuaua{sv})`: id, winsys id, x, y, width, height, current

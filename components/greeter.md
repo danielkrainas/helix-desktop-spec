@@ -223,11 +223,64 @@ AccountsService's as a fallback.
 
 The login screen (clock, user list, buttons) is on the primary monitor:
 the logical monitor the compositor's `org.gnome.Mutter.DisplayConfig`
-`GetCurrentState` marks primary (on the greeter's private session bus;
-the greeter user's own `monitors.xml`, else the leftmost monitor), found
-among the Wayland outputs by connector name (`wl_output.name`). The
-greeter asks again when a monitor comes or goes. Without an answer, the
-first monitor announced. Other monitors show the background.
+`GetCurrentState` marks primary (on the greeter's private session bus),
+found among the Wayland outputs by connector name (`wl_output.name`).
+The greeter asks again when a monitor comes or goes and after every
+`MonitorsChanged` (the compositor may bring back a remembered layout
+after the greeter started). Without an answer, the first monitor
+announced. Other monitors show the background.
+
+Which monitor the compositor makes primary follows its remembered
+configurations (`contracts/dbus/org.gnome.Mutter.DisplayConfig.md`,
+"Remembered configurations"): the greeter user's own file, then the
+system-wide `/etc/xdg/helix/monitors.toml`, for the monitors connected
+now; with neither, its default (the first monitor). Users' own layouts
+can't be used: their home directories are usually closed to other users,
+and nobody is logged in yet.
+
+### Setting the login screen's layout
+
+`/usr/libexec/helix/helix-login-monitors`, run as root through `pkexec`
+(polkit action `org.helix.login-screen-monitors`; administrator
+authentication, kept for a while in an active session), puts a layout
+into `/etc/xdg/helix/monitors.toml`. It takes no arguments and reads one
+configuration on standard input, in the remembered configurations' format
+with exactly one `[[configuration]]`: the layout for the monitors
+connected now. Settings (Displays, "Use This Layout for the Login
+Screen") sends the layout shown now, as `GetCurrentState` describes it.
+The helper:
+
+- reads at most 64 KiB, and refuses anything but exactly one
+  configuration with only the keys of the format;
+- refuses a set of monitors that is not written as the compositor writes
+  it (sorted, no repeats, connector names of letters, digits, `-`, `_`,
+  `.`, no control characters) and a layout that would not be valid for
+  those monitors (the rules under `ApplyMonitorsConfig`, each monitor
+  taken to have the mode chosen for it);
+- replaces the configuration for the same set of monitors in the file and
+  keeps the others; a file that can't be read is left alone and nothing is
+  written;
+- writes the file anew from what it parsed (never a copy of its input)
+  into a new file next to it, mode 0644, owned by root, then renames it
+  over the old one.
+
+Exit status: 0 written, 1 invalid input, 2 the file could not be read or
+written, 64 arguments given; `pkexec` itself exits 126 when the
+authentication was dismissed and 127 when it was refused.
+
+The same can be done by hand (as root): copy a user's
+`~/.config/helix/monitors.toml`, or only its `[[configuration]]` for the
+monitors connected at the login screen, to
+`/etc/xdg/helix/monitors.toml` (mode 0644).
+
+*GNOME does not document this; Helix's choice:* GDM documents only
+copying a user's `monitors.xml` into GDM's configuration directory by
+hand. Helix reads a system-wide file the administrator can set from
+Settings through a polkit-checked helper. The helper takes the layout
+from the caller instead of reading the user's home directory as root, so
+nothing under the user's control is opened with root's rights; since it
+needs an administrator anyway, it trusts the layout no more than the
+rules above.
 
 ## Configuration
 

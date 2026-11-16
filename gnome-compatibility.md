@@ -123,6 +123,7 @@ from translators (`TRANSLATING.md` in helix-desktop).
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
 | Mutter's input capture interface (`org.gnome.Mutter.InputCapture`) | Undocumented; the InputCapture portal is served through Helix's own private interface instead. |
 | `ApplyMonitorsConfig` properties other than `color-mode` and `underscanning` (e.g. RGB range) | Their key names are not documented. |
+| Mutter's `monitors.xml` (user's or `/etc/xdg/monitors.xml`) | Helix remembers layouts in its own `helix/monitors.toml`, with the same lookup (the user's, then `$XDG_CONFIG_DIRS`); the login screen's layout is set from Settings or by copying into `/etc/xdg/helix/monitors.toml` (`contracts/dbus/org.gnome.Mutter.DisplayConfig.md`, "Remembered configurations"; `components/greeter.md`, "The monitor"). |
 | Colour curves `st240`, `xvycc`, `st428` | Not written; other named curves, ICC profiles and Windows-scRGB are converted. HDR output is 8 bits per channel (Smithay picks one scanout format per GPU). Both are helix-desktop#80. |
 | Vertical workspace keys (`-up`/`-down`) | Workspaces are laid out in a row, as in GNOME 51, so they have nothing to do. |
 | `disable-workarounds` | Has no effect; Helix has no workarounds to disable. |
