@@ -316,9 +316,6 @@ not documented, and the greeter does these its own way:
 - Orca on the login screen is tested over AT-SPI on a private bus only,
   not yet speaking on real hardware through greetd (the greeter's
   private session bus must be able to start the accessibility bus).
-- Not tested on real hardware through greetd: the DRM start as
-  `_greetd`, the logind `greeter` session, power actions from the
-  greeter and the hand-over to the user's session (helix-desktop#69).
 
 ## Installing and switching
 

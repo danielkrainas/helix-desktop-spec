@@ -261,8 +261,8 @@ helix-desktop issues labelled `needs-hardware`; the main ones are touchscreens a
 tearing (asynchronous page flips) for full-screen games,
 drawing tablets, HDR and calibrated monitors, DDC/CI brightness, privacy
 screens, underscanning, offline updates, user switching with a real
-display manager, Bluetooth file transfer, USB protection, and the
-greeter's start through greetd. Screen-reader support is tested over
+display manager, Bluetooth file transfer and USB protection. The
+greeter has been verified on real hardware through greetd. Screen-reader support is tested over
 AT-SPI on a private bus and was read with Orca 50 on a headless Helix
 session (private buses, speech read from Orca's log; what it said is in
 `contracts/dbus/org.a11y.atspi.md`, "Verified with Orca"); Orca's mouse
