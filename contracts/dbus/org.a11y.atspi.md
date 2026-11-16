@@ -155,7 +155,10 @@ left-to-right layout; actions still reach the control under them.
   `Search Results` list box of the rows shown (named as shown, described
   by their tag: "Open window", "Folder", "Favorite", or a provider
   result's description and app), the selected row focused; with none,
-  "No matching apps". Without a query, an `Applications` group of the
+  "No matching apps". Rows scrolled out of sight are not objects; the
+  list box carries the whole number of results and each row its place
+  among them (the `setsize` and `posinset` attributes), so a screen
+  reader reads "3 of 25" however far the list is scrolled. Without a query, an `Applications` group of the
   page's apps and folders (buttons; the selected one selected and
   focused, else the entry is), the open folder's apps instead (a group
   named by the folder), and `Page N` buttons when there are several

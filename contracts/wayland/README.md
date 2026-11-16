@@ -1000,9 +1000,22 @@ order; ids of apps not installed, or hidden from menus, are skipped).
   `contracts/dbus/org.gnome.Shell.SearchProvider2.md`). Every row starts
   with a 32 logical px icon: an app's icon, a window's icon (see "Window
   switching") with a small window sign on its corner, a result's icon;
-  rows are 48 px tall. The list keeps the selected row in sight, showing
-  as many rows as fit above the screen's bottom. *GNOME does not document
-  this; Helix's choice:* the row under the pointer is lit with Hovered
+  rows are 48 px tall (both grow with the text scale). The box shows as
+  many items (headings and rows) as fit above the screen's bottom.
+  *GNOME does not document this; Helix's choice:* when the results do not
+  all fit, the edge row on a side with more results fades out into the box
+  (not in high contrast, and not over a lit row, so the selection's ring
+  stays whole), and a footer under the rows, after a separator, says how
+  many more there are with a chevron pointing that way: "N more results"
+  while any are below, "N results above" at the end. The pointer wheel
+  scrolls the list one item per notch and a touchpad one item per row
+  height of travel, never past either end; a click on the footer scrolls a
+  page down (the last item shown becomes the first), or back to the top at
+  the end. Scrolling lets go of a press and lights the row now under the
+  pointer. The keyboard's selection is not moved by scrolling; when it
+  moves, the list scrolls as little as brings it (with its heading, when
+  that is just above it) into sight, and a new query starts at the top.
+  The row under the pointer is lit with Hovered
   (Pressed while held) apart from the keyboard's selection, which is lit
   the same way with the focus ring inside it (`components/README.md`,
   "Shell look") and does not move with the pointer (Enter still opens
