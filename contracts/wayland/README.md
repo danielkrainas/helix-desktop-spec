@@ -964,6 +964,15 @@ keyboard follows their `keyboard_interactivity`:
   opened from the keyboard and `on_demand` when opened by the pointer;
   the other shell menus always ask for `exclusive`.
 
+**The pointer.** As in mutter, when what is under a pointer that does not
+move changes (a surface under it is mapped, goes away, or is raised or
+lowered, as when a click on a window in the overview hides the overview),
+the surface now under it gets `wl_pointer.enter` at once (and the one it
+was on `leave`), so the next click or scroll reaches it without the
+pointer moving first. While a grab holds the pointer (a button held on a
+surface, a popup menu, a drag, a move or resize) it stays where the grab
+puts it, and follows what is under it once the grab ends.
+
 ## Layer shell for other clients (Helix)
 
 `zwlr_layer_shell_v1` is offered to every client, not only the shell, so
