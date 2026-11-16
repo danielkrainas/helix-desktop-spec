@@ -48,16 +48,21 @@ reserved so the keyboard's height does not change.
   every key's boundary is seen and modifiers never look lighter than
   characters. Text on both reaches 4.5:1.
 - Shift, Enter and Tab are drawn as symbols: Shift an arrow up, hollow,
-  filled (on the accent) while Shift is on; Enter a return arrow; Tab an
+  filled (on the accent) while Shift is on; with Caps Lock on, filled on
+  the accent with a bar under the arrow (⇪) and a dot in the key's top
+  right corner, for as long as it lasts; Enter a return arrow; Tab an
   arrow to a bar. Emoji is `face-smile-symbolic`; ?123, ABC and AltGr
   stay words.
 - A character key with accents (see "Accents") has a small dot in its top
   right corner.
 - While a key is held it is drawn in the accent; a character key also
   shows its character twice as large in a bubble above it, until it is
-  let go (or the pointer leaves the keyboard).
+  let go (or the pointer leaves the keyboard). Let go, the accent fades
+  out over 160 ms (easing out) back to the key's resting look; with
+  `org.gnome.desktop.interface enable-animations` off it goes at once.
 - High contrast: black keys with white outlines (2 px for modifiers),
-  held keys and Shift on in the accent.
+  held keys and Shift on (or Caps Lock, with its bar and dot) in the
+  accent; a key let go fades inside its outline.
 
 ## Pages
 
@@ -89,9 +94,16 @@ change the page.
 ## Typing
 
 - A character key types its character (its Shift level while Shift is
-  on) as text committed by the input method when it is let go (see
-  "Accents" for a long press); Shift then goes off.
-- Shift toggles the Shift level for the next character.
+  on, and for letters while Caps Lock is on) as text committed by the
+  input method when it is let go (see "Accents" for a long press);
+  Shift then goes off (Caps Lock stays).
+- Shift toggles the Shift level for the next character. *GNOME does not
+  document this; Helix's choice:* tapped again
+  within 400 ms it turns on Caps Lock instead: letters stay capital
+  (digits and punctuation keep their first level) until Shift is
+  tapped once more. Caps Lock is the keyboard's own; it does not change
+  the keymap's Caps Lock. On the accessibility bus the Shift key is then
+  named "Caps Lock", pressed.
 - Backspace, Enter, Tab, ← and → press and release those keys (evdev 14,
   28, 15, 105, 106) on the input method's virtual keyboard
   (`zwp_virtual_keyboard_v1`); when it has no keymap yet, the shell gives
