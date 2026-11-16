@@ -202,7 +202,15 @@ left-to-right layout; actions still reach the control under them.
   place has the focus, with focus events as Tab moves between the parts
   and the arrows inside them: the chosen window, the workspace or dash
   icon the arrows reached, else the entry. Other monitors' overviews have
-  their `Windows` list only.
+  their `Windows` list only. Each window picture has, after `click`, one
+  action per other workspace, "Move to Workspace 2" (named by
+  `workspace-names`), which moves the window there as dragging it onto
+  that thumbnail does; a move made so or with the keys (Ctrl+Alt+← / →,
+  Shift+Page Up / Page Down) is said by a live label, "Terminal moved to
+  Workspace 2", announced.
+  *GNOME does not document this; Helix's choice:* one action per
+  workspace, named by it, so a screen reader user reaches any workspace
+  in one step.
   *GNOME does not document this; Helix's choice:* window pictures are
   list items of a list box (selection is the chosen window), workspace
   thumbnails list items whose selection is the active workspace.
@@ -331,17 +339,25 @@ prompts' text fields, password fields) offer `Text` and `EditableText`.
 
 Every object that reacts to clicks offers one action, `click`; doing it
 does what a click at the middle of the object's place does (the same
-code runs). Focusing a text field (`Component.GrabFocus`) clicks it too.
+code runs). A few objects offer more actions after it, named by what
+they do (the overview's window pictures: "Move to Workspace 2"). Focusing a text field (`Component.GrabFocus`) clicks it too.
 A slider's `Value.CurrentValue` (and increment/decrement by its step,
 5%) clicks the bar where that value is. Fields' `EditableText` calls
 are described under "Text fields". Other actions are ignored.
 
+## Picking an area or a point
+
+The area, point and window pickers (`SelectArea`, `PickColor`, the
+window pick; `contracts/dbus/org.gnome.Shell.Screenshot.md`) and the
+screenshot UI's Area and Window modes work with the keyboard alone:
+the arrow keys make and move the area or a point, and Enter picks it.
+The pickers' hint (a label) is announced when they open; what the keys
+picked is a live label, announced as it changes: "Area at 320, 180:
+640 × 360" or "Point at 640, 360" (layout coordinates and size in
+logical pixels).
+
 ## Not covered
 
-- Pickers that need the pointer (choosing an area or a point for a
-  screenshot, dragging windows between workspaces in the overview) have
-  no accessible way to do it; the screenshot UI's Screen and Window modes
-  work from the tool bar and keys.
 - Windows' screen positions are computed from the layout (the primary
   monitor, the dock's edge) rather than reported by the compositor.
   Orca's flat review reads by them correctly (the top bar's line reads
@@ -397,6 +413,10 @@ said nothing; Enter did not answer prompt dialogs (the run dialog);
 "Authenticating…" was announced for prompts without a password; a wrong
 password was announced as "Caps Lock is on"; a focused banner's body
 was read twice.
+
+The area picker was read too (helix-desktop#97): opening it, "Screenshot";
+each arrow key, "Area at 330, 180: 640 × 360" and so on; Enter answered
+`SelectArea` with the area.
 
 Not verified with Orca: Orca's own keys need the compositor's key
 monitor (`org.freedesktop.a11y.KeyboardMonitor.md`), which was in use

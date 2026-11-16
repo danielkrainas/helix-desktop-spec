@@ -74,6 +74,23 @@ this; Helix's choice:* the error for a cancelled call.)
   it in logical layout coordinates.
 - `PickColor()`: the user clicks a pixel; returns `{"color": (r, g, b)}`,
   sRGB values from 0 to 1.
+
+**Keyboard.** *GNOME does not document this; Helix's choice:* the area
+and point (and window) pickers work without a pointer. The first arrow
+key makes the area (the middle quarter of the first monitor: half its
+width and height, centered) or the point (the first monitor's middle);
+the arrow keys then move it 10 logical px (with Shift 50, with Alt 1),
+kept on its monitor; Ctrl with the arrows resizes the area, moving its
+right and bottom edges (Right and Down grow it, Left and Up shrink it,
+at least 10 px a side). Enter or Space picks the area or point; Escape
+cancels. The area is shown as a dragged one (undimmed, outlined, its
+size in a pill), the point as a small outlined box. The hints say so:
+"Drag, or arrows to move and Ctrl+arrows to resize · Enter to confirm ·
+Esc to cancel", "Click, or arrows and Enter, to pick a color · Esc to
+cancel", "Click a window, or arrows and Enter, to capture it · Esc to
+cancel". On the accessibility bus the hint is announced when the picker
+opens and the keys' choice as it changes
+(`contracts/dbus/org.a11y.atspi.md`, "Picking an area or a point").
 - `InteractiveScreenshot()`: shows the screenshot UI (below) and returns
   `(true, uri)` with the `file://` URI of the saved image, or
   `(false, "")` when the user cancels.
@@ -108,6 +125,10 @@ and press"). The buttons:
   - **Screen**: every monitor, nothing dimmed;
   - **Window**: the window under the pointer (topmost of the active
     workspace's windows) is outlined; clicking one selects it;
+
+  in Area mode the arrow keys make, move and (with Ctrl) resize the
+  rectangle as in the area picker (above); in Window mode they move a
+  point as in the point picker, and the window under it is selected;
 - **Screenshot** / **Record** (V switches): what Capture does. Record is
   offered only from the keys, not to `InteractiveScreenshot`; Window
   cannot be recorded (choosing Record leaves Window for Area);
@@ -132,7 +153,8 @@ created if needed.
 Helix-private, for its Screenshot portal backend: interface
 `org.helix.ScreenshotWindowPicker` at the same object, with the same
 callers allowed. `PickWindow(include_cursor, flash, filename)` dims every
-monitor with the hint "Click a window to capture it · Esc to cancel".
+monitor with the hint "Click a window, or arrows and Enter, to capture
+it · Esc to cancel" (the keys as for `PickColor`, above).
 Clicking a window captures it as `ScreenshotWindow` with `include_frame`
 true does, and returns `(success, filename_used)`; clicking where there is
 no window shows the hint again. Escape or the secondary button cancels:

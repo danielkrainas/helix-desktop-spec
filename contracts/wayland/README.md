@@ -941,6 +941,8 @@ has the focus ring.
   (on screen, not in list order); Enter activates it; Delete or Ctrl+W
   closes it (the choice moves to another window); Ctrl+Alt+← / → or
   Shift+Page Up / Page Down move it to the previous or next workspace.
+  On the accessibility bus each picture also has a "Move to Workspace N"
+  action per other workspace (`contracts/dbus/org.a11y.atspi.md`).
 - Workspace thumbnails: ← / → (↑ / ↓) move between them, Enter or Space
   switches to the chosen one.
 - Dash: ← / → move between the icons, Enter or Space acts as a click.
