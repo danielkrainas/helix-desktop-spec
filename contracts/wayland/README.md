@@ -6,7 +6,7 @@ Notes on protocols and usage expected for a GNOME-compatible session under Helix
 
 - Standard Wayland protocols sufficient for normal desktop operation (xdg-shell, xdg-decoration, primary selection, etc.).
 - `wlr-layer-shell-unstable-v1` (or equivalent) for shell surfaces (panels, notifications, OSD).
-- Mutter/GNOME-specific private protocols are out of scope for initial compatibility; public portals and D-Bus are preferred.
+- Mutter/GNOME-specific private protocols are out of scope for initial compatibility; public portals and D-Bus are preferred. The exception is the part of `gtk_shell1` GTK 3 needs (see "GTK shell" below).
 
 ## More Wayland protocols (Helix)
 
@@ -160,6 +160,23 @@ from `:0` to `:32`; when all are taken it tries `:33` to `:99` in turn.
 app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
 "Window-management settings").
+
+**GTK shell** (`gtk_shell1`, GNOME's own protocol, version 4). GTK 3 has
+no other way to say a dialog is modal, so Helix offers it as mutter does:
+`gtk_surface1.set_modal`/`unset_modal` make a window modal or not, as
+`xdg_dialog_v1` does (until that `gtk_surface1` is destroyed);
+`gtk_shell1.system_bell` rings the bell as `xdg_system_bell_v1` does;
+`gtk_surface1.request_focus` with an activation token is an
+`xdg_activation_v1` activation with it, and `present` (or
+`request_focus` without a valid token) makes the window want attention
+(see "Windows wanting attention"). No capabilities are announced (no
+global app menu, menu bar or desktop icons); app menu paths and
+accessibility names are ignored. Version 5 is not offered: with it GTK
+leaves titlebar double, middle and right clicks (`titlebar_gesture`) to
+the compositor, which Helix does not handle.
+
+*GNOME does not document this; Helix's choice:* the version offered, and
+the requests ignored.
 
 **Gestures.** Some swipes are Helix's own and are not passed to apps.
 A finished swipe does one of:
@@ -803,6 +820,17 @@ centered at its parent's top edge and moves with its parent.
 `focus-new-windows` `smart` (default): new windows get focus and go on
 top; `strict`: a new window goes just below the focused window without
 taking focus (it does get focus when no window has it).
+
+**Modal dialogs.** Focus meant for a window with a modal dialog (a window
+whose parent it is, made modal with `xdg_dialog_v1`, `gtk_surface1` or
+X11 `_NET_WM_STATE_MODAL`) goes to that dialog, or to the dialog's own
+modal dialog, as mutter's `meta_window_focus` does: an activation
+(`xdg_activation_v1`), a click, the window switcher or the dock. The
+window itself is still shown, un-minimized and raised, just below its
+dialog. When a window becomes a modal dialog of the focused window
+(modal set, or the parent set, also through `zxdg_importer_v2`), focus
+moves to it: apps such as Electron's activate their window just before
+telling whose dialog the new window is.
 
 **Overlay key.** `overlay-key` (default `Super`, meaning either Super
 key; otherwise a key name such as `Super_R`; empty: none) pressed and
