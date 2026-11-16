@@ -1825,6 +1825,16 @@ replaces it. Likewise (since version 6) UTF-8 text, offered as
 `TEXT`. Ordinary clients have no way to capture the
 screen; sandboxed apps use the Screenshot portal.
 
+The same protocol (since version 5) gives the shell pictures of single
+windows by their window-list id, for the overview, the window switcher's
+tiles and the dock's window previews. *GNOME does not document this;
+Helix's choice:* the shell has at most one picture request on its way per
+window; a request not answered within 2 seconds is given up on (its frame
+destroyed and its file closed) and may be asked again; closing the
+overview, or the switcher while the overview is not open, gives up on every
+request still on its way. A picture that comes after its request was given
+up on is not used.
+
 ## Input methods (Helix)
 
 The compositor offers `zwp_text_input_v3` to every client, and
