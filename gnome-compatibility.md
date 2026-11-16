@@ -158,6 +158,11 @@ code. The choices that users or developers are most likely to notice:
   shading are Helix's own.
 - **Lock screen.** Its own resting state, layout, cards and transitions;
   GNOME's shield and unlock dialog are not documented.
+- **Recent apps in the app grid.** The app grid's first page starts with
+  a "Recent" row of the apps launched last (GNOME 51 has none). It
+  follows `remember-app-usage`, can be turned off with Helix's own
+  `org.helix.shell app-grid-recent`, and can be cleared from its menu;
+  see `contracts/wayland/README.md`, "App grid".
 
 ### Safety and robustness
 

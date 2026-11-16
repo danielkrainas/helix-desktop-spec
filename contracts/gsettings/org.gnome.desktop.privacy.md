@@ -93,9 +93,14 @@ launcher, the app grid, the dash and the dock) is counted in
 `$XDG_DATA_HOME/helix/app-usage` (lines `<desktop id>\t<count>\t<last
 launch, Unix seconds>`). The launcher's search orders apps that match
 equally well by use: their launches, each weighing half as much for
-every 30 days since the last one. Turned off, nothing is counted, and the
-file is deleted. GNOME's own record (and its effect on its search and
-app grid) is not read or written.
+every 30 days since the last one. Each launch also goes to the front of
+`$XDG_DATA_HOME/helix/recent-apps` (one desktop id a line, the latest
+first, each once, at most 16), which the app grid's "Recent" row shows
+(`contracts/wayland/README.md`, "App grid"); "Clear Recent Apps" deletes
+that file and leaves the counts. Turned off, nothing is counted or kept,
+both files are deleted, and the app grid shows no "Recent" row. GNOME's
+own record (and its effect on its search and app grid) is not read or
+written.
 
 ### Other keys
 

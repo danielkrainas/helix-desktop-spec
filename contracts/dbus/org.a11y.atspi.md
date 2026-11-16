@@ -159,7 +159,11 @@ left-to-right layout; actions still reach the control under them.
   page's apps and folders (buttons; the selected one selected and
   focused, else the entry is), the open folder's apps instead (a group
   named by the folder), and `Page N` buttons when there are several
-  pages.
+  pages. While the app grid's "Recent" row shows (first page,
+  `contracts/wayland/README.md`, "App grid"), a `Recent Apps` group of
+  its apps comes before `Applications`, its buttons like the page's; an
+  app in both groups is two separate buttons, and only the one selected
+  is focused.
 - **Banner**: a `notification` named by the summary, holding the app
   name and the body (markup removed) as labels, `Close`, the action
   buttons by their labels and the body's links (`link`); beside it a

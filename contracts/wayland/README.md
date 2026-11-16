@@ -1080,6 +1080,54 @@ summary. Until an icon has been decoded, nothing is drawn in its place.
   launched with animations on, the launcher stays shown for the launch
   animation (0.25 seconds) and then closes.
 
+#### Recent row (Helix)
+
+GNOME's app grid has no such row; it is a deliberate Helix addition.
+*GNOME does not document this; Helix's choice:*
+
+- **What it shows.** The first page starts with a row headed "Recent"
+  (a small bold caption, dim; white in high contrast) holding the apps
+  launched last from the shell, the latest first: from
+  `$XDG_DATA_HOME/helix/recent-apps` (see
+  `contracts/gsettings/org.gnome.desktop.privacy.md`, "App usage"), the
+  apps the launcher still lists (installed and not hidden; favorites and
+  apps in folders included), each once, as many as the page has columns.
+  A faint line separates it from the grid below. Folders never appear in
+  it, and its apps keep their own places in the grid (or folder) as well.
+- **When it shows.** Only on the first page, while
+  `org.helix.shell app-grid-recent` and
+  `org.gnome.desktop.privacy remember-app-usage` are both on and at least
+  one recent app is still listed. Not while searching (the grid is not
+  shown then) and not in an open folder's box (the page under the box,
+  dimmed, keeps its layout). Changes to either key apply at once, also
+  while the launcher is open.
+- **Pages.** While the row shows, the first page's grid holds one row
+  fewer (at least one); what does not fit moves on to the next pages,
+  so every item is still on exactly one page. The page dots stay at the
+  same height on every page. When the row goes away the layout is laid
+  out again from `app-picker-layout`. A layout saved while the row
+  showed (after a rearrangement) is saved as shown.
+- **Using it.** Its apps work as grid apps: hover, press and launch
+  feedback and the focus ring of their own (the same app's grid cell is
+  not lit with it), clicking or Return launches, right click, the Menu
+  key or Shift+F10 opens the app's menu, which ends with "Clear Recent
+  Apps"; right click on the heading opens a menu with that entry alone.
+  Clearing deletes the recent apps record (the search's launch counts
+  stay) and the row goes until the next launch.
+- **Keys.** The selection counts the row's apps first, then the grid's
+  items. Right from the row's last app goes on to the grid's first item
+  (and Left back); Down from the row goes to the grid's first line in
+  the same column (its last item when that line is shorter); Up from the
+  grid's first line goes to the row in the same column (its last app
+  when the row is shorter); Up in the row stays. Tab moves from the
+  search field to the row's first app, to the grid's first item and back
+  to the search field; Shift+Tab goes the other way.
+- **Dragging.** The row's apps cannot be dragged (moving the pointer past
+  `drag-threshold` while pressing lets the press go; nothing launches),
+  and nothing can be dropped onto the row: a drop there is no drop.
+- **Accessibility.** A group named "Recent Apps" before the
+  "Applications" group (`contracts/dbus/org.a11y.atspi.md`).
+
 How GNOME's app grid looks, how many items its pages hold, how it
 names new folders and how long it waits before turning a page while
 dragging are not documented here; Helix's choices are above.

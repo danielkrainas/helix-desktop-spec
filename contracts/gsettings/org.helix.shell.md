@@ -14,6 +14,7 @@ Path: `/org/helix/shell/`
 | `quick-settings` | `as` | `['helix:wifi', 'helix:bluetooth', 'helix:airplane-mode', 'helix:auto-rotate', 'helix:night-light', 'helix:dark-style', 'helix:do-not-disturb']` |
 | `banner-ignore-timeout` | `u` | `10` |
 | `critical-banner-ignore-timeout` | `u` | `30` |
+| `app-grid-recent` | `b` | `true` |
 
 - `panel-left`, `panel-center`, `panel-right`: the panel's items in each
   zone, in order from left to right (see
@@ -28,6 +29,13 @@ Path: `/org/helix/shell/`
   The shell follows changes at once. See
   `contracts/dbus/org.freedesktop.Notifications.md`, "How long banners
   stay".
+- `app-grid-recent`: whether the app grid's first page starts with the
+  "Recent" row of the apps launched last (see
+  `contracts/wayland/README.md`, "App grid"). The row also needs
+  `org.gnome.desktop.privacy remember-app-usage`; turning this key off
+  only hides the row, and the recent apps stay recorded while usage is
+  remembered. The shell follows changes to either key at once, also
+  while the launcher is open.
 
 Ids of the form `helix:<name>` are Helix's built-in items. Extensions'
 items are `<extension id>/<item id>` (`contracts/extensions/README.md`):
