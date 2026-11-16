@@ -437,6 +437,60 @@ them, and unlocking happens after the fade-out.
   `helix-dock-edge`), which the shell hides itself in full screen unless
   `autohide-in-fullscreen` lets the pointer reveal it (see "Dock").
 
+## Tearing (Helix)
+
+`wp_tearing_control_v1` (version 1) is offered to every client, as KWin
+and wlroots-based compositors do; GNOME 51 does not offer it. A surface's
+presentation hint (`vsync` by default, or `async`) is double-buffered:
+it applies with the surface's next commit, and destroying the
+`wp_tearing_control_v1` puts `vsync` back at the next commit. A second
+control object for a surface that has one is the protocol error
+`tearing_control_exists`; one whose surface was destroyed is inert.
+
+*The protocol leaves when to tear to the compositor; Helix's choice:* a
+monitor's frame is flipped asynchronously (not waiting for vblank, so it
+may tear) only when all of these hold, checked for every frame:
+
+- `org.helix.shell allow-tearing` is on (the default;
+  `contracts/gsettings/org.helix.shell.md`);
+- the session runs on the DRM backend and the GPU says it can flip
+  asynchronously: `DRM_CAP_ATOMIC_ASYNC_PAGE_FLIP` with atomic
+  modesetting (Linux 6.8 and later), `DRM_CAP_ASYNC_PAGE_FLIP` with
+  legacy modesetting;
+- the monitor is in full screen (see "Monitors and windows"), and its
+  full-screen window is the topmost window there and has the keyboard;
+- a surface of that window (the toplevel or a subsurface; for an X11
+  window, the surface Xwayland gives it) asks for `async`;
+- nothing else is drawn over it: no top-layer surface shown in full
+  screen (the on-screen keyboard, the dock or its edge), no overlay-layer
+  surface (OSDs, menus, notifications, other clients' HUDs), not locked,
+  the magnifier off;
+- the pointer image is not shown on that monitor (games hide or lock the
+  pointer), and no window or shell animation runs.
+
+Otherwise the frame waits for vblank, as always. Helix composites every
+frame (there is no direct scanout of the game's buffer); an asynchronous
+flip swaps the composited frame. When the driver refuses an asynchronous
+flip (drivers take only some plane changes asynchronously), the same
+flip is made again waiting for vblank. Presentation feedback for a torn
+frame leaves out the `vsync` flag. The headless and nested backends keep
+the hint and ignore it. The compositor logs each monitor's change into
+and out of asynchronous flips ("asynchronous page flips"), and at start
+whether the GPU can.
+
+**X11 games.** *Helix's choice:* Helix does not read X11 conventions such
+as `_VARIABLE_REFRESH` (Mesa's variable refresh rate opt-in, which says
+nothing about tearing). Xwayland (23.2 and later) uses
+`wp_tearing_control_v1` itself: an X11 game presenting without vsync
+(Present's asynchronous flips, e.g. vsync off in the game's settings)
+makes Xwayland set `async` on its window's surface, which the rules
+above then treat like a Wayland game's.
+
+Not yet tried on real hardware (helix-desktop#110): the asynchronous
+path is unit-tested (the decision, the capability check against a fake
+device) and the hint headless, but no DRM device has flipped
+asynchronously under Helix yet.
+
 ## Animations (Helix)
 
 The compositor animates windows, shell surfaces and workspace switches

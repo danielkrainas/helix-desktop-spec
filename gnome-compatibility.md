@@ -175,6 +175,13 @@ code. The choices that users or developers are most likely to notice:
   full-screen window (`contracts/wayland/README.md`, "Layer shell for
   other clients"). Tested headless with stand-in clients, not with real
   games or MangoHud.
+- **Tearing for full-screen games.** GNOME 51 has no tearing control;
+  Helix offers `wp_tearing_control_v1`, and on the DRM backend a focused
+  full-screen game that asks (or an X11 game through Xwayland with vsync
+  off) is shown without waiting for vblank when nothing else is drawn
+  over it and the GPU can; `org.helix.shell allow-tearing` turns it off
+  (`contracts/wayland/README.md`, "Tearing"). Not yet tried on real GPUs
+  (helix-desktop#110).
 
 ### Safety and robustness
 
@@ -251,6 +258,7 @@ Some supported features are written to their published standards and
 tested against simulated devices or services, but not yet with the real
 thing. Each contract says so where it applies, and the full list is the
 helix-desktop issues labelled `needs-hardware`; the main ones are touchscreens and touchpad gestures,
+tearing (asynchronous page flips) for full-screen games,
 drawing tablets, HDR and calibrated monitors, DDC/CI brightness, privacy
 screens, underscanning, offline updates, user switching with a real
 display manager, Bluetooth file transfer, USB protection, and the

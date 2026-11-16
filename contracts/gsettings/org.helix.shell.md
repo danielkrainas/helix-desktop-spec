@@ -15,6 +15,7 @@ Path: `/org/helix/shell/`
 | `banner-ignore-timeout` | `u` | `10` |
 | `critical-banner-ignore-timeout` | `u` | `30` |
 | `app-grid-recent` | `b` | `true` |
+| `allow-tearing` | `b` | `true` |
 
 - `panel-left`, `panel-center`, `panel-right`: the panel's items in each
   zone, in order from left to right (see
@@ -36,6 +37,12 @@ Path: `/org/helix/shell/`
   only hides the row, and the recent apps stay recorded while usage is
   remembered. The shell follows changes to either key at once, also
   while the launcher is open.
+
+- `allow-tearing`: whether a full-screen window that asks for it
+  (`wp_tearing_control_v1` `async`) may be shown without waiting for
+  vblank, on the DRM backend (see `contracts/wayland/README.md`,
+  "Tearing"). The compositor reads it (it watches this schema too) and
+  follows changes at the next frame. Off, every frame waits for vblank.
 
 Ids of the form `helix:<name>` are Helix's built-in items. Extensions'
 items are `<extension id>/<item id>` (`contracts/extensions/README.md`):
