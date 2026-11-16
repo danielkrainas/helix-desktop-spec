@@ -150,7 +150,7 @@ in order.
   `expire_timeout` (5 seconds for -1) of counted time.
 - A banner with `expire_timeout` 0 (no timeout) stays for
   `banner-ignore-timeout` seconds of counted time
-  (`contracts/gsettings/org.helix.shell.md`, default 10).
+  (`contracts/gsettings/org.helixdesktop.shell.md`, default 10).
 - A critical notification's banner ignores `expire_timeout` and stays for
   `critical-banner-ignore-timeout` seconds of counted time (default 30).
   It shows even with do not disturb on.

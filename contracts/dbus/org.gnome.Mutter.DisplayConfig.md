@@ -143,7 +143,7 @@ drivers offer it for some HDMI outputs) and turns it `on` with
 `underscan hborder` and `underscan vborder` of 5 % of the mode's width
 and height (at most 128 pixels each), or `off`; it is off when the
 monitor appears. Other monitor property keys are ignored. Implemented
-but not tested with real hardware (helix-desktop#53): no monitor with an
+but not tested with real hardware (helixdesktop/desktop#53): no monitor with an
 `underscan` property was available; the D-Bus side is tested with the
 nested session's `HELIX_TEST_UNDERSCAN` (the window then claims it can
 underscan; nothing changes on screen).
@@ -182,7 +182,7 @@ monitor's `wl_output` at the scale and position it is drawn at.
 
 *GNOME does not document this; Helix's choice:* mirrored monitors of
 different sizes are rescaled and centred as above. Not yet tried on real
-hardware (helix-desktop#52).
+hardware (helixdesktop/desktop#52).
 
 An invalid configuration is rejected with
 `org.freedesktop.DBus.Error.InvalidArgs` and nothing changes. When an applied
@@ -193,7 +193,7 @@ emitted before the call returns.
 
 A persistent configuration is applied at once, then the user is asked
 whether to keep it (Helix: through the shell's
-`org.helix.DisplayChangeDialog`, with a 20-second countdown).
+`org.helixdesktop.DisplayChangeDialog`, with a 20-second countdown).
 `ApplyMonitorsConfig` returns without waiting for the answer.
 
 - Kept: the configuration is remembered.
@@ -344,7 +344,7 @@ When a monitor is put in BT.2100:
   unchanged, above it 0.75 P + 0.25 P × (1 − e^(−(L − 0.75 P) / 0.25 P)),
   all three channels scaled alike. The framebuffer sent to the monitor
   keeps 8 bits per channel (Smithay picks one pixel format for all of a
-  GPU's monitors; 10-bit output is helix-desktop#80);
+  GPU's monitors; 10-bit output is helixdesktop/desktop#80);
 - the **reference luminance** (SDR white) is 203 cd/m² scaled by the
   monitor's `output-luminance` entry for color mode 1 (100 % is 203
   cd/m²), taken between 25 % and 300 %. Its gamma ramps are not scaled;
@@ -356,7 +356,7 @@ Not yet tried on an HDR monitor: the EDID parsing, the metadata, the
 conversion (checked against reference values, and run on the GPU in a
 nested session with `HELIX_TEST_HDR=1`, which converts the nested window
 as if it were an HDR monitor) and the D-Bus side are tested without one
-(helix-desktop#57).
+(helixdesktop/desktop#57).
 
 ## Color profiles (Helix)
 
@@ -380,7 +380,7 @@ assign it profiles:
 - In the BT.2100 color mode no calibration is applied.
 
 Not yet tried with a calibrated monitor (tested against a fake colord;
-helix-desktop#58).
+helixdesktop/desktop#58).
 
 ## Color transformation matrix
 
@@ -462,7 +462,7 @@ range.
     re-read every ten seconds; a change shows up as `PropertiesChanged`;
   - setting `HELIX_NO_DDC` in the environment turns DDC/CI off.
 - **Not yet tested with real monitors.** The DDC/CI code is checked only
-  against a simulated monitor in Helix's tests (helix-desktop#54).
+  against a simulated monitor in Helix's tests (helixdesktop/desktop#54).
 
 ## Display switcher (Helix)
 

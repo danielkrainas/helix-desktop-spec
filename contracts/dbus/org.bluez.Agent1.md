@@ -8,7 +8,7 @@ Settings) does this; in Helix the shell does. Shapes in
 ## Registering
 
 The shell serves `org.bluez.Agent1` on the system bus at
-`/org/helix/BluetoothAgent`, then calls `RegisterAgent(path,
+`/org/helixdesktop/BluetoothAgent`, then calls `RegisterAgent(path,
 "KeyboardDisplay")` and `RequestDefaultAgent(path)` on `/org/bluez`
 (`org.bluez.AgentManager1`). When BlueZ starts again (its name gets a new
 owner) the shell registers again. `Release()` is acknowledged.

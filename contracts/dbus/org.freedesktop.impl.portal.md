@@ -185,7 +185,7 @@ contents are its own; Helix's are below.
   them all in one compositor session and returns one stream per source,
   in the order chosen. Without it, one source.
 - `Start` asks the user through the shell
-  (`org.helix.ScreenCastChooser.md`), offering the types asked for, and
+  (`org.helixdesktop.ScreenCastChooser.md`), offering the types asked for, and
   answers 1 when they cancel. Then it records the choice with
   `org.gnome.Mutter.ScreenCast` (`org.gnome.Mutter.ScreenCast.md`) and
   returns the streams, each with `size` and `source_type` (and `position`
@@ -232,7 +232,7 @@ contents are its own; Helix's are below.
 
 - `AvailableDeviceTypes` 7, `version` 2.
 - `Start` asks the user through the shell: with screen cast sources
-  selected, the share dialog (`org.helix.ScreenCastChooser.md`) also says
+  selected, the share dialog (`org.helixdesktop.ScreenCastChooser.md`) also says
   which devices the app will control; without, a dialog asks whether to
   let the app control the keyboard / pointer / touchscreen ("Allow" /
   "Deny"). Cancelling answers 1. Then it creates an
@@ -331,8 +331,8 @@ emitted with it. `version` is 1.
   through (option names with `_` instead of `-`); for a session that does
   not share the clipboard the methods fail with
   `org.freedesktop.DBus.Error.Failed`. An InputCapture session's
-  compositor session is its `org.helix.InputCapture` session, which
-  shares the clipboard the same way (`org.helix.InputCapture.xml`); its
+  compositor session is its `org.helixdesktop.InputCapture` session, which
+  shares the clipboard the same way (`org.helixdesktop.InputCapture.xml`); its
   `Start` turns sharing on and returns `clipboard_enabled` likewise. The
   compositor starts reporting the clipboard's owner to it from then on,
   whether or not input is being captured.
@@ -350,7 +350,7 @@ the initial value; a choice without options is a check box, its value
 
 ### Helix
 
-The shell's dialog (`org.helix.PortalDialog.Ask`): title the `title`,
+The shell's dialog (`org.helixdesktop.PortalDialog.Ask`): title the `title`,
 message the `subtitle`, description the `body`, buttons `grant_label`
 (default "Allow") and `deny_label` (default "Deny"). The first check-box
 choice is shown as the dialog's check box; every other choice is answered
@@ -389,7 +389,7 @@ installed desktop file are left out), the `last_choice` selected at first
 `uri` or `filename`, else "Choose an app."), buttons "Open" and "Cancel".
 Response 0 with `choice` the selected id; 1 when canceled or when no
 choice is left. `UpdateChoices` for a request whose dialog is open
-replaces the list (the shell's `UpdateApps`, `org.helix.PortalDialog.xml`;
+replaces the list (the shell's `UpdateApps`, `org.helixdesktop.PortalDialog.xml`;
 installed apps only, the selection staying on the same app when it is
 still listed, else the first); with no installed app left the dialog is
 canceled (response 1). For any other handle it fails with
@@ -408,7 +408,7 @@ canceled (response 1). For any other handle it fails with
 
 ### Helix
 
-- States come from the shell's windows (`org.helix.PortalDialog.RunningApps`):
+- States come from the shell's windows (`org.helixdesktop.PortalDialog.RunningApps`):
   apps with windows are 1, the focused one 2. Apps without windows are not
   listed (the shell does not know them).
   `RunningApplicationsChanged` follows the shell's `RunningAppsChanged`.
@@ -433,7 +433,7 @@ canceled (response 1). For any other handle it fails with
 
 - Only local files are accepted; anything else, or an unknown `set-on`,
   answers 2.
-- With `show-preview`, the shell's dialog (`org.helix.PortalDialog.Dialog`)
+- With `show-preview`, the shell's dialog (`org.helixdesktop.PortalDialog.Dialog`)
   shows "Set Background", "<app name> wants to set this picture as the
   background / the lock screen / the background and lock screen.", the
   picture scaled to fit, and buttons "Cancel" (answer 1) and "Set".
@@ -496,7 +496,7 @@ the user confirm.
 ### Helix
 
 - `SupportedLauncherTypes` 3, `version` 1. Another `launcher_type` answers 2.
-- The shell's dialog (`org.helix.PortalDialog.Dialog`): "Add to Apps",
+- The shell's dialog (`org.helixdesktop.PortalDialog.Dialog`): "Add to Apps",
   "<app name> wants to add a launcher for this app / web app to your
   apps." (with a name the user cannot change: "… for the app / web app
   “<name>” to your apps."), a web app's `target` below it, the icon, a
@@ -550,7 +550,7 @@ through a barrier they set, and get it as an EIS (libei) receiver.
 
 *GNOME does not document this; Helix's choice:* mutter's input capture
 interface (`org.gnome.Mutter.InputCapture`) is undocumented, so the
-compositor's side is Helix's private `org.helix.InputCapture`; how
+compositor's side is Helix's private `org.helixdesktop.InputCapture`; how
 barriers, keys held at activation and escaping a capture work is as below.
 
 - `version` 2, `SupportedCapabilities` 3 (keyboard and pointer;
@@ -564,12 +564,12 @@ barriers, keys held at activation and escaping a capture work is as below.
   the clipboard (`RequestClipboard`, see "Clipboard") shares it once
   started: no separate question; `clipboard_enabled` says whether it
   does.
-- Starting asks with the shell's dialog (`org.helix.PortalDialog`):
+- Starting asks with the shell's dialog (`org.helixdesktop.PortalDialog`):
   "Allow Input Capture?", "<app name> wants to take over the pointer and
   keyboard when the pointer leaves the screen. <key> gives them
   back." (`<key>`: the first `org.gnome.mutter.keybindings`
   `cancel-input-capture` accelerator written as `Super+Shift+Escape`), "Deny" (answer 1) and "Allow". Allowed, the compositor makes the
-  session (`org.helix.InputCapture.xml`); asking for no capability Helix
+  session (`org.helixdesktop.InputCapture.xml`); asking for no capability Helix
   has answers 2.
 - The zones are the monitors' logical areas; the zone set changes when
   they do (and the session's barriers are then dropped, with
@@ -750,7 +750,7 @@ purposes are offered, as below.
 
 - With `org.gnome.desktop.lockdown` `disable-printing` true, both answer
   2 without a dialog.
-- The dialog (`org.helix.PortalDialog.Dialog`): "Print", "Print “<title>”
+- The dialog (`org.helixdesktop.PortalDialog.Dialog`): "Print", "Print “<title>”
   on:" (or "Choose a printer."), a list of the CUPS printers (`lpstat
   -e`; the default one, `lpstat -d`, first and chosen; for `PreparePrint`
   the `printer` of `settings` when listed) and "Print to File", a "Copies"
@@ -789,8 +789,8 @@ purposes are offered, as below.
 
 ### Helix
 
-The backend asks the shell's file chooser (`org.helix.PortalDialog.ChooseFiles`,
-`org.helix.PortalDialog.xml`) once per request: one dialog stays up for
+The backend asks the shell's file chooser (`org.helixdesktop.PortalDialog.ChooseFiles`,
+`org.helixdesktop.PortalDialog.xml`) once per request: one dialog stays up for
 the whole choice, browsing folders itself, and answers with the chosen
 paths. Polkit and keyring prompts wait until it is answered. The backend
 turns the paths into `file:` URIs and remembers the folder.
@@ -976,8 +976,8 @@ turns the paths into `file:` URIs and remembers the folder.
   current row has the focus while the list does), a live status
   "<folder>, <n> items" (or "Loading…") read out when the folder
   changes, the fields, the file type (a combo box), and the buttons. Not
-  yet tried with Orca (helix-desktop#71).
-- Not offered (helix-desktop#118): a grid view, a Type column, Starred,
+  yet tried with Orca (helixdesktop/desktop#71).
+- Not offered (helixdesktop/desktop#118): a grid view, a Type column, Starred,
   Trash and Other Locations places, eject buttons beside drives, a
   resizable dialog, and reading the places again when drives come and
   go while the dialog is open.

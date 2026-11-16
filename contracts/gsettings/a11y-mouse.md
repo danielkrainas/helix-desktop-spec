@@ -48,8 +48,8 @@ windows (layer namespace `helix-click-type`): **Single**, **Double**,
 a click or a dwell) makes it the type of the next dwell click.
 
 The shell and the compositor share the type through
-`org.helix.ClickType` (Helix-private), served by the compositor on its
-`org.gnome.Mutter.DisplayConfig` bus name at `/org/helix/ClickType`:
+`org.helixdesktop.ClickType` (Helix-private), served by the compositor on its
+`org.gnome.Mutter.DisplayConfig` bus name at `/org/helixdesktop/ClickType`:
 
 - `SetClickType(s type)`: `single`, `double`, `drag` or `secondary`
   (anything else fails with `org.freedesktop.DBus.Error.InvalidArgs`);

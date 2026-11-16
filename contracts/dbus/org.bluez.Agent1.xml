@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <!-- BlueZ's pairing agent interface (served by the shell on the system bus
-     at /org/helix/BluetoothAgent) and the AgentManager1 calls it makes,
+     at /org/helixdesktop/BluetoothAgent) and the AgentManager1 calls it makes,
      after BlueZ's published API documentation. Notes: org.bluez.Agent1.md -->
 <node>
   <interface name="org.bluez.Agent1">

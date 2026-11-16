@@ -24,15 +24,15 @@ Initial public contracts extracted for GNOME 51 compatibility.
 - `org.freedesktop.Notifications.xml`, `org.gtk.Notifications.xml` — notifications
 - `org.freedesktop.Application.xml` — application activation (called by the shell)
 - `org.freedesktop.impl.portal.{Access,Account,AppChooser,Background,Wallpaper,Lockdown,Notification,Print,FileChooser,GlobalShortcuts}.xml` — more portal backend interfaces (served by `helix-portals`)
-- `org.helix.PortalDialog.xml` — Helix-private: dialogs and running apps the portal backends ask the shell for
+- `org.helixdesktop.PortalDialog.xml` — Helix-private: dialogs and running apps the portal backends ask the shell for
 - `org.freedesktop.impl.portal.{Settings,Inhibit,Screenshot,ScreenCast,RemoteDesktop,Request,Session}.xml` — XDG portal backend interfaces (xdg-desktop-portal 1.22.1)
-- `org.helix.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
+- `org.helixdesktop.DisplayChangeDialog.xml` — Helix-private: the shell asks whether to keep a display change (called by the compositor)
 - `org.gnome.Mutter.ScreenCast.xml` — recording monitors into PipeWire streams (served by the compositor)
 - `org.gnome.Mutter.RemoteDesktop.xml` — remote input, Notify* and EIS (served by the compositor)
 - `org.freedesktop.a11y.KeyboardMonitor.xml` — key events and key grabs for screen readers (served by the compositor)
-- `org.helix.ScreenEffects.xml` — Helix-private: grayscale for screen time limits (served by the compositor)
-- `org.helix.ClickType.xml` — Helix-private: the dwell click type (served by the compositor; described in `contracts/gsettings/a11y-mouse.md`)
-- `org.helix.ScreenCastChooser.xml`, `org.helix.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
+- `org.helixdesktop.ScreenEffects.xml` — Helix-private: grayscale for screen time limits (served by the compositor)
+- `org.helixdesktop.ClickType.xml` — Helix-private: the dwell click type (served by the compositor; described in `contracts/gsettings/a11y-mouse.md`)
+- `org.helixdesktop.ScreenCastChooser.xml`, `org.helixdesktop.ScreenCastState.xml` — Helix-private: the shell asks what to share; the compositor says whether sharing is on
 - `org.gnome.SettingsDaemon.Color.xml` — Night Light state (served by the shell)
 - `org.freedesktop.IBus.xml` — the part of IBus Helix's shell calls as the input method; not implemented by Helix
 - `org.mpris.MediaPlayer2.Player.xml` — the part of MPRIS Helix calls on media players (playback keys); not implemented by Helix
@@ -45,8 +45,8 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.gtk.Notifications.md`, `org.freedesktop.Application.md`,
 `org.gnome.SessionManager.EndSessionDialog.md`,
 `org.freedesktop.impl.portal.md`, `org.freedesktop.login1.md`,
-`org.helix.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`,
-`org.gnome.Mutter.ScreenCast.md`, `org.helix.ScreenCastChooser.md`,
+`org.helixdesktop.DisplayChangeDialog.md`, `org.mpris.MediaPlayer2.Player.md`,
+`org.gnome.Mutter.ScreenCast.md`, `org.helixdesktop.ScreenCastChooser.md`,
 `org.gnome.SettingsDaemon.Color.md`, `org.freedesktop.GeoClue2.Agent.md`,
 `org.gnome.evolution.dataserver.md`, `org.freedesktop.NetworkManager.SecretAgent.md`, `org.bluez.Agent1.md`,
 `org.bluez.obex.md`, `org.freedesktop.a11y.KeyboardMonitor.md`).

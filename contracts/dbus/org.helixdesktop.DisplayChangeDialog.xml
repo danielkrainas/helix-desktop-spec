@@ -4,10 +4,10 @@
   Helix-private: the compositor asks the shell whether to keep a display
   configuration change. GNOME does this inside one process (mutter and
   gnome-shell); Helix's compositor and shell are separate.
-  Served by the shell on org.gnome.Shell at /org/helix/DisplayChangeDialog.
+  Served by the shell on org.gnome.Shell at /org/helixdesktop/DisplayChangeDialog.
 -->
 <node>
-  <interface name="org.helix.DisplayChangeDialog">
+  <interface name="org.helixdesktop.DisplayChangeDialog">
     <method name="Open">
       <arg name="seconds" direction="in" type="u"/>
     </method>

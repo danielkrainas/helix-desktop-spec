@@ -162,7 +162,7 @@ does not support, is listed but not started. The settings page says why:
 ## Contribution points (API 1)
 
 Each contribution point is a D-Bus interface that the extension
-implements, on an object at `/org/helix/Extension/<kind>/<id>`. The id
+implements, on an object at `/org/helixdesktop/Extension/<kind>/<id>`. The id
 is the one from the manifest. A full contract (interface XML and
 behavior notes) is written for each one when the proposal is accepted;
 what follows is the intended shape.
@@ -183,7 +183,7 @@ warning in its log. Limits in API 1:
 - **Updates**: properties may change at any rate. The shell picks up at
   most one change per item per frame, and drops excess.
 
-### Panel items (`org.helix.Extension1.PanelItem`)
+### Panel items (`org.helixdesktop.Extension1.PanelItem`)
 
 Panel items are the Plasma/Xfce applet: something in the top panel.
 
@@ -205,8 +205,8 @@ Panel items are the Plasma/Xfce applet: something in the top panel.
 - **Zones**: the panel has left, center and right zones. The **panel
   layout** decides which items appear where, and in which order. It is
   an ordered list of item ids per zone, kept in GSettings
-  (`org.helix.shell` `panel-left`, `panel-center`, `panel-right`;
-  `contracts/gsettings/org.helix.shell.md`). Built-in items have ids
+  (`org.helixdesktop.shell` `panel-left`, `panel-center`, `panel-right`;
+  `contracts/gsettings/org.helixdesktop.shell.md`). Built-in items have ids
   too: `helix:apps`, `helix:clock`, `helix:status`, `helix:power` and
   others (`contracts/wayland/README.md`, "Panel layout"). So users arrange everything in one place, and can
   remove built-ins they do not want.
@@ -228,7 +228,7 @@ icon just work. That alone covers the most installed GNOME extension
 Extensions do not use StatusNotifierItem; their panel items are the
 richer, checked equivalent.
 
-### Quick settings (`org.helix.Extension1.Toggle`, `org.helix.Extension1.Slider`)
+### Quick settings (`org.helixdesktop.Extension1.Toggle`, `org.helixdesktop.Extension1.Slider`)
 
 - **Toggle**: a switch in the quick-settings grid, next to Wi-Fi and
   Night Light.
@@ -244,11 +244,11 @@ richer, checked equivalent.
   - Method: `SetValue(d)`. While dragging, at most one call per frame
     is sent.
 - Which toggles and sliders appear, and in which order, is part of the
-  user's quick-settings layout (`org.helix.shell` `quick-settings`),
+  user's quick-settings layout (`org.helixdesktop.shell` `quick-settings`),
   which includes the built-in ones (`helix:wifi`,
   `helix:night-light`…).
 
-### Dock items (`org.helix.Extension1.DockItem`)
+### Dock items (`org.helixdesktop.Extension1.DockItem`)
 
 Dock items are entries in the dock's places section, next to drives and
 the Trash: a folder stack, a running service, a "now playing" item.
@@ -260,7 +260,7 @@ the Trash: a folder stack, a running service, a "now playing" item.
 - Apps' own dock badges stay with `com.canonical.Unity.LauncherEntry`,
   as today.
 
-### Menus (`org.helix.Extension1.Menu`)
+### Menus (`org.helixdesktop.Extension1.Menu`)
 
 A menu is one property, `Layout`: a tree of items (in the contract, a flat list where each entry names its parent, since D-Bus types cannot nest without bound). Each item has an id,
 a kind (normal, check, radio, separator, section heading or submenu),
@@ -280,7 +280,7 @@ Manifest `contributes.command` entries become named commands
 - A suggested keybinding is used only if it is free. Otherwise the
   command is listed unbound, and the user is told.
 - Running a command calls the extension's
-  `org.helix.Extension1.Commands.Run(id)`, starting the extension first
+  `org.helixdesktop.Extension1.Commands.Run(id)`, starting the extension first
   if needed (`onCommand` activation).
 
 Extensions never grab keys themselves.
@@ -319,9 +319,9 @@ compositor closes it on a click outside. The extension draws it with any toolkit
 Wayland client surface in the extension's own process: it cannot see
 or draw over anything else, and a crash only closes the popover.
 
-## The host interface (`org.helix.Extension1.Host`)
+## The host interface (`org.helixdesktop.Extension1.Host`)
 
-Served by the shell at `/org/helix/Extension1/Host` on each extension's
+Served by the shell at `/org/helixdesktop/Extension1/Host` on each extension's
 connection:
 
 - `Hello(api_version) → (granted_api, permissions, info)`: the first
@@ -419,10 +419,10 @@ start; it does not yet protect the **user** from a malicious extension.
   - per user: `$XDG_DATA_HOME/helix/extensions/<id>/`.
 
   A per-user copy hides a system one.
-- **Enabled set**: `org.helix.extensions` `enabled` (ids), plus
+- **Enabled set**: `org.helixdesktop.extensions` `enabled` (ids), plus
   `disabled` for system extensions that are on by default
   (`enabled-by-default = true` in their manifest).
-  `org.helix.extensions` `disable-all` turns every extension off, for
+  `org.helixdesktop.extensions` `disable-all` turns every extension off, for
   troubleshooting. Holding Shift while logging in does the same for
   one session.
 - **Tools**: a `helix-extensions` command (list, info, enable, disable,
@@ -436,7 +436,7 @@ start; it does not yet protect the **user** from a malicious extension.
 ## Versioning and compatibility
 
 - **API version `MAJOR.MINOR`**:
-  - Interface names carry the major version (`org.helix.Extension1.*`).
+  - Interface names carry the major version (`org.helixdesktop.Extension1.*`).
   - Minor versions only add: new properties, methods, contribution
     points or limits raised.
   - An extension asks for the minimum minor version it needs (`api`);
@@ -500,7 +500,7 @@ items from looking second-class.
    - the layout editor. Helix has no Settings app of its own, so this
      is the shell's "Customize Panel…" dialog.
 
-   This is useful on its own. Its contracts: `org.helix.shell`, "Panel
+   This is useful on its own. Its contracts: `org.helixdesktop.shell`, "Panel
    layout" and `org.kde.StatusNotifierItem.md`.
 1. **API 1.0**:
    - the extension host;

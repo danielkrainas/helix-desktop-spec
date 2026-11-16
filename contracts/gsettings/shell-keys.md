@@ -208,7 +208,7 @@ twin: `XF86Eject`; `XF86WLAN`, `XF86UWB`, `XF86RFKill`; `XF86Bluetooth`):
 *GNOME does not document this; Helix's choice:* which drive `eject` ejects
 and the rfkill on-screen displays, as above. The drive choice is unit
 tested only; no drive has been ejected with the key yet
-(helix-desktop#59).
+(helixdesktop/desktop#59).
 
 ## Rotation lock
 

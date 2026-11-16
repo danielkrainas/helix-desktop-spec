@@ -38,7 +38,7 @@ identity (see `org.gnome.Mutter.DisplayConfig.md`) are as below.
   `RecordVirtual` are implemented; the per-stream `Start` / `Stop` fail
   with `org.freedesktop.DBus.Error.NotSupported`. `RecordWindow` takes
   `window-id` (`t`): the window's id in Helix's window list (see
-  `org.helix.ScreenCastChooser.md`); an unknown id fails with
+  `org.helixdesktop.ScreenCastChooser.md`); an unknown id fails with
   `org.freedesktop.DBus.Error.InvalidArgs`. Window streams have a `size`
   parameter (the window's size in layout coordinates) and no position.
   `RecordArea` records the rectangle (layout coordinates) clipped to the
@@ -86,7 +86,7 @@ identity (see `org.gnome.Mutter.DisplayConfig.md`) are as below.
 - Every buffer carries a header (`SPA_META_Header`) whose `pts` is the time
   the frame was made (`CLOCK_MONOTONIC`, nanoseconds) and whose `seq`
   counts the stream's frames.
-- The compositor also serves `org.helix.ScreenCastState` at
+- The compositor also serves `org.helixdesktop.ScreenCastState` at
   `/org/gnome/Mutter/ScreenCast`: `Active` (`b`) is true while any session
   is started other than the shell's own (screen recording), and emits `PropertiesChanged`. The shell shows a "Sharing"
   indicator in the panel while it is true.

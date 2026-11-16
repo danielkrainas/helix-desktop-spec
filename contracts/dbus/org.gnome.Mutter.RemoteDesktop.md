@@ -117,7 +117,7 @@ and X11 apps; not the primary selection).
   `[1, 2]` when the system's XKB library (libxkbcommon 1.11 or later)
   reads text format version 2; Helix finds out once, by compiling a small
   keymap as version 2. Only the refusal of version 2 has been tried (on
-  libxkbcommon 1.6; helix-desktop#70).
+  libxkbcommon 1.6; helixdesktop/desktop#70).
 - `SetKeymap(options)` with `keymap-type` 0 replaces the keymap of the
   session's keyboard, for everything (apps, shortcuts,
   `NotifyKeyboardKeysym`): `xkb-keymap` (`h`, required) is read to its

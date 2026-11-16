@@ -151,7 +151,7 @@ created if needed.
 ## Picking a window (Helix)
 
 Helix-private, for its Screenshot portal backend: interface
-`org.helix.ScreenshotWindowPicker` at the same object, with the same
+`org.helixdesktop.ScreenshotWindowPicker` at the same object, with the same
 callers allowed. `PickWindow(include_cursor, flash, filename)` dims every
 monitor with the hint "Click a window, or arrows and Enter, to capture
 it · Esc to cancel" (the keys as for `PickColor`, above).

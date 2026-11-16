@@ -1,10 +1,10 @@
-# org.helix.ScreenCastChooser — behavioral notes
+# org.helixdesktop.ScreenCastChooser — behavioral notes
 
 Helix-private. In GNOME, the portal backend (xdg-desktop-portal-gnome)
 draws the screen-sharing chooser itself; in Helix the shell does, so the
 dialog looks like the rest of the shell and appears above everything.
 
-- Bus name `org.gnome.Shell`, object `/org/helix/ScreenCastChooser`.
+- Bus name `org.gnome.Shell`, object `/org/helixdesktop/ScreenCastChooser`.
 - `ChooseSource(app_id, monitors, options)`: `monitors` lists
   `(connector, label)` pairs to offer (the portal passes the monitors
   DisplayConfig shows, without other casts' virtual monitors). `options`:

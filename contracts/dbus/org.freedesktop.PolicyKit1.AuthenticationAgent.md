@@ -41,7 +41,7 @@ in a dialog of its own). The helper's protocol above is private to
 libpolkit-agent and not in polkit's own documentation.
 
 - The shell registers for its own logind session (from logind
-  `GetSessionByPID`) at `/org/helix/PolicyKit1/AuthenticationAgent`,
+  `GetSessionByPID`) at `/org/helixdesktop/PolicyKit1/AuthenticationAgent`,
   with the locale of `LC_ALL`, else `LC_MESSAGES`, else `LANG`, else
   `C`, when it starts; polkitd forgets the agent when the shell's system
   bus connection closes. When another agent is

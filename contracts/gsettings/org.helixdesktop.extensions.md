@@ -1,11 +1,11 @@
-# `org.helix.extensions`
+# `org.helixdesktop.extensions`
 
 Helix's own extension settings (not a GNOME schema). Helix installs it as
-`org.helix.extensions.gschema.xml`, and this table is its contract.
+`org.helixdesktop.extensions.gschema.xml`, and this table is its contract.
 Behavior: `contracts/extensions/README.md`, "Enabling, approving and
 placing".
 
-Path: `/org/helix/extensions/`
+Path: `/org/helixdesktop/extensions/`
 
 | Key | Type | Default |
 |-----|------|---------|
@@ -29,5 +29,5 @@ Path: `/org/helix/extensions/`
 
 Keys added after the first release (`placed`, `command-keys`,
 `require-sandbox`) may be missing from an older installed schema; they
-then read as their defaults (see `org.helix.shell.md`, "Older installed
+then read as their defaults (see `org.helixdesktop.shell.md`, "Older installed
 schemas").

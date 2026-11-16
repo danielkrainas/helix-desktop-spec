@@ -125,7 +125,7 @@ left-to-right layout; actions still reach the control under them.
   description, expandable to a list of types); the warning, announced;
   Cancel and the accept button. "Replace File?" is an `alert` with
   Replace focused. Tested over AT-SPI on a private bus; not yet read
-  with Orca (helix-desktop#71).
+  with Orca (helixdesktop/desktop#71).
 - **Prompt dialogs** (polkit, keyring, network secrets, mount questions,
   portal dialogs, the run dialog): a modal `dialog` named by the title;
   the message and description as labels; list rows (`list item`s,
@@ -393,7 +393,7 @@ logical pixels).
 
 ## Verified with Orca
 
-The shell was read with Orca 50.3 (helix-desktop#71) in a headless Helix
+The shell was read with Orca 50.3 (helixdesktop/desktop#71) in a headless Helix
 session (helix-comp's headless backend with helix-shell) with a private
 session bus, a private accessibility bus (`at-spi-bus-launcher` on that
 bus, in a scratch home and runtime directory) and a private Orca with
@@ -440,7 +440,7 @@ said nothing; Enter did not answer prompt dialogs (the run dialog);
 password was announced as "Caps Lock is on"; a focused banner's body
 was read twice.
 
-The area picker was read too (helix-desktop#97): opening it, "Screenshot";
+The area picker was read too (helixdesktop/desktop#97): opening it, "Screenshot";
 each arrow key, "Area at 330, 180: 640 × 360" and so on; Enter answered
 `SelectArea` with the area.
 

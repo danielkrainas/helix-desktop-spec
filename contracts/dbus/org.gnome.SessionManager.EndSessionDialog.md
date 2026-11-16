@@ -71,7 +71,7 @@ When the dialog opens for types 1–4 it reads the interface's properties
 - PackageKit is only asked on bare hardware (DRM backend); a nested
   session never reads or schedules the host's updates.
 - Tested against a fake PackageKit on a private system bus only; no real
-  PackageKit has scheduled updates through it (helix-desktop#48).
+  PackageKit has scheduled updates through it (helixdesktop/desktop#48).
 
 ## Signals
 

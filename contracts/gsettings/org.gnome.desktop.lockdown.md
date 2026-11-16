@@ -39,7 +39,7 @@ Path: `/org/gnome/desktop/lockdown/`
 - `mount-removable-storage-devices-as-read-only`: Helix mounts drives
   through GIO, whose GVfs UDisks2 volume monitor reads this key and
   mounts removable drives read-only; Helix does nothing more. (Not tried
-  with a real drive; helix-desktop#63.)
+  with a real drive; helixdesktop/desktop#63.)
 - `disable-command-line`: the run dialog (`contracts/wayland/README.md`,
   "Run a command") does not open.
 - The other keys (`user-administration-disabled`, …) have no effect in
@@ -71,4 +71,4 @@ decided when the shell starts.
 *GNOME does not document this; Helix's choice:* how gnome-shell decides
 to offer "Switch User" and how it asks the display manager; Helix's way
 is above. Tested against fake GDM, LightDM and AccountsService services
-only, not with a real display manager (helix-desktop#62).
+only, not with a real display manager (helixdesktop/desktop#62).

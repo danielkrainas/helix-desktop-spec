@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <!--
-  org.helix.PortalDialog — Helix-private (CC0). Dialogs and app state the
+  org.helixdesktop.PortalDialog — Helix-private (CC0). Dialogs and app state the
   portal backends ask the shell for. Served by the shell (org.gnome.Shell)
-  at /org/helix/PortalDialog. Notes in org.freedesktop.impl.portal.md
+  at /org/helixdesktop/PortalDialog. Notes in org.freedesktop.impl.portal.md
   ("Access", "Account", "AppChooser", "Background", "Wallpaper", "Print", "FileChooser").
 -->
 <node>
-  <interface name="org.helix.PortalDialog">
+  <interface name="org.helixdesktop.PortalDialog">
     <!-- A question; check_label empty: no check box. -->
     <method name="Ask">
       <arg name="title" type="s" direction="in"/>

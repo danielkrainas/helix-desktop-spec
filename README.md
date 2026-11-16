@@ -2,7 +2,7 @@
 
 **Helix** is a Rust desktop environment that begins with compatibility against GNOME’s public contracts and is designed to evolve beyond them.
 
-This repository (`helix-desktop-spec`) holds the living specification and contract source of truth. The implementation is in [helix-desktop](https://github.com/danielkrainas/helix-desktop) (compositor, shell, session, portals, login screen), and Helix's own applications are in [helix-apps](https://github.com/danielkrainas/helix-apps). Both are tested against these contracts.
+This repository (`helixdesktop/spec`) holds the living specification and contract source of truth. The implementation is in [helixdesktop/desktop](https://github.com/helixdesktop/desktop) (compositor, shell, session, portals, login screen), and Helix's own applications are in [helixdesktop/apps](https://github.com/helixdesktop/apps). Both are tested against these contracts.
 
 ## Status
 
@@ -38,4 +38,4 @@ This is a clean-room effort focused on public contracts, not a fork of GNOME sou
 - `gnome-compatibility.md` — summary of what Helix supports from GNOME, what it doesn't (and why), and where it differs on purpose
 - `proposals/` — designs for Helix's own features (for example its extension system), before they become contracts
 
-The specification is living: it is refined whenever implementation work discovers missing or underspecified contracts, and changes land here before (or with) the code that follows them. Missing or unclear behaviour is recorded in the relevant contract (where GNOME is undocumented, marked *GNOME does not document this; Helix's choice:*); open work is tracked as issues in helix-desktop, labelled `gap` or `needs-hardware`.
+The specification is living: it is refined whenever implementation work discovers missing or underspecified contracts, and changes land here before (or with) the code that follows them. Missing or unclear behaviour is recorded in the relevant contract (where GNOME is undocumented, marked *GNOME does not document this; Helix's choice:*); open work is tracked as issues in helixdesktop/desktop, labelled `gap` or `needs-hardware`.

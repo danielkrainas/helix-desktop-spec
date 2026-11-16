@@ -1,10 +1,10 @@
-# `org.helix.shell`
+# `org.helixdesktop.shell`
 
 Helix's own shell settings. This is not a GNOME schema: Helix defines
-it. Helix installs it as `org.helix.shell.gschema.xml` (in
+it. Helix installs it as `org.helixdesktop.shell.gschema.xml` (in
 `$datadir/glib-2.0/schemas/`), and this table is its contract.
 
-Path: `/org/helix/shell/`
+Path: `/org/helixdesktop/shell/`
 
 | Key | Type | Default |
 |-----|------|---------|
@@ -53,7 +53,7 @@ older Helix reading a newer layout.
 
 ## Older installed schemas
 
-The installed copy of this schema (and of `org.helix.extensions`) can be
+The installed copy of this schema (and of `org.helixdesktop.extensions`) can be
 older than the programs reading it, after a partial upgrade or when a
 newer build runs against an older package. Helix's programs keep
 working then: a key the installed schema lacks, or gives another type,

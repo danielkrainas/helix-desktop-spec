@@ -29,7 +29,7 @@ follow `org.gnome.desktop.interface`:
   `clock-show-weekday` say (they concern the top bar). It changes at
   midnight. Both are labels on the accessibility bus.
 - Changes apply within a second. Names are English (the shell runs in
-  the C time locale; the shell is not translated yet, helix-desktop#81).
+  the C time locale; the shell is not translated yet, helixdesktop/desktop#81).
   *GNOME does not document this; Helix's choice:* how the date and time
   are arranged in the top bar, per locale; this order is Helix's.
 

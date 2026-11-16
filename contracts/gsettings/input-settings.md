@@ -106,7 +106,7 @@ to `numlock-state`; with it off, neither happens. Num Lock and Caps Lock
 stay as they were when the keyboard layout changes. Keyboards' Num Lock,
 Caps Lock and Scroll Lock lights follow the lock states (bare hardware;
 a keyboard that appears gets the current state). The lights have not
-been tried on real keyboards (helix-desktop#61).
+been tried on real keyboards (helixdesktop/desktop#61).
 
 ## Pointing devices
 
@@ -305,5 +305,5 @@ rings and strips as libinput groups them, and its number of modes;
 - **Not yet tested with a real tablet.** The protocol is checked with a
   Wayland client in Helix's tests, and the pressure curve and pad
   settings by unit tests; no tablet hardware was available
-  (helix-desktop#60). Stylus `keybinding` actions are unit tested only,
+  (helixdesktop/desktop#60). Stylus `keybinding` actions are unit tested only,
   and configuring a real eraser button (libinput 1.29) has never run.

@@ -48,7 +48,7 @@ schema that is not installed, or a key the installed schema lacks (or
 gives another type), reads as the type's empty value (`false`, `0`, an
 empty string or list) unless the reader names a better default, and is
 logged once; writes to such a key are skipped. Helix's own schemas work
-the same way with their documented defaults (`org.helix.shell.md`,
+the same way with their documented defaults (`org.helixdesktop.shell.md`,
 "Older installed schemas").
 
 ## Key contracts

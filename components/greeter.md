@@ -83,7 +83,7 @@ primary monitor (see "The monitor" below):
   A session picked from the menu stays picked while the selection moves.
   X11 sessions (`/usr/share/xsessions`) are not offered: greetd
   does not start an X server, so they would need a wrapper that starts
-  one (helix-desktop#76).
+  one (helixdesktop/desktop#76).
 - **Power** (bottom left): "Restart…" and "Power Off…" through logind
   (`org.freedesktop.login1.Manager` `Reboot` / `PowerOff`, interactive),
   offered when `CanReboot` / `CanPowerOff` answer `yes` or `challenge`.
@@ -241,7 +241,7 @@ and nobody is logged in yet.
 ### Setting the login screen's layout
 
 `/usr/libexec/helix/helix-login-monitors`, run as root through `pkexec`
-(polkit action `org.helix.login-screen-monitors`; administrator
+(polkit action `org.helixdesktop.login-screen-monitors`; administrator
 authentication, kept for a while in an active session), puts a layout
 into `/etc/xdg/helix/monitors.toml`. It takes no arguments and reads one
 configuration on standard input, in the remembered configurations' format
@@ -326,4 +326,4 @@ administrator's step (for example `systemctl disable gdm3` then
 
 Packaged for Debian and Ubuntu only: greetd's greeter user (`_greetd`
 there) and the greetd binary's path differ on Fedora and Arch Linux, and
-their packages are not written yet (helix-desktop#78).
+their packages are not written yet (helixdesktop/desktop#78).

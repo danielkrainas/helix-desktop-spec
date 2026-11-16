@@ -4,7 +4,7 @@ What a Helix session offers to software and users that expect GNOME 51:
 what it supports, what it does not (and why, where there is a reason),
 and where it behaves differently on purpose. It summarises the contracts
 in `contracts/`, which stay the source of truth for details; open work is
-tracked as issues in helix-desktop (labels `gap` and `needs-hardware`).
+tracked as issues in helixdesktop/desktop (labels `gap` and `needs-hardware`).
 `SCOPE.md` sets the boundaries this follows.
 
 In short: Helix aims to run unmodified GNOME applications and tools and
@@ -123,22 +123,22 @@ between characters; CJK text needs the Noto CJK fonts.
 | GNOME Shell extensions (JavaScript) | They patch GNOME Shell's internal, unstable APIs; supporting them means continually reverse-engineering private code. `org.gnome.Shell.Extensions` lists them and keeps their keys so tools don't break, but none runs. Helix has its own isolated extension system instead (`proposals/0001-extensions.md`, `contracts/extensions/`). |
 | Exact visual, animation and theme parity with GNOME Shell | Out of scope by design (`SCOPE.md`); GNOME Shell's look is not a public contract. Applications keep GNOME's look because GTK and libadwaita draw them. |
 | GDM | GDM's login screen *is* GNOME Shell in a login mode, and distributions make GDM depend on it. Helix can still be chosen from GDM, and ships its own greetd greeter (`components/greeter.md`). |
-| X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helix-desktop#76). |
+| X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helixdesktop/desktop#76). |
 | Magnifier on the Helix login screen | The greeter offers high contrast, large text, the screen reader and its own on-screen keyboard, but no zoom (`components/greeter.md`, "Accessibility"). |
 | Text shaping for Arabic and Indic scripts | Helix's own text renderer has no shaping engine: those scripts draw letter by letter (Hebrew and scripts without shaping are fine). Right-to-left surfaces also publish left-to-right bounds on the accessibility bus and keep left-to-right arrow-key order (`components/i18n.md`, "Not done yet"). |
-| `org.freedesktop.a11y.PointerLocator` | Not served yet (helix-desktop#75). |
+| `org.freedesktop.a11y.PointerLocator` | Not served yet (helixdesktop/desktop#75). |
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
 | Mutter's input capture interface (`org.gnome.Mutter.InputCapture`) | Undocumented; the InputCapture portal is served through Helix's own private interface instead. |
 | `ApplyMonitorsConfig` properties other than `color-mode` and `underscanning` (e.g. RGB range) | Their key names are not documented. |
 | Mutter's `monitors.xml` (user's or `/etc/xdg/monitors.xml`) | Helix remembers layouts in its own `helix/monitors.toml`, with the same lookup (the user's, then `$XDG_CONFIG_DIRS`); the login screen's layout is set from Settings or by copying into `/etc/xdg/helix/monitors.toml` (`contracts/dbus/org.gnome.Mutter.DisplayConfig.md`, "Remembered configurations"; `components/greeter.md`, "The monitor"). |
-| Colour curves `st240`, `xvycc`, `st428` | Not written; other named curves, ICC profiles and Windows-scRGB are converted. HDR output is 8 bits per channel (Smithay picks one scanout format per GPU). Both are helix-desktop#80. |
+| Colour curves `st240`, `xvycc`, `st428` | Not written; other named curves, ICC profiles and Windows-scRGB are converted. HDR output is 8 bits per channel (Smithay picks one scanout format per GPU). Both are helixdesktop/desktop#80. |
 | Vertical workspace keys (`-up`/`-down`) | Workspaces are laid out in a row, as in GNOME 51, so they have nothing to do. |
 | `disable-workarounds` | Has no effect; Helix has no workarounds to disable. |
 | Client-side shadows of X11 GTK windows | Helix does not advertise `_GTK_FRAME_EXTENTS`, so X11 GTK windows draw no shadow of their own (their transparency, e.g. rounded corners, is blended). Wayland windows are unaffected. |
 | Bluetooth device settings in the shell | Pairing and connecting only; device settings belong to Settings. |
 | Desktop Icons NG's own settings | That is an Ubuntu extension; Helix shows a simple set of desktop icons from `show-desktop-icons` only. |
 | GNOME's private helpers and files | Not public contracts: `gnome-shell-calendar-server` (Helix reads Evolution Data Server directly), libgweather (Helix asks MET Norway directly), the Wellbeing history file, IBus emoji and Unicode modes in the shell (left to IBus itself). |
-| Greeter on Fedora and Arch | Packaged for Debian and Ubuntu only so far; greetd's user and paths differ elsewhere (helix-desktop#78). |
+| Greeter on Fedora and Arch | Packaged for Debian and Ubuntu only so far; greetd's user and paths differ elsewhere (helixdesktop/desktop#78). |
 
 ## Differs on purpose
 
@@ -169,7 +169,7 @@ code. The choices that users or developers are most likely to notice:
 - **Recent apps in the app grid.** The app grid's first page starts with
   a "Recent" row of the apps launched last (GNOME 51 has none). It
   follows `remember-app-usage`, can be turned off with Helix's own
-  `org.helix.shell app-grid-recent`, and can be cleared from its menu;
+  `org.helixdesktop.shell app-grid-recent`, and can be cleared from its menu;
   see `contracts/wayland/README.md`, "App grid".
 
 - **Layer shell for every client.** GNOME offers no layer shell; Helix
@@ -184,9 +184,9 @@ code. The choices that users or developers are most likely to notice:
   Helix offers `wp_tearing_control_v1`, and on the DRM backend a focused
   full-screen game that asks (or an X11 game through Xwayland with vsync
   off) is shown without waiting for vblank when nothing else is drawn
-  over it and the GPU can; `org.helix.shell allow-tearing` turns it off
+  over it and the GPU can; `org.helixdesktop.shell allow-tearing` turns it off
   (`contracts/wayland/README.md`, "Tearing"). Not yet tried on real GPUs
-  (helix-desktop#110).
+  (helixdesktop/desktop#110).
 
 - **File chooser.** The FileChooser portal's dialog is drawn by the
   shell in Helix's look, modelled on GTK 4's chooser (path bar, places,
@@ -196,7 +196,7 @@ code. The choices that users or developers are most likely to notice:
   `org.gtk.gtk4.Settings.FileChooser`. Its size comes from the screen
   (it is not resizable), folders are read off the UI thread with a
   "Loading…" state, and it has no grid view, Type column, Starred, Trash
-  or Other Locations, or eject buttons yet (helix-desktop#118;
+  or Other Locations, or eject buttons yet (helixdesktop/desktop#118;
   `contracts/dbus/org.freedesktop.impl.portal.md`, "FileChooser").
 
 ### Safety and robustness
@@ -209,7 +209,7 @@ code. The choices that users or developers are most likely to notice:
   when its connection goes away, so it cannot block logout forever; the
   session ends cleanly if the bus or session manager goes away.
 - **Display changes ask through Helix's own confirmation dialog**
-  (`org.helix.DisplayChangeDialog`); GNOME's happens inside gnome-shell.
+  (`org.helixdesktop.DisplayChangeDialog`); GNOME's happens inside gnome-shell.
 - **Keyboard monitor stands aside while locked**, so whoever owns the
   screen reader's name cannot read the password; VT-switching keys can
   never be grabbed.
@@ -273,7 +273,7 @@ implementations can follow or differ knowingly.
 Some supported features are written to their published standards and
 tested against simulated devices or services, but not yet with the real
 thing. Each contract says so where it applies, and the full list is the
-helix-desktop issues labelled `needs-hardware`; the main ones are touchscreens and touchpad gestures,
+helixdesktop/desktop issues labelled `needs-hardware`; the main ones are touchscreens and touchpad gestures,
 tearing (asynchronous page flips) for full-screen games,
 drawing tablets, HDR and calibrated monitors, DDC/CI brightness, privacy
 screens, underscanning, offline updates, user switching with a real
@@ -283,6 +283,6 @@ AT-SPI on a private bus and was read with Orca 50 on a headless Helix
 session (private buses, speech read from Orca's log; what it said is in
 `contracts/dbus/org.a11y.atspi.md`, "Verified with Orca"); The file
 chooser's accessible tree is tested over AT-SPI but has not been read
-with Orca yet (helix-desktop#71). Orca's mouse
+with Orca yet (helixdesktop/desktop#71). Orca's mouse
 review does not work yet (the compositor does not tell where the
 pointer is), and Orca has not been used on real hardware with speech.

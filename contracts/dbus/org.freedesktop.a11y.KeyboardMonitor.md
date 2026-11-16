@@ -55,7 +55,7 @@ The monitor sees each key press and release after the keyboard
 accessibility features (`contracts/gsettings/a11y-keyboard.md`: slow,
 bounce, sticky and mouse keys) and before the compositor's own shortcuts
 and the focused app. Keys of an input capture session
-(`org.helix.InputCapture`) are not seen. Keys typed by remote desktop
+(`org.helixdesktop.InputCapture`) are not seen. Keys typed by remote desktop
 sessions and by tablet pad buttons set to keystrokes are seen like keyboard
 keys. The compositor does not report key
 repeats (apps repeat keys themselves).
@@ -130,9 +130,9 @@ it with the message's destination; nothing is broadcast.
 ## Not covered
 
 `org.freedesktop.a11y.PointerLocator` (the same object in GNOME, for
-finding what is under the pointer) is not served (helix-desktop#75).
+finding what is under the pointer) is not served (helixdesktop/desktop#75).
 
 The grab rules are unit tested and the D-Bus side was tested on a private
 bus with a fake screen reader; no real Orca has used it yet, so whether
 Orca's commands, its modifier (Insert or Caps Lock, double press) and its
-typing echo all work is not known (helix-desktop#67).
+typing echo all work is not known (helixdesktop/desktop#67).

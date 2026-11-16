@@ -9,14 +9,14 @@ directory:
 
 | File | Served by | Object |
 |------|-----------|--------|
-| `org.helix.Extension1.Host.xml` | the shell | `/org/helix/Extension1/Host` |
-| `org.helix.Extension1.PanelItem.xml` | the extension | `/org/helix/Extension/panel_item/<id>` |
-| `org.helix.Extension1.Toggle.xml` | the extension | `/org/helix/Extension/toggle/<id>` |
-| `org.helix.Extension1.Slider.xml` | the extension | `/org/helix/Extension/slider/<id>` |
-| `org.helix.Extension1.Menu.xml` | the extension | any path the extension names |
-| `org.helix.Extension1.DockItem.xml` (1.1) | the extension | `/org/helix/Extension/dock_item/<id>` |
-| `org.helix.Extension1.Commands.xml` (1.1) | the extension | `/org/helix/Extension/commands` |
-| `org.helix.Extensions1.xml` | the shell, on the session bus | `/org/helix/Extensions1` (bus name `org.gnome.Shell`) |
+| `org.helixdesktop.Extension1.Host.xml` | the shell | `/org/helixdesktop/Extension1/Host` |
+| `org.helixdesktop.Extension1.PanelItem.xml` | the extension | `/org/helixdesktop/Extension/panel_item/<id>` |
+| `org.helixdesktop.Extension1.Toggle.xml` | the extension | `/org/helixdesktop/Extension/toggle/<id>` |
+| `org.helixdesktop.Extension1.Slider.xml` | the extension | `/org/helixdesktop/Extension/slider/<id>` |
+| `org.helixdesktop.Extension1.Menu.xml` | the extension | any path the extension names |
+| `org.helixdesktop.Extension1.DockItem.xml` (1.1) | the extension | `/org/helixdesktop/Extension/dock_item/<id>` |
+| `org.helixdesktop.Extension1.Commands.xml` (1.1) | the extension | `/org/helixdesktop/Extension/commands` |
+| `org.helixdesktop.Extensions1.xml` | the shell, on the session bus | `/org/helixdesktop/Extensions1` (bus name `org.gnome.Shell`) |
 
 In item paths, `<id>` is the item's id with `-` written as `_` (D-Bus
 object paths cannot hold `-`).
@@ -111,7 +111,7 @@ A manifest that cannot be read or breaks these rules makes the extension
 
 ## Enabling, approving and placing
 
-Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
+Kept in `org.helixdesktop.extensions` (`contracts/gsettings/org.helixdesktop.extensions.md`):
 
 - An extension is **enabled** when its id is in `enabled`, or it is a
   system extension with `enabled-by-default` and its id is not in
@@ -128,7 +128,7 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
   reason. Turning one on there waits for the next session. (Nested
   sessions: `HELIX_TEST_SHIFT=1` in the compositor's environment does
   the same, for testing.) Not yet tried with a real keyboard
-  (helix-desktop#50).
+  (helixdesktop/desktop#50).
 - An enabled extension runs only when its permissions are
   **approved**: the manifest's permissions are a subset of those
   recorded for it in `approved`. Turning an extension on in the shell's
@@ -139,7 +139,7 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
   asks for more waits, shown as "needs approval", until approved again.
   An extension without permissions needs no approval.
 - The first time an extension is enabled, its panel items are added to
-  the end of the first zone they suit (`org.helix.shell`
+  the end of the first zone they suit (`org.helixdesktop.shell`
   `panel-left`, `panel-center`, `panel-right`; in the right zone, before
   `helix:status` and `helix:power` when they are there), and its toggles and
   sliders to the end of `quick-settings`, as `<extension id>/<item id>`.
@@ -160,7 +160,7 @@ Kept in `org.helix.extensions` (`contracts/gsettings/org.helix.extensions.md`):
   scope named `app-helix\x2dextension-<id with . as _>-<pid of the shell>-<n>.scope`
   with `MemoryMax=256M` and `CPUWeight=50`. Otherwise it is started
   directly. The scope path has not yet run in a real session (nested
-  test sessions have no systemd user manager; helix-desktop#51).
+  test sessions have no systemd user manager; helixdesktop/desktop#51).
 - Its standard output and error, and its `Log` calls, go to its log: the
   last 200 lines are kept, and appended to
   `$XDG_STATE_HOME/helix/extensions/<id>.log` (cut to its last half when
@@ -267,7 +267,7 @@ which bubblewrap and the extension inherit, and load it when installed.
 (Ubuntu 26.04 ships its own profile for `/usr/bin/bwrap` that allows
 this; Helix's profile is needed where none does, as on Ubuntu 24.04.)
 Helix's profile parses but has not yet been loaded on such a system
-(helix-desktop#49).
+(helixdesktop/desktop#49).
 
 Before the first sandboxed extension starts, the shell tries an empty
 sandbox once. When that fails, sandboxed extensions do not start (state
@@ -276,7 +276,7 @@ complaint; when the restriction above is on and bubblewrap was denied,
 "this system restricts user namespaces (AppArmor) and the
 helix-extension-sandbox profile is not loaded").
 
-`org.helix.extensions` `require-sandbox` (an administrator's lock):
+`org.helixdesktop.extensions` `require-sandbox` (an administrator's lock):
 while true, extensions without `sandbox = true` do not run (state
 `disabled`, "Only sandboxed extensions may run"); development
 extensions too.
@@ -284,7 +284,7 @@ extensions too.
 The Extensions dialog says "Sandboxed" for sandboxed extensions, else
 "Full access: it can do anything you can".
 
-## The host (`org.helix.Extension1.Host`)
+## The host (`org.helixdesktop.Extension1.Host`)
 
 - `Hello(api_version) → (api_version, permissions, info)`:
   `api_version` is the `"1.N"` the extension uses. It fails with
@@ -308,7 +308,7 @@ The Extensions dialog says "Sandboxed" for sandboxed extensions, else
 - `Launch(desktop_id, uris)` (`launch-apps`): starts an app by its
   desktop file id, with optional URIs.
 
-## Panel items (`org.helix.Extension1.PanelItem`)
+## Panel items (`org.helixdesktop.Extension1.PanelItem`)
 
 - **Properties**:
   - `Icon` (`s`), `IconData` (`ay`, a PNG, preferred when not empty);
@@ -345,7 +345,7 @@ the extension's own panel when clicked, drawn by the extension with any
 toolkit.
 
 - A primary click calls the item's `TogglePopover(x, y, output)`
-  (`org.helix.Extension1.PanelItem`) instead of `Activate`. `x`, `y` are
+  (`org.helixdesktop.Extension1.PanelItem`) instead of `Activate`. `x`, `y` are
   where the popover's top-left corner goes, in the coordinates of the
   monitor whose connector is `output`: under the item, moved left so
   that 480 pixels fit. The extension opens its popover there, or closes
@@ -363,7 +363,7 @@ toolkit.
 - While the session is locked, no popover is shown (they are closed at
   locking).
 
-## Quick settings (`org.helix.Extension1.Toggle`, `org.helix.Extension1.Slider`)
+## Quick settings (`org.helixdesktop.Extension1.Toggle`, `org.helixdesktop.Extension1.Slider`)
 
 - A **toggle** is a switch in the quick settings grid, at its place in
   `quick-settings`.
@@ -381,7 +381,7 @@ toolkit.
     (`b`).
   - A click on its bar calls `SetValue` with the value at that point.
 
-## Dock items (`org.helix.Extension1.DockItem`) (1.1)
+## Dock items (`org.helixdesktop.Extension1.DockItem`) (1.1)
 
 - Shown in the dock after the drives and before the Trash, in the order
   of the enabled extensions (by id) and their manifests, while the dock
@@ -399,12 +399,12 @@ toolkit.
 - While its extension is not running it is drawn from the manifest,
   dimmed.
 
-## Commands (`org.helix.Extension1.Commands`) (1.1)
+## Commands (`org.helixdesktop.Extension1.Commands`) (1.1)
 
 - Each `[[contributes.command]]` is a command `<extension id>/<command
   id>`. Command ids follow the rules of item ids, but are their own: a
   command may share an id with an item.
-- **Keys**: `org.helix.extensions` `command-keys` maps commands to
+- **Keys**: `org.helixdesktop.extensions` `command-keys` maps commands to
   accelerators (GNOME's syntax; empty: none). The first time an
   extension is enabled, a command's suggested `keybinding` is put there
   if no shell, window manager, custom or other command key uses it.
@@ -419,7 +419,7 @@ toolkit.
   `Run` is called after its `Hello` (within its 10 seconds). No command
   runs while the session is locked.
 
-## Menus (`org.helix.Extension1.Menu`)
+## Menus (`org.helixdesktop.Extension1.Menu`)
 
 - `Layout` (`a(iissbb)`): the entries, each `(id, parent, kind, label,
   enabled, checked)`. `parent` is 0 for the top level, else a
@@ -429,7 +429,7 @@ toolkit.
 - Choosing an entry calls `Activated(id)` and closes the menu. Menus
   look and behave like the panel's other menus.
 
-## Session bus: `org.helix.Extensions1`
+## Session bus: `org.helixdesktop.Extensions1`
 
 For tools (`helix-extensions`, the Settings app's Extensions panel) and
 the Extensions dialog's state:

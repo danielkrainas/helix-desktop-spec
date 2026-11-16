@@ -51,7 +51,7 @@ goes away soon after it ends. `Cancel()` stops a transfer.
 
 ## Interface Helix implements: org.bluez.obex.Agent1
 
-Exported by the shell at `/org/helix/ObexAgent` on the session bus.
+Exported by the shell at `/org/helixdesktop/ObexAgent` on the session bus.
 
 - `AuthorizePush(o transfer) → s`: a device wants to push the transfer's
   object. Returning a name accepts it (a bare name is stored in obexd's
@@ -89,8 +89,8 @@ they complete; Helix's are below.
 
 ### Sending
 
-- The shell serves `org.helix.BluetoothSendTo` at
-  `/org/helix/BluetoothSendTo` on its session bus name `org.gnome.Shell`:
+- The shell serves `org.helixdesktop.BluetoothSendTo` at
+  `/org/helixdesktop/BluetoothSendTo` on its session bus name `org.gnome.Shell`:
   - `SendFiles(s device, as files)`: `device` is a Bluetooth address or
     empty; `files` are absolute paths or `file://` URIs, or empty. With
     no device, the shell asks which paired device to send to (BlueZ's
@@ -114,4 +114,4 @@ they complete; Helix's are below.
 Sending and receiving are tested against a fake `org.bluez.obex` on a
 private bus, and the dialogs and notifications in a nested session with
 fake obexd and BlueZ services. **Not yet tested with a real Bluetooth
-device** (helix-desktop#55).
+device** (helixdesktop/desktop#55).

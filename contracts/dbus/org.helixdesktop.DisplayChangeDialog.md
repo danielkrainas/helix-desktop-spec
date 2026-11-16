@@ -1,8 +1,8 @@
-# org.helix.DisplayChangeDialog — behavioral notes
+# org.helixdesktop.DisplayChangeDialog — behavioral notes
 
-Companion to `org.helix.DisplayChangeDialog.xml`. Helix-private; served by
+Companion to `org.helixdesktop.DisplayChangeDialog.xml`. Helix-private; served by
 the shell (bus name `org.gnome.Shell`, object
-`/org/helix/DisplayChangeDialog`) and called by the compositor after a
+`/org/helixdesktop/DisplayChangeDialog`) and called by the compositor after a
 persistent `ApplyMonitorsConfig` (see `org.gnome.Mutter.DisplayConfig.md`).
 
 - `Open(seconds)`: ask the user whether to keep the new display settings,

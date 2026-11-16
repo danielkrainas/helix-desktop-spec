@@ -198,7 +198,7 @@ distances, edges and what each swipe does, as here.
   touch to the app.
 - Not yet tested with a real touchscreen or touchpad: the recognizer is
   checked by unit tests, and touchscreen swipes in a nested session with
-  a remote desktop virtual touchscreen (helix-desktop#56).
+  a remote desktop virtual touchscreen (helixdesktop/desktop#56).
 
 **Frame timing.** `wp_presentation` feedback reports when a frame was
 shown (the monitor's vblank, its refresh interval and sequence) or that
@@ -271,7 +271,7 @@ is then converted for the monitor ("Color modes" in
   `srgb`, `ext_srgb`, `st2084_pq` and `hlg`; the primaries `srgb`,
   `pal_m`, `pal`, `ntsc`, `generic_film`, `bt2020`, `dci_p3`,
   `display_p3` and `adobe_rgb`. `st240`, `xvycc` and `st428` are not
-  offered (helix-desktop#80); other named values are the creator's `invalid_tf` /
+  offered (helixdesktop/desktop#80); other named values are the creator's `invalid_tf` /
   `invalid_primaries_named` errors. Target volumes beyond the primary
   volume are taken: the conversion is the same matrix, values outside
   0–1 are converted, not clipped, and only the composition clips (below
@@ -451,8 +451,8 @@ control object for a surface that has one is the protocol error
 monitor's frame is flipped asynchronously (not waiting for vblank, so it
 may tear) only when all of these hold, checked for every frame:
 
-- `org.helix.shell allow-tearing` is on (the default;
-  `contracts/gsettings/org.helix.shell.md`);
+- `org.helixdesktop.shell allow-tearing` is on (the default;
+  `contracts/gsettings/org.helixdesktop.shell.md`);
 - the session runs on the DRM backend and the GPU says it can flip
   asynchronously: `DRM_CAP_ATOMIC_ASYNC_PAGE_FLIP` with atomic
   modesetting (Linux 6.8 and later), `DRM_CAP_ASYNC_PAGE_FLIP` with
@@ -486,7 +486,7 @@ nothing about tearing). Xwayland (23.2 and later) uses
 makes Xwayland set `async` on its window's surface, which the rules
 above then treat like a Wayland game's.
 
-Not yet tried on real hardware (helix-desktop#110): the asynchronous
+Not yet tried on real hardware (helixdesktop/desktop#110): the asynchronous
 path is unit-tested (the decision, the capability check against a fake
 device) and the hint headless, but no DRM device has flipped
 asynchronously under Helix yet.
@@ -1263,7 +1263,7 @@ GNOME's app grid has no such row; it is a deliberate Helix addition.
   A faint line separates it from the grid below. Folders never appear in
   it, and its apps keep their own places in the grid (or folder) as well.
 - **When it shows.** Only on the first page, while
-  `org.helix.shell app-grid-recent` and
+  `org.helixdesktop.shell app-grid-recent` and
   `org.gnome.desktop.privacy remember-app-usage` are both on and at least
   one recent app is still listed. Not while searching (the grid is not
   shown then) and not in an open folder's box (the page under the box,
@@ -1557,9 +1557,9 @@ empty search, or Escape, goes back; typing searches all apps.
 ## Panel layout (Helix)
 
 The top panel has three zones: left, center and right. Which items each
-zone shows, and in which order (left to right), are `org.helix.shell`
+zone shows, and in which order (left to right), are `org.helixdesktop.shell`
 `panel-left`, `panel-center` and `panel-right`
-(`contracts/gsettings/org.helix.shell.md`). The built-in items are:
+(`contracts/gsettings/org.helixdesktop.shell.md`). The built-in items are:
 
 | Id | Item | Shown | A click |
 |----|------|-------|---------|
@@ -1639,7 +1639,7 @@ the quick settings switches ("Quick Settings").
   The dialog's top edge stays where it is while rows come and go.
 - **Keyboard.** Tab and Shift+Tab (or the arrow keys) move between the
   buttons in reading order, and Enter or Space presses one.
-- Without the `org.helix.shell` schema installed, the dialog says that
+- Without the `org.helixdesktop.shell` schema installed, the dialog says that
   changes cannot be saved.
 - The dialog leaves the panel uncovered.
 - **Dragging** (while the dialog is open): a panel item can be dragged
@@ -1730,7 +1730,7 @@ holding, from the top:
   (DisplayConfig `Backlight`): the brightness icon and a slider setting
   every such monitor to the same fraction of its range.
 - Extensions' sliders (`contracts/extensions/README.md`), in the order
-  of `org.helix.shell` `quick-settings`.
+  of `org.helixdesktop.shell` `quick-settings`.
 - Sliders are a rounded track (6 px) filled up to the value, with a round
   knob (18 px) at the value; high contrast outlines the track and knob.
 - Switches are pills (56 px tall), two to a row: an icon (in the color of
@@ -1741,7 +1741,7 @@ holding, from the top:
   accent fill when on. A switch with a list or menu has its last 32 px as
   a separate part with a chevron (pointing down while its list is open),
   2 px apart. They come in the order of
-  `org.helix.shell` `quick-settings` (only those listed; extensions'
+  `org.helixdesktop.shell` `quick-settings` (only those listed; extensions'
   toggles too; ids
   `helix:wifi`, `helix:bluetooth`, `helix:airplane-mode`,
   `helix:auto-rotate`, `helix:night-light`, `helix:dark-style`,

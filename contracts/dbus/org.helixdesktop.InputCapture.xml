@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
 <!--
-  org.helix.InputCapture: Helix-private (CC0). The compositor's side of the
+  org.helixdesktop.InputCapture: Helix-private (CC0). The compositor's side of the
   InputCapture portal, served by helix-comp on the session bus as
-  org.helix.InputCapture at /org/helix/InputCapture. Only the owner of
+  org.helixdesktop.InputCapture at /org/helixdesktop/InputCapture. Only the owner of
   org.freedesktop.impl.portal.desktop.helix (the portal backend) may
   create sessions; a session belongs to its creator and closes when it
   leaves the bus. Notes in org.freedesktop.impl.portal.md, "InputCapture".
 -->
 <node>
-  <interface name="org.helix.InputCapture">
+  <interface name="org.helixdesktop.InputCapture">
     <!-- capabilities: 1 keyboard, 2 pointer (others are dropped; none is
          an error). Returns the session's path. -->
     <method name="CreateSession">
@@ -19,7 +19,7 @@
     <!-- 3: keyboard and pointer. -->
     <property name="SupportedCapabilities" type="u" access="read"/>
   </interface>
-  <interface name="org.helix.InputCapture.Session">
+  <interface name="org.helixdesktop.InputCapture.Session">
     <!-- The zone set and the zones: each monitor's logical width, height,
          x and y. -->
     <method name="GetZones">

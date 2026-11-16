@@ -195,7 +195,7 @@ high contrast), all their text at least 4.5:1 against the fill:
 
 The look is checked by painting the lock screen's model into buffers
 (tests, and pictures rendered at several sizes and scales) and by unit
-tests, but not on real hardware or in a live session (helix-desktop#68):
+tests, but not on real hardware or in a live session (helixdesktop/desktop#68):
 the frame pacing of the fades, shake and spinner (a 16 ms timer, not
 `wl_surface.frame`), the blur of a 4K background before the first frame
 on slow hardware, hot-plugging monitors while locked, swiping on a real

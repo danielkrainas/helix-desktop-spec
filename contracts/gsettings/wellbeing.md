@@ -54,12 +54,12 @@ unlocked and idle less than 5 seconds.
   `daily-limit-seconds`, a notification "Screen Time Limit Reached" ("You
   have used the computer for H hours and M minutes today."), once a day;
   with `grayscale`, the whole screen turns gray (the compositor's
-  `org.helix.ScreenEffects`, below) until the next day, or until the limit
+  `org.helixdesktop.ScreenEffects`, below) until the next day, or until the limit
   is turned off or raised above the total.
 
-## `org.helix.ScreenEffects` (Helix-private)
+## `org.helixdesktop.ScreenEffects` (Helix-private)
 
 Served by the compositor on its `org.gnome.Mutter.DisplayConfig` name, at
 `/org/gnome/Mutter/DisplayConfig`: `SetGrayscale(on b)` draws every
 monitor without color (on top of the magnifier's color effects) while
-`on`; property `Grayscale` (`b`). XML: `contracts/dbus/org.helix.ScreenEffects.xml`.
+`on`; property `Grayscale` (`b`). XML: `contracts/dbus/org.helixdesktop.ScreenEffects.xml`.
