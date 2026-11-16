@@ -425,7 +425,8 @@ them, and unlocking happens after the fade-out.
   top-layer shell surfaces are hidden: not drawn, not in screenshots or
   screencasts, and they take no pointer input or keyboard focus. This
   hides the panel, normal notification banners and other clients' bars
-  over a full-screen game or video, as GNOME hides its top bar there.
+  over a full-screen game or video, as GNOME hides its top bar there
+  (see "Layer shell for other clients").
   Overlay-layer surfaces stay above the full-screen window: OSDs
   (volume, brightness), menus, the overview and launcher, dialogs, and
   banners of critical notifications, which the shell puts on the overlay
@@ -880,6 +881,52 @@ keyboard follows their `keyboard_interactivity`:
 - Quick settings and the notification list ask for `exclusive` when
   opened from the keyboard and `on_demand` when opened by the pointer;
   the other shell menus always ask for `exclusive`.
+
+## Layer shell for other clients (Helix)
+
+`zwlr_layer_shell_v1` is offered to every client, not only the shell, so
+third-party bars, docks, wallpaper programs and game overlays (HUDs,
+frame counters, chat or stream widgets) work. GNOME offers no layer shell
+at all. Their surfaces follow the same rules as the shell's:
+
+- **Over a full-screen window** (see "Monitors and windows"): top-layer
+  surfaces are hidden, so another client's bar doesn't cover a game or a
+  video; overlay-layer surfaces stay above it, so an overlay tool puts
+  its HUD on the overlay layer. Going full screen and back is not
+  affected by them. The namespaces `helix-osk`, `helix-dock` and
+  `helix-dock-edge` stay shown on the top layer whoever uses them.
+- **Full-screen windows always cover their whole monitor.** Exclusive
+  zones shrink the work area (maximized and tiled windows, placement),
+  never a full-screen window. As the protocol says, a positive
+  exclusive zone counts only for a surface anchored to one edge, or to
+  one edge and both edges perpendicular to it; a surface not anchored,
+  anchored to a corner, to two parallel edges or to all four reserves
+  nothing.
+- **Pointer and touch** go to the topmost surface whose input region
+  holds the point. A surface with an empty (or partial) input region lets
+  input through where it has none: to the full-screen game under a
+  click-through HUD, as if the HUD were not there. Such a click is a
+  click on the window below in every way: it focuses that window (ending
+  a layer surface's `exclusive` keyboard claim, as below), and so does a
+  touch. *wlr-layer-shell leaves this to
+  the compositor; Helix's choice:* only the input region decides what is
+  under the pointer, never what is drawn.
+- **Keyboard**: as in "Shell surfaces and the keyboard". A surface asking
+  for `none` (the default) never gets the keyboard, so a HUD doesn't
+  take keys from the game; one asking for `exclusive` gets it at once and
+  gives it back to the game when it asks for `none` again; `on_demand`
+  gets it when clicked.
+- **Presentation**: Helix composites every frame, full-screen windows
+  included (there is no unredirection or direct scanout of a full-screen
+  window), so an overlay appearing or going away never changes how the
+  game is presented.
+
+Tested headless with a full-screen client standing in for a game and a
+third-party client with an overlay-layer HUD and a top-layer bar
+(helix-desktop `crates/helix-comp/tests/game_overlay_headless.rs`).
+MangoHud's `mangoapp` was not tried: distributions don't package it
+(Debian's and Ubuntu's `mangohud` has only the Vulkan/OpenGL layer,
+which draws into the game's own frames and needs no layer shell).
 
 ## Shell text fields and the clipboard (Helix)
 

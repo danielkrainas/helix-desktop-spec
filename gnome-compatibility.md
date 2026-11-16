@@ -167,6 +167,15 @@ code. The choices that users or developers are most likely to notice:
   `org.helix.shell app-grid-recent`, and can be cleared from its menu;
   see `contracts/wayland/README.md`, "App grid".
 
+- **Layer shell for every client.** GNOME offers no layer shell; Helix
+  offers `zwlr_layer_shell_v1` to all clients, so third-party bars, docks
+  and game overlays work. Over a full-screen game, top-layer surfaces are
+  hidden and overlay-layer ones (a HUD) stay above it; click-through
+  overlays let input reach the game, and exclusive zones never shrink a
+  full-screen window (`contracts/wayland/README.md`, "Layer shell for
+  other clients"). Tested headless with stand-in clients, not with real
+  games or MangoHud.
+
 ### Safety and robustness
 
 - **Dialogs default to the safe button.** Enter means Wait for an
