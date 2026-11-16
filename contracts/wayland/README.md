@@ -857,8 +857,11 @@ shown and have two buttons: the one that cancels on the left, the action
 on the right.
 
 - One button has the keyboard focus, drawn with the focus ring; Enter
-  (or keypad Enter) chooses it, Escape always cancels. Tab, Shift+Tab,
-  Left and Right move the focus between the two buttons.
+  (or keypad Enter) or Space chooses it, Escape always cancels. Tab,
+  Shift+Tab, Left and Right move the focus between the two buttons. The
+  end-session dialog's "Install pending software updates" check box is
+  a stop before Cancel for Tab and Shift+Tab (round); there Space
+  toggles it and Enter answers with the default.
 - The focus starts on the dialog's default, which never loses work or
   grants a permission:
 

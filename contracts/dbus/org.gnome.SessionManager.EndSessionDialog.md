@@ -27,8 +27,10 @@ may.
 - `seconds_to_stay_open`: countdown. When it runs out with nothing
   blocking, the dialog confirms by itself.
 - `inhibitor_object_paths`: `org.gnome.SessionManager.Inhibitor` objects
-  that block; the dialog lists their apps and reasons, and confirming then
-  means "anyway".
+  that block; the dialog lists their apps and reasons, each with its app's
+  icon (24 logical px; the icon of the desktop file named by the
+  inhibitor's app id, else a generic one) before its name, and confirming
+  then means "anyway".
 - Helix: when the user already confirmed a restart or power off on the
   lock screen (`org.gnome.desktop.screensaver restart-enabled`), the next
   `Open` of that type emits its confirmation signal at once and shows
@@ -47,7 +49,10 @@ When the dialog opens for types 1–4 it reads the interface's properties
 
 - Power off (1) and restart (2), with an update prepared (or already
   triggered): the dialog has a check box "Install pending software
-  updates", ticked; Space or a click toggles it. Confirming with it
+  updates", ticked; a click toggles it. It is a keyboard stop of its
+  own, before Cancel (Tab and Shift+Tab, with the focus ring when it
+  has the focus), and Space toggles it there; Enter there answers with
+  the dialog's default button. Confirming with it
   ticked calls `Trigger("power-off")` (power off) or `Trigger("reboot")`
   (restart) before the confirmation signal; unticked, when an update was
   already triggered, `Cancel()`, so the next boot does not install it.

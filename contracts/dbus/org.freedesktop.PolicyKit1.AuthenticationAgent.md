@@ -68,7 +68,11 @@ libpolkit-agent and not in polkit's own documentation.
 - The helper is the first of the paths above that exists
   (`HELIX_POLKIT_HELPER` names another, for tests).
 - The user sees the prompt dialog (below): title "Authentication
-  Required", `message`, the user's name (real name, else login name), a
+  Required", `message`, who authenticates as an avatar (the user's
+  picture from AccountsService, `org.freedesktop.Accounts.User`
+  `IconFile`, read only, cropped to a circle 48 logical px across; else
+  the name's initials on a color picked from the name, as on the lock
+  screen) with the name under it (real name, else login name), a
   password field labelled with the helper's prompt (without a trailing
   colon and space), Cancel and Authenticate. `PAM_TEXT_INFO` and
   `PAM_ERROR_MSG` texts show in the dialog. After `FAILURE` the dialog asks
