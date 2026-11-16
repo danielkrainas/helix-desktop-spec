@@ -103,6 +103,12 @@ fontconfig's best font for them. *GNOME does not document this; Helix's
 choice:* the size in `font-name` is not used; the shell keeps its own
 type scale (multiplied by `text-scaling-factor`).
 
+With Large Text, the controls that hold text grow with it, and so do the
+symbols and symbolic icons inside them, as GNOME sizes them in em: the
+search fields' search and clear symbols, quick settings' toggle, slider,
+list and round-button icons, and the battery icon there. App icons
+(launcher rows, the switcher, the dock and app grid) keep their size.
+
 Every size text is drawn at is one of a named scale (logical px, before
 Large Text's factor):
 
