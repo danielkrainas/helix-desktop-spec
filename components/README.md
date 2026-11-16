@@ -310,6 +310,21 @@ pieces apart is white lines rather than shades:
   an outline.
 - The panel's inactive workspace dots are hollow, the active one filled
   (and wide).
+- *GNOME does not document this; Helix's choice:* a quick settings
+  toggle split into two parts (one with a "›") has a
+  white edge on each side of the split, as wide as that part's outline.
+- The screenshot toolbar's toggles that are off have the 1 px white
+  outline at rest (the outline of an off control), not nothing.
+- The overview: the search field is outlined in white; window pictures
+  keep their colors with a 1 px white outline (3 px under the pointer);
+  the workspace thumbnails are black (no wallpaper), the active one
+  outlined in the accent, and a window on them that has no picture is a
+  black box with a white outline (not black on black). The switcher is
+  a black box with a white edge.
+- These were checked in renders of every surface in high contrast, and
+  the switcher and the overview also on a running (headless) session.
+- The desktop's wallpaper is kept; only the lock screen's background is
+  replaced (`contracts/gsettings/background.md`).
 
 ### Greeter
 
