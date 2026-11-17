@@ -52,7 +52,8 @@ unlocked and idle less than 5 seconds.
   GNOME's own history file is not read or written.
 - **Daily limit**: with `daily-limit-enabled`, when today's total reaches
   `daily-limit-seconds`, a notification "Screen Time Limit Reached" ("You
-  have used the computer for H hours and M minutes today."), once a day;
+  have used the computer for N hours today.", "… N minutes today.", or
+  with both "Screen time today: H hours and M minutes."), once a day;
   with `grayscale`, the whole screen turns gray (the compositor's
   `org.helixdesktop.ScreenEffects`, below) until the next day, or until the limit
   is turned off or raised above the total.

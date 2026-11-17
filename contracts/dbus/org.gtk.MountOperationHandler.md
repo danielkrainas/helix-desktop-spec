@@ -86,7 +86,7 @@ icon (none when empty or not in the icon theme).
   chooses it), with buttons "Cancel" (answer 1) and "Choose".
 - **Busy disk** (`ShowProcesses`): as a question, with "In use by:" and
   the processes' names (`/proc/<pid>/comm`, at most five, then "and N
-  more") below the text.
+  other programs") below the text.
 - **Repeated calls.** A call with the same `object_id` from the same
   caller while its dialog is shown replaces the dialog's contents; the
   earlier call answers 2.

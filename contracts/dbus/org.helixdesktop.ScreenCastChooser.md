@@ -36,7 +36,9 @@ dialog looks like the rest of the shell and appears above everything.
 - `AllowRemoteControl(app_id, devices)`: a remote desktop session
   without screen sharing. `devices` lists device names as above. The
   shell asks "Allow remote control?": the app wants to control the listed
-  devices, "Deny" / "Allow". Returns whether the user allowed it (Escape
+  devices (one whole sentence per set of `keyboard`, `pointer` and
+  `touchscreen`, others left out; "your input devices" for none),
+  "Deny" / "Allow". Returns whether the user allowed it (Escape
   or the session locking: false).
 - `DescribeWindow(window)` returns `(app_id, title)` of an open window
   (by window list id); an unknown window fails with
