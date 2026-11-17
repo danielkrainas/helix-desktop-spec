@@ -809,10 +809,23 @@ turns the paths into `file:` URIs and remembers the folder.
   `recent` (GTK's default), else everything starts in the home folder.
 - Size and place: about 80 % of the screen's width (at least 600, at
   most 1180 logical pixels) and 85 % of its height (at least 440, at most
-  900), centered, from the screen's size alone: it neither moves nor
-  changes size between folders, and with Large Text the rows grow and
-  fewer show while the title, fields and buttons stay on the screen.
-  *GNOME does not document this; Helix's choice.*
+  900), centered, from the screen's size: it neither moves nor changes
+  size between folders, and with Large Text the rows grow and fewer show
+  while the title, fields and buttons stay on the screen. *GNOME does not
+  document this; Helix's choice.*
+- Resizing: dragging an edge or a corner of the dialog (6 px either side
+  of the edge, 14 px corners; a grip marks the bottom right corner)
+  resizes it, kept centered, so an edge moves the opposite one too;
+  dragging the gap between the places and the list (a line in the accent
+  color while pointed at or dragged) widens or narrows the places. The
+  dialog stays between its smallest size from the screen (600 × 440 when
+  the screen allows) and the screen less 12 px each side; the places
+  between 120 px (or a third of the dialog) and a third of the dialog.
+  When the button goes up the size is written to
+  `org.gtk.gtk4.Settings.FileChooser` `window-size` and `sidebar-width`,
+  which later dialogs (and GTK 4's chooser) start from. The pointer's
+  shape does not change over the edges (the shell sets no cursor
+  shapes). *Helix's choice.*
 - Layout: the title; a row with Back, Forward, the path bar and, when
   opening files, Search, or when saving or choosing a folder, New
   Folder; when saving, "Name" with the name field; then the places, the
@@ -836,24 +849,42 @@ turns the paths into `file:` URIs and remembers the folder.
   name), network places the user connected to (GVfs's FUSE folders
   under `$XDG_RUNTIME_DIR/gvfs/`, named "<share> on <server>" for
   `smb-share:server=…,share=…`, "<user> on <host>" or "<host>" for others,
-  else by folder name; checked with unit tests only), and "Computer"
+  else by folder name), and "Computer"
   (`/`), each with a symbolic icon, separated into groups (standard
   folders, bookmarks, drives and network places, Computer); folders that
   do not exist are left out and a folder is listed once. They are read
-  once when the dialog opens. They scroll with the wheel when they do
-  not fit. The place shown is marked: the one shown, else the deepest one
-  holding the folder shown. Clicking a place shows it.
+  when the dialog opens, again every 2 seconds while it is open, and at
+  once when the shell's volume monitor reports a mount coming or going
+  (`contracts/gsettings/removable-media.md`), so drives, network places
+  and bookmarks appear and go while the dialog is open. When the drive
+  or network place holding the folder shown goes, the list goes to the
+  home folder. They scroll with the wheel when they do not fit. The
+  place shown is marked: the one shown, else the deepest one holding the
+  folder shown. Clicking a place shows it.
+- Eject: a drive or network place that the volume monitor has mounted
+  there (a mount whose root is that folder, FUSE ones included) has an
+  eject button (`media-eject-symbolic`) at the end of its row; clicking
+  it ejects the drive, or unmounts it when it cannot be ejected, through
+  the shell's removable-media code (as the dock's and the notification's
+  Eject do), and the place goes when the mount does.
 - The list: columns Name (a symbolic icon for the type: `folder-symbolic`
   for folders, else the generic icon of the type guessed from the name,
   e.g. `image-x-generic-symbolic`), Size (files only, as `g_format_size`
-  writes it, right-aligned; not shown when `show-size-column` is false)
+  writes it, right-aligned; not shown when `show-size-column` is false),
+  Type (with `show-type-column`, as GTK 4's: `type-format` `category`
+  names a broad category from the type's generic icon: Program, Audio,
+  Font, Image, Archive, Markup, Text, Video, Contacts, Calendar,
+  Document, Presentation, Spreadsheet, else Unknown, and folders
+  "Folder"; `description` the type's description, `mime` its MIME type)
   and Modified (the time for today, as `clock-format` asks, "Yesterday",
-  the day and month this year, else with the year); in Recent and search
+  the day and month this year, else with the year; with `date-format`
+  `with-time` the time follows the date: "Yesterday, 14:05",
+  "2 Nov, 14:05", "7 Mar 2025, 10:00"); in Recent and search
   results a Location column (the folder, `~` for the home folder) takes
   the Size column's place. Long names are shortened in the middle,
   keeping their end. Columns go when the list is too narrow (Size or
-  Location first). Folders come first (`sort-directories-first`), sorted
-  by the column header clicked (name, size or modified; clicking the same
+  Location first, then Type). Folders come first (`sort-directories-first`), sorted
+  by the column header clicked (name, size, type, as shown, or modified; clicking the same
   header again flips the order; Recent is always newest first); names
   sort naturally (`file2` before `file10`, case and accents ignored, as
   `g_utf8_collate_key_for_filename` orders them), ties by name. The sort
@@ -971,16 +1002,17 @@ turns the paths into `file:` URIs and remembers the folder.
   list box named "Files in <folder>", "Recent Files" or "Search results
   for “<text>”"; every row while there are at most 1000, else those near
   the screen; each row named by the file's name, described "Folder" or
-  its size, then "Modified <when>" and in Recent and search results its
+  its size and type, then "Modified <when>" and in Recent and search results its
   folder, with its place among all rows (`posinset`/`setsize`); the
   current row has the focus while the list does), a live status
   "<folder>, <n> items" (or "Loading…") read out when the folder
-  changes, the fields, the file type (a combo box), and the buttons. Not
+  changes, the eject buttons ("Eject <drive>"), the fields, the file type (a combo box), and the buttons. Not
   yet tried with Orca (helixdesktop/desktop#71).
-- Not offered (helixdesktop/desktop#118): a grid view, a Type column, Starred,
-  Trash and Other Locations places, eject buttons beside drives, a
-  resizable dialog, and reading the places again when drives come and
-  go while the dialog is open.
+- Not offered (helixdesktop/desktop#118): a grid view with thumbnails,
+  Starred, Trash and Other Locations places, the window's position
+  (`window-position`), kinetic touchpad scrolling of the list, and
+  listing very large folders in batches (a folder is listed whole on a
+  worker thread).
 
 ### Searching files
 

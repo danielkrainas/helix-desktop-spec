@@ -37,8 +37,8 @@ The file chooser reads these keys each time it opens; without the schema
 
 - `sort-column`, `sort-order`, `sort-directories-first`: how folders are
   sorted. Clicking a column header changes the column (or flips the
-  order) and writes `sort-column` and `sort-order`. `type` is read as
-  `name` (Helix has no Type column).
+  order) and writes `sort-column` and `sort-order`. `type` sorts by the
+  type as the Type column shows it.
 - `show-hidden`: hidden entries (names starting with `.` or ending with
   `~`) are listed; Ctrl+H flips it and writes it.
 - `show-size-column`: the Size column is shown.
@@ -47,9 +47,16 @@ The file chooser reads these keys each time it opens; without the schema
   home folder.
 - `clock-format`: modification times of today read as "14:05" (`24h`)
   or "2:05 PM" (`12h`).
+- `date-format`: with `with-time`, dates other than today's are followed
+  by the time ("Yesterday, 14:05", "2 Nov, 14:05").
+- `show-type-column`, `type-format`: the Type column is shown, naming
+  types by category (`category`, as GTK 4's chooser), description or
+  MIME type.
+- `window-size`, `sidebar-width`: the dialog's size and the places'
+  width (logical pixels), when positive; resizing the dialog or the
+  places writes them (`-1`: from the screen).
 
-*GNOME does not document this; Helix's choice:* `date-format`,
-`expand-folders`, `location-mode`, `show-type-column`, `sidebar-width`,
-`type-format`, `view-type`, `window-position` and `window-size` are not
-followed: Helix's chooser has no Type column, no grid view and no
-resizable window (its size comes from the screen).
+*GNOME does not document this; Helix's choice:* `expand-folders`,
+`location-mode`, `view-type` and `window-position` are not followed:
+Helix's chooser has no grid view, its dialog is always centered, and
+it always shows the path bar (Ctrl+L or Alt+D open the location field).
