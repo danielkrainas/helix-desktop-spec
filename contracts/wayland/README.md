@@ -1168,10 +1168,19 @@ order; ids of apps not installed, or hidden from menus, are skipped).
 
 - **Dash.** The overview shows, centered at the bottom of the primary
   monitor, the favorites' icons, then (after a gap) the icons of other
-  apps that have windows, most recently used first; a dot under an icon
-  means the app has windows. Clicking an icon activates the app's most
-  recently used window, or launches the app when it has none, and hides
-  the overview. Dragging an icon (past `drag-threshold`) along the dash
+  apps that have windows, most recently used first. Its icons look and
+  answer as the dock's (below; *GNOME does not document this; Helix's
+  choice*): one mark per window under each running app (at most four, in
+  the dock's `running-indicator-style`), the focused window's app with
+  its marks joined into one accent pill; the "Item feedback" highlight
+  and size on hover, keyboard selection and press; and, once the pointer
+  has rested on an icon as long as on the dock's (or for the keyboard's
+  choice), the app's name above it with its windows' titles below
+  (dimmer), as the dock's tooltip. Clicking an icon activates the app's
+  most recently used window and hides the overview at once, or launches
+  the app when it has none; a launch with animations sends out the launch
+  copy and hides the overview after it (0.25 seconds), as the app grid
+  does. Dragging an icon (past `drag-threshold`) along the dash
   moves it among the favorites (a running app dropped there becomes a
   favorite at that place; it goes before the favorite it is dropped left
   of); dropping a favorite more than 60 pixels above the dash unpins it.
@@ -1339,8 +1348,9 @@ dragging are not documented here; Helix's choices are above.
 
 ### Item feedback (Helix)
 
-The app grid's icons and the dock's items answer the pointer and the
-keyboard, so a click feels like it landed:
+The app grid's icons, the dock's items and the overview's dash icons
+answer the pointer and the keyboard alike, so a click feels like it
+landed:
 
 - **Hover and keyboard selection** light a rounded highlight behind the
   item, and the icon grows to 108 % of its size, centered.
@@ -1365,7 +1375,10 @@ holds), and a change of hover, press or a fade's step redraws only the
 app grid's cells whose look changed (on the rest of the frame as last
 drawn), telling the compositor only those parts changed; the whole
 launcher is drawn again only when something else changed (a page, the
-search, an icon arriving, a folder opening, a drag).
+search, an icon arriving, a folder opening, a drag). Likewise in the
+overview, a change of the dash's feedback or tooltip redraws only the
+dash (on the rest of the overview as last drawn) and tells the
+compositor only its strip changed.
 
 With `org.gnome.desktop.a11y.interface reduced-motion` `reduce` (and
 animations on), only fades play: the highlight fades in and out as
