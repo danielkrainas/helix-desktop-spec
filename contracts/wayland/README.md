@@ -1256,9 +1256,17 @@ order; ids of apps not installed, or hidden from menus, are skipped).
 The launcher with an empty search shows, below its search field, pages of
 icons with their names: the installed apps that are neither favorites nor
 in an app folder, and the app folders (a folder's icon shows its first
-four apps). A page has as many columns as fit (3 to 8, 120 pixels each)
-and rows (2 to 5, 118 pixels each); dots below the grid show the pages,
-the current one bright.
+four apps). A page has as many columns as fit (3 to 8, at 120 pixels
+each) and rows (2 to 5, at 118 pixels each); then the cells grow into the
+room the page has, up to 240 × 190 pixels (both grow with the text
+scale), and each icon takes the largest of 96, 80 and 64 pixels that
+leaves 12 pixels at its sides and room for two lines of its name below
+it (a folder's mini icons grow with it). So at 1920 × 1080 the grid spans
+nearly the whole width with 96-pixel icons, and 1280 × 720 keeps 64-pixel
+icons in four rows. Names take up to two lines, centred, the second
+ellipsized; the item under the pointer or selected shows its whole name
+(as many lines as its cell holds). Round pills below the grid show the
+pages, the current one wider and white.
 
 An app whose icon cannot be found (its desktop file names no icon, or
 the icon theme does not have it) shows the icon theme's
