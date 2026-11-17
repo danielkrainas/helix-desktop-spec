@@ -92,6 +92,12 @@ primary monitor (see "The monitor" below):
   does.
 - Optional **banner** text under the clock (`banner` in the
   configuration).
+- **Helix's mark** (the official logo, the `org.helixdesktop.Helix`
+  icon) at the bottom center, the height of the bottom bar's buttons
+  plus 8 pixels, aligned with them; left out when it would come within
+  24 pixels of the power or session side (a narrow screen, a power
+  question). It is not a control. *GDM shows a distributor logo there
+  (`org.gnome.login-screen logo`); Helix shows its own.*
 
 Keyboard focus starts in the user list (or the username field); Tab
 moves between the list or field, the session button, the accessibility
