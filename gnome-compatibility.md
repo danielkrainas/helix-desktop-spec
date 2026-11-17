@@ -126,7 +126,7 @@ between characters; CJK text needs the Noto CJK fonts.
 | X11 sessions from the Helix greeter | greetd starts no X server; X11 sessions would need a wrapper that starts one (helixdesktop/desktop#76). |
 | Magnifier on the Helix login screen | The greeter offers high contrast, large text, the screen reader and its own on-screen keyboard, but no zoom (`components/greeter.md`, "Accessibility"). |
 | Text shaping for Arabic and Indic scripts | Helix's own text renderer has no shaping engine: those scripts draw letter by letter (Hebrew and scripts without shaping are fine). Right-to-left surfaces also publish left-to-right bounds on the accessibility bus and keep left-to-right arrow-key order (`components/i18n.md`, "Not done yet"). |
-| `org.freedesktop.a11y.PointerLocator` | Not served yet (helixdesktop/desktop#75). |
+| `org.freedesktop.a11y.PointerLocator` | Served (`contracts/dbus/org.freedesktop.a11y.KeyboardMonitor.md`); not yet tried with Orca's mouse review. |
 | Mutter's `ChangeBacklight` | Deprecated in GNOME; Helix serves the current `Backlight` API only. |
 | Mutter's input capture interface (`org.gnome.Mutter.InputCapture`) | Undocumented; the InputCapture portal is served through Helix's own private interface instead. |
 | `ApplyMonitorsConfig` properties other than `color-mode` and `underscanning` (e.g. RGB range) | Their key names are not documented. |

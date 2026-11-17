@@ -387,9 +387,11 @@ logical pixels).
 - Windows' screen positions are computed from the layout (the primary
   monitor, the dock's edge) rather than reported by the compositor.
   Orca's flat review reads by them correctly (the top bar's line reads
-  left to right); Orca's mouse review cannot work yet: at-spi 2.60 asks
-  the compositor where the pointer is (`org.freedesktop.a11y.PointerLocator`
-  on `org.freedesktop.a11y.Manager`), which helix-comp does not offer.
+  left to right). at-spi 2.60 asks the compositor where the pointer is
+  (`org.freedesktop.a11y.PointerLocator` on `org.freedesktop.a11y.Manager`),
+  which helix-comp now serves; over the shell it names no window (as
+  mutter), so whether Orca's mouse review finds the shell's own surfaces
+  is not yet tried.
 
 ## Verified with Orca
 

@@ -161,7 +161,7 @@ app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
 "Window-management settings").
 
-**GTK shell** (`gtk_shell1`, GNOME's own protocol, version 4). GTK 3 has
+**GTK shell** (`gtk_shell1`, GNOME's own protocol, version 7). GTK 3 has
 no other way to say a dialog is modal, so Helix offers it as mutter does:
 `gtk_surface1.set_modal`/`unset_modal` make a window modal or not, as
 `xdg_dialog_v1` does (until that `gtk_surface1` is destroyed);
@@ -169,11 +169,18 @@ no other way to say a dialog is modal, so Helix offers it as mutter does:
 `gtk_surface1.request_focus` with an activation token is an
 `xdg_activation_v1` activation with it, and `present` (or
 `request_focus` without a valid token) makes the window want attention
-(see "Windows wanting attention"). No capabilities are announced (no
-global app menu, menu bar or desktop icons); app menu paths and
-accessibility names are ignored. Version 5 is not offered: with it GTK
-leaves titlebar double, middle and right clicks (`titlebar_gesture`) to
-the compositor, which Helix does not handle.
+(see "Windows wanting attention"). `titlebar_gesture` (version 5: GTK then
+leaves double, middle and right clicks on its own title bars to the
+compositor) does what `action-double-click-titlebar`,
+`action-right-click-titlebar` and `action-middle-click-titlebar` say, as a
+click on Helix's own title bars does; unknown gestures are ignored.
+Version 6 adds no requests (surface offsets, `wl_surface.offset`, are
+Smithay's). `set_a11y_properties` (version 7) keeps the window's
+accessibility bus name and toplevel object path for
+`org.freedesktop.a11y.PointerLocator`
+(`contracts/dbus/org.freedesktop.a11y.KeyboardMonitor.md`). No
+capabilities are announced (no global app menu, menu bar or desktop
+icons); app menu paths are ignored.
 
 *GNOME does not document this; Helix's choice:* the version offered, and
 the requests ignored.

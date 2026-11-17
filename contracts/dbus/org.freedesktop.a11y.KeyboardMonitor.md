@@ -127,10 +127,35 @@ Every key reported to any client is also reported to all watching clients
 (not while locked). Each concerned client gets one `KeyEvent`, addressed to
 it with the message's destination; nothing is broadcast.
 
+## PointerLocator
+
+`org.freedesktop.a11y.PointerLocator` is served on the same object, with
+the same caller rule (helixdesktop/desktop#75). at-spi (2.56 and later)
+uses it for mouse review: where the pointer is and in which window, which
+an app on Wayland can't know.
+
+- `QueryPointer` answers with the window under the pointer and the
+  pointer's place in it, in the window's main surface's logical
+  coordinates. The window is named by the accessibility bus name and
+  toplevel object path its app gave with `gtk_surface1.set_a11y_properties`
+  (GTK 4 does, from `gtk_shell1` version 7, see
+  `contracts/wayland/README.md` "GTK shell"); a window without them is named
+  by its process id (`pid`: Wayland clients' credentials, X11 windows'
+  `_NET_WM_PID`); one with neither is an
+  `org.freedesktop.a11y.UnknownToplevel` error. Over the shell (panel,
+  dock, overview, dialogs), a shell surface over a window, or no window,
+  `app_data` is empty and the place is in the layout (as mutter answers
+  for its own chrome). Over a window's Helix title bar the window is
+  named. While the screen is locked nothing is named.
+- After a `QueryPointer`, the caller gets one `PointerPositionChanged` (sent
+  to it only) at the next pointer motion, and none after that until it
+  asks again — the screen reader's own throttle, as in mutter. Callers that
+  leave the bus are forgotten.
+
 ## Not covered
 
-`org.freedesktop.a11y.PointerLocator` (the same object in GNOME, for
-finding what is under the pointer) is not served (helixdesktop/desktop#75).
+Tested with a fake screen reader on the headless backend's private bus;
+not yet with Orca's mouse review (helixdesktop/desktop#71).
 
 The grab rules are unit tested and the D-Bus side was tested on a private
 bus with a fake screen reader; no real Orca has used it yet, so whether

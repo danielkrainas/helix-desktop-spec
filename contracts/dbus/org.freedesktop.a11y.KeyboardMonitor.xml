@@ -6,8 +6,8 @@
   checked 2026-11-14. Descriptions are Helix's own.
   Served by the compositor on bus name org.freedesktop.a11y.Manager at
   /org/freedesktop/a11y/Manager. Behavior: org.freedesktop.a11y.KeyboardMonitor.md.
-  The same description also has org.freedesktop.a11y.PointerLocator, which
-  Helix does not serve (helixdesktop/desktop#75).
+  org.freedesktop.a11y.PointerLocator is on the same object (same
+  description, same access rule); behavior in the .md.
 -->
 <!DOCTYPE node PUBLIC
 '-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
@@ -44,5 +44,22 @@
       <arg name="unichar" type="u"/>
       <arg name="keycode" type="q"/>
     </signal>
+  </interface>
+  <interface name="org.freedesktop.a11y.PointerLocator">
+    <!-- What is under the pointer. app_data: app-dbus-name (s) and
+         toplevel-object-path (o) of the window there, as its app gave them
+         (gtk_surface1.set_a11y_properties), else pid (i); empty over the
+         shell or nothing. rel_x, rel_y: the pointer in the window's surface
+         (logical pixels), else in the layout. Error
+         org.freedesktop.a11y.UnknownToplevel for a window with neither.
+         The caller then gets one PointerPositionChanged at the next motion. -->
+    <method name="QueryPointer">
+      <arg name="app_data" type="a{sv}" direction="out"/>
+      <arg name="rel_x" type="d" direction="out"/>
+      <arg name="rel_y" type="d" direction="out"/>
+    </method>
+    <!-- The pointer moved since the caller's last QueryPointer (sent once,
+         only to it, with a destination). -->
+    <signal name="PointerPositionChanged"/>
   </interface>
 </node>
