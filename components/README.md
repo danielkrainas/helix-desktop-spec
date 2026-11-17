@@ -87,7 +87,11 @@ corners.
 A popover has a 1 px Border edge just outside it and a soft shadow: black
 at 38 % just outside its edge, fading to nothing 12 px out, the whole
 shadow 2 px lower than the box. High contrast draws no shadows (its
-edges are white lines).
+edges are white lines). A popover that fills a surface of its own (notification
+banners, the input method's candidates, the click-type and workspace
+popups) has no room around it for the shadow and draws none: its Border
+edge is the surface's edge and the corners outside the rounded edge stay
+clear.
 
 #### Type
 
