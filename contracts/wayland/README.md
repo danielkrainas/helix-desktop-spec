@@ -2078,6 +2078,15 @@ overview, or the switcher while the overview is not open, gives up on every
 request still on its way. A picture that comes after its request was given
 up on is not used.
 
+The headless backend (Helix's tests) answers captures too, drawn in
+software from the clients' shared-memory buffers at scale 1, as its
+snapshot is: monitors with their shell surfaces and windows, windows by
+their surfaces alone (a title bar asked for is left in the background
+color, and the pointer is not drawn). So `PickColor` replies with the
+color under the picked point and the overview shows window pictures in
+headless sessions. A test that needs requests left unanswered sets
+`HELIX_HEADLESS_NO_CAPTURE`.
+
 ## Input methods (Helix)
 
 The compositor offers `zwp_text_input_v3` to every client, and
