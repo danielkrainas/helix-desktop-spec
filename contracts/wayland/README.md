@@ -893,9 +893,27 @@ how it completes) is not documented here; this one is Helix's.
 
 A window wants attention when:
 
-- it asks to be activated (`xdg_activation_v1`) and Helix does not grant
-  it: Helix activates a window only for a token made within the last 10
-  seconds (an app launched from the shell, a notification click);
+- it asks to be activated (`xdg_activation_v1`, or GTK's
+  `gtk_surface1.request_focus` with a token) and Helix does not grant it.
+  Helix grants a token only if it is younger than 10 seconds and either
+  - the shell made it: every app the shell launches (app grid, dash,
+    dock, launcher, run dialog, desktop actions) gets a fresh token as its
+    startup notification id (`XDG_ACTIVATION_TOKEN`/`DESKTOP_STARTUP_ID`
+    for a spawned process, platform data `activation-token` and
+    `desktop-startup-id` for a D-Bus activated one), as does a
+    notification's action (`activation-token` in `ActivateAction`/
+    `Activate` platform data for GTK notifications, the
+    `ActivationToken` signal before `ActionInvoked` for
+    `org.freedesktop.Notifications`); or
+  - when the client asked for it (`commit`), its `set_serial` was the
+    serial of the seat's latest key press, button press or touch, that
+    input went to a surface of the asking client, and `set_surface` named
+    a surface of that client (as mutter checks).
+
+  Every other token (no serial, serial 0, an older serial, another
+  client's input, no surface) only makes the window want attention; focus
+  stays where it is. New windows are not affected: they get focus at
+  their initial commit as `focus-new-windows` says, whatever they ask;
 - an X11 window sets the urgency flag of its `WM_HINTS` (and stops
   wanting it when it clears the flag);
 - an X11 client asks to add, remove or toggle
