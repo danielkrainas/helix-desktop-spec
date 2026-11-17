@@ -3,7 +3,8 @@
 The list that opens from the clock (`contracts/dbus/org.freedesktop.Notifications.md`,
 "The notification list") has a second column, right of the notifications:
 the date, a month calendar, the chosen day's events, world clocks and the
-media player. It is read when the tray opens and after changes made from
+weather; the media player's card is at the top of the notifications
+column (as in GNOME's message list). It is read when the tray opens and after changes made from
 it (another month, a media button); the clock times follow the minute.
 
 ## Clock
@@ -149,6 +150,20 @@ was gnome-shell 46's):
 ## Media
 
 The player the playback keys control (`contracts/dbus/org.mpris.MediaPlayer2.Player.md`),
-when there is one: its name (`Identity`), the track's title and artists
-(`Metadata` `xesam:title`, `xesam:artist`), and buttons for previous,
-play/pause (showing pause while playing) and next.
+when there is one, as a card at the top of the notifications column,
+under Do Not Disturb and Clear (so it never lengthens the calendar
+column): the track's art (`mpris:artUrl`, read off the UI thread as for
+the lock screen's card, `contracts/dbus/org.gnome.ScreenSaver.md`), else
+the player's app icon (`DesktopEntry`), else a generic audio icon; the
+track's title (else the player's name, `Identity`) and artists
+(`xesam:title`, `xesam:artist`); and round previous, play/pause (showing
+pause while playing; larger) and next buttons, lit under the pointer and
+darker while pressed. It is the same card as the lock screen's.
+
+Keyboard: Tab goes header, media buttons, notifications; Left/Right move
+along the media buttons, Up goes to Do Not Disturb, Down to the first
+notification (and Down from the header, Up from the first notification,
+to play/pause). On AT-SPI a label with the title (described by the
+artists) comes before the three buttons.
+
+*Not yet:* a progress bar (MPRIS `Position` and `mpris:length`).
