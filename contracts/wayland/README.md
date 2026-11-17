@@ -1679,10 +1679,21 @@ in the center, then `helix:tray`, `helix:accessibility`,
   `helix:power`: without it, there would be no way to reach quick
   settings with the pointer. When it is in no zone, it is shown at the
   right end.
-- **Privacy indicators.** "Recording" (a screen recording is running;
-  clicking it stops it) and "Sharing" (the screen is shared) are not
-  layout items and cannot be removed. They are shown left of the right
-  zone's items.
+- **Privacy indicators.** Sharing (the screen is shared) and recording
+  (a screen recording is running) are not layout items and cannot be
+  removed. They are shown left of the right zone's items, sharing first,
+  4 px apart, each a pill as tall as the other pills in red (`#C01C28`;
+  white on it is 6.1:1) with white content: sharing the
+  `screen-shared-symbolic` icon alone (8 px each side), recording the
+  `media-record-symbolic` icon and how long the recording has run
+  ("0:42", "12:05", "1:02:03", updated every second). The recording pill
+  is a button: darker under the pointer (`#A51D2D`) and while pressed
+  (`#8B1622`), and a click (on release) stops the recording; sharing does
+  nothing on a click. In high contrast both pills have a white outline.
+  On the accessibility bus sharing is a label "Sharing", recording a
+  button "Stop recording" described by the time.
+  *GNOME does not document its indicators' look; Helix's choice.*
+  Microphone, camera and location stay status icons in the status area.
 - **On-screen display.** On-screen displays (`ShowOSD`) float above
   windows near the bottom of the monitor (`contracts/dbus/org.gnome.Shell.md`);
   they never cover the panel or the clock.
