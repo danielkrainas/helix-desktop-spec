@@ -160,10 +160,22 @@ track's title (else the player's name, `Identity`) and artists
 pause while playing; larger) and next buttons, lit under the pointer and
 darker while pressed. It is the same card as the lock screen's.
 
+Progress (as GNOME 46+): when the player reports both `Position` and a
+`mpris:length` greater than zero, a thin bar (4 px, rounded, a dim track
+filled with the text color) shows how far into the track playback is:
+in the full card beside the buttons, from the text's left edge; in the
+lock screen's compact card under the title. Without either, no bar.
+Between reads the bar moves on locally from the position read, by the
+time since and the player's `Rate`, while `PlaybackStatus` is
+`Playing` (redrawn every second while a card is shown); it never passes
+the end. The shell follows the players for the session: on `Seeked`, or
+`PropertiesChanged` for the player interface (a new track, play/pause),
+it reads the chosen player again (once the signals settle, 150 ms) and
+the open cards follow. Lengths sent as `t`, `i` or `u` instead of `x`
+are taken too.
+
 Keyboard: Tab goes header, media buttons, notifications; Left/Right move
 along the media buttons, Up goes to Do Not Disturb, Down to the first
 notification (and Down from the header, Up from the first notification,
 to play/pause). On AT-SPI a label with the title (described by the
 artists) comes before the three buttons.
-
-*Not yet:* a progress bar (MPRIS `Position` and `mpris:length`).

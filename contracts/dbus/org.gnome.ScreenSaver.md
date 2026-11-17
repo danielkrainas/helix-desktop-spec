@@ -91,9 +91,11 @@ The cards show:
 
 - **Media**: the player the playback keys control
   (`org.mpris.MediaPlayer2.Player.md`): its track's title and artists and
-  buttons for previous, play/pause and next, which work while locked. It
-  is read when the screen locks, every 5 seconds while locked, and after
-  each button.
+  buttons for previous, play/pause and next, which work while locked, and
+  the progress bar when the player reports it
+  (`../gsettings/calendar.md`, "Media"). It is read when the screen
+  locks, every 5 seconds while locked, after each button, and when a
+  player seeks or changes.
 - **Notifications**, with `org.gnome.desktop.notifications
   show-in-lock-screen` true: for the notifications that arrived since the
   screen locked and are still in the list, one line per app, "<app>: <n>

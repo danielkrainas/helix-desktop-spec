@@ -18,10 +18,15 @@ serves the interface at `/org/mpris/MediaPlayer2`.
   `CanGoNext`, `CanGoPrevious` false); with `CanControl` false it does not
   accept any of them.
 
-- `Metadata` (`a{sv}`): the track; Helix shows `xesam:title` (`s`) and
-  `xesam:artist` (`as`).
+- `Metadata` (`a{sv}`): the track; Helix shows `xesam:title` (`s`),
+  `xesam:artist` (`as`), `mpris:artUrl` (`s`) and, for the media cards'
+  progress bar, `mpris:length` (`x`, µs).
+- `Position` (`x`, µs), `Rate` (`d`) and the `Seeked` signal (`x`): the
+  progress bar (`contracts/gsettings/calendar.md`, "Media"); also
+  `PropertiesChanged` for this interface, after which the chosen player
+  is read again.
 - On the root interface `org.mpris.MediaPlayer2` (same path): `Identity`
-  (`s`), the player's name.
+  (`s`), the player's name, and `DesktopEntry` (`s`).
 
 ## Which player the keys control (Helix)
 
