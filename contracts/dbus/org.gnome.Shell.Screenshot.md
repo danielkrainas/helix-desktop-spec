@@ -75,6 +75,11 @@ this; Helix's choice:* the error for a cancelled call.)
 - `PickColor()`: the user clicks a pixel; returns `{"color": (r, g, b)}`,
   sRGB values from 0 to 1.
 
+**Cursor.** Over the area and point pickers the pointer is a crosshair
+(`wp_cursor_shape_v1` shape `crosshair`), so a corner or pixel can be
+aimed at precisely; the window picker keeps the arrow. When a picker
+closes, the arrow comes back. (The screenshot UI's cursors are below.)
+
 **Keyboard.** *GNOME does not document this; Helix's choice:* the area
 and point (and window) pickers work without a pointer. The first arrow
 key makes the area (the middle quarter of the first monitor: half its
@@ -140,6 +145,13 @@ and press"). The buttons:
   Area mode before a rectangle is selected, or in Window mode before a
   window is.
 - **Close**: cancels, as Escape.
+
+The pointer is a crosshair wherever a drag selects a new rectangle (in
+Area mode, and while one is being dragged out, even over the toolbar);
+over the selection's handles it is the matching resize cursor
+(`nw-resize`, `n-resize`, … `w-resize`), inside the selection `move`
+(also kept while one is dragged); over the toolbar, and in Screen and
+Window modes, the arrow.
 
 No hint line is shown (the keys are in the tooltips). Escape or the
 secondary button cancels. The UI is not part of the

@@ -258,7 +258,11 @@ pointer grab, the request's serial not compared; for tablet tools see
 `contracts/gsettings/input-settings.md`; an unknown shape is the
 protocol's `invalid_shape` error), or nothing. Elsewhere (desktop, panels
 that set none, Helix's title bars and window edges) it is the theme's
-default or resize cursor.
+default or resize cursor. Helix's shell names a cursor on every one of
+its surfaces as the pointer enters it, so another app's cursor never
+stays over the panel, dock or desktop: the arrow, or the screenshot
+pickers' crosshair and resize cursors
+(`contracts/dbus/org.gnome.Shell.Screenshot.md`).
 
 Named cursors come from the XCursor theme
 `org.gnome.desktop.interface cursor-theme`, at `cursor-size` logical
