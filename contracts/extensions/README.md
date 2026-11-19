@@ -25,7 +25,9 @@ This document is API version **1.2**. Minor versions only add
 (properties, methods, contribution kinds, raised limits); nothing in 1.x
 is removed or changes meaning. What 1.1 and 1.2 added is marked "(1.1)"
 or "(1.2)"; a manifest asking for an earlier `api` cannot use it (those
-manifest entries are ignored).
+manifest entries are ignored). One exception, for security: under 1.2
+as first published, `session-bus` gave a sandbox the whole session bus;
+it now gives a filtered one (see "The session bus of a sandbox").
 
 ## Extension directories
 
@@ -80,6 +82,13 @@ keybinding = "<Super><Shift>c"     # optional: a suggestion
 
 [settings]
 minutes = { type = "int", default = 0, min = 0, max = 480, label = "Minutes", help = "0: until turned off" }
+
+[session-bus]                       # (1.2) with the session-bus permission: what a sandbox may reach
+talk = ["org.freedesktop.Notifications"]
+see = ["org.mpris.MediaPlayer2.*"]
+own = ["org.mpris.MediaPlayer2.Caffeine"]
+call = ["org.mpris.MediaPlayer2.*=org.mpris.MediaPlayer2.Player.*@/org/mpris/MediaPlayer2"]
+broadcast = ["org.mpris.MediaPlayer2.*=org.freedesktop.DBus.Properties.PropertiesChanged@/org/mpris/MediaPlayer2"]
 ```
 
 - `id`: two or more dot-separated parts of `A-Z a-z 0-9 _ -`, at most
@@ -99,6 +108,8 @@ minutes = { type = "int", default = 0, min = 0, max = 480, label = "Minutes", he
   permission.
 - `permissions`: see "Permissions"; unknown names make the manifest
   invalid.
+- (1.2) `[session-bus]`: the rules of a sandbox's session bus (see "The
+  session bus of a sandbox"); it needs the `session-bus` permission.
 - Settings `type`: `bool`, `int`, `double`, `string`, `enum` (with
   `choices`, a list of strings) or `string-list`. Each needs a `label`
   and a `default` of its type (an `enum` default is one of its
@@ -227,8 +238,72 @@ own (they mean nothing without `sandbox = true`, and need `api = "1.2"`):
 | `network` | the network | use the network |
 | `files:home` | the home folder, writable | read and change all your files, which lets it do anything you can |
 | `files:documents`, `files:downloads`, `files:music`, `files:pictures`, `files:videos`, `files:desktop` | that XDG folder, writable | read and change your Documents (and so on) |
-| `session-bus` | the session bus (all of it) | talk to all your other programs, which lets it do anything you can |
+| `session-bus` | the session bus, filtered: its own names, and what its `[session-bus]` rules allow | offer its own services to your other programs |
 | `system-bus` | the system bus (all of it) | talk to system services |
+
+### The session bus of a sandbox (1.2)
+
+A sandbox never sees the session bus itself. With `session-bus`, the
+shell starts `xdg-dbus-proxy` (outside the sandbox) for each run, with
+`--filter`, and the sandbox gets only the proxy's socket, as
+`$XDG_RUNTIME_DIR/bus` (`DBUS_SESSION_BUS_ADDRESS` is
+`unix:path=$XDG_RUNTIME_DIR/bus`; without `session-bus` it is unset).
+The proxy listens on `$XDG_RUNTIME_DIR/helix/extension-bus/<id>-<tag>`
+(a 0700 folder). The sandbox starts once the proxy says it is ready
+(`--fd`); the sandbox holds the read end of that pipe
+(`bwrap --sync-fd`), so the proxy ends with the sandbox, and the shell
+also stops it and removes its socket when the extension stops. Without
+`xdg-dbus-proxy` installed, an extension asking for `session-bus` does
+not start (state `invalid`, "needs xdg-dbus-proxy, which is not
+installed").
+
+Through the proxy an extension may always talk to the bus itself (the
+proxy allows only the bus's harmless methods: not, for example,
+`UpdateActivationEnvironment`) and own `<id>` and the names under it
+(`--own=<id>.*`, when the id is a valid bus name). Nothing else is
+visible, unless its manifest's `[session-bus]` table says so, with lists
+of xdg-dbus-proxy's rules:
+
+| Key | Entries | Proxy option | Shown as |
+|-----|---------|--------------|----------|
+| `see` | `NAME` | `--see=NAME` | see whether NAME is running |
+| `talk` | `NAME` | `--talk=NAME` | talk to NAME |
+| `own` | `NAME` | `--own=NAME` | offer services as NAME |
+| `call` | `NAME=RULE` | `--call=NAME=RULE` | call RULE on NAME |
+| `broadcast` | `NAME=RULE` | `--broadcast=NAME=RULE` | hear RULE signals from NAME |
+
+- `NAME` is a well-known bus name, or the names under one with `.*`
+  (`org.example.App.*` also matches `org.example.App`); a wildcard
+  needs at least three parts before `.*`. Unique names (`:1.42`),
+  `org.freedesktop.DBus` and anything else make the manifest invalid.
+- `RULE` is `[METHOD][@PATH]`: METHOD is `*`, an interface (optionally
+  with `.*`) or a method's full name, PATH an object path (optionally
+  ending in `/*`), as for xdg-dbus-proxy.
+- Unknown keys in the table are ignored. Under `api` before 1.2 the
+  table is ignored.
+
+Each rule is kept among the extension's permissions, right after
+`session-bus`, as `session-bus:<key>=<entry>` (for example
+`session-bus:talk=org.freedesktop.Notifications`): `ListExtensions`,
+the approval prompt, `Hello` and the stored approval list them, and an
+update that changes them needs approval again, like any other
+permission. Only the table makes them: `session-bus:…` in `permissions`
+is an unknown permission.
+
+Some names' services can do anything the user can. A sandboxed
+extension that may `talk` to, `call` or `own` one of these (or a
+wildcard covering one) is treated as leaving its sandbox (see "Approval
+prompt"): `org.freedesktop.systemd1` (`StartTransientUnit`),
+`org.freedesktop.Flatpak.*` (`HostCommand`), `ca.desrt.dconf` (any
+setting, such as a custom key's command), `org.gtk.vfs.*` (any file),
+`org.freedesktop.secrets` and `org.gnome.keyring.*` (passwords),
+`org.a11y.Bus` (other apps' contents and controls),
+`org.gnome.Terminal.*` and `org.gnome.Console.*` (commands),
+`org.freedesktop.portal.*` and `org.freedesktop.impl.portal.*` (portals
+treat an extension as an unsandboxed program), `org.gnome.Shell.*` and
+`org.helixdesktop.*` (the shell's own controls), and
+`org.gnome.SessionManager` (`Setenv`). There is no unfiltered session
+bus for a sandboxed extension.
 
 ## Sandboxes (1.2)
 
@@ -246,7 +321,8 @@ Flatpak app runs. It sees:
   `$XDG_RUNTIME_DIR` holding only the Wayland socket when it has the
   `popover` permission;
 - nothing else of the user's files, no network and no D-Bus buses,
-  except what its system permissions give;
+  except what its system permissions give (the session bus only
+  through its proxy: "The session bus of a sandbox");
 - its descriptor 3 (the connection to the shell), as without a sandbox.
 
 All namespaces are new (user, mount, PID, IPC, UTS, cgroup, and the
@@ -289,7 +365,9 @@ while true, extensions without `sandbox = true` do not run (state
 extensions too.
 
 The Extensions dialog says "Sandboxed" for sandboxed extensions, else
-"Full access: it can do anything you can".
+"Full access: it can do anything you can"; for a sandboxed one whose
+permissions leave its sandbox (see "Approval prompt") it adds "Its
+permissions let it out of its sandbox: it can do anything you can."
 
 ## The host (`org.helixdesktop.Extension1.Host`)
 
@@ -297,7 +375,8 @@ The Extensions dialog says "Sandboxed" for sandboxed extensions, else
   `api_version` is the `"1.N"` the extension uses. It fails with
   `org.freedesktop.DBus.Error.NotSupported` when Helix does not support
   it. The reply's version is the one in use, its permissions those
-  granted, and `info` holds `helix-version` (`s`) and `locale` (`s`).
+  granted (with its `session-bus:…` rules, 1.2), and `info` holds
+  `helix-version` (`s`) and `locale` (`s`).
 - `GetSetting(key) → value`: the value, or the default. Unknown keys
   fail with `org.freedesktop.DBus.Error.InvalidArgs`.
 - `SetSetting(key, value)`: the value must have the key's type
@@ -458,7 +537,9 @@ what runs outside any sandbox.
   (`b`), `state` (`s`), `error` (`s`, the reason when invalid or
   crashed), `permissions` (`as`), `approved` (`b`), (1.1)
   `commands` (`a(sss)`: command id, title, accelerator), and (1.2)
-  `sandboxed` (`b`).
+  `sandboxed` (`b`) and `leaves-sandbox` (`b`: sandboxed, with
+  permissions that let it out of its sandbox, as for the approval
+  prompt). `permissions` includes the `session-bus:…` rules.
   - `state` is one of `running`, `starting`, `stopped`, `disabled`,
     `invalid`, `needs-approval` or `crashed`.
 - `Enable(id, approve)`: enables it. With `approve` true and permissions
@@ -506,10 +587,13 @@ over everything (like its other questions):
 - "It will be able to:" and one line per permission it asks for (the
   texts of "Permissions"); for an extension that is not sandboxed, also
   "It is not sandboxed: it can do anything you can."; for a sandboxed
-  one with `files:home` or `session-bus` (which reach everything the
-  user's account can: startup files and autostart entries, or services
-  such as systemd's `StartTransientUnit`), also "Its permissions let it
-  out of its sandbox: it can do anything you can.";
+  one with `files:home` (startup files and autostart entries) or a
+  `[session-bus]` rule that may talk to, call or own a powerful name
+  (see "The session bus of a sandbox"), which reach everything the
+  user's account can, also "Its permissions let it out of its sandbox:
+  it can do anything you can." Each session bus rule is its own line
+  and names exactly what it allows ("talk to
+  org.freedesktop.Notifications");
 - buttons "Cancel" and "Turn On"; Escape cancels, Enter turns it on.
   There is no countdown.
 
