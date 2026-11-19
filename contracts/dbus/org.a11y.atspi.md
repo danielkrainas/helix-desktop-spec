@@ -241,10 +241,11 @@ left-to-right layout; actions still reach the control under them.
   thumbnails list items whose selection is the active workspace.
 - **Menus** (panel status icon and extension item menus, the dock's and
   app grid's app menus, the window menu, the input source and
-  accessibility menus, the panel's context menu, the background menu): a
+  accessibility menus, the panel's context menu, the background menu, a
+  desktop icon's menu): a
   `menu` named by what it is for (the status icon or extension item, the
   app, the drive or `Trash`, `Input Sources`, `Accessibility`, `Top Bar`,
-  `Background`, `Window Menu`) of
+  `Background`, the desktop icon's name, `Window Menu`) of
   its entries where painted, with `separator`s between groups. Entries
   with a check box are `check menu item`s, checked as set; a set of
   choices (input sources, engine modes) are `radio menu item`s, the

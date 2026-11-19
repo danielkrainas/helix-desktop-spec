@@ -1001,14 +1001,19 @@ keyboard follows their `keyboard_interactivity`:
   document it; Helix's choice:* a click elsewhere always ends the
   panel's or dock's keyboard mode.
 - An `on_demand` surface gets the keyboard when a pointer button is
-  pressed on it (a menu opened by a click), not when it appears.
+  pressed on it (a menu opened by a click), not when it appears. This
+  holds on every layer: a press on the bare desktop where a bottom or
+  background surface asking for `on_demand` (the desktop icons) takes
+  input gives that surface the keyboard (windows lose it, as on any
+  press on the desktop).
 - A surface that has the keyboard and goes away, or commits asking for
   `none` (the panel after `switch-panels` ends), gives it back: to the
   topmost other top or overlay surface asking for `exclusive`, else to
   the top window.
 - Quick settings and the notification list ask for `exclusive` when
   opened from the keyboard and `on_demand` when opened by the pointer;
-  the other shell menus always ask for `exclusive`.
+  the other shell menus always ask for `exclusive`. The desktop icons
+  surface asks for `on_demand`.
 
 **The pointer.** As in mutter, when what is under a pointer that does not
 move changes (a surface under it is mapped, goes away, or is raised or

@@ -48,21 +48,45 @@ dock).
   with "…"), white with a shadow. Folders use `folder`, other files the
   icon of the content type their name suggests (then `text-x-generic`).
   A launcher shows its `Name` and `Icon`: a `.desktop` file of
-  `Type=Application` that is executable and trusted
-  (`metadata::trusted` is `true`, as GNOME's file manager's "Allow
-  Launching" or `gio set FILE metadata::trusted true` leaves it). Any
-  other `.desktop` file is a plain file, under its file name: archives
-  keep the executable bit, and the name and icon are whatever the file
-  says.
+  `Type=Application` that is executable, not writable by others (as
+  Desktop Icons NG) and trusted (`metadata::trusted` is `true`, as
+  "Allow Launching" below, GNOME's file manager's, or `gio set FILE
+  metadata::trusted true` leaves it). Any other `.desktop` file is a
+  plain file, under its file name: archives keep the executable bit, and
+  the name and icon are whatever the file says.
 - A press selects the file under the pointer (an accent-colored rounded
   cell), or nothing. A second press on the same file within 400 ms opens
   it: a launcher (checked again then) starts its application (through
   `gio launch`), anything else opens with its default application.
 - A right click or long press on an empty spot (no icon) opens the
-  background menu (`contracts/wayland/README.md`, "Background menu"); a
-  right click on an icon does nothing.
-- Files have no menus, renaming, dragging or keyboard use; launchers
-  are trusted elsewhere (Helix offers no "Allow Launching" yet).
+  background menu (`contracts/wayland/README.md`, "Background menu").
+- **A file's menu**, as Desktop Icons NG's: a right press on an icon
+  (opened on the press, at the pointer), or a long press on it (the
+  primary button or a touch held 500 ms without moving more than 8
+  logical pixels, as the background menu), selects it and opens its menu;
+  so do Menu and Shift+F10 on the selected icon while the icons have the
+  keyboard (at the icon's middle, its first entry selected). It lists:
+  - **Open**: as a double click.
+  - a separator and **Allow Launching** or **Don't Allow Launching**,
+    only for an application's `.desktop` file (`Type=Application`, with a
+    `Name`) right in the desktop folder that is a regular file (not a
+    link) owned by the user and not writable by others. "Don't Allow
+    Launching" when it launches now (as above), else "Allow Launching".
+    Both look at the file again when chosen. "Allow Launching" sets
+    `metadata::trusted` to `true` and, when the owner cannot execute it,
+    adds the owner's executable bit (as Desktop Icons NG); "Don't Allow
+    Launching" sets `metadata::trusted` to `false` and leaves the mode
+    alone (who set the executable bit is not known). The icon shows the
+    launcher's name and icon, or its own again, at once.
+  Other Desktop Icons NG entries (Open With, Cut/Copy, Rename, Move to
+  Trash, Properties, Show in Files…) are not offered.
+- **Keyboard**: the icons surface asks for `on_demand` keyboard
+  interactivity, so a click on it gives it the keyboard
+  (`contracts/wayland/README.md`, "Shell surfaces and the keyboard").
+  While it has it: Menu or Shift+F10 opens the selected file's menu,
+  Return or Enter opens the selected file, Escape takes the selection
+  away. There is no moving between icons with the keyboard, renaming or
+  dragging.
 - GNOME's shell draws no desktop icons; Ubuntu's Desktop Icons NG
   extension does, with settings of its own, which Helix does not read.
 
