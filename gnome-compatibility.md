@@ -85,6 +85,11 @@ schemas covered are listed in `contracts/gsettings/`, including:
 - `org.gnome.shell` (favourites, app picker layout), the app and window
   switchers, and Ubuntu's Dash to Dock settings for the dock.
 
+The system sounds volume, which GNOME keeps in the sound server rather
+than in GSettings, is shared too: Helix's Settings app uses the same
+stream-restore entry under PipeWire and WirePlumber
+(`contracts/gsettings/org.gnome.desktop.sound.md`).
+
 ### Desktop features
 
 The shell provides the features GNOME users expect, each in its own
