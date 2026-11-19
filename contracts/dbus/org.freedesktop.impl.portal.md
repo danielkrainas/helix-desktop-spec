@@ -650,8 +650,12 @@ where answers are kept, and the unit of the signals' `timestamp`
   `GrabAccelerators`, in the normal and overview action modes, with
   trigger-on-release; `AcceleratorActivated` / `AcceleratorDeactivated`
   become `Activated` / `Deactivated` with the shell's `timestamp`
-  (milliseconds) and empty options. Binding again replaces the session's
-  shortcuts (the old ones are released, then `ShortcutsChanged`).
+  (milliseconds) and empty options. Only those signals sent by the
+  current owner of `org.gnome.Shell` count (the owner is followed through
+  `NameOwnerChanged`); the same signals from any other client are
+  ignored, so no other session-bus client can fire an app's shortcuts.
+  Binding again replaces the session's shortcuts (the old ones are
+  released, then `ShortcutsChanged`).
 - `trigger_description` writes modifiers as `Ctrl`, `Alt`, `Shift`,
   `Super` and the key with a capital first letter, joined by `+` (e.g.
   `Ctrl+Shift+S`).
