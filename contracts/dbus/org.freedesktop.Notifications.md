@@ -76,6 +76,14 @@ A notification shows one icon, the first of:
 Icon names are looked up in the theme of `org.gnome.desktop.interface
 icon-theme`, then `hicolor`; PNG and SVG icons are shown.
 
+*Helix's choice:* limits. `image-data` wider or taller than 2048, with a
+rowstride that is negative or shorter than a row, or with less data than
+its size needs, is ignored (the next source is used); larger than 512 it
+is kept shrunk to 512. Image files are read only when they are regular
+files of at most 16 MiB (never devices or FIFOs), and PNGs only up to
+4096 pixels a side. Summaries longer than 1000 characters and bodies
+longer than 10 000 are cut, with "…".
+
 ### Body markup
 
 The body may use the markup of the Desktop Notifications specification:
@@ -83,7 +91,8 @@ The body may use the markup of the Desktop Notifications specification:
 (underlined), `<a href="URI">` (a link) and the entities `&amp;`, `&lt;`,
 `&gt;`, `&quot;`, `&apos;` and `&#N;` / `&#xN;`. Other tags, `<img>`
 included, are left out with their text kept. A `<` that does not start a
-tag is shown as is. Links are underlined in the accent color; clicking one
+tag is shown as is (a tag ends at the first `>`, and never spans another
+`<`). Links are underlined in the accent color; clicking one
 opens its URI with the default application (and does not activate the
 notification).
 

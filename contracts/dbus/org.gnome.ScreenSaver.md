@@ -180,7 +180,10 @@ high contrast), all their text at least 4.5:1 against the fill:
 
 - The media card shows the track's art (`mpris:artUrl`, a `file://` or
   `http(s)://` address, read off the UI thread with a 5 second timeout
-  and at most 8 MiB, decoded and kept per address) in an 84 px rounded
+  and at most 8 MiB, decoded and kept per address; a `file://` address
+  only when it is a regular file, pictures only up to 4096 pixels a side
+  and 16 megapixels, and `http(s)://` art only for players not in an app
+  sandbox, or Flatpaks that may use the network themselves) in an 84 px rounded
   square at the left, else the player's app icon (`DesktopEntry`), else a
   generic audio icon; the title in bold and the artists under it,
   left-aligned on one line each (shortened with "…"); and round

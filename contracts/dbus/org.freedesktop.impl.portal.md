@@ -766,7 +766,10 @@ purposes are offered, as below.
 - Print to File: the document is saved in the user's Documents folder
   (else the home folder) as `<title>.pdf` (`.ps` for PostScript; `/` in
   the title becomes `-`; "output" without a title), with " (2)" etc. when
-  the name is taken. Copies do not apply.
+  the name is taken. The file is created new (`O_CREAT|O_EXCL`, never
+  through a symbolic link): any existing entry of that name, a dangling
+  link too, counts as taken. Copies do not apply.
+- Documents larger than 512 MiB are not printed (response 2).
 - Paper size, page setup, ranges and other print settings are passed
   through to the app, not shown.
 

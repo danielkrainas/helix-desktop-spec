@@ -225,9 +225,9 @@ own (they mean nothing without `sandbox = true`, and need `api = "1.2"`):
 | Name | Gives the sandbox | Shown as |
 |------|-------------------|----------|
 | `network` | the network | use the network |
-| `files:home` | the home folder, writable | read and change all your files |
+| `files:home` | the home folder, writable | read and change all your files, which lets it do anything you can |
 | `files:documents`, `files:downloads`, `files:music`, `files:pictures`, `files:videos`, `files:desktop` | that XDG folder, writable | read and change your Documents (and so on) |
-| `session-bus` | the session bus (all of it) | talk to your other programs |
+| `session-bus` | the session bus (all of it) | talk to all your other programs, which lets it do anything you can |
 | `system-bus` | the system bus (all of it) | talk to system services |
 
 ## Sandboxes (1.2)
@@ -257,8 +257,15 @@ Without `bwrap` installed, a sandboxed extension does not start (state
 `invalid`, "needs bubblewrap (bwrap)").
 
 The shell starts bubblewrap through `helix-extension-sandbox`
-(installed in `/usr/libexec/helix/`; it runs `bwrap` with the arguments
-it was given). Where AppArmor restricts unprivileged user namespaces
+(installed in `/usr/libexec/helix/`) when bubblewrap is 0.8 or later,
+else `bwrap` itself. Anyone can run the helper, so it runs only
+`/usr/bin/bwrap` (never one found in `PATH`), always adds
+`--unshare-user --disable-userns --die-with-parent` before the
+arguments it was given, and refuses (exit status 2) arguments whose
+options do not end with `--`, or that use `--cap-add`, `--userns`,
+`--userns2`, `--pidns`, `--args`, `--unshare-user-try` or
+`--share-user` before the last `--`. What it starts thus has no
+capabilities and can make no user namespaces of its own. Where AppArmor restricts unprivileged user namespaces
 (`kernel.apparmor_restrict_unprivileged_userns` 1, as on Ubuntu 24.04),
 bubblewrap can only set up a sandbox under a profile that allows them:
 the packages install `/etc/apparmor.d/helix-extension-sandbox`, a
@@ -306,7 +313,11 @@ The Extensions dialog says "Sandboxed" for sandboxed extensions, else
   from going idle (`org.gnome.SessionManager.Inhibit`, idle flag) until
   `Uninhibit(handle)` or the extension stops.
 - `Launch(desktop_id, uris)` (`launch-apps`): starts an app by its
-  desktop file id, with optional URIs.
+  desktop file id, with optional URIs. A sandboxed extension may pass
+  only `http`, `https` and `mailto` URIs (others fail with
+  `org.freedesktop.DBus.Error.AccessDenied`): an app given one of the
+  sandbox's own files, whose home is a host folder, could run it outside
+  the sandbox.
 
 ## Panel items (`org.helixdesktop.Extension1.PanelItem`)
 
@@ -494,7 +505,11 @@ over everything (like its other questions):
 - title "Turn on <name>?";
 - "It will be able to:" and one line per permission it asks for (the
   texts of "Permissions"); for an extension that is not sandboxed, also
-  "It is not sandboxed: it can do anything you can.";
+  "It is not sandboxed: it can do anything you can."; for a sandboxed
+  one with `files:home` or `session-bus` (which reach everything the
+  user's account can: startup files and autostart entries, or services
+  such as systemd's `StartTransientUnit`), also "Its permissions let it
+  out of its sandbox: it can do anything you can.";
 - buttons "Cancel" and "Turn On"; Escape cancels, Enter turns it on.
   There is no countdown.
 

@@ -156,6 +156,17 @@ merging or replacing), as above.
 **Xwayland's display.** Helix lets Smithay pick the first free display
 from `:0` to `:32`; when all are taken it tries `:33` to `:99` in turn.
 
+**X authorization.** As mutter does, Xwayland runs with `-auth` and a
+random MIT-MAGIC-COOKIE-1 (16 bytes from the kernel), kept in
+`$XDG_RUNTIME_DIR/.helix-Xwaylandauth.<compositor pid>` (mode 0600, two
+entries: `FamilyLocal` with the host name and `FamilyWild`, both for the
+display number). Only clients with the cookie may connect. The session
+gets `XAUTHORITY` (the file) through `Setenv`, before `DISPLAY`, and so
+does the compositor's `--command`. Xwayland listens only on its socket in
+`/tmp/.X11-unix` (*Helix's choice:* no abstract socket, which any process
+sharing the network namespace could reach). Without a runtime directory
+to keep the file in, Xwayland is not started.
+
 **Foreign toplevels** (`zxdg_exporter_v2`/`zxdg_importer_v2`, and v1). An
 app (typically a portal) may make its toplevel a dialog of another app's
 exported toplevel: it is then placed and kept as dialogs are (see
@@ -1007,7 +1018,15 @@ puts it, and follows what is under it once the grab ends.
 `zwlr_layer_shell_v1` is offered to every client, not only the shell, so
 third-party bars, docks, wallpaper programs and game overlays (HUDs,
 frame counters, chat or stream widgets) work. GNOME offers no layer shell
-at all. Their surfaces follow the same rules as the shell's:
+at all. *Helix's choice:* except to clients in an app sandbox, which do
+not see the global: a Flatpak (`/.flatpak-info` in the client process's
+root), a snap (an AppArmor label starting with `snap.`), any process
+whose root directory is not the compositor's, or a client whose process
+can't be told (no `SO_PEERCRED`). A layer surface could take the
+keyboard at any time, and with it the clipboard, and draw convincing
+system dialogs over everything. (`wp_security_context_v1` is not
+offered; sandboxes connect to the ordinary socket.) Their surfaces follow
+the same rules as the shell's:
 
 - **Over a full-screen window** (see "Monitors and windows"): top-layer
   surfaces are hidden, so another client's bar doesn't cover a game or a
