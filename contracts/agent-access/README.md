@@ -266,7 +266,8 @@ A grant is (agent id, level, kind). Kinds:
   turned off;
 - **always** (*Always allow*): remembered across sessions, honoured only
   while `remember-mode` is `remember`, until the user forgets it in
-  Settings.
+  Settings. *Stop* in the indicator suspends it for the rest of the
+  session (see "Indicator").
 
 The level of a grant is the level the user approved in the consent
 prompt. An agent may use the lower of its grant's level and
@@ -307,17 +308,40 @@ its `level`). One prompt is shown at a time; other calls wait for it,
 and a call from the same agent that the answer covers goes on without a
 second prompt. The prompt cannot be answered over D-Bus or by an
 agent's synthetic input; locking the screen dismisses it unanswered
-(`NotGranted`). Until the prompt exists, the shell has nobody to ask and
-answers `NotGranted`.
+(`NotGranted`).
+
+*Helix's choice* for how the prompt resists the agent: the answer
+travels only inside the shell (no D-Bus method answers it); the shell
+refuses accessibility actions on the prompt (screen readers still read
+it, and the keyboard works it); the prompt's layer surface has the
+namespace `helix-agent-prompt`, and while one is shown the compositor
+drops input that does not come from the machine's own devices (remote
+desktop and EIS input, and the headless backend's test input; key,
+button and touch releases still go through so nothing stays held); and
+keys and clicks in the first second after the prompt appears are
+ignored, so a prompt timed to appear under a click or an Enter meant for
+something else is not answered by it. *Deny* has the keyboard focus at
+first. A remote desktop user answers it at the machine. If another
+dialog (a password prompt) needs the screen while the prompt is up, the
+prompt waits and comes back after it.
 
 ## Indicator
 
 While any agent holds a grant and has made an allowed call in the last
 minute, or has a call running (a wait, a question, input), the top bar
 shows an indicator, like the screen-sharing one (helixdesktop/desktop#143).
-It is mandatory, not a setting. Its menu lists the active agents (display
-name and executable) with *Stop* for each, which revokes that agent's
-session grant, and opens the Agent Access page in Settings.
+It is mandatory, not a setting; it is not shown while the screen is
+locked. Its menu lists the active agents (display name and executable,
+and the level) with *Stop* for each, and opens Settings at Privacy &
+Security, where the Agent Access page is.
+
+*Stop* ends that agent's session grant and, *Helix's choice*, also
+suspends its remembered (*Always allow*) grant for the rest of the
+session, so the agent's next call asks the user again instead of going
+on (a *Stop* that an always-allowed agent could ignore would stop
+nothing). Answering the prompt again lifts the suspension; Settings'
+`Revoke` also does. Unlike *Deny*, *Stop* does not refuse the agent's
+next request: it asks.
 
 ## Sensitive actions
 
