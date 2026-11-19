@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helixdesktop.AgentAccess1 — Helix extension (CC0). The Settings
+  page's view of Agent Access: list agents and take access away. Served by
+  the shell on its main connection as org.gnome.Shell, object
+  /org/helixdesktop/Agent1. Only the Settings app may call it (README.md,
+  "Who may manage grants"). No method grants or widens access.
+-->
+<node>
+  <interface name="org.helixdesktop.AgentAccess1">
+    <method name="ListAgents">
+      <arg type="aa{sv}" name="agents" direction="out"/>
+    </method>
+    <!-- Ends the agent's session grant (and this session's denial). -->
+    <method name="Revoke">
+      <arg type="s" name="agent" direction="in"/>
+    </method>
+    <!-- Revoke, and forget a remembered (Always allow) grant. -->
+    <method name="Forget">
+      <arg type="s" name="agent" direction="in"/>
+    </method>
+    <!-- Revoke every agent's session grant. -->
+    <method name="StopAll"/>
+    <!-- Empties the activity log (helixdesktop/desktop#144). -->
+    <method name="ClearLog"/>
+    <signal name="AgentsChanged"/>
+  </interface>
+</node>

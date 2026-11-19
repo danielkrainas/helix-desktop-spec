@@ -51,6 +51,12 @@ logged once; writes to such a key are skipped. Helix's own schemas work
 the same way with their documented defaults (`org.helixdesktop.shell.md`,
 "Older installed schemas").
 
+### Helix's own schemas
+
+- [`org.helixdesktop.shell`](org.helixdesktop.shell.md): the shell's own settings
+- [`org.helixdesktop.extensions`](org.helixdesktop.extensions.md): Helix extensions
+- [`org.helixdesktop.agent-access`](org.helixdesktop.agent-access.md): Agent Access (`contracts/agent-access/`)
+
 ## Key contracts
 
 Schemas Helix depends on directly have a key table (key, GVariant type,

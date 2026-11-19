@@ -41,7 +41,7 @@ This is a clean-room effort focused on public contracts, not a fork of GNOME sou
 
 - `SCOPE.md` — what “compatible” means and current boundaries
 - `components/` — high-level component breakdown, the shell's shared look, and the login screen (`components/greeter.md`)
-- `contracts/` — structured contract data (D-Bus XML, GSettings schemas, Wayland notes, and `contracts/extensions/` for Helix's own extension API)
+- `contracts/` — structured contract data (D-Bus XML, GSettings schemas, Wayland notes, `contracts/extensions/` for Helix's own extension API, and `contracts/agent-access/` for Agent Access)
 - `gnome-compatibility.md` — summary of what Helix supports from GNOME, what it doesn't (and why), and where it differs on purpose
 - `proposals/` — designs for Helix's own features (for example its extension system), before they become contracts
 

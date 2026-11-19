@@ -273,6 +273,22 @@ Each of these is written down in its contract, marked *GNOME does not
 document this; Helix's choice:* where GNOME is silent, so other
 implementations can follow or differ knowingly.
 
+## Helix extensions
+
+Features with no GNOME counterpart, which GNOME software neither uses nor
+needs:
+
+- **Helix extensions** (`contracts/extensions/`), in place of GNOME
+  Shell's JavaScript extensions (see "Not supported").
+- **Agent Access** (`contracts/agent-access/`): the `helix-agent`
+  command and the shell's `org.helixdesktop.Agent1` interface let an
+  agent (a coding assistant, an automation) read the session and act on
+  it, behind Settings › Privacy & Security › Agent Access
+  (`org.helixdesktop.agent-access`, off by default). The shell enforces
+  the policy: sandboxed apps are refused, the user approves each agent in
+  a consent prompt, and the lock screen, password fields, system prompts
+  and Settings are never reachable.
+
 ## Not yet verified
 
 Some supported features are written to their published standards and

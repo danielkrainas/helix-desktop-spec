@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<!--
+  org.helixdesktop.Agent1 — Helix extension (CC0). What agents (and the
+  helix-agent CLI) may ask of the desktop. Served by the shell on its main
+  connection as org.gnome.Shell, object /org/helixdesktop/Agent1. Every
+  method goes through the shell's policy check first. Behavior, access
+  levels and errors in README.md; record keys in README.md, "Records".
+  Methods marked (1.x) are added by later Agent Access work; a shell that
+  does not have one yet answers org.freedesktop.DBus.Error.UnknownMethod.
+-->
+<node>
+  <interface name="org.helixdesktop.Agent1">
+    <!-- No grant needed; never asks the user. -->
+    <method name="GetStatus">
+      <arg type="a{sv}" name="status" direction="out"/>
+    </method>
+    <!-- Asks for a grant of `level` (or the configured level when ""). -->
+    <method name="RequestAccess">
+      <arg type="s" name="level" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="status" direction="out"/>
+    </method>
+
+    <!-- Read only (helixdesktop/desktop#146). -->
+    <method name="GetState">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="state" direction="out"/>
+    </method>
+    <method name="ListWindows">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="windows" direction="out"/>
+    </method>
+    <method name="ListApps">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="apps" direction="out"/>
+    </method>
+    <method name="ListWorkspaces">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="workspaces" direction="out"/>
+    </method>
+    <method name="ListMonitors">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="monitors" direction="out"/>
+    </method>
+    <method name="ListNotifications">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="notifications" direction="out"/>
+    </method>
+    <method name="RecentFiles">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="files" direction="out"/>
+    </method>
+    <method name="SearchFiles">
+      <arg type="s" name="query" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="files" direction="out"/>
+    </method>
+    <method name="WaitForWindow">
+      <arg type="a{sv}" name="match" direction="in"/>
+      <arg type="u" name="timeout_ms" direction="in"/>
+      <arg type="a{sv}" name="window" direction="out"/>
+    </method>
+    <method name="WaitForWindowClosed">
+      <arg type="u" name="window" direction="in"/>
+      <arg type="u" name="timeout_ms" direction="in"/>
+    </method>
+
+    <!-- Talk to the user: Read only (helixdesktop/desktop#148). -->
+    <method name="Ask">
+      <arg type="s" name="question" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="answer" direction="out"/>
+    </method>
+    <method name="Confirm">
+      <arg type="s" name="question" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="b" name="yes" direction="out"/>
+    </method>
+    <method name="AddReminder">
+      <arg type="x" name="time" direction="in"/>
+      <arg type="s" name="text" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="s" name="id" direction="out"/>
+    </method>
+    <method name="ListReminders">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="reminders" direction="out"/>
+    </method>
+    <method name="CancelReminder">
+      <arg type="s" name="id" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+
+    <!-- Control the desktop (helixdesktop/desktop#147). -->
+    <method name="Open">
+      <arg type="s" name="uri" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="Launch">
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="as" name="uris" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="WindowAction">
+      <arg type="u" name="window" direction="in"/>
+      <arg type="s" name="action" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="SwitchWorkspace">
+      <arg type="u" name="index" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="SetToggle">
+      <arg type="s" name="name" direction="in"/>
+      <arg type="b" name="on" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="SetValue">
+      <arg type="s" name="name" direction="in"/>
+      <arg type="d" name="value" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="Notify">
+      <arg type="s" name="title" direction="in"/>
+      <arg type="s" name="body" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="u" name="id" direction="out"/>
+    </method>
+
+    <!-- Clipboard: behind the `clipboard` switch (helixdesktop/desktop#151). -->
+    <method name="GetClipboard">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="content" direction="out"/>
+    </method>
+    <method name="SetClipboard">
+      <arg type="s" name="mime_type" direction="in"/>
+      <arg type="ay" name="data" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+
+    <!-- Control apps (helixdesktop/desktop#149). -->
+    <method name="A11yTree">
+      <arg type="u" name="window" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="root" direction="out"/>
+    </method>
+    <method name="A11yAction">
+      <arg type="u" name="window" direction="in"/>
+      <arg type="s" name="node" direction="in"/>
+      <arg type="s" name="action" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="A11ySetValue">
+      <arg type="u" name="window" direction="in"/>
+      <arg type="s" name="node" direction="in"/>
+      <arg type="v" name="value" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+
+    <!-- Screen and input (helixdesktop/desktop#150). -->
+    <method name="Screenshot">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="image" direction="out"/>
+    </method>
+    <method name="Input">
+      <arg type="aa{sv}" name="events" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+
+    <!-- Something that changes what GetStatus answers changed (settings,
+         grants, lock); callers ask GetStatus again. -->
+    <signal name="AccessChanged"/>
+  </interface>
+</node>

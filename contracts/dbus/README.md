@@ -69,7 +69,9 @@ well: `GrabAccelerator(s)` and `UngrabAccelerator(s)` (`org.gnome.Shell.md`),
 `org.helixdesktop.PortalDialog` (the portal backend only),
 `org.helixdesktop.Extensions1` (`contracts/extensions/README.md`) and
 `org.helixdesktop.BluetoothSendTo` (`org.bluez.obex.md`; the last two
-refuse callers inside an app sandbox).
+refuse callers inside an app sandbox). `org.helixdesktop.Agent1` and
+`org.helixdesktop.AgentAccess1` (Agent Access, `contracts/agent-access/`)
+refuse sandboxed callers and run their own policy check.
 
 ## Notes
 
