@@ -90,7 +90,21 @@ it, since identity never comes from the agent.
   has the PNG in base64 and text output refuses (exit 2) unless
   standard output is not a terminal, where it writes the PNG.
 - `log` reads `$XDG_STATE_HOME/helix/agent-activity/` itself; it needs
-  no access because the log is the user's own file.
+  no access because the log is the user's own file. `--agent` keeps
+  the entries whose `agent` is the id given; `--since` those whose
+  `time` (Unix seconds, or ISO 8601 text) is at or after it.
+- `completions` prints a script made from the same command table as the
+  parser; packages install them (bash:
+  `/usr/share/bash-completion/completions/helix-agent`, zsh: `_helix-agent`
+  in the distribution's vendor directory, fish:
+  `/usr/share/fish/vendor_completions.d/helix-agent.fish`).
+
+*Helix's choice:* the CLI and the shell ship together, so the CLI knows
+which methods its shell has. A command whose method the shell does not
+have yet (helixdesktop/desktop#146–#151) still parses its arguments and
+has its `--help` (which says so), and then fails with `not-supported`
+(exit 23) without calling the shell; a newer CLI talking to an older
+shell gets the same from `UnknownMethod`.
 
 ## `--help`
 
