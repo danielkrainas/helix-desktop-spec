@@ -127,25 +127,36 @@ added; clients ignore keys they do not know):
 
 - **Window**: `id` (`u`, the id of the compositor's window list, also
   `org.helixdesktop.ScreenCastChooser`'s), `app-id` (`s`), `title`
-  (`s`), `workspace` (`u`, index from 0), `monitor` (`s`, connector),
-  `focused` (`b`), `x`, `y`, `width`, `height` (`i`, logical pixels),
-  `state` (`s`: `normal`, `maximized`, `fullscreen`, `minimized`,
-  `tiled-left`, `tiled-right`), `document` (`s`, URI of the open
-  document, only when the app tells it).
-- **App**: `id` (`s`), `name` (`s`), `running` (`b`), `windows` (`u`).
-- **Workspace**: `index` (`u`), `active` (`b`), `windows` (`u`).
+  (`s`), `workspace` (`u`, index from 0; for a window on every
+  workspace, the active one), `all-workspaces` (`b`, on every
+  workspace), `monitor` (`s`, connector of the monitor showing most of
+  it), `focused` (`b`), `x`, `y`, `width`, `height` (`i`, logical
+  pixels), `state` (`s`: `normal`, `maximized`, `fullscreen`,
+  `minimized`, `tiled-left`, `tiled-right`), `document` (`s`, URI of
+  the open document, only when the app tells it; see "Open
+  documents").
+- **App**: `id` (`s`, the desktop file's name without `.desktop`, or
+  the window's app id for windows without a desktop file), `name` (`s`),
+  `running` (`b`), `windows` (`u`).
+- **Workspace**: `index` (`u`), `active` (`b`), `windows` (`u`; windows
+  on every workspace count on each).
 - **Monitor**: `connector` (`s`), `name` (`s`), `x`, `y`, `width`,
   `height` (`i`, logical), `scale` (`d`), `primary` (`b`).
 - **State** (`GetState`): `focused-window` (`u`, 0 for none),
   `active-workspace` (`u`), `dark-style`, `do-not-disturb`,
   `night-light`, `wifi`, `airplane-mode`, `muted` (`b`), `volume` (`d`,
-  0–1, above 1 when over-amplified), `brightness` (`d`, 0–1; absent
-  without a controllable screen).
+  0–1, above 1 when over-amplified), `brightness` (`d`, 0–1). `wifi`
+  is absent without NetworkManager, `airplane-mode` without
+  NetworkManager and Bluetooth, `volume` and `muted` without a sound
+  server, `brightness` without a controllable screen. `focused-window`
+  is 0 when the focused window is an excluded app's.
 - **Notification**: `id` (`u`), `app-id` (`s`), `app-name` (`s`),
   `time` (`x`, Unix seconds), and with `notifications` on, `summary` and
   `body` (`s`); without it, `redacted` (`b`, true).
 - **File**: `uri` (`s`), `name` (`s`), `mime-type` (`s`), `modified`
-  (`x`), `size` (`t`).
+  (`x`, last changed; for a recent item that is not a local file, when it
+  was used), `size` (`t`, local files only), and from `RecentFiles`
+  `used` (`x`, when it was last used).
 - **Reminder**: `id` (`s`), `time` (`x`), `text` (`s`).
 - **Accessible node**: `id` (`s`), `role` (`s`, AT-SPI role name),
   `name`, `description` (`s`), `states` (`as`), `value` (`s` or `d`;
@@ -158,6 +169,73 @@ added; clients ignore keys they do not know):
 The methods' own options and arguments are specified with their
 implementation (helixdesktop/desktop#146–#151) and listed in `cli.md`
 through the commands that use them.
+
+### Read only methods
+
+The options and arguments of the *Read only* methods
+(helixdesktop/desktop#146), besides the common ones. Malformed values
+fail with `InvalidArgs`.
+
+| Method | Options and arguments | Returns |
+|--------|----------------------|---------|
+| `GetState` | | the State record |
+| `ListWindows` | `app` (`s`), `title` (`s`, contained in the title, ignoring case), `focused` (`b`) | Window records, most recently used first |
+| `ListApps` | `running` (`b`: only apps with windows) | App records, by name: the apps the app grid shows, and apps with windows |
+| `ListWorkspaces` | | Workspace records, by index |
+| `ListMonitors` | | Monitor records |
+| `ListNotifications` | `limit` (`u`, default and most 50) | Notification records of the notification list, newest first |
+| `RecentFiles` | `limit` (`u`, 1–200, default 50), `type` (`s`, a MIME type or `major/*`) | File records, most recently used first |
+| `SearchFiles` | `query` (not empty); `since`, `until` (`x`, Unix seconds, compared with `modified`), `type` (`s`), `in` (`s`, an absolute folder path or `file://` URI, default the home folder; `NotFound` when it is no folder), `limit` (`u`, 1–200, default 50) | File records |
+| `WaitForWindow` | `match` holds `app`, `title`, `focused` as for `ListWindows` (and the common options); `timeout_ms` (0: no limit) | the Window record of the first matching window, at once when one is open; `TimedOut` |
+| `WaitForWindowClosed` | `window`; `timeout_ms` (0: no limit) | when the window is gone; `NotFound` when it is not open at the start, `TimedOut` |
+
+- **Exclusions.** Windows of excluded apps (Settings and `excluded-apps`)
+  are never listed, counted, matched or returned; `ListWindows` or
+  `WaitForWindow` with `app` naming an excluded app, and
+  `WaitForWindowClosed` of an excluded app's window, fail with
+  `Excluded`. Notifications are left out when their app id is excluded,
+  when they are about an excluded app's window (the shell's "… is
+  ready"), or, without an app id, when their app name is an excluded
+  app's name. Recent items are left out when marked private, or when
+  every app that registered them is excluded (compared by the app's id,
+  name, `StartupWMClass` and executable).
+- **Notifications** without the `notifications` switch have no `summary`
+  and `body`, and `redacted` true. Bodies with markup are given as plain
+  text.
+- **Recent files** come from `$XDG_DATA_HOME/recently-used.xbel`; none
+  when `org.gnome.desktop.privacy` `remember-recent-files` is off, and
+  none older than `recent-files-max-age`. Local files that no longer
+  exist are left out; other locations (`sftp://`…) are kept, without
+  `size`.
+- **File search** asks LocalSearch (`org.freedesktop.LocalSearch3`, else
+  `org.freedesktop.Tracker3.Miner.Files`; neither is started for it) for
+  files below the folder whose names or contents have words starting
+  with the query's words; when neither runs or it finds nothing, the
+  shell looks through the folder itself (names containing the query,
+  then text files of at most 256 KiB containing it; at most 20,000
+  entries looked at). Hidden files and folders are left out. The filters
+  apply to what was found; results are by relevance (names before
+  contents).
+- **Waits** look at the windows again a few times a second; while one
+  runs the agent counts as active (the indicator shows), and when the
+  agent loses access meanwhile (a setting, a revoke, the lock) it ends
+  with the error a new call would get.
+
+### Open documents
+
+*Helix's choice:* a Window record's `document` comes from what apps
+already tell the desktop, so no app needs changes, and never from the
+app's accessibility tree (that is the *Control apps* level's):
+
+1. A media player's MPRIS `Metadata` `xesam:url`, when its `DesktopEntry`
+   names the window's app: for that app's most recently used window.
+2. Otherwise the item of `recently-used.xbel` that the window's app
+   registered (by app id, name or executable) and used most recently,
+   whose file name (at least 3 characters) is in the window's title:
+   Text Editor, Document Viewer, Image Viewer and other apps that record
+   their recent files and show the file name in the title.
+
+Apps that do neither have no `document`.
 
 ## Errors
 
@@ -332,8 +410,9 @@ minute, or has a call running (a wait, a question, input), the top bar
 shows an indicator, like the screen-sharing one (helixdesktop/desktop#143).
 It is mandatory, not a setting; it is not shown while the screen is
 locked. Its menu lists the active agents (display name and executable,
-and the level) with *Stop* for each, and opens Settings at Privacy &
-Security, where the Agent Access page is.
+and the level) with *Stop* for each, and opens Settings at the Agent
+Access page (`helix-settings-app agent-access`; GNOME's Settings, which
+has no such page, at Privacy).
 
 *Stop* ends that agent's session grant and, *Helix's choice*, also
 suspends its remembered (*Always allow*) grant for the rest of the

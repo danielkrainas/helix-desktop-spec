@@ -89,6 +89,17 @@ it, since identity never comes from the agent.
 - `screenshot --output` writes the PNG there; without it, JSON output
   has the PNG in base64 and text output refuses (exit 2) unless
   standard output is not a terminal, where it writes the PNG.
+- `--limit`: a whole number from 1 (the shell gives at most 200 files
+  and 50 notifications). `--type` may be `major/*` (`image/*`).
+- `files search --in` takes a folder path (relative ones are made
+  absolute against the working directory, `~` is the home folder) or a
+  `file://` URI; `--since` and `--until` are `WHEN`s, sent as Unix
+  seconds.
+- `wait`'s `--timeout` is how long to wait (default 60 seconds; `0`: as
+  long as it takes); the CLI waits for the shell's answer that long plus
+  the global `--timeout` (no limit when either is `0`). `wait window`
+  returns at once when a matching window is open; `--title` matches
+  anywhere in the title, ignoring case.
 - `log` reads `$XDG_STATE_HOME/helix/agent-activity/` itself; it needs
   no access because the log is the user's own file. `--agent` keeps
   the entries whose `agent` is the id given; `--since` those whose
@@ -187,6 +198,7 @@ always an object:
 | `notifications` | `{"notifications": [Notification...]}` |
 | `files recent`, `files search` | `{"files": [File...]}` |
 | `wait window` | the Window record |
+| `wait closed` | `{}` |
 | `ask` | `{"answer": "<text>", "choice": <index or -1>}` |
 | `confirm` | `{"yes": true\|false}` |
 | `remind add` | `{"id": "<id>"}` |
