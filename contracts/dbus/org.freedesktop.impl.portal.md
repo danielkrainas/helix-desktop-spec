@@ -418,8 +418,13 @@ canceled (response 1). For any other handle it fails with
 - `EnableAutostart`: writes (or with `enable` false removes)
   `$XDG_CONFIG_HOME/autostart/<app_id>.desktop`: `Type=Application`,
   `Name=<app_id>`, `Exec=` the command line (each argument quoted as the
-  Desktop Entry specification says), `X-Flatpak=<app_id>`, and
-  `DBusActivatable=true` with flag 1; result true when that worked.
+  Desktop Entry specification says, then backslashes doubled as key-file
+  strings want), `X-Flatpak=<app_id>`, and
+  `DBusActivatable=true` with flag 1; result true when that worked. The
+  file is written whole (a new file renamed into place). Nothing is
+  written, and the result is false, for an `app_id` other than letters,
+  digits, `.`, `_` and `-`, an empty command line, or an argument with a
+  control character (a newline would start a key of its own).
 
 ## Wallpaper (`org.freedesktop.impl.portal.Wallpaper`)
 
@@ -930,6 +935,17 @@ turns the paths into `file:` URIs and remembers the folder.
     `thumbnailers/` under the XDG data folders; skipped when its `TryExec`
     is missing) lists the type, run with `%i` / `%u` (the file's path /
     URI), `%o` (the output) and `%s` (256), and stopped after 10 seconds.
+    As in GNOME, the thumbnailer runs in bubblewrap (started like
+    extension sandboxes, `contracts/extensions/README.md`): no network
+    or other namespaces shared, no user namespaces of its own, a new
+    session, a cleared environment (`PATH`, `HOME=/tmp`,
+    `GIO_USE_VFS=local`, `LANG`), `/usr` and `/etc` read-only, the
+    user's fonts read-only, the file read-only as
+    `/tmp/helix-thumbnail-input.<extension>` (that is what `%i` and `%u`
+    name) and an empty new folder as `/tmp/helix-thumbnail-output`, the
+    only place it can write (`%o` is `thumbnail.png` in it). Only a
+    regular PNG file left there is taken. Without bubblewrap no
+    thumbnailer runs.
     Helix does not write into the shared cache (its entries need metadata
     Helix's thumbnails lack).
 

@@ -59,6 +59,20 @@ Companion to `org.gnome.Shell.xml`.
 - `ScreenTransition`: briefly freezes the screen so a following change
   (e.g. a display reconfiguration) appears as a cross-fade.
 
+### Who may call them (Helix)
+
+- `ShowOSD`, `ShowMonitorLabels`, `HideMonitorLabels` and
+  `ScreenTransition`: only the owners of
+  `org.gnome.SettingsDaemon.MediaKeys` and `org.gnome.Settings` (as
+  GNOME Shell allows) and of `org.gnome.Mutter.DisplayConfig` (Helix's
+  compositor); others get `org.freedesktop.DBus.Error.AccessDenied`, so
+  no app can show fake on-screen displays.
+- `FocusSearch`, `FocusApp`, `ShowApplications` and setting
+  `OverviewActive`: any caller not in an app sandbox (Flatpak, snap, or
+  any process with a root directory of its own); sandboxed callers get
+  `AccessDenied`. *Helix's choice:* GNOME Shell allows only the names
+  above for the methods; Helix's compositor and tools call them too.
+
 ## Accelerators
 
 `GrabAccelerator(accelerator, modeFlags, grabFlags)` registers a global

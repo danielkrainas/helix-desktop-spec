@@ -89,7 +89,10 @@ time and `no_buffer` is never raised; a buffer that is not wl_shm or not
 square raises `invalid_buffer`, and `set_name` or `add_buffer` on an icon
 already given to a toplevel raises `immutable`. A later image of the same
 size and scale replaces the earlier one; images in formats other than
-ARGB8888 and XRGB8888 are left out. `set_icon` takes effect with the
+ARGB8888 and XRGB8888 are left out, as are (*Helix's choice:* to bound
+what a client can make the compositor hold) images larger than 512
+pixels a side, images past 8 in one icon, and images that would take a
+client's icon pixels past 32 MiB. `set_icon` takes effect with the
 toplevel's next commit; an icon with neither a name nor images, or none,
 unsets it.
 
@@ -317,8 +320,10 @@ is then converted for the monitor ("Color modes" in
   0, and above reference white on SDR monitors).
 - **ICC profiles** (`create_icc_creator`): `set_icc_file` takes 1 byte
   to 32 MB (`bad_size`) of a regular file (`bad_fd`) within it
-  (`out_of_file`), once (`already_set`); the profile is read then.
-  `create` without it is `incomplete_set`. Matrix/curve RGB profiles
+  (`out_of_file`), once (`already_set`); the file is kept and the
+  profile read by `create`, then let go. A client may have at most 8
+  such files waiting for `create`; past that, the description made fails
+  (`operating_system`). `create` without it is `incomplete_set`. Matrix/curve RGB profiles
   (v2 and v4) are taken: the `rXYZ`, `gXYZ` and `bXYZ` colorants (D50,
   as ICC keeps them) as primaries with a D50 white (so they are adapted
   to D65 like other primaries), and the `rTRC`, `gTRC` and `bTRC` curves
@@ -344,7 +349,8 @@ is then converted for the monitor ("Color modes" in
   defaults (`st2084_pq`: 0.005 / 10000 / 203 cd/m²; `hlg`: 0.005 /
   1000 / 203; others 0.2 / 80 / 80); with `st2084_pq` the maximum is the minimum plus 10000 cd/m². A
   created description is ready at once; equal descriptions share an
-  identity. Descriptions from creators and `create_windows_scrgb` give
+  identity (among the first 256 different ones; each later different
+  one gets an identity of its own). Descriptions from creators and `create_windows_scrgb` give
   no information (`no_information`); those of monitors and surface
   feedback do: primaries (and their name when named), transfer function,
   luminances, target primaries and luminance (the description's own

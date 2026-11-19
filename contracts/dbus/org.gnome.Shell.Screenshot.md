@@ -17,6 +17,10 @@ these well-known names may use the interface; others get
   which asks the user or checks the app's permission first)
 - `org.gnome.Screenshot` (the GNOME Screenshot app)
 
+and that is not in an app sandbox (Flatpak, snap, or any process with a
+root directory of its own): a sandboxed app could ship under one of
+these IDs.
+
 *GNOME does not document this; Helix's choice:* GNOME restricts this
 interface too, but which callers it allows is not part of the contract;
 the list above is Helix's.

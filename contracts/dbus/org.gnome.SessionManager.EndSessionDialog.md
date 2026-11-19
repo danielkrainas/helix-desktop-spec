@@ -20,8 +20,15 @@ Shows (or updates, if already open) the confirmation dialog.
 *GNOME does not document this; Helix's choice:* values beyond 0–2 (GNOME
 has update and upgrade dialogs too, opened by callers it does not name).
 Types 3 and 4 are Helix's numbering (see "Updates" below); other values
-show the Log Out dialog. Nothing in Helix opens 3 or 4 yet; software apps
-may.
+show the Log Out dialog. Nothing in Helix opens 3 or 4 yet; the session
+manager may, for software apps.
+
+*Helix's choice:* only the session manager (the owner of
+`org.gnome.SessionManager`) may call `Open` and `Close`; others get
+`org.freedesktop.DBus.Error.AccessDenied`. The session manager takes the
+answer signals only from the dialog's owner (the unique name owning
+`org.gnome.Shell` when it called `Open`), so no other client can confirm
+or cancel for the user.
 
 - `timestamp`: event time of the triggering input, for focus (may be 0).
 - `seconds_to_stay_open`: countdown. When it runs out with nothing

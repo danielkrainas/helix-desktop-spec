@@ -13,3 +13,8 @@ persistent `ApplyMonitorsConfig` (see `org.gnome.Mutter.DisplayConfig.md`).
 - `Close()`: dismiss the question without an answer (no signal follows).
 
 Exactly one of `Kept` or `Reverted` follows each `Open` that is not closed.
+
+Only the compositor (the owner of `org.gnome.Mutter.DisplayConfig`) may
+call `Open` and `Close`; others get `org.freedesktop.DBus.Error.AccessDenied`.
+The compositor takes `Kept` and `Reverted` only from the shell it asked
+(the unique name owning `org.gnome.Shell` at `Open`).

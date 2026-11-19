@@ -32,9 +32,21 @@ video file.
 the `Error` names, what happens when the file exists, and the scale of a
 recording spanning monitors of different scales are as below.
 
-- The shell serves it. Callers are the ones `org.gnome.Shell.Screenshot`
-  allows (`org.gnome.Shell.Screenshot.md`) and the shell itself; others get
-  `org.freedesktop.DBus.Error.AccessDenied`.
+- The shell serves it. The only caller is Helix's portal backend (the
+  owner of `org.freedesktop.impl.portal.desktop.helix`, not in an app
+  sandbox), besides the shell itself; others, `org.gnome.Screenshot`
+  included, get `org.freedesktop.DBus.Error.AccessDenied`. (GNOME too
+  lets only the shell record.)
+- `pipeline` may only chain encoders and the elements around them:
+  `videoconvert`, `videoscale`, `videorate`, `videoflip`, `queue`, the
+  encoders `vp8enc`, `vp9enc`, `x264enc`, `x265enc`, `openh264enc`,
+  `av1enc`, `svtav1enc`, `rav1enc`, `theoraenc`, `vaapih264enc`,
+  `vah264enc`, `vah265enc`, `vaav1enc`, `nvh264enc`, `nvh265enc`, and the
+  parsers `h264parse`, `h265parse`, `vp9parse`, `av1parse`, each with
+  plain `property=value` settings (not `name` or `location`), linked by
+  `!`, and `video/x-raw,…` caps. Anything else (other elements, element
+  names and references, branches, bins, quoting) is
+  `org.freedesktop.DBus.Error.InvalidArgs`.
 - `%d` becomes `YYYY-MM-DD` and `%t` `HH-MM-SS` (local time). A name
   without an extension gets `.webm`, or `.mkv` with a `pipeline`. An
   existing file is not replaced: ` (2)`, ` (3)`… are added before the
