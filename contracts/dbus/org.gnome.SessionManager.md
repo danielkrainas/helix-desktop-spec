@@ -204,6 +204,15 @@ manager and xdg-desktop-portal; apps use the portal.
 
 - `RestoreSupported` is true. Registrations are kept in
   `$XDG_STATE_HOME/helix/restore.toml` (`~/.local/state/helix/...`).
+- `app_id` must be a plain desktop file id: ASCII letters, digits, `_`,
+  `-` and `.`, with no empty element (no leading or trailing dot, no
+  `..`) and at most 255 bytes. Others fail with
+  `org.gnome.SessionManager.InvalidArgs`, and saved records whose id is
+  not one are dropped when the file is read.
+- `dbus_name` must be the caller's own bus name (its unique name, or a
+  name it owns); empty means its unique name. Otherwise the call fails
+  with `org.gnome.SessionManager.InvalidArgs`. The instance counts as
+  gone when that name leaves the bus.
 - An instance is restorable when it was still registered at the end of
   the session (reason 3), or when its app left the bus without
   unregistering, or the whole session ended without the session manager
@@ -212,7 +221,8 @@ manager and xdg-desktop-portal; apps use the portal.
   and reason 1.
 - At login, once the session's components are up, every app with
   restorable instances is started once per instance, through its desktop
-  file (`<app_id>.desktop`).
+  file (`<app_id>.desktop` in the `applications` directory of the XDG
+  data directories).
 - Unregistered instances become cleanup ids, returned to the app's next
   `RegisterRestore` until it reports them deleted.
 - `org.gnome.desktop.session` `save-restore` (true without the key):

@@ -51,6 +51,26 @@ Behavioral notes that XML cannot express live in companion `.md` files
 `org.gnome.evolution.dataserver.md`, `org.freedesktop.NetworkManager.SecretAgent.md`, `org.bluez.Agent1.md`,
 `org.bluez.obex.md`, `org.freedesktop.a11y.KeyboardMonitor.md`).
 
+## The shell's two connections
+
+*Helix's choice:* the shell owns `org.freedesktop.Notifications`,
+`org.gtk.Notifications`, `org.gnome.ScreenSaver` and
+`org.kde.StatusNotifierWatcher` on a connection of their own, which
+serves only those interfaces. Everything else the shell serves
+(`org.gnome.Shell` and the interfaces at its other paths) is on its main
+connection. Sandboxed apps are commonly allowed to talk to those four
+names, and a sandbox's D-Bus proxy lets an app call any object on a
+connection that owns a name it may talk to. Signals of those interfaces
+(e.g. `NotificationClosed`, `ActiveChanged`) come from that connection,
+and the shell calls status icons' items and menus from it too.
+
+Interfaces meant only for parts of the desktop check their caller as
+well: `GrabAccelerator(s)` and `UngrabAccelerator(s)` (`org.gnome.Shell.md`),
+`org.helixdesktop.PortalDialog` (the portal backend only),
+`org.helixdesktop.Extensions1` (`contracts/extensions/README.md`) and
+`org.helixdesktop.BluetoothSendTo` (`org.bluez.obex.md`; the last two
+refuse callers inside an app sandbox).
+
 ## Notes
 
 These are clean-room extractions of the public introspection interfaces from upstream GNOME 51 and xdg-desktop-portal sources.

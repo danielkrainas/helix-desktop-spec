@@ -97,7 +97,14 @@ they complete; Helix's are below.
     paired devices, by alias); with no files, it asks for files with
     Helix's file chooser (the FileChooser portal backend). The call
     returns at once; the rest happens in the shell. It fails with
-    `org.freedesktop.DBus.Error.Failed` when sending is not available.
+    `org.freedesktop.DBus.Error.Failed` when sending is not available,
+    and with `org.freedesktop.DBus.Error.AccessDenied` for a caller
+    inside an app sandbox (as for `org.helixdesktop.Extensions1`).
+  - Files the caller names are sent only after the user has seen them:
+    the device question lists them (the first 8 by name, then "and N
+    more"), and with a device given the shell asks "Send N files to
+    <device>?" with the same list first. Files that are not regular
+    files are left out; when none is left nothing is sent.
 - The files go one after another in one OPP session. A notification
   "Sending files to <device>" shows which file is being sent and how far
   it has got (updated at most every 10%); when all are sent it becomes

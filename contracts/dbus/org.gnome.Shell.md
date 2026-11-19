@@ -86,6 +86,16 @@ the trigger-on-release flag (128).
 
 ### Helix
 
+- Only these callers may grab and release accelerators: the owners of
+  `org.gnome.SettingsDaemon.MediaKeys` and `org.gnome.Settings` (as GNOME
+  Shell allows), and of `org.freedesktop.impl.portal.desktop.helix` (the
+  GlobalShortcuts portal backend). Other callers get
+  `org.freedesktop.DBus.Error.AccessDenied`.
+- *Helix's choice:* keys that type text are never grabbed (action id 0):
+  an accelerator with no modifier other than Shift, unless its key is
+  never typed (`XF86…` keys, `F1`…`F35`, `Print`, `Pause`,
+  `Scroll_Lock`, `Sys_Req`, `Break`, `Help`, `Cancel`). Otherwise a grab
+  would see what is typed into apps and the lock screen.
 - Grabs whose `modeFlags` include the lock screen (4) keep working while
   the session is locked; others do not fire then.
 - Of the `grabFlags`, only trigger-on-release (128) changes anything:
@@ -99,3 +109,5 @@ the trigger-on-release flag (128).
 and return whether they succeeded (false if an action was not grabbed; for
 the list form, false if any was not).
 Grabs belong to the caller and are released when it leaves the bus.
+In Helix a caller can release only its own grabs: another caller's
+action counts as not grabbed (false).

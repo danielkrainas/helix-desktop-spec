@@ -432,7 +432,15 @@ toolkit.
 ## Session bus: `org.helixdesktop.Extensions1`
 
 For tools (`helix-extensions`, the Settings app's Extensions panel) and
-the Extensions dialog's state:
+the Extensions dialog's state.
+
+Every method refuses callers inside an app sandbox with
+`org.freedesktop.DBus.Error.AccessDenied`: a Flatpak (`/.flatpak-info`
+in the caller's root), a snap (an AppArmor label starting with
+`snap.`), or any process whose root directory is not the shell's (for
+example an extension's own sandbox), as the bus's
+`GetConnectionCredentials` describes the caller. These calls control
+what runs outside any sandbox.
 
 - `ListExtensions() → a{sa{sv}}`: by id, `name`, `description`,
   `version`, `path`, `type` (`system`/`user`/`development`), `enabled`
@@ -468,7 +476,10 @@ the Extensions dialog's state:
   without being saved in the layout (after the zone's other items). It
   is restarted when a file in the directory changes (checked every
   second). It stops when the
-  caller leaves the bus, or on `StopDevelopment(id)`.
+  caller leaves the bus, or on `StopDevelopment(id)`. When an
+  administrator allows only sandboxed extensions (`require-sandbox`), a
+  development extension without a sandbox fails with
+  `org.freedesktop.DBus.Error.InvalidArgs` and is never started.
 - (1.1) `RunCommand(command)`: runs `<extension id>/<command id>`.
 - (1.1) `BindCommand(command, accelerator)`: sets its key (`""`: none).
   An accelerator that does not parse, or one another key uses, fails
