@@ -26,6 +26,12 @@ manager and the shell call. Helix does not implement this interface.
 - The session object's `Active` (`b`) is true while the session is in the
   foreground of its seat (e.g. not switched away from on another VT). It
   emits `PropertiesChanged`.
+- `GetSessionByPID(pid)` fails with `org.freedesktop.login1.NoSessionForPID`
+  for a process outside every session (e.g. one in the user's service
+  manager, as apps the shell starts in their own scopes are).
+- The session object's `Remote` (`b`) is true for a remote login (SSH);
+  Agent Access uses it (`contracts/agent-access/README.md`, "Remote
+  sessions").
 
 ## Inhibitors
 
