@@ -305,6 +305,83 @@ clock-format = "24h"      # 12h or 24h; unset: see "Clock"
 It is drawn with the shades of `components/README.md`, "Accent color".
 Unset or an unknown name: blue (the unknown name is logged).
 
+### Changing the configuration
+
+`/usr/libexec/helix/helix-login-config` (in the `helix-greeter`
+package), run as root through `pkexec`, changes
+`/etc/helix/greeter.toml`. Settings (Login Screen) uses it; the file is
+owned by root and Settings runs as the user.
+
+- **Polkit action:** `org.helixdesktop.login-screen-config`, "Authentication
+  is required to change the login screen settings": administrator
+  authentication, kept for a while (`auth_admin_keep`), in an active local
+  session; refused (`no`) for inactive and remote sessions.
+- **Invocation:** `pkexec /usr/libexec/helix/helix-login-config`, with no
+  arguments (any argument, a path included, is refused with exit status
+  64 and nothing is read). The changes come on standard input as a UTF-8
+  TOML document with only the keys being changed:
+
+  ```toml
+  user-list = false
+  accent = "teal"
+  remove = ["banner", "clock-format"]
+  ```
+
+  `remove` (optional) is an array of key names to delete from the file,
+  so that the greeter falls back to their defaults. An input with nothing
+  to set or remove is accepted and writes nothing.
+
+The input is untrusted. The helper refuses all of it, writing nothing,
+when:
+
+- it is larger than 16 KiB, is not UTF-8, or is not TOML;
+- it has a key other than `user-list`, `banner`, `accent`, `clock-format`
+  and `remove` (tables included), or a value of the wrong type;
+- `user-list` is not a boolean;
+- `banner` is not a string, is empty or only white space (to clear it,
+  remove it), is longer than 200 characters (Unicode scalar values), or
+  contains a control character (Unicode general category Cc, line breaks
+  and tabs included) or a bidirectional override or isolate (U+202A to
+  U+202E, U+2066 to U+2069);
+- `accent` is not one of the accent names above (exactly, lower case);
+- `clock-format` is not `12h` or `24h`;
+- `remove` is not an array of strings, names a key other than the four
+  above, or names a key the input also sets.
+
+Writing:
+
+- It reads the existing file; a missing one is taken as empty. A file
+  that is not valid TOML (or is not a regular file, is a symbolic link,
+  or is larger than 1 MiB) is left as it is and nothing is written (exit
+  status 2): the administrator's content is never dropped silently.
+- It keeps what it doesn't change: keys it does not know (a newer
+  configuration meeting an older helper), tables, comments and layout.
+  A changed key keeps its place and comments; a new key is added at the
+  end of the top-level keys.
+- It writes the result as a new file in `/etc/helix` (created, mode 0755,
+  if missing), flushes it to disk, gives it mode 0644 and owner root,
+  renames it over `/etc/helix/greeter.toml` and flushes the directory. A
+  symbolic link at the target is never followed.
+- The file it writes is made from the parsed values, never a copy of the
+  input.
+- A running greeter is not signalled: the changes apply the next time the
+  login screen starts.
+
+Exit status: 0 written (nothing is printed), 1 invalid input (a one-line
+reason in English on standard error), 2 the configuration could not be
+read or written (a reason on standard error), 64 arguments given.
+`pkexec` itself exits 126 when the authentication dialog was dismissed,
+and 127 when the caller is not authorized, authentication failed or
+`pkexec` hit an error; callers treat both as "not authorized" and leave
+their controls as they were.
+
+*GNOME does not document this; Helix's choice:* GDM's configuration
+(`/etc/gdm3/greeter.dconf-defaults`, `custom.conf`) is changed by hand or
+by distribution tools; GNOME Settings has no login screen panel. Helix
+changes its own file through a polkit-checked helper that, like
+`helix-login-monitors`, takes the values from the caller and trusts them
+no more than the rules above.
+
 ## Where GDM differs
 
 *GNOME does not document this; Helix's choice:* GDM's behaviour here is
