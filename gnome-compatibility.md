@@ -194,15 +194,18 @@ code. The choices that users or developers are most likely to notice:
   (helixdesktop/desktop#110).
 
 - **File chooser.** The FileChooser portal's dialog is drawn by the
-  shell in Helix's look, modelled on GTK 4's chooser (path bar, places,
-  a list with Name, Size and Modified sorted by the headers, type-ahead,
-  double-click, a file type menu, Save's name at the top, New Folder),
-  and shares the sort order and hidden files with GTK 4 through
-  `org.gtk.gtk4.Settings.FileChooser`. Its size comes from the screen
-  (it is not resizable), folders are read off the UI thread with a
-  "Loading…" state, and it has no grid view, Type column, Starred, Trash
-  or Other Locations, or eject buttons yet (helixdesktop/desktop#118;
-  `contracts/dbus/org.freedesktop.impl.portal.md`, "FileChooser").
+  shell in Helix's look, modelled on GTK 4's chooser (path bar, places
+  with the Trash and Other Locations, a list with Name, Size, Type and
+  Modified sorted by the headers or a grid of thumbnails from the
+  freedesktop thumbnail cache, type-ahead, double-click, a file type
+  menu, Save's name at the top, New Folder, eject buttons), and shares
+  its settings with GTK 4 through `org.gtk.gtk4.Settings.FileChooser`
+  (sort, hidden files, columns, dates, size, list or grid). Folders are
+  read off the UI thread and shown in batches as they come, and the
+  touchpad scrolls the list kinetically. It has no Starred place (GNOME
+  keeps stars in Nautilus's private database; Helix Files has none
+  yet), no "Connect to Server", and does not remember a position
+  (`contracts/dbus/org.freedesktop.impl.portal.md`, "FileChooser").
 
 ### Safety and robustness
 

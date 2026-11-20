@@ -56,7 +56,13 @@ The file chooser reads these keys each time it opens; without the schema
   width (logical pixels), when positive; resizing the dialog or the
   places writes them (`-1`: from the screen).
 
+- `view-type`: `grid` shows the files as a grid of thumbnails, `list`
+  (or anything else) as the column list; the dialog's list / grid switch,
+  Ctrl+1 and Ctrl+2 write it.
+
 *GNOME does not document this; Helix's choice:* `expand-folders`,
-`location-mode`, `view-type` and `window-position` are not followed:
-Helix's chooser has no grid view, its dialog is always centered, and
-it always shows the path bar (Ctrl+L or Alt+D open the location field).
+`location-mode` and `window-position` are not followed: Helix's chooser
+always shows the path bar (Ctrl+L or Alt+D open the location field),
+and its dialog is the shell's own, always centered over the dimmed
+screen and not movable, so there is no position to keep (GTK 4 cannot
+place its windows on Wayland either).

@@ -838,9 +838,11 @@ turns the paths into `file:` URIs and remembers the folder.
   which later dialogs (and GTK 4's chooser) start from. The pointer's
   shape does not change over the edges (the shell sets no cursor
   shapes). *Helix's choice.*
-- Layout: the title; a row with Back, Forward, the path bar and, when
-  opening files, Search, or when saving or choosing a folder, New
-  Folder; when saving, "Name" with the name field; then the places, the
+- Layout: the title; a row with Back, Forward, the path bar, the list /
+  grid switch (`view-grid-symbolic` while the list shows,
+  `view-list-symbolic` while the grid does) and, when opening files,
+  Search, or when saving or choosing a folder, New Folder; when saving,
+  "Name" with the name field; then the places, the
   file list and (while the selected file's type can be previewed) a
   preview pane; at the bottom the check box, a warning line, the file
   type button and Cancel and the accept button (the default).
@@ -851,20 +853,24 @@ turns the paths into `file:` URIs and remembers the folder.
   give way to a "…" button that goes to the deepest folder not shown.
   Clicking a folder's button goes there (with the folder below it
   selected). In Recent the bar reads "Recent", in a search "Search for
-  “<text>”".
+  “<text>”", in the Trash "Trash", in Other Locations "Other Locations".
 - Places (left): Recent (when opening files or saving), Home, the user's
   standard folders (Desktop, Documents, Downloads, Music, Pictures,
   Videos, as `user-dirs.dirs` names them, except the home folder
-  itself), GTK bookmarks (`$XDG_CONFIG_HOME/gtk-3.0/bookmarks`: local
+  itself), the Trash (`user-trash-symbolic`; when opening files only:
+  nothing is saved into the Trash, and a folder chosen there would be
+  the Trash's own storage), GTK bookmarks (`$XDG_CONFIG_HOME/gtk-3.0/bookmarks`: local
   `file:` URIs, named by their label or the folder's name), drives
   mounted under `/media/<user>/` and `/run/media/<user>/` (by folder
   name), network places the user connected to (GVfs's FUSE folders
   under `$XDG_RUNTIME_DIR/gvfs/`, named "<share> on <server>" for
   `smb-share:server=…,share=…`, "<user> on <host>" or "<host>" for others,
-  else by folder name), and "Computer"
-  (`/`), each with a symbolic icon, separated into groups (standard
-  folders, bookmarks, drives and network places, Computer); folders that
-  do not exist are left out and a folder is listed once. They are read
+  else by folder name), "Computer"
+  (`/`) and "Other Locations" (`list-add-symbolic`), each with a symbolic
+  icon, separated into groups (standard folders and the Trash,
+  bookmarks, drives and network places, Computer and Other Locations);
+  folders that do not exist are left out (the Trash is listed whether or
+  not its folder exists yet) and a folder is listed once. They are read
   when the dialog opens, again every 2 seconds while it is open, and at
   once when the shell's volume monitor reports a mount coming or going
   (`contracts/gsettings/removable-media.md`), so drives, network places
@@ -872,7 +878,40 @@ turns the paths into `file:` URIs and remembers the folder.
   or network place holding the folder shown goes, the list goes to the
   home folder. They scroll with the wheel when they do not fit. The
   place shown is marked: the one shown, else the deepest one holding the
-  folder shown. Clicking a place shows it.
+  folder shown (a folder inside the Trash marks the Trash). Clicking a
+  place shows it.
+- Trash: lists what the freedesktop Trash specification's Trash folders
+  hold: the home Trash (`$XDG_DATA_HOME/Trash`) and, for each drive
+  among the places, `<drive>/.Trash/<uid>` (when `.Trash` is a sticky
+  folder, not a link) and `<drive>/.Trash-<uid>`. An item is listed
+  when it has its `info/<name>.trashinfo` and its `files/<name>`, under
+  the name it had (the last part of the info's `Path=`, percent-decoded;
+  a relative `Path=` is below the drive), with the folder it was in as
+  its Location (the Location column, as in Recent, sorted by the
+  headers like a folder); its type comes from that name. The items are
+  read from the Trash folders themselves (not through GVfs's
+  `trash:///`), so choosing one answers the path of the item in
+  `files/`, which the app can read, and a trashed folder opens as a
+  folder. Empty: "Trash is empty". The chooser neither restores nor
+  deletes anything. *GNOME reads the Trash through GVfs; Helix's
+  choice, so that the answer is a local path.*
+- Other Locations: a list (its Location column the folder, or "Not
+  mounted") of "Computer" (`/`), then what the shell's volume monitor
+  knows (`contracts/gsettings/removable-media.md`): each mounted drive,
+  disc, phone or network share whose root is a local folder (FUSE ones
+  too), by its name, and each volume that can be mounted but is not.
+  It follows mounts coming and going while it shows. Activating a
+  mounted one (double-click, Enter, or the accept button) shows its
+  folder; activating one not mounted mounts it with no window opened
+  and nothing asked ("Mounting <drive>…" in the warning line; when the
+  mount needs a password or an answer, or fails: "The drive could not
+  be mounted: <error>"; a volume gone meanwhile: "The drive is gone."),
+  after which it shows its folder. Choosing a folder, the accept button
+  chooses a mounted one selected. *Helix's choice:* volumes needing a
+  password are unlocked from the dock, Files or the notification (the
+  shell's password dialog would replace the chooser, answering the app
+  "canceled"), and there is no "Connect to Server" (it needs the same
+  questions); servers connected in Files show as network places.
 - Eject: a drive or network place that the volume monitor has mounted
   there (a mount whose root is that folder, FUSE ones included) has an
   eject button (`media-eject-symbolic`) at the end of its row; clicking
@@ -908,7 +947,48 @@ turns the paths into `file:` URIs and remembers the folder.
   type (globs ignore case; MIME types by the type guessed from the name).
   Only the rows that show are drawn; the list scrolls with the wheel or
   touchpad (three rows a notch) and has a scrollbar that can be dragged
-  or clicked. With nothing to show: "Folder is empty", "No recent files",
+  or clicked.
+- Grid (`org.gtk.gtk4.Settings.FileChooser view-type` `grid`; the switch
+  in the path bar's row, Ctrl+1 the list, Ctrl+2 the grid, as in GNOME
+  Files, writes the key): the same rows, as cells in lines (as many
+  120-pixel cells as fit, sharing the width), each with a thumbnail of
+  80 × 80 (scaled down to fit, never up, its pixels the screen's) or
+  else the theme's full-color icon for the type (`folder` for folders,
+  the type's icon names from GIO, else `text-x-generic`; 64 × 64), and
+  the name centered below on at most two lines (a longer one shortened
+  in the middle of the second line). The column headers stay above the
+  grid as its sort buttons. Up and Down move a line, Left and Right a
+  cell (mirrored right to left), Page Up and Page Down by the lines that
+  show; selection, the mouse and type-ahead are as in the list. Only
+  the lines that show are drawn. *GNOME does not document this; Helix's
+  choice.*
+- Thumbnails (grid): asked for only for the files on screen (not
+  folders or empty files), whenever those change, by worker threads
+  (two), most wanted first; a request replaces the earlier ones not
+  started yet, so scrolling past a folder makes nothing for the files
+  scrolled by. For each file, per the freedesktop thumbnail
+  specification: the thumbnail in `$XDG_CACHE_HOME/thumbnails/<flavor>/<md5
+  of the file's URI>.png` is used when it is fresh (its `Thumb::MTime`
+  is the file's modification time, and its `Thumb::URI`, when present,
+  the file's URI; without `Thumb::MTime`, when not older than the
+  file), first from the smallest flavor at least as big as needed
+  (`normal` 128, `large` 256, `x-large` 512, `xx-large` 1024), then
+  Helix's own cache (`$XDG_CACHE_HOME/helix/thumbnails/`, 256). A
+  picture Helix decodes (as for previews, at most 32 MiB) without one
+  is scaled down here and, when larger than the flavor, written to the
+  shared cache as `normal` (needed up to 128) or `large` (above), with
+  `Thumb::URI`, `Thumb::MTime`, `Thumb::Size`, `Thumb::Mimetype` and
+  `Software` (`Helix`), the folder made `0700` and the file `0600`,
+  written whole under another name then renamed in, so GNOME's file
+  manager and later dialogs use it. Other types get a smaller cached
+  thumbnail if there is one, else the installed thumbnailers make one as
+  for previews (sandboxed, into Helix's own cache). Files in the
+  thumbnail caches themselves get none. In memory the dialog keeps at
+  most 48 MiB of thumbnails, those shown least recently going first; a
+  change of scale or text size makes them again at the new size.
+  *Helix's choice:* the thumbnails are made by the shell, as GNOME's
+  apps make them themselves; the `org.freedesktop.thumbnails.Thumbnailer1`
+  D-Bus service is not used. With nothing to show: "Folder is empty", "No recent files",
   "No results found", or "This folder cannot be shown: <error>".
 - Reading folders: a folder is listed on a worker thread from its
   entries' metadata only (no file is opened or read; the type comes from
@@ -916,9 +996,30 @@ turns the paths into `file:` URIs and remembers the folder.
   are listed and a slow drive does not hold the dialog up. Going to a
   folder empties the list at once (the path bar already shows the new
   folder); after 200 ms without an answer the list says "Loading…" with a
-  spinner. The places, Cancel and every other part work while a folder
-  loads; a listing that comes after the user went elsewhere is dropped.
-  *GNOME does not document this; Helix's choice.*
+  spinner. The entries come in batches as they are read, every 50 ms:
+  each batch's rows are merged into those shown where the sort puts
+  them (the sort keys are worked out once per entry), hidden files and
+  the file type filter apply to them as they come, the current row and
+  picked files stay (while the user has chosen none, the first row stays
+  the current one; a folder to select on coming back up is selected when
+  it arrives, unless the user chose meanwhile), and once the list was
+  scrolled, the row at its top stays where it is. While more is coming
+  the warning line reads "Loading…" (after the first 200 ms). The places,
+  Cancel and every other part work while a folder loads; going elsewhere
+  stops the reading (the worker checks between batches), and a listing
+  that comes after the user went elsewhere is dropped. Recent, search
+  results, the Trash and Other Locations come whole. *GNOME does not
+  document this; Helix's choice.*
+- Kinetic scrolling: touchpad (finger) scrolling moves the list with the
+  fingers; when they lift (the compositor's axis stop), the list goes on
+  at the speed of the last 100 ms of movement (none when the fingers
+  rested more than 60 ms before lifting, or below 120 pixels a second;
+  at most 12000), slowing down as GTK's kinetic scrolling does (speed
+  falling as e^(−4t), so a fling goes a quarter of its speed in pixels),
+  a step every 16 ms, until below 15 pixels a second or at either end of
+  the list. A wheel notch, a press, a key, scrolling the places or
+  touching again stops it. *GNOME does not document this; Helix's
+  choice.*
 - Recent lists recently used files (`$XDG_DATA_HOME/recently-used.xbel`),
   newest first by when they were last modified there (else added), at
   most 100, only local files that still exist and pass the current file
@@ -932,8 +1033,9 @@ turns the paths into `file:` URIs and remembers the folder.
   - a picture scaled down to fit the pane (not above 32 MiB);
   - text: its first lines (of the first 8 KiB), tabs as four spaces;
   - other files: their thumbnail, from the freedesktop thumbnail cache
-    (`$XDG_CACHE_HOME/thumbnails/{x-large,large,normal}/<md5 of the
-    URI>.png`, used when not older than the file), else Helix's own cache
+    (`$XDG_CACHE_HOME/thumbnails/{large,x-large,xx-large,normal}/<md5 of
+    the URI>.png`, used when fresh as for the grid's thumbnails), else
+    Helix's own cache
     (`$XDG_CACHE_HOME/helix/thumbnails/`, same names), else made into
     Helix's cache by the thumbnailer whose `.thumbnailer` file (in
     `thumbnailers/` under the XDG data folders; skipped when its `TryExec`
@@ -950,8 +1052,10 @@ turns the paths into `file:` URIs and remembers the folder.
     only place it can write (`%o` is `thumbnail.png` in it). Only a
     regular PNG file left there is taken. Without bubblewrap no
     thumbnailer runs.
-    Helix does not write into the shared cache (its entries need metadata
-    Helix's thumbnails lack).
+    Thumbnailers' results stay in Helix's own cache (they lack the
+    metadata the shared cache's entries need); the grid writes the
+    pictures' thumbnails it makes into the shared cache (see
+    "Thumbnails").
 
   When it cannot be shown the pane reads "No preview".
 - File type: a button with the current type's name and a menu above it
@@ -977,7 +1081,8 @@ turns the paths into `file:` URIs and remembers the folder.
   Anywhere: Alt+Up the parent folder, Alt+Left and Alt+Right back and
   forward, Alt+Home the home folder, Ctrl+L or Alt+D the location field
   (with the folder shown), Ctrl+H hidden files on or off (stored in
-  `show-hidden`), Ctrl+F search (opening files), Escape closes the
+  `show-hidden`), Ctrl+1 the list and Ctrl+2 the grid (stored in
+  `view-type`), Ctrl+F search (opening files), Escape closes the
   location, search or new folder field, else cancels. In the name and
   path bar fields: Left, Right, Home, End (with Shift selecting),
   Backspace, Delete, Ctrl+A, and typing replaces the selection; copy,
@@ -1023,19 +1128,28 @@ turns the paths into `file:` URIs and remembers the folder.
   for the dialog's whole life, with the path bar (a tool bar of buttons,
   the folder shown toggled), the places (a list box), the file list (a
   list box named "Files in <folder>", "Recent Files" or "Search results
-  for “<text>”"; every row while there are at most 1000, else those near
+  for “<text>”", "Trash", "Other Locations"; the grid's cells are its
+  rows; every row while there are at most 1000, else those near
   the screen; each row named by the file's name, described "Folder" or
   its size and type, then "Modified <when>" and in Recent and search results its
   folder, with its place among all rows (`posinset`/`setsize`); the
   current row has the focus while the list does), a live status
   "<folder>, <n> items" (or "Loading…") read out when the folder
-  changes, the eject buttons ("Eject <drive>"), the fields, the file type (a combo box), and the buttons. Not
+  changes, the "Grid View" button (toggled while the grid shows), the
+  eject buttons ("Eject <drive>"), the fields, the file type (a combo box), and the buttons. Not
   yet tried with Orca (helixdesktop/desktop#71).
-- Not offered (helixdesktop/desktop#118): a grid view with thumbnails,
-  Starred, Trash and Other Locations places, the window's position
-  (`window-position`), kinetic touchpad scrolling of the list, and
-  listing very large folders in batches (a folder is listed whole on a
-  worker thread).
+- Not offered (helixdesktop/desktop#118), *Helix's choice:*
+  - Starred: GNOME's starred files live in GNOME Files' (Nautilus's)
+    private Tracker database (`$XDG_DATA_HOME/nautilus/tags`), which it
+    does not offer on the bus; Helix Files has no starring yet, so there
+    is no store the chooser could share with the file manager. A Starred
+    place comes when Helix Files stars files, from the same store.
+  - The window's position (`window-position`): the dialog is the
+    shell's, centered over everything with the screen dimmed, and cannot
+    be moved, so there is no position to remember (GTK 4 on Wayland
+    cannot place its window either).
+  - "Connect to Server", and unlocking or answering questions while
+    mounting from Other Locations (see there).
 
 ### Searching files
 
