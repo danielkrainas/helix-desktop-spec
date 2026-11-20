@@ -193,7 +193,8 @@ added; clients ignore keys they do not know):
   `album` (`s`), `length` (`d`, seconds); `position` (`d`, seconds;
   absent when the player does not tell it); `can-play`, `can-pause`,
   `can-go-next`, `can-go-previous`, `can-seek`, `can-control` (`b`, its
-  properties of those names).
+  properties of those names; each absent when the player does not have
+  it).
 - **Power** (`GetPower`), each key only when the computer has it: from
   UPower (`org.freedesktop.UPower`, system bus) `on-battery` (`b`), and
   from its display device (`/org/freedesktop/UPower/devices/DisplayDevice`,
@@ -223,8 +224,8 @@ added; clients ignore keys they do not know):
   the call had `until` and something changed).
 - **File**: `uri` (`s`), `name` (`s`), `mime-type` (`s`), `modified`
   (`x`, last changed; for a recent item that is not a local file, when it
-  was used), `size` (`t`, local files only), and from `RecentFiles`
-  `used` (`x`, when it was last used).
+  was used), `size` (`t`, local files only, not folders), and from
+  `RecentFiles` `used` (`x`, when it was last used).
 - **Reminder**: `id` (`s`), `time` (`x`), `text` (`s`).
 - **Accessible node**: `id` (`s`), `parent` (`s`, the parent's id; `""`
   for the first node of a tree), `role` (`s`, AT-SPI role name as
@@ -427,7 +428,8 @@ Batch 1 (helixdesktop/desktop#156).
   `excluded-apps`) when its `DesktopEntry` names that app, when the
   process owning its bus name is that app's (by its other windows, its
   program or its systemd unit, as for the *Control apps* methods), or,
-  without a `DesktopEntry`, when its `Identity` is that app's name.
+  without a `DesktopEntry`, when its `Identity` is that app's name (as
+  the app grid shows it).
   `GetMedia` leaves such players out and never counts them; such a
   player is never `active` for an agent (the next one by the rule is);
   `MediaControl` naming one fails with `Excluded` (`app:<id>`,
@@ -437,11 +439,13 @@ Batch 1 (helixdesktop/desktop#156).
   microseconds) or `SetPosition` (a `position`, with the track's
   `mpris:trackid`). `NotSupported` when its `CanControl` is false, when
   the property for the action (`CanPlay`, `CanPause`, `CanGoNext`,
-  `CanGoPrevious`, `CanSeek`) is false, for `position` without a
-  track id, and for an unknown action; `seek` with neither or both of
-  `offset` and `position` is `InvalidArgs`. The player is not waited
-  for: the call returns once it accepted the D-Bus call (3 seconds at
-  most, else `Failed`).
+  `CanGoPrevious`, `CanSeek`; for `play-pause` the one for what it would
+  do, `CanPause` while playing and `CanPlay` otherwise; `stop` has none)
+  is false, for `position` without a track id, and for an unknown action;
+  a property the player does not have counts as true; `seek` with neither
+  or both of `offset` and `position` is `InvalidArgs`. The player is not
+  waited for: the call returns once it accepted the D-Bus call (3 seconds
+  at most, else `Failed`).
 - **Power** is read from the system bus when the call comes, as the
   panel's battery and quick settings' Power Mode read it. Nothing is
   started for it, and what is missing (no battery, no UPower, no
@@ -451,7 +455,8 @@ Batch 1 (helixdesktop/desktop#156).
   share (`contracts/files/starred.md`), opened read-only for each call as
   the file chooser opens it (helix-desktop's `crates/helix-settings`,
   `stars.rs`). Only starred files inside the home folder that still
-  exist are given; `type` applies as for `RecentFiles`. A missing store,
+  exist are given, starred folders too (`mime-type` `inode/directory`,
+  no `size`); `type` applies as for `RecentFiles`. A missing store,
   one that is off, or one that cannot be read gives `[]`, not an error.
 
 ### Changing settings

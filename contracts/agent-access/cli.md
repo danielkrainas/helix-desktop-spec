@@ -115,7 +115,8 @@ it, since identity never comes from the agent.
   player). `seek` takes seconds: with a sign (`+30`, `-10`) it is
   `offset`, without one `position` (from the start); decimals are
   allowed. Text output of `media` is a line per player: `*` for the
-  active one, its name, status, and “title — artist” when given.
+  active one, its name, its `id` (for `--player`), status, and “title —
+  artist” when given.
 - `power`'s text output is the battery's percentage, state and time
   left, and the power mode (“Power mode: Balanced (also: Power Saver,
   Performance)”); lines for what the computer lacks are left out.
