@@ -72,7 +72,7 @@ false: the agent marks this call sensitive).
 | `ListNotifications` | read-only | | contents only with `notifications` |
 | `RecentFiles`, `SearchFiles` | read-only | | |
 | `WaitForWindow`, `WaitForWindowClosed` | read-only | | |
-| `Ask`, `Confirm` | read-only | | |
+| `Ask`, `Confirm` | read-only | | a dialog only the user at the machine answers |
 | `AddReminder`, `ListReminders`, `CancelReminder` | read-only | | an agent sees only its own reminders |
 | `GetClipboard` | read-only | | needs `clipboard` |
 | `Open`, `Launch` | desktop | when marked | not excluded apps (also as the app that would open a file) |
@@ -304,6 +304,94 @@ fail with `InvalidArgs`; none returns anything but `Notify`.
   an agent may show at most 5 in any minute; more fail with `Failed`
   until the minute is up.
 
+### Talk to the user methods
+
+The options and arguments of the methods that talk to the user
+(helixdesktop/desktop#148), besides the common ones. Malformed values
+fail with `InvalidArgs`. Lengths are in characters, after the text is
+made plain (below).
+
+| Method | Options and arguments | Returns |
+|--------|----------------------|---------|
+| `Ask` | `question` (1–500); `choices` (`as`, 2–8 answers of 1–64, no two the same: the user picks one; without it the user types an answer of at most 1,000), `default` (`s`: the answer filled in, at most 1,000; with `choices`, one of them, which has the focus first), `timeout-ms` (`u`, 0 or absent: no limit) | `answer` (`s`: the text typed, or the choice), `choice` (`i`: the choice's index from 0, -1 for a typed answer); `Cancelled`, `TimedOut` |
+| `Confirm` | `question` as `Ask`'s; `yes`, `no` (`s`: the buttons' labels, 1–24, not the same; default "Yes" and "No" in the user's language), `timeout-ms` | `yes` (`b`): true for yes, false for no; `Cancelled` (Escape), `TimedOut` |
+| `AddReminder` | `time` (Unix seconds, from 60 seconds ago to 366 days ahead; a time just past is shown at once), `text` (1–500) | the reminder's id (`s`) |
+| `ListReminders` | | this agent's Reminder records not yet shown, by time |
+| `CancelReminder` | `id` | `NotFound` when this agent has no such reminder (another agent's included) |
+
+- **Plain text.** *Helix's choice:* control characters (line breaks
+  too) become spaces, characters that reorder text (U+061C, U+200E,
+  U+200F, U+202A–U+202E, U+2066–U+2069) are removed, so an agent's text
+  cannot rearrange what is shown next to it, and the ends are trimmed.
+  Nothing is markup: `<b>` is shown as written. The display name in the
+  dialog is cleaned the same way.
+- **The dialog.** *Helix's choice:* a shell-modal dialog unlike the
+  system's prompts (the consent, sensitive-action, polkit and keyring
+  prompts): a band in the indicator's red says "Question from an agent",
+  the title names the agent ("“Build bot” asks", its display name, else
+  its executable's file name), the next line its program (its id, as
+  the consent prompt shows it), the agent's words stand in a quoted
+  block, and the last line says Helix did not ask. Below the question:
+  a text field with *Cancel* and *Answer*; or a button for each choice,
+  then *Cancel*; or the `no` and `yes` buttons. The focus starts in the
+  text field, on the `default` choice (else the first), or on `no`.
+  Enter in the text field answers (an empty answer too); Escape cancels.
+- **Only the user answers.** As the consent prompt ("Consent"): the
+  answer travels only inside the shell; the dialog's layer surface has
+  the namespace `helix-agent-prompt`, so while it is shown the
+  compositor drops remote desktop, EIS and the headless backend's test
+  input; accessibility actions on it are refused (setting the text
+  field's text too; screen readers still read it, and the keyboard
+  works it); keys and clicks in its first second are ignored. The
+  price: **a remote desktop user answers at the machine**, as for the
+  consent prompt; otherwise an agent could answer its own question
+  through remote desktop or EIS.
+- **One at a time.** *Helix's choice:* an agent's questions are queued,
+  not refused: its next `Ask` or `Confirm` waits until the one before is
+  answered (the `timeout-ms` counts while it waits), and questions of
+  different agents are shown one after another. A question never covers
+  the lock screen or another prompt (consent, sensitive action, polkit,
+  keyring, network secrets…): it waits for it; one shown when such a
+  prompt comes is put back first in line, and shown again after it
+  (with its first second ignored again).
+- **How it ends.** The answer; *Cancel* or Escape: `Cancelled`;
+  `timeout-ms` passing: the dialog closes, `TimedOut`; locking the
+  screen closes it (or the queued question): `Cancelled`, not `Locked`,
+  since the user did not answer; the agent losing access meanwhile
+  (`enabled` off, a lower `access-level`, *Stop*, a revoke): it closes
+  with the error a new call would get; the caller leaving the bus (the
+  CLI killed): it closes, `Failed`. While a question is open or queued
+  the agent counts as active (the indicator shows it). `interactive`
+  false only spares the consent prompt; the question itself is shown,
+  since it is what the call asks for.
+- **Reminders.** *Helix's choice:* kept in
+  `$XDG_STATE_HOME/helix/agent-reminders.json` (mode 0600, written whole
+  through a temporary file, never through a symlink, and a rename), so
+  they outlive the shell and the session:
+
+  ```json
+  {"version": 1, "reminders": [{"id": "3f9a0c2e7b1d4a56", "agent": "/usr/bin/node /home/me/agent.js", "executable": "/usr/bin/node", "name": "Example", "time": 1795082400, "text": "Check the deploy", "added": 1795080600}]}
+  ```
+
+  Ids are 16 random hexadecimal digits. An agent may have 20 reminders
+  waiting, and add 5 in any minute (more fail with `Failed`). When one
+  is added, the shell says so in a notification under "Agent: <agent>"
+  (as `Notify`'s): "Reminder set for <time>", the text, and a *Cancel
+  Reminder* button, so the user sees what an agent scheduled and can
+  undo it. When it is due (looked at when the shell starts, so reminders
+  due while it was not running are shown then, at their times, and at
+  least every 30 seconds) it is shown as a notification under "Agent:
+  <agent>" titled "Reminder" with the text, the "Reminder set"
+  notification is taken back, and it is removed. Reminders due while
+  `enabled` is off are removed without being shown. Grants do not
+  matter when a reminder is shown: the agent had access when it set it.
+  Reminders show while the screen is locked as any notification does,
+  and Do Not Disturb holds back their banners.
+- **Cancelling.** An agent lists and cancels only its own. The user
+  cancels one with the *Cancel Reminder* button, or in Settings
+  (`AgentAccess1.ListReminders` and `CancelReminder`, "Who may manage
+  grants").
+
 ## Errors
 
 The shell answers refusals with these D-Bus errors (prefix
@@ -323,7 +411,7 @@ that token, for clients to word their own message.
 | `DeniedByUser` | the user denied access, or declined a sensitive action | |
 | `Excluded` | the target is excluded | `app:<app id>`, `settings`, `password-field`, `system-prompt` or `shell` |
 | `NeedsConfirmation` | a sensitive action with `confirm-sensitive` on, and `interactive` false | |
-| `Cancelled` | the user dismissed `Ask` or `Confirm` | |
+| `Cancelled` | the user dismissed `Ask` or `Confirm`, or the screen locked while it was shown or queued | |
 | `TimedOut` | a wait or question ran out of time | |
 | `NotFound` | no such window, app, node or reminder | |
 | `NotSupported` | a name or action this shell does not support (e.g. a toggle without hardware) | |
@@ -547,7 +635,8 @@ The shell reads the settings on every call and watches them: turning
 next call that needs it. Revoking an agent (Settings, or *Stop*)
 ends its grant at once. A call already waiting (a wait, a question, a
 prompt) when its agent loses access ends with the error the agent would
-now get.
+now get; a question the lock closed ends `Cancelled` ("Talk to the user
+methods").
 
 ## Who may manage grants
 
@@ -573,6 +662,11 @@ grants come only from the consent prompt.
 - `ClearLog()`: empties the activity log (helixdesktop/desktop#144) and
   records that it did (see "Activity log").
 - `AgentsChanged` is emitted when the list changes.
+- `ListReminders()`: every agent's reminders not yet shown (Reminder
+  records with `agent`, `executable` and `name`), by time.
+- `CancelReminder(id)`: cancels any agent's reminder.
+- `RemindersChanged` is emitted when a reminder is added, shown or
+  cancelled.
 
 Unknown agent ids are not an error (nothing to take away).
 
@@ -616,11 +710,12 @@ ignore keys they do not know; keys may be added):
 | `agent` | string | The agent's id (see "Who is calling"); `""` when the caller could not be identified (e.g. sandboxed: then the caller's executable when it is the user's process, else `""`). |
 | `name` | string | Its display name, `""` for none. |
 | `method` | string | The `Agent1` method; or one of the *events* below. |
-| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`); for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
+| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
 | `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
-| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body); later stages add `text-length`, `question-length` and the like. |
+| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body), `question-length` (`Ask`, `Confirm`), `text-length` (`AddReminder`); later stages add others. |
+| `choice-count` | integer | `Ask` with `choices`: how many. |
 | `uri-count` | integer | `Launch`: how many files or addresses it handed the app (absent for none). |
 | `action` | string | `WindowAction`: the action (`tile-left`, `close`); a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
 | `state` | string | `SetToggle`: `on` or `off`. |
@@ -653,6 +748,11 @@ Events (not `Agent1` methods; none of them is a method name):
   `target` is the method, `action` what it does when the prompt said
   more. `allowed` or `refused:DeniedByUser`.
 - `Stop`: *Stop* in the indicator; `cancelled`.
+- `Reminder`: a reminder came due and was shown (`allowed`), was due
+  while `enabled` was off and removed unshown (`refused:AccessOff`), or
+  the user cancelled it with the notification's button (`cancelled`);
+  `target` is `reminder:<id>`, `agent` and `name` the agent that set it,
+  no `level`.
 - `LogFull`: written once when a day file reaches a cap (below), with
   `agent` and `name` `""`.
 
@@ -662,11 +762,12 @@ the method's name, no `level`, and `allowed` (unknown agent ids too:
 the line says what the user asked for):
 
 - `Revoke`, `Forget`: `target` the agent's id as Settings gave it.
+- `CancelReminder`: `target` `reminder:<id>` as Settings gave it.
 - `StopAll`: no `target`.
 - `ClearLog`: no `target`; written after the files are removed (so a
   cleared log says it was cleared).
 
-`ListAgents` is not recorded. Calls to `AgentAccess1` that are refused
+`ListAgents` and `ListReminders` are not recorded. Calls to `AgentAccess1` that are refused
 (`AccessDenied`, a program other than Settings) are recorded, with the
 method name.
 
@@ -682,6 +783,10 @@ Examples:
 {"time":1795082455,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SensitivePrompt","target":"SetToggle","level":"desktop","outcome":"refused:DeniedByUser","action":"wifi-off"}
 {"time":1795082456,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetToggle","target":"wifi","level":"desktop","outcome":"refused:DeniedByUser","state":"off"}
 {"time":1795082460,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Open","target":"https://example.org","level":"desktop","outcome":"allowed"}
+{"time":1795082462,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Ask","level":"read-only","outcome":"allowed","question-length":29,"choice-count":2}
+{"time":1795082464,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Confirm","level":"read-only","outcome":"cancelled","question-length":12}
+{"time":1795082466,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"AddReminder","target":"reminder:3f9a0c2e7b1d4a56","level":"read-only","outcome":"allowed","text-length":16}
+{"time":1795084200,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Reminder","target":"reminder:3f9a0c2e7b1d4a56","outcome":"allowed"}
 {"time":1795082470,"agent":"/usr/bin/helix-settings-app","name":"","method":"Revoke","target":"/usr/bin/node /home/me/agent.js","outcome":"allowed"}
 {"time":1795082471,"agent":"/usr/bin/helix-settings-app","name":"","method":"StopAll","outcome":"allowed"}
 {"time":1795082501,"agent":"/opt/bot","name":"","method":"GetState","level":"read-only","outcome":"refused:AccessOff","count":120,"until":1795082559}
@@ -690,7 +795,7 @@ Examples:
 ### No secrets
 
 A line holds only the keys above. Never recorded: text an agent types
-or sends (`Ask`/`Confirm` questions, reminder and notification text,
+or sends (`Ask`/`Confirm` questions and choices, reminder and notification text,
 `SetValue` values, input), clipboard data, notification summaries and
 bodies, accessible field values, window titles, answers to questions,
 and search queries and title matches. *Helix's choice:* a search query

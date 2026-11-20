@@ -106,6 +106,17 @@ it, since identity never comes from the agent.
   the global `--timeout` (no limit when either is `0`). `wait window`
   returns at once when a matching window is open; `--title` matches
   anywhere in the title, ignoring case.
+- `ask` and `confirm` send `QUESTION` as `question`, `--choice` (2–8,
+  in order) as `choices`, `--default`, `--yes` and `--no` as the options
+  of those names (`README.md`, "Talk to the user methods"). Their
+  `--timeout` is how long the user has to answer (default 300 seconds;
+  `0`: as long as it takes), sent as `timeout-ms`; the CLI waits for the
+  shell's answer that long plus the global `--timeout` (no limit when
+  either is `0`). Text output of `ask` is the answer; of `confirm`,
+  nothing (the exit code says it).
+- `remind add` sends `WHEN` as Unix seconds (`+10m`: ten minutes from
+  now) and `TEXT`; its text output says the id and the local time.
+  `remind list` prints one line per reminder: id, local time and text.
 - `log` reads `$XDG_STATE_HOME/helix/agent-activity/` itself; it needs
   no access because the log is the user's own file. `--agent` keeps
   the entries whose `agent` is the id given; `--since` those whose

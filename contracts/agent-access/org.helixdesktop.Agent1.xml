@@ -66,7 +66,10 @@
       <arg type="u" name="timeout_ms" direction="in"/>
     </method>
 
-    <!-- Talk to the user: Read only (helixdesktop/desktop#148). -->
+    <!-- Talk to the user: Read only (helixdesktop/desktop#148); options
+         and limits in README.md, "Talk to the user methods". Ask and
+         Confirm show a dialog only the user at the machine can answer;
+         Ask returns answer (s) and choice (i, -1 for typed text). -->
     <method name="Ask">
       <arg type="s" name="question" direction="in"/>
       <arg type="a{sv}" name="options" direction="in"/>
