@@ -33,3 +33,10 @@ serves the interface at `/org/mpris/MediaPlayer2`.
 The first player, in bus-name order, whose `PlaybackStatus` is `Playing`;
 else the first that is `Paused`; else the first one found. Players with
 `CanControl` false are skipped.
+
+## Agent Access
+
+Agents read the players (`GetMedia`) and control them (`MediaControl`,
+also `Seek` and `SetPosition`) through the shell, never excluded apps'
+players; the active player is the one the keys control
+(`contracts/agent-access/README.md`, "Media, power and stars").

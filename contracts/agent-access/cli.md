@@ -44,6 +44,9 @@ it, since identity never comes from the agent.
 | `notifications [--limit <N>]` | `ListNotifications` | read-only |
 | `files recent [--limit <N>] [--type <MIME>]` | `RecentFiles` | read-only |
 | `files search <QUERY> [--since <WHEN>] [--until <WHEN>] [--type <MIME>] [--in <FOLDER>] [--limit <N>]` | `SearchFiles` | read-only |
+| `files starred [--limit <N>] [--type <MIME>]` | `StarredFiles` | read-only |
+| `media` (or `media list`) | `GetMedia` | read-only |
+| `power` (or `power status`) | `GetPower` | read-only |
 | `wait window [--app <APP_ID>] [--title <TEXT>] [--focused] [--timeout <SECONDS>]` | `WaitForWindow` | read-only |
 | `wait closed <WINDOW> [--timeout <SECONDS>]` | `WaitForWindowClosed` | read-only |
 | `ask <QUESTION> [--choice <TEXT>]... [--default <TEXT>] [--timeout <SECONDS>]` | `Ask` | read-only |
@@ -58,7 +61,17 @@ it, since identity never comes from the agent.
 | `launch <APP_ID> [<URI-OR-PATH>...]` | `Launch` | desktop |
 | `window <ACTION> <WINDOW> [ARGS]` | `WindowAction` | desktop |
 | `workspace switch <INDEX>` | `SwitchWorkspace` | desktop |
-| `toggle <NAME> [on\|off]` | `SetToggle` | desktop |
+| `toggle <NAME> [on\|off] [--until <WHEN>]` | `SetToggle` | desktop |
+| `media play\|pause\|play-pause\|next\|previous\|stop [--player <ID>]` | `MediaControl` | desktop |
+| `media seek <SECONDS> [--player <ID>]` | `MediaControl` (`seek`) | desktop |
+| `wallpaper <PATH> [--variant light\|dark\|both] [--fit <FIT>] [--until <WHEN>]` | `SetWallpaper` | desktop |
+| `accent <COLOR> [--until <WHEN>]` | `SetAccent` | desktop |
+| `power mode <PROFILE> [--until <WHEN>]` | `SetPowerMode` | desktop |
+| `files star <PATH>` / `files unstar <PATH>` | `StarFile` | desktop |
+| `files reveal <PATH>` | `RevealFile` | desktop |
+| `dock pin <APP_ID>` / `dock unpin <APP_ID>` | `SetFavorite` | desktop |
+| `notifications dismiss <ID>` | `DismissNotification` | desktop |
+| `notifications press <ID> [<ACTION>]` | `NotificationAction` | desktop, `notifications` switch |
 | `set <NAME> <VALUE>` | `SetValue` | desktop |
 | `notify <TITLE> [<BODY>] [--icon <ICON>] [--urgency low\|normal]` | `Notify` | desktop |
 | `a11y tree <WINDOW> [--depth <N>] [--node <NODE>] [--max-nodes <N>] [--bounds]` | `A11yTree` | apps |
@@ -81,15 +94,53 @@ it, since identity never comes from the agent.
 - `window` actions: `focus`, `close`, `minimize`, `maximize`,
   `unmaximize`, `restore`, `fullscreen`, `unfullscreen`, `tile-left`,
   `tile-right`, `move <X> <Y>`, `resize <WIDTH> <HEIGHT>`,
-  `to-workspace <INDEX>` (sent as `WindowAction`'s options `x`, `y`,
-  `width`, `height`, `workspace`). `close` is sensitive.
+  `to-workspace <INDEX>`, `to-monitor <CONNECTOR>` (sent as
+  `WindowAction`'s options `x`, `y`, `width`, `height`, `workspace`,
+  `monitor`; `CONNECTOR` as `monitors` gives it). `close` is sensitive.
 - `toggle` names: `dark-style`, `do-not-disturb`, `night-light`, `wifi`,
   `airplane-mode`, `mute`; without `on`/`off` the setting flips (read
   with `GetState` first; `not-supported` when the state does not have
   it). `wifi` and `airplane-mode` are sensitive.
+- `--until <WHEN>` (`toggle`, `wallpaper`, `accent`, `power mode`): put
+  the old value back then (`README.md`, "Changes, undo and restoring"),
+  sent as the option `until` in Unix seconds. `WHEN` is usually relative
+  (`+30m`, `+2h`); it must be 10 seconds to 24 hours ahead (otherwise
+  exit 2, before calling the shell). The CLI sends `until` only to a
+  shell that has `SetWallpaper` and otherwise fails with
+  `not-supported`, so the change never silently lasts.
 - `set` names: `volume`, `brightness`; `VALUE` is a percentage
   (`0`–`100`, `volume` up to `150` when over-amplification is on), sent
   as `SetValue`'s 0–1 value.
+- `media`: `ID` is a player's `id` from `media` (default: the active
+  player). `seek` takes seconds: with a sign (`+30`, `-10`) it is
+  `offset`, without one `position` (from the start); decimals are
+  allowed. Text output of `media` is a line per player: `*` for the
+  active one, its name, status, and “title — artist” when given.
+- `power`'s text output is the battery's percentage, state and time
+  left, and the power mode (“Power mode: Balanced (also: Power Saver,
+  Performance)”); lines for what the computer lacks are left out.
+  `power mode` takes `power-saver`, `balanced` or `performance`.
+- `wallpaper` sends `PATH` (made absolute, `~` the home folder, or a
+  `file://` URI) as `uri`, and `--variant` and `--fit` (`zoom`,
+  `scaled`, `centered`, `stretched`, `wallpaper`, `spanned`) as the
+  options of those names. `accent` takes `blue`, `teal`, `green`,
+  `yellow`, `orange`, `red`, `pink`, `purple` or `slate`.
+- `files star`, `unstar` and `reveal` take a path (made absolute, `~`
+  the home folder) or a `file://` URI; `star` sends `starred` true,
+  `unstar` false.
+- `dock pin` and `unpin` send the app id (with or without `.desktop`)
+  and `pinned` true or false.
+- Text output of the commands that return a Change (`wallpaper`,
+  `accent`, `power mode`, `files star`, `unstar`, `dock pin`, `unpin`)
+  is “Accent color: Blue → Red” (“, back at 15:30” with `until`), or
+  “Accent color is already Red” when nothing changed; `toggle` with
+  `--until` adds “, back at 15:30”.
+- `notifications dismiss` and `press` take a notification's `id` from
+  `notifications`; `press` sends `ACTION`, an `id` of the notification's
+  `actions` (shown by `notifications` with Notification access on), or
+  `default` (clicking the notification itself, the default without
+  `ACTION`). `notifications` alone still lists; with a subcommand its
+  `--limit` is refused (exit 2).
 - `open` and `launch` take paths (relative ones are made absolute
   against the working directory, `~` is the home folder), `file://`
   URIs, and `http`, `https` and `mailto` addresses.
@@ -206,7 +257,9 @@ Read (Read only):
   workspaces     Workspaces
   monitors       Monitors
   notifications  Recent notifications
-  files          Recent files and file search
+  files          Recent, starred and found files; star and reveal them
+  media          Media players: what plays; play, pause and skip
+  power          Battery and power mode; change the power mode
   wait           Wait for a window to appear or close
 Talk to the user (Read only):
   ask            Ask the user a question
@@ -219,6 +272,9 @@ Act (Control the desktop):
   workspace      Switch workspaces
   toggle         Turn a quick setting on or off
   set            Set volume or brightness
+  wallpaper      Set the background picture
+  accent         Set the accent color
+  dock           Pin or unpin an app in the dock
   notify         Show the user a notification
   clipboard      Read or set the clipboard (needs Clipboard access)
 Apps (Control apps):
@@ -265,7 +321,10 @@ always an object:
 | `workspaces` | `{"workspaces": [Workspace...]}` |
 | `monitors` | `{"monitors": [Monitor...]}` |
 | `notifications` | `{"notifications": [Notification...]}` |
-| `files recent`, `files search` | `{"files": [File...]}` |
+| `files recent`, `files search`, `files starred` | `{"files": [File...]}` |
+| `media` | `{"players": [Media player...]}` |
+| `power` | the Power record |
+| `wallpaper`, `accent`, `power mode`, `files star`, `files unstar`, `dock pin`, `dock unpin` | the Change record |
 | `wait window` | the Window record |
 | `wait closed` | `{}` |
 | `ask` | `{"answer": "<text>", "choice": <index or -1>}` |
@@ -275,7 +334,7 @@ always an object:
 | `clipboard get` | the Clipboard record (`data` in base64; with `--output`, `"path"` instead of `"text"` or `"data"`) |
 | `clipboard types` | `{"types": [...]}` |
 | `notify` | `{"id": <id>}` |
-| `toggle` | `{"name": "<NAME>", "on": true\|false}` (the state it set) |
+| `toggle` | `{"name": "<NAME>", "on": true\|false}` (the state it set; with `--until`, also `"until": <Unix seconds>`) |
 | `a11y tree` | `{"window": <id>, "app-id": "<id>", "truncated": true\|false, "root": <node>}`: the shell's flat list as a tree, each Accessible node with `children` (a list of nodes) and without `parent` |
 | `a11y find` | `{"nodes": [Accessible node...]}` |
 | `a11y wait` | the Accessible node found |
@@ -317,7 +376,7 @@ the message on standard error.
 | 16 | `remote` | `Remote` | Agent access from remote sessions is turned off (Settings › Privacy & Security › Agent Access) |
 | 17 | `sandboxed` | `Sandboxed` | Agent access is not available to sandboxed apps |
 | 18 | `needs-confirmation` | `NeedsConfirmation` | This action needs the user's confirmation; run it without --no-ask to ask |
-| 19 | `feature-off` | `FeatureOff` | Clipboard access is turned off (Settings › Privacy & Security › Agent Access) |
+| 19 | `feature-off` | `FeatureOff` | Clipboard access is turned off (Settings › Privacy & Security › Agent Access) (`clipboard`) / Notification access is turned off (Settings › Privacy & Security › Agent Access) (`notifications`) |
 | 20 | `no` | `Cancelled`, or `confirm` answered no | The user said no / The user cancelled the question / Stopped: the user took over the keyboard or pointer (`user-input`) / The user is using the keyboard or pointer; try again in a moment (`cooldown`) / The user stopped the agent (`stopped`) |
 | 21 | `timed-out` | `TimedOut` | Timed out |
 | 22 | `not-found` | `NotFound` | No such window / app / item: {what} |
@@ -335,7 +394,8 @@ messages, by the error's message token: `app:<id>`: “{app name} is
 excluded from agent access”; `settings`: “Agents can't use Settings”;
 `password-field`: “Agents can't use password fields”; `system-prompt`:
 “Agents can't act while a system prompt is open”; `shell`: “Agents
-can't act on the shell itself”. `confirm` answered no exits 20 with
+can't act on the shell itself”; `private-file`: “Agents can't use files
+in hidden or system folders”. `confirm` answered no exits 20 with
 `{"yes": false}` as its output and no error object; a dismissed
 question is the error `no` with the message “The user cancelled the
 question”. Messages are translated in text output; JSON `code` values

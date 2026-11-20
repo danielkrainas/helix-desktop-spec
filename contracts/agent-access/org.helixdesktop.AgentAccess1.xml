@@ -3,10 +3,11 @@
 <!--
   org.helixdesktop.AgentAccess1 — Helix extension (CC0). The Settings
   page's view of Agent Access: list agents and take access away, list and
-  cancel agents' reminders. Served by
+  cancel agents' reminders, list and undo agents' changes. Served by
   the shell on its main connection as org.gnome.Shell, object
   /org/helixdesktop/Agent1. Only the Settings app may call it (README.md,
-  "Who may manage grants"). No method grants or widens access.
+  "Who may manage grants"). No method grants or widens access; Undo only
+  puts back a value the user had before an agent changed it.
 -->
 <node>
   <interface name="org.helixdesktop.AgentAccess1">
@@ -34,8 +35,26 @@
     <method name="CancelReminder">
       <arg type="s" name="id" direction="in"/>
     </method>
+    <!-- Batch 2 (helixdesktop/desktop#157); README.md, "Changes, undo
+         and restoring". Every agent change that can still be undone (the
+         latest of its setting, still at the value the agent set), newest
+         first: id, agent, executable, name, time, setting, target, old,
+         new, and until while a restore is pending. -->
+    <method name="ListChanges">
+      <arg type="aa{sv}" name="changes" direction="out"/>
+    </method>
+    <!-- Puts the change's old value back and drops its pending restore.
+         Errors (org.helixdesktop.Agent1.Error.): NotFound (unknown,
+         pruned, superseded, already undone or restored); Failed "changed"
+         (the setting no longer has the agent's value) or "unavailable"
+         (the old value cannot be set any more). -->
+    <method name="Undo">
+      <arg type="s" name="id" direction="in"/>
+    </method>
     <signal name="AgentsChanged"/>
     <!-- A reminder was added, shown or cancelled. -->
     <signal name="RemindersChanged"/>
+    <!-- What ListChanges gives may have changed (batch 2). -->
+    <signal name="ChangesChanged"/>
   </interface>
 </node>

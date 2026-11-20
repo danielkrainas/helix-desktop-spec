@@ -190,7 +190,10 @@ oldest beyond that is closed (reason 1).
 Clicking the clock in the panel opens the list below it, newest first:
 each notification's icon, app, summary and up to two lines of body, with a
 × that dismisses it (reason 2). Clicking a notification acts as clicking
-its banner.
+its banner. Agents with Agent Access can dismiss a listed notification
+and press its buttons the same way (`DismissNotification`,
+`NotificationAction`; `contracts/agent-access/README.md`,
+"Notifications, files and monitors").
 
 Banners and list rows say when the notification arrived (or was last
 replaced), after the app's name: "Chat · now". *GNOME does not document

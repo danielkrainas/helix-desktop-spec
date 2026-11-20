@@ -447,7 +447,8 @@ canceled (response 1). For any other handle it fails with
   URI is written to `org.gnome.desktop.background` `picture-uri` and
   `picture-uri-dark`, and/or `org.gnome.desktop.screensaver`
   `picture-uri`. A `picture-options` of `none` becomes `zoom` so the
-  picture shows.
+  picture shows. Agent Access's `SetWallpaper` copies the same way
+  (`contracts/agent-access/README.md`, "Changing settings").
 
 ## Email (`org.freedesktop.impl.portal.Email`)
 

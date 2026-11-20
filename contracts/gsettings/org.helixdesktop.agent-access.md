@@ -25,8 +25,8 @@ Path: `/org/helixdesktop/agent-access/`
 
 - `enabled`: the master switch. Off, the shell refuses every agent call
   except `GetStatus` (error `AccessOff`). Turning it off also ends every
-  session grant, stops agents' input at once and forgets this
-  session's denials; remembered
+  session grant, stops agents' input at once, puts back agents'
+  temporary changes (`until`) and forgets this session's denials; remembered
   (*Always allow*) grants are kept for when it is turned on again.
 - `access-level`: the most an agent may be granted, one of
   `read-only`, `desktop`, `apps`, `screen-and-input` (the schema's
@@ -41,8 +41,10 @@ Path: `/org/helixdesktop/agent-access/`
   `remember` also offers *Always allow*, and remembered agents are not
   asked. Under `ask`, remembered grants are ignored but kept (Settings
   still lists them). An unknown value reads as `ask`.
-- `notifications`: agents may read notification titles and bodies. Off,
-  `ListNotifications` gives only each notification's app and time.
+- `notifications`: agents may read notification titles, bodies and
+  button labels, and press notifications' buttons (`NotificationAction`).
+  Off, `ListNotifications` gives only each notification's app and time,
+  and `NotificationAction` fails with `FeatureOff`.
 - `clipboard`: agents may read (*Read only*) and set (*Control the
   desktop*) the clipboard, and use apps' copy, cut and paste actions
   (*Control apps*). Off, the clipboard methods and those actions fail

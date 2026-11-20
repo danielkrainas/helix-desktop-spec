@@ -64,7 +64,8 @@ full-text flags changed. So Helix opens it like this:
    it, a boolean with at most one value. Anything else (missing, another
    domain, range or cardinality) turns stars **off**: none are shown and
    nothing is written.
-3. **Writing** (Helix Files only) needs both of these; otherwise stars
+3. **Writing** (Helix Files, and the shell for Agent Access's
+   `StarFile`) needs both of these; otherwise stars
    are **read-only**:
    - the stored schema version (`nautilus: nrl:lastModified`) is the one
      above (a newer Nautilus may mean more than this check sees);
@@ -80,7 +81,8 @@ full-text flags changed. So Helix opens it like this:
    (only if it is the version above), else with the same schema written
    out by Helix (the same terms; comments of its own). Nautilus opens
    such a store with its own ontology and changes nothing but the
-   comments. The file chooser never creates it.
+   comments. The shell creates it the same way for Agent Access's
+   `StarFile`; the file chooser never creates it.
 
 The chooser opens the store read-only for each listing. It shows the
 Starred place (after Recent, when Recent is offered) while `meta.db`
@@ -142,3 +144,12 @@ module, with Helix readers alongside:
   so a restored file is still starred.
 - Not yet: undo for stars, a clickable star in the list, and search in
   Starred (helixdesktop/desktop#155).
+
+## Agent Access
+
+The shell reads the stars for agents (`StarredFiles`, opening the store
+read-only as the file chooser does) and, from batch 2, stars and unstars
+files for them (`StarFile`), writing as Helix Files does: under the same
+conditions (step 3), and creating a missing store as in step 4. See
+`contracts/agent-access/README.md`, "Media, power and stars" and
+"Changing settings".

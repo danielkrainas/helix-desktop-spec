@@ -56,6 +56,24 @@
       <arg type="a{sv}" name="options" direction="in"/>
       <arg type="aa{sv}" name="files" direction="out"/>
     </method>
+    <!-- Scoped actions, batch 1: Read only (helixdesktop/desktop#156);
+         README.md, "Media, power and stars". StarredFiles returns File
+         records of the stars GNOME Files and Helix Files share ([] when
+         there are none to read); GetMedia returns Media player records,
+         never excluded apps' players; GetPower returns the Power record,
+         leaving out what the computer does not have. -->
+    <method name="StarredFiles">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="files" direction="out"/>
+    </method>
+    <method name="GetMedia">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="aa{sv}" name="players" direction="out"/>
+    </method>
+    <method name="GetPower">
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="power" direction="out"/>
+    </method>
     <method name="WaitForWindow">
       <arg type="a{sv}" name="match" direction="in"/>
       <arg type="u" name="timeout_ms" direction="in"/>
@@ -98,7 +116,10 @@
     <!-- Control the desktop (helixdesktop/desktop#147); options and
          sensitivity in README.md, "Control the desktop methods".
          WindowAction "close" and SetToggle "wifi" / "airplane-mode" are
-         sensitive actions. -->
+         sensitive actions. From batch 2 (helixdesktop/desktop#157),
+         WindowAction has "to-monitor" (option monitor, s) and SetToggle
+         takes until (x, Unix seconds; README.md, "Changes, undo and
+         restoring"); SetToggle's reply stays empty. -->
     <method name="Open">
       <arg type="s" name="uri" direction="in"/>
       <arg type="a{sv}" name="options" direction="in"/>
@@ -132,6 +153,71 @@
       <arg type="s" name="body" direction="in"/>
       <arg type="a{sv}" name="options" direction="in"/>
       <arg type="u" name="id" direction="out"/>
+    </method>
+
+    <!-- Scoped actions, batch 1: Control the desktop
+         (helixdesktop/desktop#156); README.md, "Media, power and
+         stars". Play, pause, skip, stop or seek a player by its id from
+         GetMedia ("" for the active one); never an excluded app's. -->
+    <method name="MediaControl">
+      <arg type="s" name="player" direction="in"/>
+      <arg type="s" name="action" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+
+    <!-- Scoped actions, batch 2: Control the desktop
+         (helixdesktop/desktop#157); README.md, "Changing settings" and
+         "Changes, undo and restoring". Each changes one thing and returns
+         a Change record (changed, id, name, target, old, new, until).
+         SetWallpaper, SetAccent and SetPowerMode take until (x, Unix
+         seconds): the old value is put back then, or earlier when the
+         user stops the agent. -->
+    <method name="SetWallpaper">
+      <arg type="s" name="uri" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="change" direction="out"/>
+    </method>
+    <method name="SetAccent">
+      <arg type="s" name="name" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="change" direction="out"/>
+    </method>
+    <method name="SetPowerMode">
+      <arg type="s" name="profile" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="change" direction="out"/>
+    </method>
+    <method name="StarFile">
+      <arg type="s" name="uri" direction="in"/>
+      <arg type="b" name="starred" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="change" direction="out"/>
+    </method>
+    <method name="SetFavorite">
+      <arg type="s" name="app_id" direction="in"/>
+      <arg type="b" name="pinned" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+      <arg type="a{sv}" name="change" direction="out"/>
+    </method>
+
+    <!-- Scoped actions, batch 2 (helixdesktop/desktop#157); README.md,
+         "Notifications, files and monitors". Only notifications
+         ListNotifications gives this agent; NotificationAction needs the
+         notifications switch and is sensitive by the button's label.
+         RevealFile shows a file in the file manager
+         (org.freedesktop.FileManager1.ShowItems). -->
+    <method name="DismissNotification">
+      <arg type="u" name="id" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="NotificationAction">
+      <arg type="u" name="id" direction="in"/>
+      <arg type="s" name="action" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
+    </method>
+    <method name="RevealFile">
+      <arg type="s" name="uri" direction="in"/>
+      <arg type="a{sv}" name="options" direction="in"/>
     </method>
 
     <!-- Clipboard: behind the `clipboard` switch (helixdesktop/desktop#151);

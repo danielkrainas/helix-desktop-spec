@@ -43,8 +43,8 @@ outright.
 
 | Level | Value in `access-level` | Allows |
 |-------|-------------------------|--------|
-| Read only | `read-only` | reading state (windows, apps, workspaces, monitors, notifications, recent files, file search), waiting for windows, and talking to the user (ask, confirm, remind) |
-| Control the desktop | `desktop` | also launching apps, opening files and URLs, managing windows and workspaces, quick settings toggles, volume and brightness, notifications from the agent, setting the clipboard |
+| Read only | `read-only` | reading state (windows, apps, workspaces, monitors, notifications, recent and starred files, file search, media players, power), waiting for windows, and talking to the user (ask, confirm, remind) |
+| Control the desktop | `desktop` | also launching apps, opening and revealing files and URLs, managing windows and workspaces, quick settings toggles, volume and brightness, controlling media players, the background, accent color and power mode, starring files, the dock's favorites, dismissing notifications and pressing their buttons, notifications from the agent, setting the clipboard |
 | Control apps | `apps` | also reading and acting on apps' accessibility trees |
 | Screen and input | `screen-and-input` | also screenshots and synthetic pointer and keyboard input |
 
@@ -71,6 +71,9 @@ false: the agent marks this call sensitive).
 | `ListWindows`, `ListApps`, `ListWorkspaces`, `ListMonitors` | read-only | | |
 | `ListNotifications` | read-only | | contents only with `notifications` |
 | `RecentFiles`, `SearchFiles` | read-only | | |
+| `StarredFiles` | read-only | | the stars GNOME Files and Helix Files share; empty when there are none to read |
+| `GetMedia` | read-only | | never excluded apps' players |
+| `GetPower` | read-only | | what is missing is left out, never an error |
 | `WaitForWindow`, `WaitForWindowClosed` | read-only | | |
 | `Ask`, `Confirm` | read-only | | a dialog only the user at the machine answers |
 | `AddReminder`, `ListReminders`, `CancelReminder` | read-only | | an agent sees only its own reminders |
@@ -78,8 +81,17 @@ false: the agent marks this call sensitive).
 | `Open`, `Launch` | desktop | when marked | not excluded apps (also as the app that would open a file) |
 | `WindowAction` | desktop | `close`, or when marked | not excluded apps' windows |
 | `SwitchWorkspace` | desktop | when marked | |
-| `SetToggle` | desktop | `wifi`, `airplane-mode`, or when marked | |
+| `SetToggle` | desktop | `wifi`, `airplane-mode`, or when marked | takes `until` (see "Changes, undo and restoring") |
 | `SetValue` | desktop | when marked | |
+| `MediaControl` | desktop | when marked | not excluded apps' players |
+| `SetWallpaper` | desktop | when marked | a local picture, copied; not from hidden or system folders; returns a Change; takes `until` |
+| `SetAccent` | desktop | when marked | an accent color Settings offers; returns a Change; takes `until` |
+| `SetPowerMode` | desktop | when marked | a power profile the computer offers; returns a Change; takes `until` |
+| `StarFile` | desktop | when marked | a file in the home folder; returns a Change |
+| `SetFavorite` | desktop | when marked | an app the app grid shows; not excluded apps; returns a Change |
+| `RevealFile` | desktop | when marked | not when the file manager is an excluded app |
+| `DismissNotification` | desktop | when marked | only notifications `ListNotifications` gives this agent |
+| `NotificationAction` | desktop | by the button's label (as `A11yAction`'s names), or when marked | needs `notifications`; only notifications `ListNotifications` gives this agent |
 | `Notify` | desktop | when marked | labelled with the agent; at most 5 a minute |
 | `SetClipboard` | desktop | when marked | needs `clipboard`; the shell holds the copy for the agent |
 | `A11yTree`, `A11yFind` | apps | | not excluded apps' windows, nor while a system prompt is shown |
@@ -91,7 +103,17 @@ false: the agent marks this call sensitive).
 The shell implemented the methods in stages (helixdesktop/desktop#146
 to #151); a shell without a method has it absent from introspection and
 answers `org.freedesktop.DBus.Error.UnknownMethod`. `GetStatus` and
-`RequestAccess` are always there.
+`RequestAccess` are always there. The scoped actions come in two more
+stages: batch 1, reading and media (`GetMedia`, `GetPower`,
+`StarredFiles`, `MediaControl`; helixdesktop/desktop#156), and batch 2,
+changes (`SetWallpaper`, `SetAccent`, `SetPowerMode`, `SetToggle`'s
+`until`, `DismissNotification`, `NotificationAction`, `RevealFile`,
+`StarFile`, `SetFavorite`, `WindowAction`'s `to-monitor`, and Settings'
+`ListChanges` and `Undo`; helixdesktop/desktop#157). A shell without
+one of these methods answers `UnknownMethod` in the same way. A shell
+without batch 2 answers `NotSupported` for `to-monitor`, but ignores an
+`until` it does not know (the change then stays): an agent that relies
+on `until` checks that the shell has `SetWallpaper` (introspection) first.
 
 `GetStatus()` and `RequestAccess(level, options)` return the caller's
 status (`a{sv}`):
@@ -150,10 +172,55 @@ added; clients ignore keys they do not know):
   is absent without NetworkManager, `airplane-mode` without
   NetworkManager and Bluetooth, `volume` and `muted` without a sound
   server, `brightness` without a controllable screen. `focused-window`
-  is 0 when the focused window is an excluded app's.
+  is 0 when the focused window is an excluded app's. From batch 2,
+  `accent` (`s`, `org.gnome.desktop.interface` `accent-color`, as
+  `SetAccent` names it).
 - **Notification**: `id` (`u`), `app-id` (`s`), `app-name` (`s`),
   `time` (`x`, Unix seconds), and with `notifications` on, `summary` and
-  `body` (`s`); without it, `redacted` (`b`, true).
+  `body` (`s`); without it, `redacted` (`b`, true). From batch 2, with
+  `notifications` on only: `actions` (`aa{sv}`, the notification's
+  buttons in order, each `id` (`s`, the action's key) and `label`
+  (`s`); absent when it has none) and `default-action` (`b`, true when
+  clicking the notification itself does something). Without the switch
+  neither is there: labels say as much as a summary ("Reply to Anna").
+- **Media player** (`GetMedia`): `id` (`s`, the player's bus name
+  without `org.mpris.MediaPlayer2.`: `vlc`, `firefox.instance_1_42`),
+  `app-id` (`s`, its `DesktopEntry`; absent when it gives none), `name`
+  (`s`, its `Identity`), `status` (`s`: `playing`, `paused` or
+  `stopped`), `active` (`b`: the player the playback keys control, see
+  `contracts/dbus/org.mpris.MediaPlayer2.Player.md`), and from its
+  `Metadata`, when it gives them: `title` (`s`), `artist` (`as`),
+  `album` (`s`), `length` (`d`, seconds); `position` (`d`, seconds;
+  absent when the player does not tell it); `can-play`, `can-pause`,
+  `can-go-next`, `can-go-previous`, `can-seek`, `can-control` (`b`, its
+  properties of those names).
+- **Power** (`GetPower`), each key only when the computer has it: from
+  UPower (`org.freedesktop.UPower`, system bus) `on-battery` (`b`), and
+  from its display device (`/org/freedesktop/UPower/devices/DisplayDevice`,
+  when `IsPresent` and its `Type` is battery): `percentage` (`d`,
+  0–100), `battery-state` (`s`: `charging`, `discharging`, `empty`,
+  `fully-charged`, `pending-charge`, `pending-discharge`; absent for
+  unknown), `time-to-empty`, `time-to-full` (`x`, seconds; absent when
+  UPower gives 0), `warning-level` (`s`: `none`, `low`, `critical`,
+  `action`); from power-profiles-daemon (as quick settings reads it,
+  `contracts/wayland/README.md`, "Quick settings") `power-profile` (`s`,
+  `ActiveProfile`) and `power-profiles` (`as`, the profiles of its
+  `Profiles`, in its order).
+- **Change** (what `SetWallpaper`, `SetAccent`, `SetPowerMode`,
+  `StarFile` and `SetFavorite` return; see "Changes, undo and
+  restoring"): `changed` (`b`: false when it already had that value, and
+  then nothing else but `name`, `target`, `old` and `new`), `id` (`s`,
+  16 hexadecimal digits: the change's id, as `change` in the activity
+  log), `name` (`s`: `wallpaper`, `accent`, `power-mode`, `star`,
+  `favorite`), `target` (`s`: for `star` the file's `file://` URI, for
+  `favorite` the app id; absent otherwise), `old` and `new` (the value
+  before and after: `s` for `wallpaper` (a `file://` URI), `accent` and
+  `power-mode`, `b` for `star` and `favorite`; for `wallpaper`,
+  `picture-uri`, the same before and after for `variant` `dark`), for
+  `wallpaper` also `old-dark` and `new-dark` (`s`, `picture-uri-dark`,
+  the same before and after for `light`; `""` when unset) and `old-fit`
+  and `new-fit` (`s`, `picture-options`), and `until` (`x`, Unix seconds: when it will be put back; only when
+  the call had `until` and something changed).
 - **File**: `uri` (`s`), `name` (`s`), `mime-type` (`s`), `modified`
   (`x`, last changed; for a recent item that is not a local file, when it
   was used), `size` (`t`, local files only), and from `RecentFiles`
@@ -182,8 +249,9 @@ added; clients ignore keys they do not know):
   the clipboard offers (see "Clipboard methods").
 
 The methods' own options and arguments are specified with their
-implementation (helixdesktop/desktop#146–#151) and listed in `cli.md`
-through the commands that use them.
+implementation (helixdesktop/desktop#146–#151, and for the scoped
+actions #156 and #157) and listed in `cli.md` through the commands
+that use them.
 
 ### Read only methods
 
@@ -201,6 +269,9 @@ fail with `InvalidArgs`.
 | `ListNotifications` | `limit` (`u`, default and most 50) | Notification records of the notification list, newest first |
 | `RecentFiles` | `limit` (`u`, 1–200, default 50), `type` (`s`, a MIME type or `major/*`) | File records, most recently used first |
 | `SearchFiles` | `query` (not empty); `since`, `until` (`x`, Unix seconds, compared with `modified`), `type` (`s`), `in` (`s`, an absolute folder path or `file://` URI, default the home folder; `NotFound` when it is no folder), `limit` (`u`, 1–200, default 50) | File records |
+| `StarredFiles` | `limit` (`u`, 1–200, default 50), `type` (`s`, as `RecentFiles`') | File records (without `used`), most recently modified first; `[]` when the store is missing, off or cannot be read (see "Media, power and stars") |
+| `GetMedia` | | Media player records: the active one first, then by bus name; `[]` when none runs |
+| `GetPower` | | the Power record; `{}` without UPower and power-profiles-daemon |
 | `WaitForWindow` | `match` holds `app`, `title`, `focused` as for `ListWindows` (and the common options); `timeout_ms` (0: no limit) | the Window record of the first matching window, at once when one is open; `TimedOut` |
 | `WaitForWindowClosed` | `window`; `timeout_ms` (0: no limit) | when the window is gone; `NotFound` when it is not open at the start, `TimedOut` |
 
@@ -255,17 +326,28 @@ Apps that do neither have no `document`.
 ### Control the desktop methods
 
 The options and arguments of the *Control the desktop* methods
-(helixdesktop/desktop#147), besides the common ones. Malformed values
-fail with `InvalidArgs`; none returns anything but `Notify`.
+(helixdesktop/desktop#147; the scoped actions #156 and #157),
+besides the common ones. Malformed values fail with `InvalidArgs`. Only
+`Notify` and the methods that return a Change (see "Records") return
+anything.
 
 | Method | Options and arguments | Does |
 |--------|----------------------|------|
 | `Open` | `uri`: an absolute path, a `file://` URI, or an `http`, `https` or `mailto` address; `app` (`s`, an app id: open it with that app) | opens it in its default app (see below); `NotFound` when the file does not exist or no app opens it |
 | `Launch` | `app_id` (with or without `.desktop`); `uris` as `Open`'s `uri` | starts an app the app grid shows, handing it `uris`; `NotFound` for other ids |
-| `WindowAction` | `window`; `action`: `focus`, `close`, `minimize`, `maximize`, `unmaximize`, `restore`, `fullscreen`, `unfullscreen`, `tile-left`, `tile-right`, `move` (options `x`, `y`, `i`), `resize` (`width`, `height`, `i`, at least 1), `to-workspace` (`workspace`, `u`) | acts on the window; `NotFound` for an unknown window or workspace, `NotSupported` for an unknown action |
+| `WindowAction` | `window`; `action`: `focus`, `close`, `minimize`, `maximize`, `unmaximize`, `restore`, `fullscreen`, `unfullscreen`, `tile-left`, `tile-right`, `move` (options `x`, `y`, `i`), `resize` (`width`, `height`, `i`, at least 1), `to-workspace` (`workspace`, `u`), `to-monitor` (`monitor`, `s`, a connector as `ListMonitors` gives it; batch 2) | acts on the window; `NotFound` for an unknown window, workspace or monitor, `NotSupported` for an unknown action |
 | `SwitchWorkspace` | `index` (from 0) | makes it the active workspace; `NotFound` when there is no such workspace |
-| `SetToggle` | `name`: `dark-style`, `do-not-disturb`, `night-light`, `wifi`, `airplane-mode`, `mute`; `on` | turns it on or off; `NotSupported` for other names and for what is not there (no NetworkManager, sound server…) |
+| `SetToggle` | `name`: `dark-style`, `do-not-disturb`, `night-light`, `wifi`, `airplane-mode`, `mute`; `on`; `until` (`x`, batch 2) | turns it on or off, until `until` when given; `NotSupported` for other names and for what is not there (no NetworkManager, sound server…) |
 | `SetValue` | `name`: `volume`, `brightness`; `value` (`d`, 0–1 as the State record has it; `volume` up to 1.5 with over-amplification on) | sets it; `NotSupported` as for `SetToggle` |
+| `MediaControl` | `player` (`s`, a Media player's `id`; `""`: the active one); `action`: `play`, `pause`, `play-pause`, `next`, `previous`, `stop`, `seek`; for `seek`, `offset` (`d`, seconds from where it is, may be negative) or `position` (`d`, seconds from the start), one of the two | asks the player to do it; `NotFound` when there is no such player (or none at all), `NotSupported` when the player cannot (below) |
+| `SetWallpaper` | `uri`: an absolute path or a `file://` URI; `variant` (`s`: `light`, `dark` or `both`, default `both`), `fit` (`s`: `zoom`, `scaled`, `centered`, `stretched`, `wallpaper`, `spanned`), `until` (`x`) | copies the picture and makes it the background; returns a Change. `NotFound` when the file does not exist, `NotSupported` for another scheme or a file that is not a picture (below), `Excluded` (`private-file`) for a file in a hidden or system folder |
+| `SetAccent` | `name`: `blue`, `teal`, `green`, `yellow`, `orange`, `red`, `pink`, `purple`, `slate`; `until` (`x`) | sets the accent color; returns a Change. `NotSupported` for other names |
+| `SetPowerMode` | `profile`: `power-saver`, `balanced`, `performance`; `until` (`x`) | makes it power-profiles-daemon's active profile; returns a Change. `NotSupported` without power-profiles-daemon, for a profile it does not offer, and for other names |
+| `StarFile` | `uri`: an absolute path or a `file://` URI; `starred` (`b`) | stars or unstars it; returns a Change. `NotFound` when the file does not exist, `NotSupported` for a file outside the home folder (or the home folder itself) and when stars cannot be written (below) |
+| `SetFavorite` | `app_id` (with or without `.desktop`); `pinned` (`b`) | adds the app to the dock's favorites (at the end) or takes it out; returns a Change. `NotFound` for an app the app grid does not show |
+| `RevealFile` | `uri`: an absolute path or a `file://` URI | shows it selected in the file manager; `NotFound` when it does not exist, `NotSupported` when no file manager serves `org.freedesktop.FileManager1` |
+| `DismissNotification` | `id` (`u`, a Notification's `id`) | dismisses it, as its × does; `NotFound` when `ListNotifications` would not give this agent that notification |
+| `NotificationAction` | `id` (`u`); `action` (`s`: one of its `actions`' `id`, or `default`: clicking the notification itself) | does what the user's click on that button does; `NotFound` for a notification as `DismissNotification`'s, or an action it does not have |
 | `Notify` | `title` (not empty), `body`; `icon` (`s`, a theme icon's name), `urgency` (`s`: `low` or `normal`, default `normal`) | shows a notification; returns its id (`u`) |
 
 - **Through the shell's own ways.** *Helix's choice:* the methods do
@@ -318,6 +400,256 @@ fail with `InvalidArgs`; none returns anything but `Notify`.
   holds them back like any app's) and have no app id. *Helix's choice:*
   an agent may show at most 5 in any minute; more fail with `Failed`
   until the minute is up.
+
+### Scoped actions
+
+The methods added after helixdesktop/desktop#151 are *scoped actions*: each has one fixed
+purpose and typed arguments, and fits an existing level. *Helix's
+choice:* there is no general settings writer and no passthrough to
+D-Bus or GSettings; a new switch is added only for an action that reads
+personal content (`NotificationAction` uses `notifications`). Every
+change returns the value it replaced, the activity log records the old
+and new values, and a change can be temporary (`until`) and undone from
+Settings ("Changes, undo and restoring"). Consent, the indicator,
+*Stop*, exclusions, `confirm-sensitive`, the remote-session rules and
+the activity log apply as to every method.
+
+### Media, power and stars
+
+Batch 1 (helixdesktop/desktop#156).
+
+- **Players** are the session bus's names starting with
+  `org.mpris.MediaPlayer2.` (`contracts/dbus/org.mpris.MediaPlayer2.Player.md`),
+  read when the call comes (each player has a second to answer;
+  players that do not are left out). `active` is the player the
+  playback keys control, by the same rule.
+- **Exclusions.** A player is an excluded app's (Settings' or one in
+  `excluded-apps`) when its `DesktopEntry` names that app, when the
+  process owning its bus name is that app's (by its other windows, its
+  program or its systemd unit, as for the *Control apps* methods), or,
+  without a `DesktopEntry`, when its `Identity` is that app's name.
+  `GetMedia` leaves such players out and never counts them; such a
+  player is never `active` for an agent (the next one by the rule is);
+  `MediaControl` naming one fails with `Excluded` (`app:<id>`,
+  `settings`). The player's `xesam:url` and art are never given.
+- **Media control** calls the player's `Play`, `Pause`, `PlayPause`,
+  `Stop`, `Next`, `Previous`, and for `seek` `Seek` (an `offset`, in
+  microseconds) or `SetPosition` (a `position`, with the track's
+  `mpris:trackid`). `NotSupported` when its `CanControl` is false, when
+  the property for the action (`CanPlay`, `CanPause`, `CanGoNext`,
+  `CanGoPrevious`, `CanSeek`) is false, for `position` without a
+  track id, and for an unknown action; `seek` with neither or both of
+  `offset` and `position` is `InvalidArgs`. The player is not waited
+  for: the call returns once it accepted the D-Bus call (3 seconds at
+  most, else `Failed`).
+- **Power** is read from the system bus when the call comes, as the
+  panel's battery and quick settings' Power Mode read it. Nothing is
+  started for it, and what is missing (no battery, no UPower, no
+  power-profiles-daemon) is left out of the record; `GetPower` itself
+  fails only with the policy's errors.
+- **Starred files** come from the store GNOME Files and Helix Files
+  share (`contracts/files/starred.md`), opened read-only for each call as
+  the file chooser opens it (helix-desktop's `crates/helix-settings`,
+  `stars.rs`). Only starred files inside the home folder that still
+  exist are given; `type` applies as for `RecentFiles`. A missing store,
+  one that is off, or one that cannot be read gives `[]`, not an error.
+
+### Changing settings
+
+Batch 2 (helixdesktop/desktop#157). Each method changes one thing,
+as Settings or quick settings changes it, and returns a Change (see
+"Records"; `SetToggle` keeps its empty reply, below).
+
+- **The background.** `SetWallpaper` takes a local file only. The shell
+  opens it once (following symlinks), and every check is of the file it
+  opened, whose real path is read from the open file: it must be a
+  regular file the user can read, at most 64 MiB, and a picture the
+  background draws (PNG, JPEG, WebP, JPEG XL or SVG, by its content,
+  read whole; not a slideshow XML): otherwise `NotSupported` ("not a
+  picture"). *Helix's choice* for where the file may be, by its real
+  path:
+  - in the home folder, when no folder below the home folder on its path,
+    and not the file itself, has a name starting with `.`; or anywhere
+    in `$XDG_DATA_HOME/backgrounds/`;
+  - in a system backgrounds folder: `<dir>/backgrounds/` for each
+    folder of `$XDG_DATA_DIRS` (`/usr/share/backgrounds/`…);
+  - in `/tmp/` or `/var/tmp/`, owned by the user;
+  - on a removable drive the user mounted (below `/media/<user>/` or
+    `/run/media/<user>/`).
+
+  Anything else (hidden folders such as `~/.config`, `~/.cache`,
+  `~/.var/app` or `~/.mozilla`, where apps keep private data; `/proc`,
+  `/run/user`, `/etc`, other users' homes) fails with `Excluded`
+  (`private-file`).
+- **The copy.** As the Wallpaper portal does
+  (`contracts/dbus/org.freedesktop.impl.portal.md`, "Wallpaper"), the
+  picture is copied from the opened file to
+  `$XDG_DATA_HOME/backgrounds/<YYYY-MM-DD-HH-MM-SS>-<original name>`
+  (mode 0600; a number is added before the extension when the name is
+  taken), so moving or deleting the original does not change the
+  background. A file already in `$XDG_DATA_HOME/backgrounds/` or a system
+  backgrounds folder is used where it is. The copy's `file://` URI is
+  written to `org.gnome.desktop.background` `picture-uri` (`light`),
+  `picture-uri-dark` (`dark`), or both (`both`); `fit` is written to
+  `picture-options`, and without `fit` a `picture-options` of `none`
+  becomes `zoom`, so the picture shows. The lock screen's picture is
+  not changed. Copies are not removed when the background changes again
+  (an undo may need them).
+- **The accent color** is `org.gnome.desktop.interface` `accent-color`,
+  one of the colors Settings' Appearance offers.
+- **The power mode** is set as quick settings sets it
+  (`contracts/wayland/README.md`, "Quick settings"): power-profiles-daemon's
+  `ActiveProfile`, only to a profile its `Profiles` lists.
+- **Stars.** `StarFile` writes the shared store as Helix Files does
+  (`contracts/files/starred.md`), for a file or folder inside the home
+  folder, by its `file://` URI (`g_file_get_uri`). It is
+  `NotSupported` when stars are off or read-only there (step 3 of
+  "Opening without changing Nautilus's database"). *Helix's choice:* a
+  missing store is created as Helix Files creates it (step 4), so
+  starring works for a user who never starred anything. A running GNOME
+  Files does not see the change until it restarts (helixdesktop/desktop#154).
+- **Favorites.** `SetFavorite` changes `org.gnome.shell` `favorite-apps`
+  (`<app id>.desktop`): pinning adds it at the end, unpinning takes it
+  out. Excluded apps and Settings fail with `Excluded`, as for `Launch`.
+- **`SetToggle`'s reply.** *Helix's choice:* it stays empty: an out
+  argument would change the method's signature, and callers with typed
+  proxies would break. Its old and new state are in the log (as `old`
+  and `new`), and `until` works as for the others.
+- **Limits.** *Helix's choice:* an agent may make at most 10 changes in
+  any minute with each of `SetWallpaper`, `SetAccent`, `SetPowerMode`,
+  `StarFile` and `SetFavorite`; more fail with `Failed` until the minute
+  is up. A call that changes nothing (`changed` false) does not count.
+
+### Notifications, files and monitors
+
+Batch 2 (helixdesktop/desktop#157).
+
+- **Which notifications.** `DismissNotification` and
+  `NotificationAction` take only an id that `ListNotifications` would
+  give this agent now (not an excluded app's, not one about an excluded
+  app's window); any other id, a gone one included, is `NotFound`, so an
+  agent learns nothing of notifications it cannot list.
+- **Dismissing** is the user's × in the notification list: the
+  notification goes away and its app is told it was dismissed
+  (`NotificationClosed` reason 2, or as `org.gtk.Notifications` and the
+  portal's notifications are told; `contracts/dbus/org.freedesktop.Notifications.md`).
+- **Pressing a button** needs the `notifications` switch (`FeatureOff`,
+  `notifications`): the record's `actions` are only there with it, and
+  their labels say what the notification says. It does exactly what the
+  user's click does: an activation token for the app, `ActionInvoked`
+  (or the app's action), and the notification closes unless it is
+  resident. `default` is clicking the notification itself, and is
+  `NotFound` when `default-action` is false.
+- **Which buttons are sensitive.** *Helix's choice:* as `A11yAction`'s
+  controls ("Control apps methods", "Sensitive actions"): a button whose
+  label has, as a whole word, one of the same words (reply, send, delete,
+  pay…, in English or the user's language), and `default` when the
+  notification has such a button, since apps often make the default
+  action the one that answers. With `confirm-sensitive` on, the prompt
+  names the label and the app, to the user only.
+- **Revealing** calls `org.freedesktop.FileManager1.ShowItems` on the
+  session bus with the file's `file://` URI and an activation token, as
+  the screenshot notification's "Show in Files" does. The file manager
+  is the app owning that name, else (when it is only activatable) the
+  default app for `inode/directory`; when that app is excluded (or
+  Settings), the call fails with `Excluded` before anything starts. The
+  file must exist; hidden files may be revealed (nothing is read).
+- **To another monitor.** `to-monitor` moves the window to that monitor
+  as Super+Shift+arrow does: a maximized, tiled or full-screen window
+  stays so there; a normal window keeps its place relative to the
+  monitor's top-left corner, made smaller when it does not fit, and is
+  kept on the monitor as for `move`. A window already there is left
+  alone. It fails (`Failed`) for a minimized window, and returns as the
+  other window actions do.
+
+### Changes, undo and restoring
+
+Batch 2 (helixdesktop/desktop#157). A *change* is a call of
+`SetWallpaper`, `SetAccent`, `SetPowerMode`, `SetToggle`, `StarFile` or
+`SetFavorite` that changed something. A call that finds the value
+already set changes nothing: it returns `changed` false, has no id, sets
+up no restore, and leaves any pending restore of that setting alone.
+
+- **The previous value is returned.** The Change record has the value
+  before (`old`) and after (`new`), and the log line the same, so an
+  agent or the user can put it back. Each change has an id, kept by the
+  shell with the values in `$XDG_STATE_HOME/helix/agent-changes.json`
+  (mode 0600, written whole through a temporary file, never through a
+  symlink, and a rename; its format is the shell's own). Records are
+  pruned with the log (`log-retention-days`), kept at most 500 (the
+  oldest dropped first), and all removed by `ClearLog`.
+- **What is one setting.** `wallpaper` (`picture-uri`,
+  `picture-uri-dark` and `picture-options` together), `accent`,
+  `power-mode`, each toggle by name, `star` per file and `favorite` per
+  app. Only a setting's latest change can be undone or restored: a
+  newer change of the same setting (by any agent) supersedes the older.
+- **Still what the agent set.** A change can be undone or restored only
+  while its setting still has the change's `new` value, read as
+  `GetState`, the stars and `favorite-apps` read it (for `wallpaper`,
+  the URIs and `picture-options` it wrote). When the user or anything
+  else changed it since, nothing is done: the user's later choice wins.
+- **Temporary changes (`until`).** `SetWallpaper`, `SetAccent`,
+  `SetPowerMode` and `SetToggle` take `until` (`x`, Unix seconds): when
+  it comes, the shell puts `old` back. *Helix's choice:* it must be at
+  least 10 seconds and at most 24 hours ahead (`InvalidArgs` otherwise);
+  `helix-agent` turns relative times (`+30m`) into it. The restore is
+  kept with the change, so it outlives the agent's process (a one-shot
+  `helix-agent toggle dark-style on --until +1h` exits at once). When
+  the sensitive-action prompt is shown, it says until when ("turn Wi-Fi
+  off until 15:30"). A
+  newer change of the same setting replaces the pending restore: with
+  its own `until`, the restore keeps the *first* change's `old` (the
+  user's value, not an agent's in between) and takes the new time; without
+  `until`, the pending restore is dropped (the agent made it lasting).
+- **When it runs out.** The shell checks pending restores at least every
+  30 seconds and when the clock jumps (resume from suspend), so a
+  restore is done within 30 seconds of its time, or at once on resume
+  when it fell due meanwhile. It is done whatever the grant, the lock
+  or `enabled` (putting the user's value back takes nothing away), in
+  the same way as the change was made.
+- **What ends it early.** *Helix's choice:*
+  - *Stop* in the indicator, Settings' `Revoke`, `Forget` and `StopAll`,
+    turning `enabled` off, and lowering `access-level` below `desktop`
+    restore the agent's (or every agent's) pending changes at once: the
+    user stopping an agent also takes back what it set for a while.
+  - The screen locking, and the agent's process ending, do not: the
+    change runs its time.
+  - When the shell stops normally (the session ends, or the shell is
+    restarted), it does the pending restores first. Those it could not
+    do (a crash, a power cut) are done at once when the shell next
+    starts, before it shows the desktop: the session that asked for
+    them has ended.
+  - Settings' `Undo` of the change, or *Restore now* in the indicator
+    (below), does it at once.
+- **What is not restored.** A restore is skipped (and logged, `cancelled`
+  with a reason) when the setting no longer has the agent's value
+  (`changed`), or when the old value cannot be set any more
+  (`unavailable`: power-profiles-daemon gone or no longer offering the
+  profile, the old picture file gone, NetworkManager or the sound server
+  gone). Toggles are restored as quick settings sets them, so turning
+  `airplane-mode` back off turns Wi-Fi and Bluetooth on, as quick
+  settings does.
+- **The indicator** shows while any agent has a pending restore (it
+  counts as active, whatever the time since its last call). Under the
+  agent, its menu has a row per pending change with the time left,
+  rounded up to the minute ("Accent Color back to Blue in 25 min",
+  "Dark Style back to off in 1 min", "Background back to the previous
+  picture in 2 h 5 min"; under a minute, "in less than a minute"), updated
+  each minute while the menu is open. Choosing a row is *Restore now*.
+  It names the setting as Settings and quick settings do, and the
+  value as Settings shows it.
+- **Undo from Settings.** Settings' activity log offers *Undo* on a
+  change that can still be undone (`AgentAccess1.ListChanges`), and
+  undoing calls `AgentAccess1.Undo` ("Who may manage grants"). Agents
+  undo their own changes by setting `old` again; there is no undo method
+  for agents.
+- **What cannot be undone.** `DismissNotification`,
+  `NotificationAction`, `RevealFile`, `MediaControl`, `Open`, `Launch`,
+  the window and workspace actions, `SetValue`, `Notify` and
+  `SetClipboard` are not changes in this sense: they have no id, no
+  `until` and no Undo (a pressed button, a dismissed notification and a
+  skipped track cannot be taken back; volume and brightness have their
+  own sliders).
 
 ### Talk to the user methods
 
@@ -763,16 +1095,16 @@ that token, for clients to word their own message.
 | `Remote` | the caller is in a remote session and `allow-remote` is off | |
 | `Locked` | the screen is locked (or locking) | |
 | `LevelTooLow` | the method needs a level above `access-level` | the level needed |
-| `FeatureOff` | the method needs a switch that is off | `clipboard` |
+| `FeatureOff` | the method needs a switch that is off | `clipboard`, `notifications` |
 | `NotGranted` | no grant, and the user could not be asked (`interactive` false, no consent prompt available, or the prompt went away unanswered) | |
 | `DeniedByUser` | the user denied access, or declined a sensitive action | |
-| `Excluded` | the target is excluded | `app:<app id>`, `settings`, `password-field`, `system-prompt` or `shell` |
+| `Excluded` | the target is excluded | `app:<app id>`, `settings`, `password-field`, `system-prompt`, `shell` or `private-file` (`SetWallpaper`: a file in a hidden or system folder) |
 | `NeedsConfirmation` | a sensitive action with `confirm-sensitive` on, and `interactive` false | |
 | `Cancelled` | the user dismissed `Ask` or `Confirm`, or the screen locked while it was shown or queued; `Input` stopped by the user | `Input`: `user-input` (the user's own input), `cooldown` (moments after), `stopped` (*Stop*, Settings, access off) |
 | `TimedOut` | a wait or question ran out of time | |
-| `NotFound` | no such window, app, node or reminder | |
+| `NotFound` | no such window, app, node, reminder, monitor, player, notification, action, file or change | |
 | `NotSupported` | a name or action this shell, this computer or the app does not support (e.g. a toggle without hardware, an app that does not let its focus be moved) | why, in English (e.g. `the app does not support this`); free text, not a token |
-| `Failed` | anything else | |
+| `Failed` | anything else | `changed` (`AgentAccess1.Undo`: the setting no longer has the value the agent set), `unavailable` (`Undo`: the old value cannot be set any more); otherwise free text |
 
 Arguments that are malformed fail with
 `org.freedesktop.DBus.Error.InvalidArgs` (after the policy check, so an
@@ -791,13 +1123,14 @@ error:
 4. **Remote.** In a remote session with `allow-remote` off: `Remote`.
 5. **Lock.** Screen locked or locking: `Locked`.
 6. **Level.** The method's level above `access-level`: `LevelTooLow`.
-7. **Switches.** `clipboard` off for the clipboard methods:
-   `FeatureOff`.
+7. **Switches.** `clipboard` off for the clipboard methods, and
+   `notifications` off for `NotificationAction`: `FeatureOff`.
 8. **Grant.** Denied this session: `DeniedByUser`. A grant covering the
    level: go on. Otherwise ask the user (see "Consent"), unless
    `interactive` is false (`NotGranted`); after the answer, steps 3–6
    are checked again.
-9. **Exclusions.** The target (window, app, node, the screen) is checked
+9. **Exclusions.** The target (window, app, node, the screen, a media
+   player, the file manager, a background file) is checked
    against the exclusions: `Excluded`.
 10. **Sensitive actions.** Sensitive, with `confirm-sensitive` on: ask
     the user (`NeedsConfirmation` when `interactive` is false;
@@ -918,13 +1251,15 @@ prompt waits and comes back after it.
 ## Indicator
 
 While any agent holds a grant and has made an allowed call in the last
-minute, or has a call running (a wait, a question, input), the top bar
+minute, or has a call running (a wait, a question, input), or has a
+temporary change waiting to be put back, the top bar
 shows an indicator, like the screen-sharing one (helixdesktop/desktop#143).
 It is mandatory, not a setting; it is not shown while the screen is
 locked. While an agent takes a screenshot or sends input, and for 3
 seconds after, it says an agent is controlling the screen (see "Screen
 and input methods"). Its menu lists the active agents (display name and executable,
-and the level) with *Stop* for each, and opens Settings at the Agent
+and the level) with *Stop* for each, their temporary changes with the
+time left (see "Changes, undo and restoring"), and opens Settings at the Agent
 Access page (`helix-settings-app agent-access`; GNOME's Settings, which
 has no such page, at Privacy).
 
@@ -932,7 +1267,8 @@ has no such page, at Privacy).
 suspends its remembered (*Always allow*) grant for the rest of the
 session, so the agent's next call asks the user again instead of going
 on (a *Stop* that an always-allowed agent could ignore would stop
-nothing). Answering the prompt again lifts the suspension; Settings'
+nothing). *Stop* also puts back at once what the agent changed with
+`until` and is still waiting to restore. Answering the prompt again lifts the suspension; Settings'
 `Revoke` also does. Unlike *Deny*, *Stop* does not refuse the agent's
 next request: it asks.
 
@@ -985,10 +1321,11 @@ Not settings; the user cannot turn them off:
 Excluded apps' windows are left out of `ListWindows`, `ListApps` and
 `WaitForWindow`, their notifications out of `ListNotifications`, and
 they are black in screenshots (and refused as a window screenshot or
-`Input`'s window); launching or opening them
-(also opening a file whose default app is one), any method naming
-one of their windows, and reading what they copied, fails with
-`Excluded`. App ids are compared
+`Input`'s window), their media players out of `GetMedia`; launching,
+opening or pinning them (also opening a file whose default app is one,
+and revealing a file when the file manager is one), any method naming
+one of their windows or players, and reading what they copied, fails
+with `Excluded`. App ids are compared
 without a `.desktop` suffix.
 
 ## Settings take effect at once
@@ -997,7 +1334,8 @@ The shell reads the settings on every call and watches them: turning
 `enabled` off ends every session grant and denial; lowering
 `access-level` narrows every grant; turning a switch off refuses the
 next call that needs it. Revoking an agent (Settings, or *Stop*)
-ends its grant at once. A call already waiting (a wait, a question, a
+ends its grant at once, and puts back its temporary changes ("Changes,
+undo and restoring"). A call already waiting (a wait, a question, a
 prompt) when its agent loses access ends with the error the agent would
 now get; a question the lock closed ends `Cancelled` ("Talk to the user
 methods").
@@ -1010,8 +1348,9 @@ session's user, and its executable is `helix-settings-app` in the
 directory of the shell's own executable or in `/usr/bin`; any other
 caller gets `org.freedesktop.DBus.Error.AccessDenied`. That interface
 has no method that grants or widens access, so a program passing as
-Settings could only take access away, list agents or clear the log;
-grants come only from the consent prompt.
+Settings could only take access away, list agents, clear the log, or
+put a setting back to the value it had before an agent changed it
+(`Undo`); grants come only from the consent prompt.
 
 - `ListAgents()`: every agent with a grant or a denial this session, or
   a remembered grant: `agent` (`s`, id), `executable` (`s`), `name`
@@ -1031,6 +1370,27 @@ grants come only from the consent prompt.
 - `CancelReminder(id)`: cancels any agent's reminder.
 - `RemindersChanged` is emitted when a reminder is added, shown or
   cancelled.
+- `ListChanges()` (batch 2): every change that can be undone now ("Changes,
+  undo and restoring": the latest of its setting, which still has the
+  value the agent set), newest first: `id` (`s`), `agent` (`s`),
+  `executable` (`s`), `name` (`s`, the display name), `time` (`x`),
+  `setting` (`s`, the Change's `name`), `target` (`s`, as the Change's),
+  `old`, `new` (`v`), for `wallpaper` `old-dark`, `new-dark`, `old-fit`,
+  `new-fit`, and `until` (`x`) while a restore is pending. Settings
+  shows *Undo* on the log lines whose `change` is listed.
+- `Undo(id)` (batch 2): puts that change's `old` back, as a restore
+  does, and drops its pending restore. It works whatever `enabled`,
+  the level and the grants are (the user taking a change back needs no
+  agent access). It fails with `org.helixdesktop.Agent1.Error.NotFound`
+  for an id that is unknown, pruned, superseded by a newer change of
+  the same setting, already undone or already restored, with
+  `org.helixdesktop.Agent1.Error.Failed` `changed` when the setting no
+  longer has the value the agent set (nothing is done), and with
+  `Failed` `unavailable` when the old value cannot be set any more.
+- `ChangesChanged` (batch 2) is emitted when the list `ListChanges`
+  gives may have changed: a change made, undone, restored or superseded,
+  and when the setting changes under a listed change (the shell watches
+  the settings it lists).
 
 Unknown agent ids are not an error (nothing to take away).
 
@@ -1039,7 +1399,8 @@ Unknown agent ids are not an error (nothing to take away).
 The shell records every `Agent1` call except `GetStatus`
 (helixdesktop/desktop#144), refused calls included, and what the user
 did about agents: consent-prompt and sensitive-action-prompt answers,
-and *Stop* in the indicator. Settings reads the log directly (*View
+and *Stop* in the indicator; and the temporary changes the shell put
+back. Settings reads the log directly (*View
 Activity*) and clears it with `ClearLog`; `helix-agent log` reads it for
 the user.
 
@@ -1074,7 +1435,7 @@ ignore keys they do not know; keys may be added):
 | `agent` | string | The agent's id (see "Who is calling"); `""` when the caller could not be identified (e.g. sandboxed: then the caller's executable when it is the user's process, else `""`). |
 | `name` | string | Its display name, `""` for none. |
 | `method` | string | The `Agent1` method; or one of the *events* below. |
-| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for `GetClipboard`, the app id of the app the content came from, when known; for `Screenshot`, `screen`, `monitor:<connector>` or the window; for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
+| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for `GetClipboard`, the app id of the app the content came from, when known; for `Screenshot`, `screen`, `monitor:<connector>` or the window; for Settings' `Revoke` and `Forget`, the agent's id; a media player as `player:<id>` and, when known, ` (<app id>)`; a notification as `notification:<id>` and, when known, ` (<app id>)`; a changed setting by its Change `name` (`wallpaper`, `accent`, `power-mode`), a starred file by its URI, a favorite by its app id; for `WindowAction` `to-monitor`, the window. Never a window title, a track's title or a notification's text. Control characters are removed and it is cut at 256 characters. |
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
 | `reason` | string | For a `refused:<Error>` or `cancelled` call: why, when the shell knows more than the error's name, as one token of the fixed vocabulary below. Absent otherwise (always for `allowed`). |
@@ -1088,11 +1449,17 @@ ignore keys they do not know; keys may be added):
 | `event-count`, `done-count` | integer | `Input`: how many events it had; how many steps (moves, presses, releases, texts, waits) were carried out. |
 | `move-count`, `click-count`, `button-count`, `scroll-count`, `key-count`, `shortcut-count` | integer | `Input`: how many of each kind (absent for none); clicks counted one by one, `button-count` for `down`/`up` buttons, `key-count` for keys without Ctrl, Alt, Super or AltGr, `shortcut-count` for combinations with them. |
 | `uri-count` | integer | `Launch`: how many files or addresses it handed the app (absent for none). |
-| `action` | string | `WindowAction`: the action (`tile-left`, `close`); `A11yAction`: the action when it is a common one (`click`, `activate`, `toggle`, `default`, `focus`, `select`, `window.close`, `clipboard.copy`…), else `other` (apps name their actions); `A11ySetValue`: `set-text` or `set-value`; a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
+| `action` | string | `WindowAction`: the action (`tile-left`, `close`, `to-monitor`); `MediaControl`: the action (`play-pause`, `seek`); `NotificationAction`: `default` or `button` (never the button's key or label); `A11yAction`: the action when it is a common one (`click`, `activate`, `toggle`, `default`, `focus`, `select`, `window.close`, `clipboard.copy`…), else `other` (apps name their actions); `A11ySetValue`: `set-text` or `set-value`; a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
 | `role` | string | `A11yAction`, `A11ySetValue`: the role of the node acted on (`button`, `password text`), also when refused; `A11yFind`: the role looked for. |
 | `node-count` | integer | `A11yTree`: how many nodes it returned; `A11yFind`: how many matched. |
 | `hidden-count` | integer | `A11yTree`, `A11yFind`: how many of the nodes returned had their text withheld (`read-text-fields` off); absent for none. Never which. |
 | `state` | string | `SetToggle`: `on` or `off`. |
+| `change` | string | A change (batch 2, "Changes, undo and restoring"): its id, 16 hexadecimal digits, as the Change record's `id`; also on its `Restore` and `Undo` lines. Absent when nothing changed. |
+| `old`, `new` | string | A change, a `Restore` or an `Undo`: the value before and after it, as text: a picture's `file://` URI (`wallpaper`, `picture-uri`), an accent color's or power profile's name, `on` or `off` for toggles, stars (`on`: starred) and favorites (`on`: pinned). Also on a call that changed nothing (then equal, and no `change`); absent on refused and failed calls. |
+| `old-dark`, `new-dark`, `old-fit`, `new-fit` | string | `SetWallpaper` (and its `Restore`, `Undo`): `picture-uri-dark` and `picture-options` before and after. |
+| `variant` | string | `SetWallpaper`: `light`, `dark` or `both`. |
+| `restore-at` | integer | A change with `until`: when it will be put back, Unix seconds. (Not `until`, which is the coalesced refusals' key.) |
+| `cause` | string | `Restore`: why it was put back: `expired` (its `until` came), `stopped` (*Stop*, Settings' `Revoke`, `Forget` or `StopAll`, `enabled` turned off, `access-level` lowered), `session-ended` (the shell stopped, or restored at its next start), `restore-now` (the indicator's row). |
 | `mime-type` | string | `GetClipboard`, `SetClipboard`: the type read or set as a common kind (`text/plain` for every plain text type, `text/html`, `text/uri-list`, `image/png`, `image/jpeg`, `image/gif`, `image/svg+xml`, `application/pdf`, `x-kde-passwordManagerHint`), else `other`. |
 | `data-length` | integer | `GetClipboard`: how many bytes it returned; `SetClipboard`: how many the agent sent. |
 | `grant` | string | Consent prompts: `session` or `always`. |
@@ -1122,10 +1489,14 @@ existed have none). Never anything else from the error's message:
 | `refused:Excluded` | `shell` | The shell's own UI: its windows, or clipboard content it set. |
 | `refused:Excluded` | `settings` | Settings: its app id, its windows, an app or handler that runs it. |
 | `refused:Excluded` | `app` | An app the user excluded (`excluded-apps`). Only `app`: the error's `app:<id>` is not repeated; `target` says what the call acted on (the app id when that is what it named). |
+| `refused:Excluded` | `private-file` | `SetWallpaper`: the file is in a hidden or system folder. |
 | `refused:FeatureOff` | `clipboard` | The `clipboard` switch was off. |
+| `refused:FeatureOff` | `notifications` | `NotificationAction`: the `notifications` switch was off. |
 | `cancelled` | `user-input` | `Input`: the user used the keyboard or pointer during the run. |
 | `cancelled` | `cooldown` | `Input`: the user had just used the keyboard or pointer, so it did not start or go on. |
 | `cancelled` | `stopped` | `Input`: stopped by *Stop* in the indicator, Settings' *Revoke*, *Forget* or *Stop all*, or Agent Access being turned off. |
+| `cancelled` | `changed` | `Restore`: the setting no longer had the agent's value, so it was left as it is. |
+| `cancelled` | `unavailable` | `Restore`: the old value could not be set any more (the profile, the picture or the device is gone). |
 
 The other refusals have no `reason`: the error's name says it
 (`LevelTooLow`'s level is `level`). A dismissed question, prompt or
@@ -1149,6 +1520,12 @@ Events (not `Agent1` methods; none of them is a method name):
   no `level`.
 - `LogFull`: written once when a day file reaches a cap (below), with
   `agent` and `name` `""`.
+- `Restore` (batch 2): the shell put back a temporary change, or did
+  not (`cancelled` with `changed` or `unavailable`); `agent` and `name`
+  the agent that made it, `target` and `change` the change's, `old` the
+  value the agent had set, `new` the value put back, `cause`, no
+  `level`. A change put back at the next start is logged then, with that
+  time.
 
 `AgentAccess1` (Settings) calls that take access away or clear the log
 are recorded, with `agent` the Settings executable, `name` `""`, `method`
@@ -1157,11 +1534,15 @@ the line says what the user asked for):
 
 - `Revoke`, `Forget`: `target` the agent's id as Settings gave it.
 - `CancelReminder`: `target` `reminder:<id>` as Settings gave it.
+- `Undo` (batch 2): `change` the id as Settings gave it, and when the
+  change is known its `target`, `old` (the value the agent had set) and
+  `new` (the value put back); `error` `NotFound` or `Failed` when it was
+  not done (as for an `Agent1` call that failed).
 - `StopAll`: no `target`.
 - `ClearLog`: no `target`; written after the files are removed (so a
   cleared log says it was cleared).
 
-`ListAgents` and `ListReminders` are not recorded. Calls to `AgentAccess1` that are refused
+`ListAgents`, `ListReminders` and `ListChanges` are not recorded. Calls to `AgentAccess1` that are refused
 (`AccessDenied`, a program other than Settings) are recorded, with the
 method name.
 
@@ -1189,6 +1570,13 @@ Examples:
 {"time":1795082470,"agent":"/usr/bin/helix-settings-app","name":"","method":"Revoke","target":"/usr/bin/node /home/me/agent.js","outcome":"allowed"}
 {"time":1795082471,"agent":"/usr/bin/helix-settings-app","name":"","method":"StopAll","outcome":"allowed"}
 {"time":1795082501,"agent":"/opt/bot","name":"","method":"GetState","level":"read-only","outcome":"refused:AccessOff","count":120,"until":1795082559}
+{"time":1795082600,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetAccent","target":"accent","level":"desktop","outcome":"allowed","change":"9c1d0e2f4a6b8c3d","old":"blue","new":"red","restore-at":1795086200}
+{"time":1795082610,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetToggle","target":"dark-style","level":"desktop","outcome":"allowed","state":"on","change":"5e7f9a1b3c2d4e6f","old":"off","new":"on"}
+{"time":1795082620,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetWallpaper","target":"wallpaper","level":"desktop","outcome":"refused:Excluded","reason":"private-file","variant":"both"}
+{"time":1795082630,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"NotificationAction","target":"notification:42 (org.gnome.Fractal)","level":"desktop","outcome":"refused:FeatureOff","reason":"notifications","action":"button"}
+{"time":1795082640,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"MediaControl","target":"player:vlc (org.videolan.VLC)","level":"desktop","outcome":"allowed","action":"play-pause"}
+{"time":1795082650,"agent":"/usr/bin/helix-settings-app","name":"","method":"Undo","target":"dark-style","outcome":"allowed","change":"5e7f9a1b3c2d4e6f","old":"on","new":"off"}
+{"time":1795086200,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Restore","target":"accent","outcome":"allowed","change":"9c1d0e2f4a6b8c3d","old":"red","new":"blue","cause":"expired"}
 ```
 
 ### No secrets
@@ -1204,7 +1592,10 @@ all). *Helix's choice:* a search query
 can say as much as a document ("letter to my divorce lawyer"), so only
 its length is recorded. Later methods record only kinds (a MIME type,
 a toggle's name) and lengths; the keys, text and positions of synthetic
-input are not recorded, nor screenshots' pixels. An address an agent opens is recorded by its scheme and
+input are not recorded, nor screenshots' pixels. Changes record their
+old and new values (setting values: color and profile names, `on` and
+`off`, background pictures' URIs), never what a notification or a player
+shows (labels, action keys, track titles). An address an agent opens is recorded by its scheme and
 host only: its path and query can hold anything (a password reset
 token).
 
@@ -1234,3 +1625,19 @@ Day files are kept for `log-retention-days` days counting today: with
 the shell starts, when the local day changes (checked each minute) and
 when the setting changes. Only names of the form `YYYY-MM-DD.jsonl`
 are pruned. `ClearLog` removes every `*.jsonl` file there.
+
+## Possible later work
+
+Scoped actions considered for the first pass and left out. None is
+planned or tracked as an issue; each would follow "Scoped actions" if
+added:
+
+- **Calendar and contacts** (reading events and people from
+  Evolution Data Server): personal content, so it would need a switch of
+  its own, as `notifications` and `clipboard` have.
+- **Trash and other file changes** (moving to the trash, renaming,
+  moving, deleting): always sensitive if ever added.
+- **Networks and Bluetooth** (connecting to a network, pairing a
+  device): pairing and secrets go through the shell's system prompts,
+  which agents never reach.
+- **Window layouts** (saving and restoring where windows are).

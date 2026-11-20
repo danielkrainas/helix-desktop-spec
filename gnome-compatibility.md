@@ -298,7 +298,11 @@ needs:
   (`org.helixdesktop.agent-access`, off by default). The shell enforces
   the policy: sandboxed apps are refused, the user approves each agent in
   a consent prompt, and the lock screen, password fields, system prompts
-  and Settings are never reachable.
+  and Settings are never reachable. Changes go through narrow, typed
+  actions (background, accent color, power mode, toggles, stars, dock
+  favorites, media control), each returning the old value, optionally
+  temporary, and undoable from Settings; there is no general settings
+  writer.
 
 ## Not yet verified
 
