@@ -1077,6 +1077,7 @@ ignore keys they do not know; keys may be added):
 | `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for `GetClipboard`, the app id of the app the content came from, when known; for `Screenshot`, `screen`, `monitor:<connector>` or the window; for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
+| `reason` | string | For a `refused:<Error>` or `cancelled` call: why, when the shell knows more than the error's name, as one token of the fixed vocabulary below. Absent otherwise (always for `allowed`). |
 | `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
 | `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body), `question-length` (`Ask`, `Confirm`), `text-length` (`AddReminder`, the text `A11ySetValue` sets, the text
 `Input` types), `name-length` (`A11yFind`'s `name`); later stages add others. |
@@ -1106,11 +1107,29 @@ Outcomes:
   short name: one of `Sandboxed`, `AccessOff`, `Remote`, `Locked`,
   `LevelTooLow`, `FeatureOff`, `NotGranted`, `DeniedByUser`, `Excluded`,
   `NeedsConfirmation`, and `AccessDenied` for `AgentAccess1` calls from
-  programs other than Settings. The reason is only the error name
-  (`Excluded`'s token, e.g. `app:<id>`, is not repeated; the target says
-  what was excluded).
+  programs other than Settings. Some refusals have a `reason` (below).
 - `cancelled`: the user dismissed the prompt or question (`Cancelled`),
-  or stopped the agent.
+  or stopped the agent. A stopped `Input` has a `reason` (below).
+
+Reasons (`reason`), a fixed vocabulary of tokens: readers show a token
+they do not know as if there were no `reason` (lines written before it
+existed have none). Never anything else from the error's message:
+
+| Outcome | `reason` | When |
+|---------|----------|------|
+| `refused:Excluded` | `password-field` | A password field (the node acted on, a field it is in, the focus for `Input`), or clipboard content a password manager marked secret (`GetClipboard`). |
+| `refused:Excluded` | `system-prompt` | A system prompt was open (`Screenshot`, `Input`, `GetClipboard`, `SetClipboard`), or the window is a system prompt's. |
+| `refused:Excluded` | `shell` | The shell's own UI: its windows, or clipboard content it set. |
+| `refused:Excluded` | `settings` | Settings: its app id, its windows, an app or handler that runs it. |
+| `refused:Excluded` | `app` | An app the user excluded (`excluded-apps`). Only `app`: the error's `app:<id>` is not repeated; `target` says what the call acted on (the app id when that is what it named). |
+| `refused:FeatureOff` | `clipboard` | The `clipboard` switch was off. |
+| `cancelled` | `user-input` | `Input`: the user used the keyboard or pointer during the run. |
+| `cancelled` | `cooldown` | `Input`: the user had just used the keyboard or pointer, so it did not start or go on. |
+| `cancelled` | `stopped` | `Input`: stopped by *Stop* in the indicator, Settings' *Revoke*, *Forget* or *Stop all*, or Agent Access being turned off. |
+
+The other refusals have no `reason`: the error's name says it
+(`LevelTooLow`'s level is `level`). A dismissed question, prompt or
+reminder (`cancelled`) has none.
 
 Events (not `Agent1` methods; none of them is a method name):
 
@@ -1164,7 +1183,9 @@ Examples:
 {"time":1795084200,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Reminder","target":"reminder:3f9a0c2e7b1d4a56","outcome":"allowed"}
 {"time":1795082468,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11yTree","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"allowed","node-count":143}
 {"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11ySetValue","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"allowed","text-length":17,"role":"text","action":"set-text"}
-{"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11ySetValue","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"refused:Excluded","text-length":5,"role":"password text"}
+{"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11ySetValue","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"refused:Excluded","reason":"password-field","text-length":5,"role":"password text"}
+{"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Input","target":"window:21 (org.gnome.TextEditor)","level":"screen-and-input","outcome":"cancelled","reason":"user-input","event-count":3,"click-count":1,"text-length":40,"done-count":2}
+{"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Screenshot","target":"window:22 (org.example.Vault)","level":"screen-and-input","outcome":"refused:Excluded","reason":"app","scope":"window"}
 {"time":1795082470,"agent":"/usr/bin/helix-settings-app","name":"","method":"Revoke","target":"/usr/bin/node /home/me/agent.js","outcome":"allowed"}
 {"time":1795082471,"agent":"/usr/bin/helix-settings-app","name":"","method":"StopAll","outcome":"allowed"}
 {"time":1795082501,"agent":"/opt/bot","name":"","method":"GetState","level":"read-only","outcome":"refused:AccessOff","count":120,"until":1795082559}
@@ -1192,7 +1213,8 @@ token).
 *Helix's choice:*
 
 - **Coalescing.** A refusal identical to one recorded less than 60
-  seconds before (same `agent`, `method`, `target` and `outcome`) is
+  seconds before (same `agent`, `method`, `target`, `outcome` and
+  `reason`) is
   counted instead of written; when the minute is up (checked each
   minute, and when the next identical refusal comes), one line stands
   for the counted calls (`time` the first, `until` the last, `count`).
