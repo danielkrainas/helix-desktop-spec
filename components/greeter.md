@@ -305,6 +305,13 @@ clock-format = "24h"      # 12h or 24h; unset: see "Clock"
 It is drawn with the shades of `components/README.md`, "Accent color".
 Unset or an unknown name: blue (the unknown name is logged).
 
+Settings has a *Login Screen* panel for these keys (helixdesktop/apps#193),
+shown only when `helix-greeter` is installed and greetd is the display
+manager (see "Installing and switching"). It reads the file directly and
+changes it through `helix-login-config` (below), one administrator prompt
+per batch of changes; its *Use This Layout for the Login Screen* is
+Displays' action (see "Setting the login screen's layout").
+
 ### Changing the configuration
 
 `/usr/libexec/helix/helix-login-config` (in the `helix-greeter`
