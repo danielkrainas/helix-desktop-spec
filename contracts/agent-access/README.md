@@ -74,14 +74,14 @@ false: the agent marks this call sensitive).
 | `WaitForWindow`, `WaitForWindowClosed` | read-only | | |
 | `Ask`, `Confirm` | read-only | | a dialog only the user at the machine answers |
 | `AddReminder`, `ListReminders`, `CancelReminder` | read-only | | an agent sees only its own reminders |
-| `GetClipboard` | read-only | | needs `clipboard` |
+| `GetClipboard` | read-only | | needs `clipboard`; not what the shell, Settings, a system prompt's program or an excluded app copied, nor a password manager's secret (see "Clipboard methods") |
 | `Open`, `Launch` | desktop | when marked | not excluded apps (also as the app that would open a file) |
 | `WindowAction` | desktop | `close`, or when marked | not excluded apps' windows |
 | `SwitchWorkspace` | desktop | when marked | |
 | `SetToggle` | desktop | `wifi`, `airplane-mode`, or when marked | |
 | `SetValue` | desktop | when marked | |
 | `Notify` | desktop | when marked | labelled with the agent; at most 5 a minute |
-| `SetClipboard` | desktop | when marked | needs `clipboard` |
+| `SetClipboard` | desktop | when marked | needs `clipboard`; the shell holds the copy for the agent |
 | `A11yTree`, `A11yFind` | apps | | not excluded apps' windows, nor while a system prompt is shown |
 | `A11yAction` | apps | by the control's name (see "Control apps methods"), `window.close`, or when marked | also not password fields; clipboard actions need `clipboard` |
 | `A11ySetValue` | apps | when marked | also not password fields |
@@ -175,7 +175,8 @@ added; clients ignore keys they do not know):
 - **Image** (`Screenshot`): `png` (`ay`), `width`, `height` (`i`,
   pixels), `scale` (`d`).
 - **Clipboard** (`GetClipboard`): `mime-type` (`s`), and `text` (`s`)
-  for text types or `data` (`ay`) otherwise.
+  for text types or `data` (`ay`) otherwise; `types` (`as`), every type
+  the clipboard offers (see "Clipboard methods").
 
 The methods' own options and arguments are specified with their
 implementation (helixdesktop/desktop#146–#151) and listed in `cli.md`
@@ -526,6 +527,76 @@ it; `node` a node id from `A11yTree` or `A11yFind`.
   (the indicator), and ends with the error a new call would get when the
   agent loses access, a system prompt appears or the window closes.
 
+### Clipboard methods
+
+The options and arguments of the clipboard methods
+(helixdesktop/desktop#151), besides the common ones. Both need the
+`clipboard` switch (`FeatureOff`, step 7) on top of their level:
+reading is *Read only*, setting *Control the desktop*. Malformed values
+fail with `InvalidArgs`.
+
+| Method | Options and arguments | Returns |
+|--------|----------------------|---------|
+| `GetClipboard` | `type` (`s`): `text` or a plain text type (`text/plain`, `text/plain;charset=utf-8`, `UTF8_STRING`…) for plain text, `major/*` (`image/*`) for the first type of that kind offered, else exactly that type (ignoring case); absent: plain text, else `image/png`, else the first type offered. `types-only` (`b`): only what it offers | the Clipboard record; with `types-only`, only `types`. `NotFound` when the clipboard is empty or does not offer the type |
+| `SetClipboard` | `mime_type`: `text/plain` (`""` and `text/plain;charset=utf-8` too), `text/html`, `text/uri-list` or `image/png`; `data`: the content, 1 byte to 16 MiB, UTF-8 for text types, a PNG image for `image/png` | nothing. `NotSupported` for other types, `InvalidArgs` for bad data |
+
+- **Through the shell.** Agents never take part in the clipboard
+  themselves. The shell asks the compositor what the clipboard offers
+  and which client set it, and has the compositor hand it the content;
+  `SetClipboard` gives the compositor the data, which then owns the
+  clipboard *for the agent* (Wayland and X11 apps paste it until
+  something else is copied). Plain text is offered as
+  `text/plain;charset=utf-8`, `text/plain`, `UTF8_STRING`, `STRING`
+  and `TEXT`; other types as themselves.
+- **What is read is what was checked.** *Helix's choice:* the
+  compositor numbers each clipboard change and serves only the change
+  the shell checked; when the clipboard changes in between, the call
+  fails with `Failed` ("the clipboard changed while it was read"), never
+  with the newer content.
+- **Where the content came from.** *Helix's choice:* the compositor
+  records who set the clipboard: the Wayland client that set it (the
+  app id of one of its windows, the focused one first, and its process),
+  for an X11 app the focused X11 window when it took the clipboard, the
+  shell, an agent (`SetClipboard`), or a remote desktop session.
+  `GetClipboard` (also with `types-only`) fails with `Excluded` when the
+  content came from the shell (`shell`: its text fields, copied search
+  results and screenshots: the shell's prompts never reach an agent,
+  and a screenshot only through `Screenshot`), from
+  Settings (`settings`), from an excluded app (`app:<app id>`), or from a
+  process that is the shell's, Settings', a system prompt's program
+  (pinentry, gcr-prompter, polkit agents…) or an excluded app's (by its
+  other windows, its program or its systemd unit, as for the *Control
+  apps* methods). An agent's copy, a remote desktop client's, and an
+  app whose window and process are not known are read: the `clipboard`
+  switch is the user's explicit choice, and refusing what cannot be
+  traced would refuse most X11 copies.
+- **Password managers.** Content offered with the type
+  `x-kde-passwordManagerHint` whose value is `secret` (as KeePassXC and
+  KDE's apps mark passwords) is refused with `Excluded`
+  (`password-field`); a hint that cannot be read within a second counts
+  as `secret`. Apps' own password fields do not copy (GTK, Qt); the
+  compositor cannot see which field an app copied from.
+- **Primary selection.** *Helix's choice:* not supported. The primary
+  selection is whatever text the user last selected, without copying
+  it; reading it would read what the user never chose to share, and
+  setting it would change what a middle click pastes.
+- **Lock and prompts.** Both methods fail with `Locked` while the screen
+  is locked and with `Excluded` (`system-prompt`) while a system prompt
+  is shown, checked when the call comes and again just before the
+  content is read or set (after the sensitive-action prompt). `SetClipboard`
+  is sensitive only when marked; with `confirm-sensitive` on, the user
+  confirms before the clipboard changes.
+- **Limits.** *Helix's choice:* at most 16 MiB either way (`Failed` when
+  the clipboard holds more; `InvalidArgs` for more data); the app that
+  copied has 5 seconds to send it (`TimedOut`). Text types are given as
+  `text` when they are UTF-8 (`STRING` and `TEXT` may be Latin-1 and are
+  read as such), else as `data`.
+- **Nothing recorded.** The activity log records the type read or set as
+  a common kind (`mime-type`: `text/plain`, `text/html`,
+  `text/uri-list`, `image/png`…, else `other`: apps name their own
+  types) and the length in bytes (`data-length`), and for `GetClipboard`
+  the app the content came from (`target`); never the content.
+
 ## Errors
 
 The shell answers refusals with these D-Bus errors (prefix
@@ -747,7 +818,8 @@ Not settings; the user cannot turn them off:
   prompt (or an agent's question, or another permission prompt of the
   shell's), `A11y*`, `Screenshot`, `Input` and the clipboard methods fail
   with `Excluded` (`system-prompt`), as do apps' windows of the system's
-  prompt programs; the shell's own UI is never a target (`shell`).
+  prompt programs and what they copied; the shell's own UI is never a
+  target (`shell`), nor is what the shell copied.
 - **Settings.** *Helix's choice:* every window of the Settings app
   (`org.helixdesktop.Settings`) is excluded (`settings`), because the
   shell cannot tell which page a window shows and the Agent Access page
@@ -758,8 +830,9 @@ Not settings; the user cannot turn them off:
 Excluded apps' windows are left out of `ListWindows`, `ListApps` and
 `WaitForWindow`, their notifications out of `ListNotifications`, and
 they are blacked out in screenshots; launching or opening them
-(also opening a file whose default app is one), and any method naming
-one of their windows, fails with `Excluded`. App ids are compared
+(also opening a file whose default app is one), any method naming
+one of their windows, and reading what they copied, fails with
+`Excluded`. App ids are compared
 without a `.desktop` suffix.
 
 ## Settings take effect at once
@@ -845,7 +918,7 @@ ignore keys they do not know; keys may be added):
 | `agent` | string | The agent's id (see "Who is calling"); `""` when the caller could not be identified (e.g. sandboxed: then the caller's executable when it is the user's process, else `""`). |
 | `name` | string | Its display name, `""` for none. |
 | `method` | string | The `Agent1` method; or one of the *events* below. |
-| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
+| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for `GetClipboard`, the app id of the app the content came from, when known; for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
 | `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
@@ -857,6 +930,8 @@ ignore keys they do not know; keys may be added):
 | `node-count` | integer | `A11yTree`: how many nodes it returned; `A11yFind`: how many matched. |
 | `hidden-count` | integer | `A11yTree`, `A11yFind`: how many of the nodes returned had their text withheld (`read-text-fields` off); absent for none. Never which. |
 | `state` | string | `SetToggle`: `on` or `off`. |
+| `mime-type` | string | `GetClipboard`, `SetClipboard`: the type read or set as a common kind (`text/plain` for every plain text type, `text/html`, `text/uri-list`, `image/png`, `image/jpeg`, `image/gif`, `image/svg+xml`, `application/pdf`, `x-kde-passwordManagerHint`), else `other`. |
+| `data-length` | integer | `GetClipboard`: how many bytes it returned; `SetClipboard`: how many the agent sent. |
 | `grant` | string | Consent prompts: `session` or `always`. |
 | `count`, `until` | integer | Coalesced refusals (below): how many calls the line stands for (≥ 2), and the last one's `time`. |
 | `dropped` | string | `LogFull` lines (below): `refusals` or `all`. |

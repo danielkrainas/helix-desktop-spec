@@ -2118,7 +2118,15 @@ image to put on the clipboard (`image/png`); the compositor then owns the
 selection and serves it to Wayland and X11 clients until something else
 replaces it. Likewise (since version 6) UTF-8 text, offered as
 `text/plain;charset=utf-8`, `text/plain`, `UTF8_STRING`, `STRING` and
-`TEXT`. Ordinary clients have no way to capture the
+`TEXT`. Since version 7, for Agent Access's clipboard methods
+(`contracts/agent-access/README.md`, "Clipboard methods"): data of one
+type an agent copies (plain text offered as above), owned by the
+compositor for the agent; what the clipboard offers and who set it (a
+Wayland client by a window's app id and its process, an X11 app by the
+focused X11 window when it took the clipboard, the shell, an agent, a
+remote desktop session), with a number that changes with every change
+of the clipboard; and the content, written into a file descriptor only
+while the clipboard is still the change of that number. Ordinary clients have no way to capture the
 screen; sandboxed apps use the Screenshot portal.
 
 The same protocol (since version 5) gives the shell pictures of single

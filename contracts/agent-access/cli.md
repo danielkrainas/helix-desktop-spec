@@ -51,7 +51,8 @@ it, since identity never comes from the agent.
 | `remind add <WHEN> <TEXT>` | `AddReminder` | read-only |
 | `remind list` | `ListReminders` | read-only |
 | `remind cancel <ID>` | `CancelReminder` | read-only |
-| `clipboard get [--type <MIME>]` | `GetClipboard` | read-only, `clipboard` switch |
+| `clipboard get [--type <MIME>] [--output <FILE>]` | `GetClipboard` | read-only, `clipboard` switch |
+| `clipboard types` | `GetClipboard` (`types-only`) | read-only, `clipboard` switch |
 | `clipboard set [<TEXT>] [--type <MIME>]` (standard input without `TEXT`) | `SetClipboard` | desktop, `clipboard` switch |
 | `open <URI-OR-PATH> [--app <APP_ID>]` | `Open` | desktop |
 | `launch <APP_ID> [<URI-OR-PATH>...]` | `Launch` | desktop |
@@ -107,6 +108,19 @@ it, since identity never comes from the agent.
   place of the value); of `find` and `wait` a line per node. The text
   output of `status` has a line for `read-text-fields` (“Reading text
   fields: on/off”) when the shell reports it.
+- `clipboard get` sends `--type` as `type` (`README.md`, "Clipboard
+  methods": `text/plain`, `text/html`, `image/*`…; default plain text,
+  else a picture). Its text output is the content as it is, with no line
+  break added, so it can be piped; binary content (no `text`) is written
+  to standard output only when that is not a terminal (otherwise exit 2
+  with “The clipboard holds binary data; use --output FILE or redirect
+  standard output”). `--output` writes the content (the text's UTF-8,
+  or the data) to the file; relative paths are against the working
+  directory. `clipboard types` prints one type per line.
+- `clipboard set` sends `TEXT` (or, without it, all of standard input,
+  at most 16 MiB: more is exit 2) as `data`, and `--type` (`text/plain`,
+  `text/plain;charset=utf-8`, `text/html`, `text/uri-list` or
+  `image/png`; others are exit 2) as `mime_type` (`""` without it).
 - `input key` takes key combinations such as `ctrl+c`, `alt+F4`,
   `Return` (XKB key names, modifiers `ctrl`, `alt`, `shift`, `super`);
   several are pressed in turn.
@@ -238,7 +252,8 @@ always an object:
 | `confirm` | `{"yes": true\|false}` |
 | `remind add` | `{"id": "<id>"}` |
 | `remind list` | `{"reminders": [Reminder...]}` |
-| `clipboard get` | the Clipboard record (`data` in base64) |
+| `clipboard get` | the Clipboard record (`data` in base64; with `--output`, `"path"` instead of `"text"` or `"data"`) |
+| `clipboard types` | `{"types": [...]}` |
 | `notify` | `{"id": <id>}` |
 | `toggle` | `{"name": "<NAME>", "on": true\|false}` (the state it set) |
 | `a11y tree` | `{"window": <id>, "app-id": "<id>", "truncated": true\|false, "root": <node>}`: the shell's flat list as a tree, each Accessible node with `children` (a list of nodes) and without `parent` |

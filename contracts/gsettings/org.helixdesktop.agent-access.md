@@ -42,8 +42,12 @@ Path: `/org/helixdesktop/agent-access/`
   still lists them). An unknown value reads as `ask`.
 - `notifications`: agents may read notification titles and bodies. Off,
   `ListNotifications` gives only each notification's app and time.
-- `clipboard`: agents may read and set the clipboard. Off, the clipboard
-  methods fail with `FeatureOff`.
+- `clipboard`: agents may read (*Read only*) and set (*Control the
+  desktop*) the clipboard, and use apps' copy, cut and paste actions
+  (*Control apps*). Off, the clipboard methods and those actions fail
+  with `FeatureOff`. Even on, what the shell, Settings, system prompts
+  and excluded apps copied, and password managers' secrets, are not
+  read (`contracts/agent-access/README.md`, "Clipboard methods").
 - `read-text-fields`: agents controlling apps (`apps`) get what is in
   editable text fields. Off, `A11yTree` and `A11yFind` give such fields
   without their text (`value-hidden` instead of `value`), and a name or
