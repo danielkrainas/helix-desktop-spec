@@ -67,8 +67,8 @@ it, since identity never comes from the agent.
 | `a11y do <WINDOW> <NODE> <ACTION>` | `A11yAction` | apps |
 | `a11y press <WINDOW> <NODE>` / `a11y focus <WINDOW> <NODE>` / `a11y select <WINDOW> <NODE>` | `A11yAction` | apps |
 | `a11y set <WINDOW> <NODE> <VALUE> [--number]` | `A11ySetValue` | apps |
-| `screenshot [--window <WINDOW> \| --monitor <CONNECTOR>] [--output <FILE>]` | `Screenshot` | screen-and-input |
-| `input key <KEYS>...` / `input type <TEXT>` / `input click <X> <Y> [--button <N>]` / `input move <X> <Y>` / `input scroll <DX> <DY>` | `Input` | screen-and-input |
+| `screenshot [--window <WINDOW> \| --monitor <CONNECTOR>] [--area <X,Y,WIDTH,HEIGHT>] [--output <FILE>]` | `Screenshot` | screen-and-input |
+| `input key <KEYS>...` / `input type <TEXT>` / `input click <X> <Y> [--button <BUTTON>] [--count <N>]` / `input move <X> <Y>` / `input scroll <DX> <DY> [--at <X,Y>]` / `input drag <X1> <Y1> <X2> <Y2> [--button <BUTTON>]` / `input sequence <STEP>...`, each with `[--window <WINDOW>]` | `Input` | screen-and-input |
 | `log [--agent <ID>] [--since <WHEN>]` | none (reads the log file) | none |
 | `help [<COMMAND> \| exit-codes]` | | |
 | `completions <bash\|zsh\|fish>` | | |
@@ -121,12 +121,32 @@ it, since identity never comes from the agent.
   at most 16 MiB: more is exit 2) as `data`, and `--type` (`text/plain`,
   `text/plain;charset=utf-8`, `text/html`, `text/uri-list` or
   `image/png`; others are exit 2) as `mime_type` (`""` without it).
-- `input key` takes key combinations such as `ctrl+c`, `alt+F4`,
-  `Return` (XKB key names, modifiers `ctrl`, `alt`, `shift`, `super`);
-  several are pressed in turn.
-- `screenshot --output` writes the PNG there; without it, JSON output
-  has the PNG in base64 and text output refuses (exit 2) unless
-  standard output is not a terminal, where it writes the PNG.
+- `input`: positions are logical pixels in the window, from its
+  top-left corner; `--window` (after the subcommand) sends the input into
+  that window, focusing it first (default: the focused window); each
+  command is one `Input` call (`README.md`, "Screen and input methods").
+  `key` takes key combinations such as `ctrl+c`, `alt+F4`, `Return`
+  (XKB key names; modifiers `ctrl`, `alt`, `shift`, `super`, `altgr`),
+  each a `key` event, pressed in turn. `type` sends one `text` event.
+  `click` sends `click` with `x`, `y`, `--button` (`left`, `middle`,
+  `right`, `back`, `forward`) as `button` and `--count` (1–3) as `count`.
+  `move` sends `move`; `scroll` sends `scroll` (`DX`, `DY` in wheel
+  steps; `--at X,Y` as its `x`, `y`). `drag` sends `down` (the button, at
+  `X1 Y1`), `move` (`X2 Y2`) and `up`. `sequence` sends one event per
+  step, in order: `move X Y`, `click [BUTTON] [X Y]`, `double-click
+  [BUTTON] [X Y]` (`count` 2), `mouse-down [BUTTON] [X Y]`, `mouse-up
+  [BUTTON]` (`down`/`up` with `button`, default `left`), `key KEYS`,
+  `key-down KEY`, `key-up KEY` (`down`/`up` with `key`), `scroll DX DY`,
+  `type TEXT`, `wait MS`; what it holds is let go when it ends. Output is
+  `{}` (nothing in text).
+- `screenshot` sends `--window`, `--monitor` and `--area` (`X,Y,WIDTH,HEIGHT`,
+  in the window, the monitor or the screen) as the options `window`,
+  `monitor` and `x`, `y`, `width`, `height`. `--output` writes the PNG
+  there (text output: “Saved a W×H screenshot to FILE”, and “Blacked out:
+  N” when something was); without it, JSON output has the PNG in base64
+  and text output refuses (exit 2: “A screenshot is binary data; use
+  --output FILE or redirect standard output”) unless standard output is
+  not a terminal, where it writes the PNG.
 - `--limit`: a whole number from 1 (the shell gives at most 200 files
   and 50 notifications). `--type` may be `major/*` (`image/*`).
 - `files search --in` takes a folder path (relative ones are made
@@ -161,7 +181,7 @@ it, since identity never comes from the agent.
 
 *Helix's choice:* the CLI and the shell ship together, so the CLI knows
 which methods its shell has. A command whose method the shell does not
-have yet (helixdesktop/desktop#146–#151) still parses its arguments and
+have (none since helixdesktop/desktop#150) still parses its arguments and
 has its `--help` (which says so), and then fails with `not-supported`
 (exit 23) without calling the shell; a newer CLI talking to an older
 shell gets the same from `UnknownMethod`.
@@ -298,7 +318,7 @@ the message on standard error.
 | 17 | `sandboxed` | `Sandboxed` | Agent access is not available to sandboxed apps |
 | 18 | `needs-confirmation` | `NeedsConfirmation` | This action needs the user's confirmation; run it without --no-ask to ask |
 | 19 | `feature-off` | `FeatureOff` | Clipboard access is turned off (Settings › Privacy & Security › Agent Access) |
-| 20 | `no` | `Cancelled`, or `confirm` answered no | The user said no / The user cancelled the question |
+| 20 | `no` | `Cancelled`, or `confirm` answered no | The user said no / The user cancelled the question / Stopped: the user took over the keyboard or pointer (`user-input`) / The user is using the keyboard or pointer; try again in a moment (`cooldown`) / The user stopped the agent (`stopped`) |
 | 21 | `timed-out` | `TimedOut` | Timed out |
 | 22 | `not-found` | `NotFound` | No such window / app / item: {what} |
 | 23 | `not-supported` | `NotSupported` | Not supported here: {reason} (“Not supported here” when the shell gave none) |

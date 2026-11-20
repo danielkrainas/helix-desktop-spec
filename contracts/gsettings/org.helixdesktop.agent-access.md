@@ -25,7 +25,8 @@ Path: `/org/helixdesktop/agent-access/`
 
 - `enabled`: the master switch. Off, the shell refuses every agent call
   except `GetStatus` (error `AccessOff`). Turning it off also ends every
-  session grant and forgets this session's denials; remembered
+  session grant, stops agents' input at once and forgets this
+  session's denials; remembered
   (*Always allow*) grants are kept for when it is turned on again.
 - `access-level`: the most an agent may be granted, one of
   `read-only`, `desktop`, `apps`, `screen-and-input` (the schema's

@@ -2126,8 +2126,26 @@ Wayland client by a window's app id and its process, an X11 app by the
 focused X11 window when it took the clipboard, the shell, an agent, a
 remote desktop session), with a number that changes with every change
 of the clipboard; and the content, written into a file descriptor only
-while the clipboard is still the change of that number. Ordinary clients have no way to capture the
-screen; sandboxed apps use the Screenshot portal.
+while the clipboard is still the change of that number. Since version 8,
+for Agent Access's *Screen and input* methods
+(`contracts/agent-access/README.md`, "Screen and input methods"): a
+picture of the layout, an area of it, or one window, without the pointer,
+where every window not in a list the shell gives (by window list id;
+windows without one too) and every layer surface whose namespace is not
+in another list is drawn as opaque black in its place in the stacking
+order, with how many were blacked out; and runs of synthetic input into
+one window (`helix_agent_input_v1`), which the compositor carries out an
+event at a time, checking just before each that the session is unlocked,
+no Agent Access prompt is shown, the window has the keyboard focus, a
+pointer event's point is on the window's own surface, and a key's text
+field is not a password or PIN field (`zwp_text_input_v3` content
+purpose); the events go to the client without the compositor's key
+bindings or window management, keys of the user's layout through the
+seat and text through a keymap made for it. Input from the machine's
+devices, a remote desktop session, EIS or the headless test socket stops
+every run at once and refuses new ones for 2 seconds. Ordinary clients
+have no way to capture the screen; sandboxed apps use the Screenshot
+portal.
 
 The same protocol (since version 5) gives the shell pictures of single
 windows by their window-list id, for the overview, the window switcher's

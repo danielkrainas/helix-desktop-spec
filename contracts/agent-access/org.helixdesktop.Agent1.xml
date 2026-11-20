@@ -178,7 +178,11 @@
       <arg type="a{sv}" name="options" direction="in"/>
     </method>
 
-    <!-- Screen and input (helixdesktop/desktop#150). -->
+    <!-- Screen and input (helixdesktop/desktop#150; README.md, "Screen and
+         input methods"): a picture the compositor draws with protected
+         windows and shell surfaces black; input carried out by the
+         compositor into one focused window, checked before every event
+         and stopped by the user's own input. -->
     <method name="Screenshot">
       <arg type="a{sv}" name="options" direction="in"/>
       <arg type="a{sv}" name="image" direction="out"/>

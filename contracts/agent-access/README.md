@@ -85,12 +85,12 @@ false: the agent marks this call sensitive).
 | `A11yTree`, `A11yFind` | apps | | not excluded apps' windows, nor while a system prompt is shown |
 | `A11yAction` | apps | by the control's name (see "Control apps methods"), `window.close`, or when marked | also not password fields; clipboard actions need `clipboard` |
 | `A11ySetValue` | apps | when marked | also not password fields |
-| `Screenshot` | screen-and-input | | |
-| `Input` | screen-and-input | when marked | |
+| `Screenshot` | screen-and-input | | the compositor draws it; protected windows and shell surfaces black; not of a protected window, nor while a system prompt is shown (see "Screen and input methods") |
+| `Input` | screen-and-input | when marked | into one window that has the focus; not protected windows or password fields, nor while a system prompt is shown; the user's own input stops it |
 
-The shell implements the methods in stages (helixdesktop/desktop#146
-to #151); until a method is implemented it is absent from introspection
-and answers `org.freedesktop.DBus.Error.UnknownMethod`. `GetStatus` and
+The shell implemented the methods in stages (helixdesktop/desktop#146
+to #151); a shell without a method has it absent from introspection and
+answers `org.freedesktop.DBus.Error.UnknownMethod`. `GetStatus` and
 `RequestAccess` are always there.
 
 `GetStatus()` and `RequestAccess(level, options)` return the caller's
@@ -173,7 +173,10 @@ added; clients ignore keys they do not know):
   `width`, `height` (`i`, in its window, with `bounds`). See "Control
   apps methods".
 - **Image** (`Screenshot`): `png` (`ay`), `width`, `height` (`i`,
-  pixels), `scale` (`d`).
+  pixels), `scale` (`d`, pixels per logical pixel), `x`, `y`,
+  `logical-width`, `logical-height` (`i`, the rectangle captured, in
+  logical pixels: in the layout, or for a window in the window),
+  `filled` (`u`, how many windows and surfaces were blacked out in it).
 - **Clipboard** (`GetClipboard`): `mime-type` (`s`), and `text` (`s`)
   for text types or `data` (`ay`) otherwise; `types` (`as`), every type
   the clipboard offers (see "Clipboard methods").
@@ -597,6 +600,155 @@ fail with `InvalidArgs`.
   types) and the length in bytes (`data-length`), and for `GetClipboard`
   the app the content came from (`target`); never the content.
 
+### Screen and input methods
+
+The options and arguments of the *Screen and input* methods
+(helixdesktop/desktop#150), besides the common ones. Malformed values fail
+with `InvalidArgs`. `window` is a window id as `ListWindows` gives it;
+positions are logical pixels from the window's top-left corner (the
+`x`, `y` of its Window record, its title bar not included).
+
+| Method | Options and arguments | Returns |
+|--------|----------------------|---------|
+| `Screenshot` | `window` (`u`: that window alone, whether or not it is shown), or `monitor` (`s`: a connector as `ListMonitors` gives it), else every monitor; `x`, `y`, `width`, `height` (`i`, all four: only that area, in the window, the monitor, or the layout) | the Image record. `NotFound` for an unknown window or monitor, `InvalidArgs` for an area that is empty, not inside, or more than 16,384 pixels either way |
+| `Input` | `events` (`aa{sv}`, 1–500, carried out in order); `window` (`u`: into that window, which is focused first; default: the focused window) | nothing; the errors below |
+
+Events (`type` and its keys):
+
+| `type` | Keys | Does |
+|--------|------|------|
+| `move` | `x`, `y` (`d` or `i`) | moves the pointer there |
+| `click` | `button` (`s`: `left` (default), `middle`, `right`, `back`, `forward`), `x`, `y` (moves there first), `count` (`u`, 1–3) | presses and releases the button `count` times |
+| `down`, `up` | `button` (as `click`, with `x`, `y` for `down`), or `key` (`s`, a key name) | presses or releases it; whatever an `Input` call holds is let go when it ends |
+| `scroll` | `dx`, `dy` (`i`, wheel steps, at most 100 either way; positive: right, down), `x`, `y` | scrolls where the pointer is (moving there first) |
+| `key` | `keys` (`s`): a key combination, `+`-separated modifiers (`ctrl`, `alt`, `shift`, `super`, `altgr`) and a key | presses the modifiers, presses and releases the key, releases the modifiers |
+| `text` | `text` (`s`): any characters but control characters (line feed is Return, tab is Tab); at most 10,000 in all | types it |
+| `wait` | `ms` (`u`, at most 5,000) | waits |
+
+Key names are XKB keysym names (`Return`, `Escape`, `F4`, `Left`,
+`eacute`; letters as themselves, `a` and `A` being different keys; any case
+for the rest), and `enter`, `esc`, `del`, `ins`, `pgup`, `pgdn`,
+`backspace`, `space` and the modifiers' names. An unknown type is
+`NotSupported`.
+
+- **The compositor draws, the agent never sees more.** *Helix's
+  choice:* the shell asks the compositor for the picture
+  (`helix_screenshot_v1` version 8, `contracts/wayland/README.md`) and
+  tells it what may be shown: the windows it cleared, and the shell
+  surfaces (layer namespaces) agents may see. Everything else is drawn as
+  opaque black (filled, never blurred) in its place in the stacking order,
+  with its popups and title bar, so what is above it still shows and a
+  window that opened after the shell decided is black. The pointer is
+  never drawn.
+- **What is black.** Excluded apps' windows (`app:<id>`), Settings',
+  the shell's own, the system prompt programs' (`gcr-prompter`, polkit
+  agents, `pinentry*`, `ssh-askpass*`, KWallet), and every window of a
+  process that shows one of those, runs an excluded app's program or runs
+  in its systemd unit (as for the *Control apps* methods; windows whose
+  process is not known are judged by their app id). Windows the compositor
+  has no window list id for (X11 override-redirect menus and tooltips).
+  Of the shell, everything but the wallpaper (`helix-background`), the
+  desktop icons, the top bar and its tooltips, the dock, the on-screen
+  displays (volume, workspace switch, monitor labels, click type): its
+  prompts and dialogs (polkit, keyring, network, Bluetooth, consent,
+  sensitive actions, questions, the run dialog), notifications and the
+  notification list, the overview and the window switcher (they show
+  windows' pictures), the launcher, menus, the on-screen keyboard (it
+  shows what is typed), the screenshot UI. The lock screen and the
+  greeter are never captured: nothing runs while the screen is locked,
+  and the compositor refuses captures while it is.
+- **Password fields.** A picture cannot tell where a password field is;
+  apps mask what is typed into them (dots), and a screenshot shows the
+  dots. *Helix's choice:* nothing more is done for pictures.
+- **Window screenshots.** A protected window's picture is refused
+  outright (`Excluded`), never sent black. A window's picture is its
+  surfaces alone (cropped to its window geometry), drawn whether or not
+  it is shown (on another workspace, behind others).
+- **Refused** while the screen is locked (`Locked`) and while a system
+  prompt is shown (`Excluded`, `system-prompt`), checked when the call
+  comes and again just before the compositor draws.
+- **Size.** *Helix's choice:* at most 16,384 pixels either way, drawn at
+  the highest scale of the monitors captured; a PNG of more than 64 MiB
+  fails (`Failed`: take a monitor, a window or an area).
+- **Input goes to one window.** *Helix's choice:* an `Input` call names
+  one window (or takes the focused one); it is checked as a target
+  (excluded apps, Settings, the shell's, a system prompt program's, and
+  windows of a process that shows one of those: `Excluded`), focused
+  first when it was named and is not focused, and checked again. The
+  shell surfaces (top bar, dock, overview, notifications, prompts) are
+  never a target: input goes to an app's window or nowhere.
+- **Checked before every event, by the compositor.** The compositor
+  carries the events out (`helix_agent_input_v1`) and, just before each
+  key, button, motion and scroll, checks that the screen is not locked,
+  no Agent Access prompt is shown, the window is still mapped and has the
+  keyboard focus (also through its menus and popups), for pointer events
+  that the point is inside the window and the window's own surface is
+  there (not another window, a title bar or a shell surface over it), and
+  for keys and text that the app's focused text field is not a password
+  or PIN field (below). The first that fails stops the call: nothing
+  after it is sent. The shell checks the grant, the level, the lock and
+  system prompts before each event too, and positions against the
+  window's size (`InvalidArgs`). Focus moving to another window, a shell
+  dialog or a system prompt in the middle stops it.
+- **No compositor keys.** *Helix's choice:* synthetic events go straight
+  to the window's app, never through the compositor's key bindings, the
+  shell's keys, click-to-focus, window moving or title bar buttons: an
+  agent's Super, Alt+Tab, Ctrl+Alt+F*n*, Super+L or Alt+F4 reach the
+  app as keys (which may close its window: Alt+F4 is the app's then) and
+  never switch windows, workspaces or virtual terminals, lock the screen
+  or open the overview.
+- **Keys and text.** `key`, `down` and `up` keys are keys of the user's
+  keyboard layout (the key that gives that keysym at its first or second
+  level, with Shift for the second), so apps see real key codes; a key
+  the layout does not have is `NotSupported`. `text` is typed with a
+  keymap made for the text (as a virtual keyboard does), a key for each
+  character, with no modifiers: any Unicode character, whatever the
+  layout, Caps Lock or keys the user or the call holds. Apps that read key
+  codes rather than the characters (some games, terminals' raw modes,
+  some X11 apps) may see made-up keys for typed text. About 250
+  characters a second.
+- **Password fields.** *Helix's choice:* the compositor knows a text
+  field is a password or PIN field when the app says so over
+  `zwp_text_input_v3` (its content purpose; GTK, Qt, Firefox and
+  Chromium do for their password fields). A `key`, `down`/`up` key or
+  `text` event while one has the focus stops the call with `Excluded`
+  (`password-field`). Apps that do not use `zwp_text_input_v3` (X11 apps)
+  cannot be checked.
+- **The user's input stops it (the hard stop).** *Helix's choice:*
+  while an `Input` call runs, anything the user does with an input device
+  (a key or button press, pointer motion, scrolling, a touch, a tablet
+  pen; from the machine's own devices, a remote desktop session or EIS)
+  stops it at once, even in the middle of a text: `Cancelled`
+  (`user-input`). For 2 seconds after, new `Input` calls are refused with
+  `Cancelled` (`cooldown`). Releases do not count (the key that started
+  the agent may still be going up). What the call held is let go.
+- ***Stop* stops it.** The indicator's *Stop*, Settings' `Revoke`,
+  `Forget` and `StopAll`, and turning Agent Access off stop running
+  `Input` calls at once: `Cancelled` (`stopped`).
+- **Sensitive.** *Helix's choice:* `Input` is sensitive only when
+  marked: the shell cannot know what a click or Enter does (sends a
+  message, buys something), and asking about every keystroke would teach
+  the user to say yes. Agents should mark input that sends, deletes or
+  pays. `Screenshot` is never sensitive.
+- **The indicator.** While an agent takes a screenshot or sends input,
+  and for 3 seconds after, the indicator says an agent is controlling the
+  screen (another icon, a white ring; its menu and accessible name say
+  so).
+- **Errors.** Besides the policy's: `NotFound` for no focused window or
+  a window that went away, `Failed` when the window lost the focus or the
+  point is outside it or covered, `NotSupported` for a key the layout
+  does not have, `Locked`, `Excluded` (`system-prompt`,
+  `password-field`), `Cancelled` (`user-input`, `cooldown`, `stopped`).
+- **Nothing recorded.** `Screenshot`'s line has `scope` (`screen`,
+  `monitor`, `window`), `target` (`screen`, `monitor:<connector>` or
+  `window:<id> (<app id>)`), `width`, `height` and `filled-count`;
+  never the picture. `Input`'s has the window as `target`, `event-count`,
+  counts of kinds (`move-count`, `click-count`, `button-count`,
+  `scroll-count`, `key-count`, `shortcut-count`), `text-length`, and
+  `done-count` (steps carried out before it ended); never the text, key
+  names or positions. A key combination with Ctrl, Alt, Super or AltGr
+  counts as a shortcut, without saying which.
+
 ## Errors
 
 The shell answers refusals with these D-Bus errors (prefix
@@ -616,7 +768,7 @@ that token, for clients to word their own message.
 | `DeniedByUser` | the user denied access, or declined a sensitive action | |
 | `Excluded` | the target is excluded | `app:<app id>`, `settings`, `password-field`, `system-prompt` or `shell` |
 | `NeedsConfirmation` | a sensitive action with `confirm-sensitive` on, and `interactive` false | |
-| `Cancelled` | the user dismissed `Ask` or `Confirm`, or the screen locked while it was shown or queued | |
+| `Cancelled` | the user dismissed `Ask` or `Confirm`, or the screen locked while it was shown or queued; `Input` stopped by the user | `Input`: `user-input` (the user's own input), `cooldown` (moments after), `stopped` (*Stop*, Settings, access off) |
 | `TimedOut` | a wait or question ran out of time | |
 | `NotFound` | no such window, app, node or reminder | |
 | `NotSupported` | a name or action this shell, this computer or the app does not support (e.g. a toggle without hardware, an app that does not let its focus be moved) | why, in English (e.g. `the app does not support this`); free text, not a token |
@@ -769,7 +921,9 @@ While any agent holds a grant and has made an allowed call in the last
 minute, or has a call running (a wait, a question, input), the top bar
 shows an indicator, like the screen-sharing one (helixdesktop/desktop#143).
 It is mandatory, not a setting; it is not shown while the screen is
-locked. Its menu lists the active agents (display name and executable,
+locked. While an agent takes a screenshot or sends input, and for 3
+seconds after, it says an agent is controlling the screen (see "Screen
+and input methods"). Its menu lists the active agents (display name and executable,
 and the level) with *Stop* for each, and opens Settings at the Agent
 Access page (`helix-settings-app agent-access`; GNOME's Settings, which
 has no such page, at Privacy).
@@ -812,7 +966,8 @@ Not settings; the user cannot turn them off:
   and editable texts the shell takes for one (see "Control apps
   methods"), have no `value`; acting on them, setting them, or sending
   input while one has focus fails with `Excluded` (`password-field`).
-  Screenshots black them out where the shell knows their bounds.
+  Screenshots show what the app shows of them (masked text); typing into
+  one stops `Input` (see "Screen and input methods").
 - **System prompts.** While the shell shows a polkit, keyring, network
   secret, Bluetooth pairing, Agent Access consent or sensitive-action
   prompt (or an agent's question, or another permission prompt of the
@@ -829,7 +984,8 @@ Not settings; the user cannot turn them off:
 
 Excluded apps' windows are left out of `ListWindows`, `ListApps` and
 `WaitForWindow`, their notifications out of `ListNotifications`, and
-they are blacked out in screenshots; launching or opening them
+they are black in screenshots (and refused as a window screenshot or
+`Input`'s window); launching or opening them
 (also opening a file whose default app is one), any method naming
 one of their windows, and reading what they copied, fails with
 `Excluded`. App ids are compared
@@ -918,12 +1074,18 @@ ignore keys they do not know; keys may be added):
 | `agent` | string | The agent's id (see "Who is calling"); `""` when the caller could not be identified (e.g. sandboxed: then the caller's executable when it is the user's process, else `""`). |
 | `name` | string | Its display name, `""` for none. |
 | `method` | string | The `Agent1` method; or one of the *events* below. |
-| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for `GetClipboard`, the app id of the app the content came from, when known; for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
+| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`), a reminder as `reminder:<id>` (`AddReminder` once added, `CancelReminder`, the `Reminder` event); for `GetClipboard`, the app id of the app the content came from, when known; for `Screenshot`, `screen`, `monitor:<connector>` or the window; for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
 | `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
-| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body), `question-length` (`Ask`, `Confirm`), `text-length` (`AddReminder`, the text `A11ySetValue` sets), `name-length` (`A11yFind`'s `name`); later stages add others. |
+| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body), `question-length` (`Ask`, `Confirm`), `text-length` (`AddReminder`, the text `A11ySetValue` sets, the text
+`Input` types), `name-length` (`A11yFind`'s `name`); later stages add others. |
 | `choice-count` | integer | `Ask` with `choices`: how many. |
+| `scope` | string | `Screenshot`: `screen`, `monitor` or `window`. |
+| `width`, `height` | integer | `Screenshot`: the picture's size in pixels. |
+| `filled-count` | integer | `Screenshot`: how many windows and surfaces were blacked out in it. |
+| `event-count`, `done-count` | integer | `Input`: how many events it had; how many steps (moves, presses, releases, texts, waits) were carried out. |
+| `move-count`, `click-count`, `button-count`, `scroll-count`, `key-count`, `shortcut-count` | integer | `Input`: how many of each kind (absent for none); clicks counted one by one, `button-count` for `down`/`up` buttons, `key-count` for keys without Ctrl, Alt, Super or AltGr, `shortcut-count` for combinations with them. |
 | `uri-count` | integer | `Launch`: how many files or addresses it handed the app (absent for none). |
 | `action` | string | `WindowAction`: the action (`tile-left`, `close`); `A11yAction`: the action when it is a common one (`click`, `activate`, `toggle`, `default`, `focus`, `select`, `window.close`, `clipboard.copy`…), else `other` (apps name their actions); `A11ySetValue`: `set-text` or `set-value`; a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
 | `role` | string | `A11yAction`, `A11ySetValue`: the role of the node acted on (`button`, `password text`), also when refused; `A11yFind`: the role looked for. |
@@ -1020,8 +1182,8 @@ id>)`, a node by its role, a set text by its length, a set number not at
 all). *Helix's choice:* a search query
 can say as much as a document ("letter to my divorce lawyer"), so only
 its length is recorded. Later methods record only kinds (a MIME type,
-a toggle's name) and lengths; the keys and text of synthetic input are
-not recorded. An address an agent opens is recorded by its scheme and
+a toggle's name) and lengths; the keys, text and positions of synthetic
+input are not recorded, nor screenshots' pixels. An address an agent opens is recorded by its scheme and
 host only: its path and query can hold anything (a password reset
 token).
 
