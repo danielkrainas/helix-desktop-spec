@@ -202,9 +202,9 @@ code. The choices that users or developers are most likely to notice:
   its settings with GTK 4 through `org.gtk.gtk4.Settings.FileChooser`
   (sort, hidden files, columns, dates, size, list or grid). Folders are
   read off the UI thread and shown in batches as they come, and the
-  touchpad scrolls the list kinetically. It has no Starred place (GNOME
-  keeps stars in Nautilus's private database; Helix Files has none
-  yet), no "Connect to Server", and does not remember a position
+  touchpad scrolls the list kinetically. Its Starred place lists GNOME
+  Files' starred files, read-only. It has no "Connect to Server", and
+  does not remember a position
   (`contracts/dbus/org.freedesktop.impl.portal.md`, "FileChooser").
 
 ### Safety and robustness
@@ -265,6 +265,14 @@ code. The choices that users or developers are most likely to notice:
   words kept in memory only.
 - **Status icons** use the `org.kde.*` names apps actually use, although
   the specification says `org.freedesktop.*`.
+- **Starred files**: GNOME keeps stars in GNOME Files' private
+  TinySPARQL database, with no public contract. Helix Files and the file
+  chooser read it, and Helix Files writes it, as Nautilus 50 does, so
+  stars are shared. The schema is checked first: an unknown version is
+  read-only and an unknown shape turns stars off, and Helix never
+  migrates the database (`contracts/files/starred.md`). A running
+  Nautilus only sees stars Helix changed after it restarts
+  (helixdesktop/desktop#154).
 - **Login screen**: the greeter reads each user's session from
   AccountsService but remembers sessions itself (it cannot write them
   there), and takes its clock format from its own configuration or the

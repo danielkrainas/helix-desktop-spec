@@ -852,9 +852,12 @@ turns the paths into `file:` URIs and remembers the folder.
   until another branch is entered. When they do not fit, the first ones
   give way to a "…" button that goes to the deepest folder not shown.
   Clicking a folder's button goes there (with the folder below it
-  selected). In Recent the bar reads "Recent", in a search "Search for
-  “<text>”", in the Trash "Trash", in Other Locations "Other Locations".
-- Places (left): Recent (when opening files or saving), Home, the user's
+  selected). In Recent the bar reads "Recent", in Starred "Starred", in a
+  search "Search for “<text>”", in the Trash "Trash", in Other Locations
+  "Other Locations".
+- Places (left): Recent (when opening files or saving), Starred
+  (`starred-symbolic`; with Recent, while GNOME Files' star store
+  exists), Home, the user's
   standard folders (Desktop, Documents, Downloads, Music, Pictures,
   Videos, as `user-dirs.dirs` names them, except the home folder
   itself), the Trash (`user-trash-symbolic`; when opening files only:
@@ -867,7 +870,7 @@ turns the paths into `file:` URIs and remembers the folder.
   `smb-share:server=…,share=…`, "<user> on <host>" or "<host>" for others,
   else by folder name), "Computer"
   (`/`) and "Other Locations" (`list-add-symbolic`), each with a symbolic
-  icon, separated into groups (standard folders and the Trash,
+  icon, separated into groups (Recent, Starred, standard folders and the Trash,
   bookmarks, drives and network places, Computer and Other Locations);
   folders that do not exist are left out (the Trash is listed whether or
   not its folder exists yet) and a folder is listed once. They are read
@@ -880,6 +883,14 @@ turns the paths into `file:` URIs and remembers the folder.
   place shown is marked: the one shown, else the deepest one holding the
   folder shown (a folder inside the Trash marks the Trash). Clicking a
   place shows it.
+- Starred: the files and folders starred in GNOME Files (and Helix
+  Files) that are inside the home folder and still there, read-only from
+  Nautilus's store each time it is shown (`contracts/files/starred.md`),
+  with their folder as Location, sorted by the headers like a folder.
+  Files go through the file type filter, while folders stay listed so
+  they can be opened. Empty: "No starred files". A store that cannot be
+  used (no TinySPARQL, a schema Helix does not know) lists as an error.
+  The chooser neither stars nor unstars.
 - Trash: lists what the freedesktop Trash specification's Trash folders
   hold: the home Trash (`$XDG_DATA_HOME/Trash`) and, for each drive
   among the places, `<drive>/.Trash/<uid>` (when `.Trash` is a sticky
@@ -1127,7 +1138,7 @@ turns the paths into `file:` URIs and remembers the folder.
 - Accessibility (`org.a11y.atspi.md`): one dialog object, `file-chooser`,
   for the dialog's whole life, with the path bar (a tool bar of buttons,
   the folder shown toggled), the places (a list box), the file list (a
-  list box named "Files in <folder>", "Recent Files" or "Search results
+  list box named "Files in <folder>", "Recent Files", "Starred Files" or "Search results
   for “<text>”", "Trash", "Other Locations"; the grid's cells are its
   rows; every row while there are at most 1000, else those near
   the screen; each row named by the file's name, described "Folder" or
@@ -1139,11 +1150,8 @@ turns the paths into `file:` URIs and remembers the folder.
   eject buttons ("Eject <drive>"), the fields, the file type (a combo box), and the buttons. Not
   yet tried with Orca (helixdesktop/desktop#71).
 - Not offered (helixdesktop/desktop#118), *Helix's choice:*
-  - Starred: GNOME's starred files live in GNOME Files' (Nautilus's)
-    private Tracker database (`$XDG_DATA_HOME/nautilus/tags`), which it
-    does not offer on the bus; Helix Files has no starring yet, so there
-    is no store the chooser could share with the file manager. A Starred
-    place comes when Helix Files stars files, from the same store.
+  - Starring and unstarring in the chooser (GTK's chooser has neither):
+    its Starred place is read-only (see Starred above).
   - The window's position (`window-position`): the dialog is the
     shell's, centered over everything with the screen dimmed, and cannot
     be moved, so there is no position to remember (GTK 4 on Wayland

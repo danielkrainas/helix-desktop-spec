@@ -9,6 +9,7 @@ This directory holds the concrete interface definitions that an implementation m
 - `dbus/` — D-Bus interface definitions (XML)
 - `gsettings/` — GSettings schema definitions
 - `wayland/` — Notes on Wayland protocols and usage
+- `files/` — Stores shared with GNOME apps through files rather than D-Bus or GSettings (GNOME Files' starred files)
 - `extensions/` — Helix's own extension API
 - `agent-access/` — Agent Access, a Helix extension: the `helix-agent` CLI and the shell's `org.helixdesktop.Agent1` and `org.helixdesktop.AgentAccess1` interfaces (settings in `gsettings/org.helixdesktop.agent-access.md`)
 
