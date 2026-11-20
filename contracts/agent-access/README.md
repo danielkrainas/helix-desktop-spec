@@ -82,8 +82,9 @@ false: the agent marks this call sensitive).
 | `SetValue` | desktop | when marked | |
 | `Notify` | desktop | when marked | labelled with the agent; at most 5 a minute |
 | `SetClipboard` | desktop | when marked | needs `clipboard` |
-| `A11yTree` | apps | | |
-| `A11yAction`, `A11ySetValue` | apps | when marked | |
+| `A11yTree`, `A11yFind` | apps | | not excluded apps' windows, nor while a system prompt is shown |
+| `A11yAction` | apps | by the control's name (see "Control apps methods"), `window.close`, or when marked | also not password fields; clipboard actions need `clipboard` |
+| `A11ySetValue` | apps | when marked | also not password fields |
 | `Screenshot` | screen-and-input | | |
 | `Input` | screen-and-input | when marked | |
 
@@ -158,9 +159,17 @@ added; clients ignore keys they do not know):
   was used), `size` (`t`, local files only), and from `RecentFiles`
   `used` (`x`, when it was last used).
 - **Reminder**: `id` (`s`), `time` (`x`), `text` (`s`).
-- **Accessible node**: `id` (`s`), `role` (`s`, AT-SPI role name),
-  `name`, `description` (`s`), `states` (`as`), `value` (`s` or `d`;
-  never for password fields), `actions` (`as`), `children` (`aa{sv}`).
+- **Accessible node**: `id` (`s`), `parent` (`s`, the parent's id; `""`
+  for the first node of a tree), `role` (`s`, AT-SPI role name as
+  at-spi2-core names it: `button`, `text`, `password text`…), `name`,
+  `description` (`s`), `states` (`as`, AT-SPI state names: `focused`,
+  `checked`, `editable`…), `actions` (`as`, the app's action names),
+  `child-count` (`u`), and when they apply: `value` (`s` text, or `d`
+  with `min` and `max` (`d`) for a number; never for password fields),
+  `value-truncated` (`b`), `password` (`b`, true: a password field),
+  `truncated` (`b`, some of its children were left out), `x`, `y`,
+  `width`, `height` (`i`, in its window, with `bounds`). See "Control
+  apps methods".
 - **Image** (`Screenshot`): `png` (`ay`), `width`, `height` (`i`,
   pixels), `scale` (`d`).
 - **Clipboard** (`GetClipboard`): `mime-type` (`s`), and `text` (`s`)
@@ -392,6 +401,113 @@ made plain (below).
   (`AgentAccess1.ListReminders` and `CancelReminder`, "Who may manage
   grants").
 
+### Control apps methods
+
+The options and arguments of the *Control apps* methods
+(helixdesktop/desktop#149), besides the common ones. Malformed values
+fail with `InvalidArgs`. `window` is a window id as `ListWindows` gives
+it; `node` a node id from `A11yTree` or `A11yFind`.
+
+| Method | Options and arguments | Returns |
+|--------|----------------------|---------|
+| `A11yTree` | `depth` (`u`, levels below the first node, 0: it alone; default and most 64), `max-nodes` (`u`, 1–5,000, default 1,000), `node` (`s`: start there, else at the window), `bounds` (`b`: add `x`, `y`, `width`, `height` in the window) | `nodes` (`aa{sv}`: Accessible node records in tree order, the first where reading started), `window` (`u`), `app-id` (`s`), `truncated` (`b`: nodes were left out) |
+| `A11yFind` | `role` (`s`, a role name), `name` (`s`, contained in the name, ignoring case), `states` (`as`, all of them), `limit` (`u`, 1–500, default 50), `timeout-ms` (`u`: wait until one matches; 0 or absent: answer at once) | the matching Accessible node records, in tree order, without children (`[]` when none matches at once); `TimedOut` |
+| `A11yAction` | `node`; `action`: one of the node's `actions`, or `default` (its first action), `focus` (the keyboard focus), `select` (select it in the list, tabs or menu holding it) | `NotSupported` when the node has no such action or the app cannot do it |
+| `A11ySetValue` | `node`; `value` (`v`): a string replaces an editable text's text (or, for a node with a number and no editable text, is that number), a number (`d`, `i`, `u`, `x`) sets the node's number, within its `min` and `max` | `NotSupported` when the node has neither; `InvalidArgs` outside the range |
+
+- **The shell is the only client.** *Helix's choice:* the shell
+  connects to the accessibility bus itself (`AT_SPI_BUS_ADDRESS`, else
+  `org.a11y.Bus.GetAddress` on the session bus) and reads and acts on
+  the app's objects there; agents never get an object's bus name or a way
+  to reach it.
+- **Which tree is a window's.** *Helix's choice:* by the window's
+  process, never by its title alone. The compositor tells the shell
+  each window's process (its Wayland client's credentials; for an X11
+  window the process it names) and, when the app said with
+  `gtk_surface1.set_a11y_properties` (GTK 4), its bus name and the
+  window's object path. The told object is used when the process owning
+  that name on the accessibility bus is the window's; a told name of
+  another process is refused. Otherwise the registry's applications are
+  asked for the one whose bus connection is the window's process: none,
+  or more than one, is `NotSupported`; of its top-level objects that are
+  shown, the one, or the one named as the window is titled (needed when
+  the process has several windows). Anything else is ambiguous and
+  refused (`NotSupported`), never guessed. Apps whose accessibility
+  connection is not their own process (a sandbox's D-Bus proxy) cannot
+  be driven.
+- **Node ids.** A node's id is its object path on the app's connection,
+  shortened to its last part when it shares the window's object's
+  directory (GTK 4: `2bfe25b2_b780_4e52_9c1e_6d0a3f8b7e10`), else the
+  whole path. It names the same control for as long as the app keeps
+  that object (GTK, Qt: the widget's lifetime), across tree reads, not
+  across app restarts; a gone node is `NotFound`. Every action first
+  checks that the node is at exactly that path (its parent gives it at
+  its place: some toolkits answer for paths they never gave) and walks
+  from it up its parents to the window's object: a node of another
+  window, another app, or none is `NotFound`. Only nodes of the
+  app's own bus connection are read (objects embedded from other
+  processes are left out, and their holder marked `truncated`).
+- **What is read.** Roles, names, descriptions, states and action names
+  as the app gives them; a number's value, minimum and maximum; and the
+  text of editable texts (and of other texts whose text is not their
+  name), at most 4,096 characters (`value-truncated`). *Helix's choice:*
+  text contents are given: driving apps means reading what they show,
+  the user chose *Control apps* knowing it, and apps whose contents must
+  not be read belong in `excluded-apps` (a password manager, banking,
+  messaging). Unlike notifications, which every app sends, the agent
+  reads one window it names.
+- **Password fields.** A node is one when its role is `password text`,
+  or it is an editable text whose text is all mask characters (`•`, `●`,
+  `∗`, `*`…; GTK 4 reports an entry with hidden characters as plain
+  `text`) or whose name contains "password", "passphrase", "passcode",
+  "PIN" or "secret" (or the words for them in the user's language).
+  AT-SPI has no password state; toolkits that know the field is one use
+  the role. A password field's record has `password` true and no
+  `value`, its text is never read (not even masked), its children are not
+  read, and `A11yAction` (`focus` too), `A11ySetValue` and `A11yTree`'s
+  `node` on it or anything inside it fail with `Excluded`
+  (`password-field`). An empty field with hidden characters that no
+  name marks cannot be told from a plain one.
+- **Protected surfaces.** Before anything is read, in order: the
+  window's app id is checked as any target (Settings: `settings`;
+  `excluded-apps`: `app:<id>`); while a system prompt is shown (the
+  shell's polkit, keyring, network secret, Bluetooth pairing, consent,
+  sensitive-action and question dialogs, and its other permission
+  prompts) everything fails with `system-prompt`; then the window's
+  process: the shell's own (its panels, prompts and dialogs are never a
+  target; `shell`), Settings' program `helix-settings-app` (`settings`),
+  the shell's, compositor's, greeter's, session's and portals' programs
+  (`shell`), the system's prompt programs (`gcr-prompter`, polkit
+  agents, `pinentry*`, `ssh-askpass*`, KWallet: `system-prompt`), and a
+  process that shows a window of an excluded app or Settings, runs an
+  excluded app's program, or runs in an excluded app's systemd unit
+  (`app:<id>`, `settings`). The lock screen and the greeter have no
+  windows agents can name, and nothing runs while the screen is locked;
+  each action checks the lock and the system prompts again just before
+  it is done (after the sensitive-action prompt).
+- **Clipboard.** Actions that use the clipboard (`clipboard.*`, and
+  actions named `copy`, `cut` or `paste`) need the `clipboard` switch
+  (`FeatureOff`): pasting into a field and reading it would read the
+  clipboard.
+- **Sensitive actions.** *Helix's choice:* `A11yAction` is sensitive
+  when the agent marks it, for `window.close`, `selection.delete` and
+  `text.clear`, and when the control's name or description has, as a
+  whole word, one of: delete, remove, erase, discard, trash, send,
+  submit, post, publish, pay, purchase, buy, order, checkout, transfer,
+  donate, uninstall, format, wipe, reset, empty, revoke, quit, sign out,
+  log out, shut down, or their translations in the user's language.
+  `focus` is never sensitive. `A11ySetValue` is sensitive when marked.
+  The shell cannot know what a control does; agents should mark what
+  they know to be sensitive. The prompt names the control by its name
+  and role and the app ("Control: “Delete All” (button) in
+  org.gnome.Nautilus"), shown to the user only.
+- **Limits.** A tree read stops after `max-nodes` nodes or 20 seconds
+  (`truncated`); each call to the app waits at most 3 seconds (`Failed`
+  when it does not answer). `A11yFind` reads up to 5,000 nodes; with
+  `timeout-ms` it looks again every quarter second, counts as running
+  (the indicator), and ends with the error a new call would get when the
+  agent loses access, a system prompt appears or the window closes.
+
 ## Errors
 
 The shell answers refusals with these D-Bus errors (prefix
@@ -603,16 +719,17 @@ starts itself outside every session counts as local.
 Not settings; the user cannot turn them off:
 
 - **The lock screen.** Nothing runs while the screen is locked (step 5).
-- **Password fields.** Accessible nodes with the role `password text`
-  or the state `PASSWORD` have no `value`; acting on them, setting them,
-  or sending input while one has focus fails with `Excluded`
-  (`password-field`). Screenshots black them out where the shell knows
-  their bounds.
+- **Password fields.** Accessible nodes with the role `password text`,
+  and editable texts the shell takes for one (see "Control apps
+  methods"), have no `value`; acting on them, setting them, or sending
+  input while one has focus fails with `Excluded` (`password-field`).
+  Screenshots black them out where the shell knows their bounds.
 - **System prompts.** While the shell shows a polkit, keyring, network
   secret, Bluetooth pairing, Agent Access consent or sensitive-action
-  prompt, `A11y*`, `Screenshot`, `Input` and the clipboard methods fail
-  with `Excluded` (`system-prompt`); the shell's own UI is never a
-  target (`shell`).
+  prompt (or an agent's question, or another permission prompt of the
+  shell's), `A11y*`, `Screenshot`, `Input` and the clipboard methods fail
+  with `Excluded` (`system-prompt`), as do apps' windows of the system's
+  prompt programs; the shell's own UI is never a target (`shell`).
 - **Settings.** *Helix's choice:* every window of the Settings app
   (`org.helixdesktop.Settings`) is excluded (`settings`), because the
   shell cannot tell which page a window shows and the Agent Access page
@@ -714,10 +831,12 @@ ignore keys they do not know; keys may be added):
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
 | `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
-| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body), `question-length` (`Ask`, `Confirm`), `text-length` (`AddReminder`); later stages add others. |
+| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body), `question-length` (`Ask`, `Confirm`), `text-length` (`AddReminder`, the text `A11ySetValue` sets), `name-length` (`A11yFind`'s `name`); later stages add others. |
 | `choice-count` | integer | `Ask` with `choices`: how many. |
 | `uri-count` | integer | `Launch`: how many files or addresses it handed the app (absent for none). |
-| `action` | string | `WindowAction`: the action (`tile-left`, `close`); a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
+| `action` | string | `WindowAction`: the action (`tile-left`, `close`); `A11yAction`: the action when it is a common one (`click`, `activate`, `toggle`, `default`, `focus`, `select`, `window.close`, `clipboard.copy`…), else `other` (apps name their actions); `A11ySetValue`: `set-text` or `set-value`; a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
+| `role` | string | `A11yAction`, `A11ySetValue`: the role of the node acted on (`button`, `password text`), also when refused; `A11yFind`: the role looked for. |
+| `node-count` | integer | `A11yTree`: how many nodes it returned; `A11yFind`: how many matched. |
 | `state` | string | `SetToggle`: `on` or `off`. |
 | `grant` | string | Consent prompts: `session` or `always`. |
 | `count`, `until` | integer | Coalesced refusals (below): how many calls the line stands for (≥ 2), and the last one's `time`. |
@@ -787,6 +906,9 @@ Examples:
 {"time":1795082464,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Confirm","level":"read-only","outcome":"cancelled","question-length":12}
 {"time":1795082466,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"AddReminder","target":"reminder:3f9a0c2e7b1d4a56","level":"read-only","outcome":"allowed","text-length":16}
 {"time":1795084200,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Reminder","target":"reminder:3f9a0c2e7b1d4a56","outcome":"allowed"}
+{"time":1795082468,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11yTree","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"allowed","node-count":143}
+{"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11ySetValue","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"allowed","text-length":17,"role":"text","action":"set-text"}
+{"time":1795082469,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"A11ySetValue","target":"window:21 (org.gnome.TextEditor)","level":"apps","outcome":"refused:Excluded","text-length":5,"role":"password text"}
 {"time":1795082470,"agent":"/usr/bin/helix-settings-app","name":"","method":"Revoke","target":"/usr/bin/node /home/me/agent.js","outcome":"allowed"}
 {"time":1795082471,"agent":"/usr/bin/helix-settings-app","name":"","method":"StopAll","outcome":"allowed"}
 {"time":1795082501,"agent":"/opt/bot","name":"","method":"GetState","level":"read-only","outcome":"refused:AccessOff","count":120,"until":1795082559}
@@ -798,7 +920,10 @@ A line holds only the keys above. Never recorded: text an agent types
 or sends (`Ask`/`Confirm` questions and choices, reminder and notification text,
 `SetValue` values, input), clipboard data, notification summaries and
 bodies, accessible field values, window titles, answers to questions,
-and search queries and title matches. *Helix's choice:* a search query
+and search queries and title matches; for the *Control apps* methods,
+node ids, names and values (a window is recorded as `window:<id> (<app
+id>)`, a node by its role, a set text by its length, a set number not at
+all). *Helix's choice:* a search query
 can say as much as a document ("letter to my divorce lawyer"), so only
 its length is recorded. Later methods record only kinds (a MIME type,
 a toggle's name) and lengths; the keys and text of synthetic input are

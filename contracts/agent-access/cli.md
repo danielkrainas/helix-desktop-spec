@@ -60,9 +60,12 @@ it, since identity never comes from the agent.
 | `toggle <NAME> [on\|off]` | `SetToggle` | desktop |
 | `set <NAME> <VALUE>` | `SetValue` | desktop |
 | `notify <TITLE> [<BODY>] [--icon <ICON>] [--urgency low\|normal]` | `Notify` | desktop |
-| `a11y tree <WINDOW> [--depth <N>] [--node <NODE>]` | `A11yTree` | apps |
+| `a11y tree <WINDOW> [--depth <N>] [--node <NODE>] [--max-nodes <N>] [--bounds]` | `A11yTree` | apps |
+| `a11y find <WINDOW> [--role <ROLE>] [--name <TEXT>] [--state <STATE>]... [--limit <N>]` | `A11yFind` | apps |
+| `a11y wait <WINDOW> [--role <ROLE>] [--name <TEXT>] [--state <STATE>]... [--timeout <SECONDS>]` | `A11yFind` | apps |
 | `a11y do <WINDOW> <NODE> <ACTION>` | `A11yAction` | apps |
-| `a11y set <WINDOW> <NODE> <VALUE>` | `A11ySetValue` | apps |
+| `a11y press <WINDOW> <NODE>` / `a11y focus <WINDOW> <NODE>` / `a11y select <WINDOW> <NODE>` | `A11yAction` | apps |
+| `a11y set <WINDOW> <NODE> <VALUE> [--number]` | `A11ySetValue` | apps |
 | `screenshot [--window <WINDOW> \| --monitor <CONNECTOR>] [--output <FILE>]` | `Screenshot` | screen-and-input |
 | `input key <KEYS>...` / `input type <TEXT>` / `input click <X> <Y> [--button <N>]` / `input move <X> <Y>` / `input scroll <DX> <DY>` | `Input` | screen-and-input |
 | `log [--agent <ID>] [--since <WHEN>]` | none (reads the log file) | none |
@@ -89,6 +92,18 @@ it, since identity never comes from the agent.
 - `open` and `launch` take paths (relative ones are made absolute
   against the working directory, `~` is the home folder), `file://`
   URIs, and `http`, `https` and `mailto` addresses.
+- `a11y`: `NODE` is a node id from `a11y tree` or `a11y find`
+  (`README.md`, "Control apps methods"). `tree` sends `--depth`,
+  `--node`, `--max-nodes` and `--bounds` as the options of those names;
+  `find` sends `--role`, `--name`, `--state` (repeatable, as `states`)
+  and `--limit`. `wait` is `find` with `limit` 1 and its `--timeout`
+  (default 60 seconds; `0`: as long as it takes) as `timeout-ms`; the CLI
+  waits for the shell's answer that long plus the global `--timeout`.
+  `press` sends the action `default` (the node's first), `focus` and
+  `select` those actions. `set` sends `VALUE` as a string, or with
+  `--number` as a number (`d`). Text output of `tree` is an indented
+  outline (role, name, value, states, actions, `#id`); of `find` and
+  `wait` a line per node.
 - `input key` takes key combinations such as `ctrl+c`, `alt+F4`,
   `Return` (XKB key names, modifiers `ctrl`, `alt`, `shift`, `super`);
   several are pressed in turn.
@@ -223,7 +238,9 @@ always an object:
 | `clipboard get` | the Clipboard record (`data` in base64) |
 | `notify` | `{"id": <id>}` |
 | `toggle` | `{"name": "<NAME>", "on": true\|false}` (the state it set) |
-| `a11y tree` | the root Accessible node |
+| `a11y tree` | `{"window": <id>, "app-id": "<id>", "truncated": true\|false, "root": <node>}`: the shell's flat list as a tree, each Accessible node with `children` (a list of nodes) and without `parent` |
+| `a11y find` | `{"nodes": [Accessible node...]}` |
+| `a11y wait` | the Accessible node found |
 | `screenshot` | the Image record (`png` in base64; with `--output`, `"path"` instead of `"png"`) |
 | `log` | `{"entries": [...]}` (the log's own lines) |
 | other commands | `{}` |
