@@ -75,12 +75,12 @@ false: the agent marks this call sensitive).
 | `Ask`, `Confirm` | read-only | | |
 | `AddReminder`, `ListReminders`, `CancelReminder` | read-only | | an agent sees only its own reminders |
 | `GetClipboard` | read-only | | needs `clipboard` |
-| `Open`, `Launch` | desktop | when marked | |
-| `WindowAction` | desktop | when marked | |
+| `Open`, `Launch` | desktop | when marked | not excluded apps (also as the app that would open a file) |
+| `WindowAction` | desktop | `close`, or when marked | not excluded apps' windows |
 | `SwitchWorkspace` | desktop | when marked | |
 | `SetToggle` | desktop | `wifi`, `airplane-mode`, or when marked | |
 | `SetValue` | desktop | when marked | |
-| `Notify` | desktop | when marked | |
+| `Notify` | desktop | when marked | labelled with the agent; at most 5 a minute |
 | `SetClipboard` | desktop | when marked | needs `clipboard` |
 | `A11yTree` | apps | | |
 | `A11yAction`, `A11ySetValue` | apps | when marked | |
@@ -236,6 +236,73 @@ app's accessibility tree (that is the *Control apps* level's):
    their recent files and show the file name in the title.
 
 Apps that do neither have no `document`.
+
+### Control the desktop methods
+
+The options and arguments of the *Control the desktop* methods
+(helixdesktop/desktop#147), besides the common ones. Malformed values
+fail with `InvalidArgs`; none returns anything but `Notify`.
+
+| Method | Options and arguments | Does |
+|--------|----------------------|------|
+| `Open` | `uri`: an absolute path, a `file://` URI, or an `http`, `https` or `mailto` address; `app` (`s`, an app id: open it with that app) | opens it in its default app (see below); `NotFound` when the file does not exist or no app opens it |
+| `Launch` | `app_id` (with or without `.desktop`); `uris` as `Open`'s `uri` | starts an app the app grid shows, handing it `uris`; `NotFound` for other ids |
+| `WindowAction` | `window`; `action`: `focus`, `close`, `minimize`, `maximize`, `unmaximize`, `restore`, `fullscreen`, `unfullscreen`, `tile-left`, `tile-right`, `move` (options `x`, `y`, `i`), `resize` (`width`, `height`, `i`, at least 1), `to-workspace` (`workspace`, `u`) | acts on the window; `NotFound` for an unknown window or workspace, `NotSupported` for an unknown action |
+| `SwitchWorkspace` | `index` (from 0) | makes it the active workspace; `NotFound` when there is no such workspace |
+| `SetToggle` | `name`: `dark-style`, `do-not-disturb`, `night-light`, `wifi`, `airplane-mode`, `mute`; `on` | turns it on or off; `NotSupported` for other names and for what is not there (no NetworkManager, sound server…) |
+| `SetValue` | `name`: `volume`, `brightness`; `value` (`d`, 0–1 as the State record has it; `volume` up to 1.5 with over-amplification on) | sets it; `NotSupported` as for `SetToggle` |
+| `Notify` | `title` (not empty), `body`; `icon` (`s`, a theme icon's name), `urgency` (`s`: `low` or `normal`, default `normal`) | shows a notification; returns its id (`u`) |
+
+- **Through the shell's own ways.** *Helix's choice:* the methods do
+  what the user's own clicks do, in the same code: apps start through
+  the launcher (in their own scope, with an activation token), files
+  open as a double-click on the desktop opens them, windows are acted on
+  through the compositor's window list as the window menu and the
+  overview do, and toggles and values change as quick settings changes
+  them (setting the volume unmutes, as its slider does). Nothing an
+  agent does through these methods is out of the user's reach to undo.
+- **Opening.** `Open` hands a local file or folder to the default app
+  for its type, and an address to the default app for its scheme.
+  Other schemes (`ssh:`, `smb:`, apps' own schemes) are refused with
+  `NotSupported`: an app's own scheme can start things without asking.
+  A `.desktop` file launches its application only when it is trusted as
+  on the desktop (an application's entry, executable, not writable by
+  others, and marked `metadata::trusted` with *Allow Launching*);
+  otherwise it is a plain file and opens as one. Relative paths are
+  refused; `helix-agent` makes them absolute.
+- **Exclusions.** The app that would start is checked like a target
+  (step 9): the `app` option, `Launch`'s `app_id`, the default app for
+  the file or address, or the trusted `.desktop` file's name. Excluded
+  apps, Settings, and any app whose command runs Settings' program
+  (`helix-settings-app`) are refused with `Excluded`, before the user is
+  asked about a sensitive action. `WindowAction` on a window of an
+  excluded app (or of Settings) fails with `Excluded`.
+- **Windows.** `focus` raises the window and gives it the keyboard,
+  unminimizing it and switching to its workspace; `restore` makes it
+  normal again (unminimized, and neither maximized, tiled nor full
+  screen); actions that are already so do nothing (`tile-left` on a
+  window tiled left does not untile it). `move` places the window's own
+  area (`x`, `y` of its Window record) and `resize` asks its app for a
+  size, both ending a maximize, tile or full screen first, and fail
+  (`Failed`) for a minimized window or one on another workspace. The
+  compositor keeps a moved window on a monitor: its top below the top
+  bar and at least 64 pixels of it on the monitor. *Helix's choice:*
+  the call returns once the windows show the change, or after at most
+  two seconds (an app may choose another size, or ask before closing),
+  so a `ListWindows` right after it shows the result.
+- **Quick settings.** `wifi` is NetworkManager's Wi-Fi switch and
+  `airplane-mode` turns every radio off (or back on), as quick settings
+  does; both are sensitive, since they change the network. With
+  `confirm-sensitive` on, the sensitive-action prompt names what is
+  changed ("turn Wi-Fi off"), as it does for closing a window.
+- **Notifications** appear under "Agent: <agent>" in place of an app's
+  name, `<agent>` being the agent's display name and its executable's
+  file name (or the executable and the script) as the indicator shows
+  it, so an agent cannot pass one off as the system's or an app's. They
+  are plain text (no markup, no buttons, never critical: Do Not Disturb
+  holds them back like any app's) and have no app id. *Helix's choice:*
+  an agent may show at most 5 in any minute; more fail with `Failed`
+  until the minute is up.
 
 ## Errors
 
@@ -467,9 +534,10 @@ Not settings; the user cannot turn them off:
 
 Excluded apps' windows are left out of `ListWindows`, `ListApps` and
 `WaitForWindow`, their notifications out of `ListNotifications`, and
-they are blacked out in screenshots; launching or opening them, and any
-method naming one of their windows, fails with `Excluded`. App ids are
-compared without a `.desktop` suffix.
+they are blacked out in screenshots; launching or opening them
+(also opening a file whose default app is one), and any method naming
+one of their windows, fails with `Excluded`. App ids are compared
+without a `.desktop` suffix.
 
 ## Settings take effect at once
 
@@ -548,11 +616,14 @@ ignore keys they do not know; keys may be added):
 | `agent` | string | The agent's id (see "Who is calling"); `""` when the caller could not be identified (e.g. sandboxed: then the caller's executable when it is the user's process, else `""`). |
 | `name` | string | Its display name, `""` for none. |
 | `method` | string | The `Agent1` method; or one of the *events* below. |
-| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI. Never a window title. Control characters are removed and it is cut at 256 characters. |
+| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI, an address as its scheme and host only (`https://example.org`, `mailto:`), a workspace as `workspace:<index>`, a quick setting or value by its name (`wifi`, `volume`); for Settings' `Revoke` and `Forget`, the agent's id. Never a window title. Control characters are removed and it is cut at 256 characters. |
 | `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
 | `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
 | `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
-| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`); later stages add `text-length`, `question-length` and the like. |
+| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`, a notification's title), `body-length` (a notification's body); later stages add `text-length`, `question-length` and the like. |
+| `uri-count` | integer | `Launch`: how many files or addresses it handed the app (absent for none). |
+| `action` | string | `WindowAction`: the action (`tile-left`, `close`); a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
+| `state` | string | `SetToggle`: `on` or `off`. |
 | `grant` | string | Consent prompts: `session` or `always`. |
 | `count`, `until` | integer | Coalesced refusals (below): how many calls the line stands for (≥ 2), and the last one's `time`. |
 | `dropped` | string | `LogFull` lines (below): `refusals` or `all`. |
@@ -579,16 +650,25 @@ Events (not `Agent1` methods; none of them is a method name):
   unanswered). The call that asked is recorded too, with its own
   outcome.
 - `SensitivePrompt`: the sensitive-action prompt was answered;
-  `target` is the method. `allowed` or `refused:DeniedByUser`.
+  `target` is the method, `action` what it does when the prompt said
+  more. `allowed` or `refused:DeniedByUser`.
 - `Stop`: *Stop* in the indicator; `cancelled`.
 - `LogFull`: written once when a day file reaches a cap (below), with
   `agent` and `name` `""`.
 
-`AgentAccess1` (Settings) calls are not recorded, except `ClearLog`:
-after the files are removed, a line `ClearLog` with `agent` the Settings
-executable and `allowed` (so a cleared log says it was cleared). Calls
-to `AgentAccess1` that are refused (`AccessDenied`, a program other than
-Settings) are recorded, with the method name.
+`AgentAccess1` (Settings) calls that take access away or clear the log
+are recorded, with `agent` the Settings executable, `name` `""`, `method`
+the method's name, no `level`, and `allowed` (unknown agent ids too:
+the line says what the user asked for):
+
+- `Revoke`, `Forget`: `target` the agent's id as Settings gave it.
+- `StopAll`: no `target`.
+- `ClearLog`: no `target`; written after the files are removed (so a
+  cleared log says it was cleared).
+
+`ListAgents` is not recorded. Calls to `AgentAccess1` that are refused
+(`AccessDenied`, a program other than Settings) are recorded, with the
+method name.
 
 Examples:
 
@@ -598,6 +678,12 @@ Examples:
 {"time":1795082420,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"WaitForWindowClosed","target":"window:21 (org.example.Vault)","level":"read-only","outcome":"refused:Excluded"}
 {"time":1795082430,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"WaitForWindow","level":"read-only","outcome":"allowed","error":"TimedOut","title-length":5}
 {"time":1795082440,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"ConsentPrompt","level":"read-only","outcome":"allowed","grant":"session"}
+{"time":1795082450,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"WindowAction","target":"window:21 (org.gnome.TextEditor)","level":"desktop","outcome":"allowed","action":"tile-left"}
+{"time":1795082455,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SensitivePrompt","target":"SetToggle","level":"desktop","outcome":"refused:DeniedByUser","action":"wifi-off"}
+{"time":1795082456,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetToggle","target":"wifi","level":"desktop","outcome":"refused:DeniedByUser","state":"off"}
+{"time":1795082460,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Open","target":"https://example.org","level":"desktop","outcome":"allowed"}
+{"time":1795082470,"agent":"/usr/bin/helix-settings-app","name":"","method":"Revoke","target":"/usr/bin/node /home/me/agent.js","outcome":"allowed"}
+{"time":1795082471,"agent":"/usr/bin/helix-settings-app","name":"","method":"StopAll","outcome":"allowed"}
 {"time":1795082501,"agent":"/opt/bot","name":"","method":"GetState","level":"read-only","outcome":"refused:AccessOff","count":120,"until":1795082559}
 ```
 
@@ -611,7 +697,9 @@ and search queries and title matches. *Helix's choice:* a search query
 can say as much as a document ("letter to my divorce lawyer"), so only
 its length is recorded. Later methods record only kinds (a MIME type,
 a toggle's name) and lengths; the keys and text of synthetic input are
-not recorded.
+not recorded. An address an agent opens is recorded by its scheme and
+host only: its path and query can hold anything (a password reset
+token).
 
 ### Not filling the disk
 

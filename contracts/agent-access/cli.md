@@ -75,14 +75,20 @@ it, since identity never comes from the agent.
   an offset), or a relative time: `+10m`, `+2h`, `-1d`, `yesterday`,
   `today`.
 - `window` actions: `focus`, `close`, `minimize`, `maximize`,
-  `unmaximize`, `fullscreen`, `unfullscreen`, `tile-left`,
+  `unmaximize`, `restore`, `fullscreen`, `unfullscreen`, `tile-left`,
   `tile-right`, `move <X> <Y>`, `resize <WIDTH> <HEIGHT>`,
-  `to-workspace <INDEX>`.
+  `to-workspace <INDEX>` (sent as `WindowAction`'s options `x`, `y`,
+  `width`, `height`, `workspace`). `close` is sensitive.
 - `toggle` names: `dark-style`, `do-not-disturb`, `night-light`, `wifi`,
   `airplane-mode`, `mute`; without `on`/`off` the setting flips (read
-  with `GetState` first). `wifi` and `airplane-mode` are sensitive.
+  with `GetState` first; `not-supported` when the state does not have
+  it). `wifi` and `airplane-mode` are sensitive.
 - `set` names: `volume`, `brightness`; `VALUE` is a percentage
-  (`0`–`100`, `volume` up to `150` when over-amplification is on).
+  (`0`–`100`, `volume` up to `150` when over-amplification is on), sent
+  as `SetValue`'s 0–1 value.
+- `open` and `launch` take paths (relative ones are made absolute
+  against the working directory, `~` is the home folder), `file://`
+  URIs, and `http`, `https` and `mailto` addresses.
 - `input key` takes key combinations such as `ctrl+c`, `alt+F4`,
   `Return` (XKB key names, modifiers `ctrl`, `alt`, `shift`, `super`);
   several are pressed in turn.
@@ -205,6 +211,7 @@ always an object:
 | `remind list` | `{"reminders": [Reminder...]}` |
 | `clipboard get` | the Clipboard record (`data` in base64) |
 | `notify` | `{"id": <id>}` |
+| `toggle` | `{"name": "<NAME>", "on": true\|false}` (the state it set) |
 | `a11y tree` | the root Accessible node |
 | `screenshot` | the Image record (`png` in base64; with `--output`, `"path"` instead of `"png"`) |
 | `log` | `{"entries": [...]}` (the log's own lines) |
