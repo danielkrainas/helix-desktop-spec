@@ -533,7 +533,10 @@ Batch 2 (helixdesktop/desktop#157).
   `NotificationAction` take only an id that `ListNotifications` would
   give this agent now (not an excluded app's, not one about an excluded
   app's window); any other id, a gone one included, is `NotFound`, so an
-  agent learns nothing of notifications it cannot list.
+  agent learns nothing of notifications it cannot list. The shell's own
+  "Reminder set" notification has no `actions` for agents, and pressing
+  its *Cancel Reminder* button is `NotFound`: it is the user's way to
+  undo what an agent scheduled, and the log would say the user did it.
 - **Dismissing** is the user's × in the notification list: the
   notification goes away and its app is told it was dismissed
   (`NotificationClosed` reason 2, or as `org.gtk.Notifications` and the
@@ -547,9 +550,10 @@ Batch 2 (helixdesktop/desktop#157).
   `NotFound` when `default-action` is false.
 - **Which buttons are sensitive.** *Helix's choice:* as `A11yAction`'s
   controls ("Control apps methods", "Sensitive actions"): a button whose
-  label has, as a whole word, one of the same words (reply, send, delete,
-  pay…, in English or the user's language), and `default` when the
-  notification has such a button, since apps often make the default
+  label has, as a whole word, one of the same words (send, delete,
+  pay…), or reply, answer or respond (a reply answers someone in the
+  user's name), in English or the user's language; and `default` when
+  the notification has such a button, since apps often make the default
   action the one that answers. With `confirm-sensitive` on, the prompt
   names the label and the app, to the user only.
 - **Revealing** calls `org.freedesktop.FileManager1.ShowItems` on the
@@ -560,11 +564,12 @@ Batch 2 (helixdesktop/desktop#157).
   Settings), the call fails with `Excluded` before anything starts. The
   file must exist; hidden files may be revealed (nothing is read).
 - **To another monitor.** `to-monitor` moves the window to that monitor
-  as Super+Shift+arrow does: a maximized, tiled or full-screen window
-  stays so there; a normal window keeps its place relative to the
-  monitor's top-left corner, made smaller when it does not fit, and is
-  kept on the monitor as for `move`. A window already there is left
-  alone. It fails (`Failed`) for a minimized window, and returns as the
+  as Super+Shift+arrow does, a monitor at a time (the neighbour that
+  way) toward the one named: a maximized or full-screen window stays so
+  there; a normal window keeps its place relative to the monitor's work
+  area, moved in to stay on it (not resized), and is focused. A window
+  already there is left alone. It fails (`Failed`) for a minimized
+  window and for a monitor the moves do not reach, and returns as the
   other window actions do.
 
 ### Changes, undo and restoring
@@ -582,7 +587,9 @@ up no restore, and leaves any pending restore of that setting alone.
   (mode 0600, written whole through a temporary file, never through a
   symlink, and a rename; its format is the shell's own). Records are
   pruned with the log (`log-retention-days`), kept at most 500 (the
-  oldest dropped first), and all removed by `ClearLog`.
+  oldest dropped first), and removed by `ClearLog`; a change with a
+  pending restore is kept until it is done, whatever these say (the
+  user's value still comes back).
 - **What is one setting.** `wallpaper` (`picture-uri`,
   `picture-uri-dark` and `picture-options` together), `accent`,
   `power-mode`, each toggle by name, `star` per file and `favorite` per
@@ -1379,7 +1386,8 @@ put a setting back to the value it had before an agent changed it
   undo and restoring": the latest of its setting, which still has the
   value the agent set), newest first: `id` (`s`), `agent` (`s`),
   `executable` (`s`), `name` (`s`, the display name), `time` (`x`),
-  `setting` (`s`, the Change's `name`), `target` (`s`, as the Change's),
+  `setting` (`s`, the Change's `name`; for a toggle its name,
+  `dark-style`…), `target` (`s`, as the Change's; `""` for none),
   `old`, `new` (`v`), for `wallpaper` `old-dark`, `new-dark`, `old-fit`,
   `new-fit`, and `until` (`x`) while a restore is pending. Settings
   shows *Undo* on the log lines whose `change` is listed.
@@ -1578,7 +1586,7 @@ Examples:
 {"time":1795082600,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetAccent","target":"accent","level":"desktop","outcome":"allowed","change":"9c1d0e2f4a6b8c3d","old":"blue","new":"red","restore-at":1795086200}
 {"time":1795082610,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetToggle","target":"dark-style","level":"desktop","outcome":"allowed","state":"on","change":"5e7f9a1b3c2d4e6f","old":"off","new":"on"}
 {"time":1795082620,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SetWallpaper","target":"wallpaper","level":"desktop","outcome":"refused:Excluded","reason":"private-file","variant":"both"}
-{"time":1795082630,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"NotificationAction","target":"notification:42 (org.gnome.Fractal)","level":"desktop","outcome":"refused:FeatureOff","reason":"notifications","action":"button"}
+{"time":1795082630,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"NotificationAction","level":"desktop","outcome":"refused:FeatureOff","reason":"notifications"}
 {"time":1795082640,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"MediaControl","target":"player:vlc (org.videolan.VLC)","level":"desktop","outcome":"allowed","action":"play-pause"}
 {"time":1795082650,"agent":"/usr/bin/helix-settings-app","name":"","method":"Undo","target":"dark-style","outcome":"allowed","change":"5e7f9a1b3c2d4e6f","old":"on","new":"off"}
 {"time":1795086200,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"Restore","target":"accent","outcome":"allowed","change":"9c1d0e2f4a6b8c3d","old":"red","new":"blue","cause":"expired"}

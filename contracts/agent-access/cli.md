@@ -136,6 +136,9 @@ it, since identity never comes from the agent.
   is “Accent color: Blue → Red” (“, back at 15:30” with `until`), or
   “Accent color is already Red” when nothing changed; `toggle` with
   `--until` adds “, back at 15:30”.
+- Text output of `notifications` starts each line with the
+  notification's `id`, and with Notification access on lists its buttons
+  below it (`[reply] Reply`).
 - `notifications dismiss` and `press` take a notification's `id` from
   `notifications`; `press` sends `ACTION`, an `id` of the notification's
   `actions` (shown by `notifications` with Notification access on), or
