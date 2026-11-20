@@ -51,7 +51,9 @@ Path: `/org/helixdesktop/agent-access/`
   agents may never read or control, in addition to the hard exclusions.
   Their windows are left out of every list and refused as targets.
 - `log-retention-days`: days the activity log keeps entries; range
-  1–365 (the schema's range).
+  1–365 (the schema's range). Day files are kept for that many days
+  counting today, and pruned at once when it changes
+  (`contracts/agent-access/README.md`, "Activity log").
 
 Keys missing from an older installed schema read as the defaults above
 (`org.helixdesktop.shell.md`, "Older installed schemas"); a missing

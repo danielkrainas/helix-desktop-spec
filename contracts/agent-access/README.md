@@ -502,7 +502,8 @@ grants come only from the consent prompt.
   stays (so under `remember` it is let in again).
 - `Forget(agent)`: `Revoke`, and forgets its remembered grant.
 - `StopAll()`: `Revoke` for every agent.
-- `ClearLog()`: empties the activity log (helixdesktop/desktop#144).
+- `ClearLog()`: empties the activity log (helixdesktop/desktop#144) and
+  records that it did (see "Activity log").
 - `AgentsChanged` is emitted when the list changes.
 
 Unknown agent ids are not an error (nothing to take away).
@@ -510,12 +511,130 @@ Unknown agent ids are not an error (nothing to take away).
 ## Activity log
 
 The shell records every `Agent1` call except `GetStatus`
-(helixdesktop/desktop#144): time, agent id and display name, method,
-target (app id, window title, file URI; no content), level, and outcome
-(`allowed`, `refused:<error>`, `cancelled`). It never records secrets:
-no typed text, clipboard data, notification contents, field values or
-question answers, only their kind and length. The log is kept in
+(helixdesktop/desktop#144), refused calls included, and what the user
+did about agents: consent-prompt and sensitive-action-prompt answers,
+and *Stop* in the indicator. Settings reads the log directly (*View
+Activity*) and clears it with `ClearLog`; `helix-agent log` reads it for
+the user.
+
+### Files
+
 `$XDG_STATE_HOME/helix/agent-activity/` (directory 0700), one file per
-day (`YYYY-MM-DD.jsonl`, 0600, one JSON object per line), and files older
-than `log-retention-days` are removed. Settings reads it directly and
-clears it with `ClearLog`; `helix-agent log` reads it for the user.
+local day, `YYYY-MM-DD.jsonl` (0600), named by the day of the entries'
+`time`. Other files there are not the log's. Each line is one JSON
+object followed by `\n`. Lines are appended, each in one write, so the
+lines of concurrent calls never mix; a line torn by a crash is ended
+by the next write (with a `\n` first), and readers skip lines that are
+not a JSON object. Within a file, lines are in the order calls *ended*,
+so `time` (when the call *arrived*) may go back a little; readers sort
+by `time`. A call is recorded when it ends (a wait or a question that
+the shell does not live to finish is not recorded); a refusal of the
+policy check at once.
+
+*Helix's choice:* the shell never follows a symlink there: the directory
+must be a real directory of the user's (one that is not is not written
+to, cleared or pruned), and the day files are opened with `O_NOFOLLOW`
+(a symlink in their place is not written through). A directory or file
+with a wider mode is narrowed to 0700 / 0600.
+
+### Lines
+
+Keys, in this order (readers must not depend on the order, and must
+ignore keys they do not know; keys may be added):
+
+| Key | Type | Value |
+|-----|------|-------|
+| `time` | integer | When the call arrived, Unix seconds. Always a number (readers may also take ISO 8601 text). |
+| `agent` | string | The agent's id (see "Who is calling"); `""` when the caller could not be identified (e.g. sandboxed: then the caller's executable when it is the user's process, else `""`). |
+| `name` | string | Its display name, `""` for none. |
+| `method` | string | The `Agent1` method; or one of the *events* below. |
+| `target` | string | What the call read or acted on, absent for none: an app id as the agent gave it (`org.gnome.Maps`), a window as `window:<id>` and, once known, ` (<app id>)` (`window:21 (org.gnome.TextEditor)`), a file or folder as a `file://` URI. Never a window title. Control characters are removed and it is cut at 256 characters. |
+| `level` | string | The access level the call needed (`read-only`, …); for a consent prompt the level asked, for *Stop* the level the agent held. Absent for calls needing none. |
+| `outcome` | string | `allowed`, `refused:<Error>` or `cancelled` (below). |
+| `error` | string | For an `allowed` call that then failed: the error's short name (`TimedOut`, `NotFound`, `NotSupported`, `Failed`, `InvalidArgs`). Absent when it succeeded. |
+| `<kind>-length` | integer | The length in characters of something the agent sent, instead of it: `query-length` (`SearchFiles`), `title-length` (a window match's `title`); later stages add `text-length`, `question-length` and the like. |
+| `grant` | string | Consent prompts: `session` or `always`. |
+| `count`, `until` | integer | Coalesced refusals (below): how many calls the line stands for (≥ 2), and the last one's `time`. |
+| `dropped` | string | `LogFull` lines (below): `refusals` or `all`. |
+
+Outcomes:
+
+- `allowed`: the policy check let the call through. It may still have
+  failed (`error`).
+- `refused:<Error>`: the policy refused it; `<Error>` is the error's
+  short name: one of `Sandboxed`, `AccessOff`, `Remote`, `Locked`,
+  `LevelTooLow`, `FeatureOff`, `NotGranted`, `DeniedByUser`, `Excluded`,
+  `NeedsConfirmation`, and `AccessDenied` for `AgentAccess1` calls from
+  programs other than Settings. The reason is only the error name
+  (`Excluded`'s token, e.g. `app:<id>`, is not repeated; the target says
+  what was excluded).
+- `cancelled`: the user dismissed the prompt or question (`Cancelled`),
+  or stopped the agent.
+
+Events (not `Agent1` methods; none of them is a method name):
+
+- `ConsentPrompt`: the consent prompt was answered. `allowed` with
+  `grant` (*Allow for this session*, *Always allow*),
+  `refused:DeniedByUser` (*Deny*), or `cancelled` (it went away
+  unanswered). The call that asked is recorded too, with its own
+  outcome.
+- `SensitivePrompt`: the sensitive-action prompt was answered;
+  `target` is the method. `allowed` or `refused:DeniedByUser`.
+- `Stop`: *Stop* in the indicator; `cancelled`.
+- `LogFull`: written once when a day file reaches a cap (below), with
+  `agent` and `name` `""`.
+
+`AgentAccess1` (Settings) calls are not recorded, except `ClearLog`:
+after the files are removed, a line `ClearLog` with `agent` the Settings
+executable and `allowed` (so a cleared log says it was cleared). Calls
+to `AgentAccess1` that are refused (`AccessDenied`, a program other than
+Settings) are recorded, with the method name.
+
+Examples:
+
+```
+{"time":1795082400,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"ListWindows","target":"org.gnome.TextEditor","level":"read-only","outcome":"allowed"}
+{"time":1795082410,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"SearchFiles","target":"file:///home/me","level":"read-only","outcome":"allowed","query-length":6}
+{"time":1795082420,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"WaitForWindowClosed","target":"window:21 (org.example.Vault)","level":"read-only","outcome":"refused:Excluded"}
+{"time":1795082430,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"WaitForWindow","level":"read-only","outcome":"allowed","error":"TimedOut","title-length":5}
+{"time":1795082440,"agent":"/usr/bin/node /home/me/agent.js","name":"Example","method":"ConsentPrompt","level":"read-only","outcome":"allowed","grant":"session"}
+{"time":1795082501,"agent":"/opt/bot","name":"","method":"GetState","level":"read-only","outcome":"refused:AccessOff","count":120,"until":1795082559}
+```
+
+### No secrets
+
+A line holds only the keys above. Never recorded: text an agent types
+or sends (`Ask`/`Confirm` questions, reminder and notification text,
+`SetValue` values, input), clipboard data, notification summaries and
+bodies, accessible field values, window titles, answers to questions,
+and search queries and title matches. *Helix's choice:* a search query
+can say as much as a document ("letter to my divorce lawyer"), so only
+its length is recorded. Later methods record only kinds (a MIME type,
+a toggle's name) and lengths; the keys and text of synthetic input are
+not recorded.
+
+### Not filling the disk
+
+*Helix's choice:*
+
+- **Coalescing.** A refusal identical to one recorded less than 60
+  seconds before (same `agent`, `method`, `target` and `outcome`) is
+  counted instead of written; when the minute is up (checked each
+  minute, and when the next identical refusal comes), one line stands
+  for the counted calls (`time` the first, `until` the last, `count`).
+  An agent hammering a refused method writes about two lines a minute.
+  The counts of the last minute are lost if the shell stops. Allowed
+  calls are never coalesced.
+- **Caps.** Once a day file is 4 MiB, refusals (anything not
+  `allowed`) are no longer written that day; at 16 MiB nothing is. A
+  `LogFull` line marks each (once per day and shell run).
+- Refused calls are recorded with access off too (coalesced): the user
+  can see that something tried.
+
+### Retention
+
+Day files are kept for `log-retention-days` days counting today: with
+30, today's file and the 29 before it; older day files are removed when
+the shell starts, when the local day changes (checked each minute) and
+when the setting changes. Only names of the form `YYYY-MM-DD.jsonl`
+are pruned. `ClearLog` removes every `*.jsonl` file there.
