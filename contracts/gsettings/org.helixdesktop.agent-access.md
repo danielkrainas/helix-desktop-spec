@@ -17,6 +17,7 @@ Path: `/org/helixdesktop/agent-access/`
 | `remember-mode` | `s` | `'ask'` |
 | `notifications` | `b` | `false` |
 | `clipboard` | `b` | `false` |
+| `read-text-fields` | `b` | `false` |
 | `confirm-sensitive` | `b` | `true` |
 | `allow-remote` | `b` | `false` |
 | `excluded-apps` | `as` | `[]` |
@@ -43,6 +44,14 @@ Path: `/org/helixdesktop/agent-access/`
   `ListNotifications` gives only each notification's app and time.
 - `clipboard`: agents may read and set the clipboard. Off, the clipboard
   methods fail with `FeatureOff`.
+- `read-text-fields`: agents controlling apps (`apps`) get what is in
+  editable text fields. Off, `A11yTree` and `A11yFind` give such fields
+  without their text (`value-hidden` instead of `value`), and a name or
+  description that is the field's text is left out too; labels and other
+  texts that are not fields, and the numbers of sliders and spin
+  buttons, are given either way, and `A11ySetValue` still sets a field's
+  text (`contracts/agent-access/README.md`, "Control apps methods").
+  Summary "Let agents read text fields".
 - `confirm-sensitive`: the shell asks the user before every sensitive
   action (see `contracts/agent-access/README.md`, "Sensitive actions").
 - `allow-remote`: agents running in a remote login session (SSH) may

@@ -102,8 +102,11 @@ it, since identity never comes from the agent.
   `press` sends the action `default` (the node's first), `focus` and
   `select` those actions. `set` sends `VALUE` as a string, or with
   `--number` as a number (`d`). Text output of `tree` is an indented
-  outline (role, name, value, states, actions, `#id`); of `find` and
-  `wait` a line per node.
+  outline (role, name, value, states, actions, `#id`; “(password
+  field)” for `password`, “(hidden)” (translated) for `value-hidden` in
+  place of the value); of `find` and `wait` a line per node. The text
+  output of `status` has a line for `read-text-fields` (“Reading text
+  fields: on/off”) when the shell reports it.
 - `input key` takes key combinations such as `ctrl+c`, `alt+F4`,
   `Return` (XKB key names, modifiers `ctrl`, `alt`, `shift`, `super`);
   several are pressed in turn.
@@ -283,8 +286,14 @@ the message on standard error.
 | 20 | `no` | `Cancelled`, or `confirm` answered no | The user said no / The user cancelled the question |
 | 21 | `timed-out` | `TimedOut` | Timed out |
 | 22 | `not-found` | `NotFound` | No such window / app / item: {what} |
-| 23 | `not-supported` | `NotSupported`, `UnknownMethod` | Not supported by this Helix session |
+| 23 | `not-supported` | `NotSupported` | Not supported here: {reason} (“Not supported here” when the shell gave none) |
+| 23 | `not-supported` | `UnknownMethod`, a command the CLI knows the shell lacks | Not supported by this Helix session |
 
+`{reason}` is the shell's `NotSupported` message as it is (English):
+it says whether the session, the computer or the app cannot do it
+(`the app does not let its focus be moved over accessibility` for
+`a11y focus` on a GTK 4 app). `help exit-codes` describes 23 as “Not
+supported by this Helix session, this computer or the app”.
 `{level}` is the level's name as Settings shows it: “Read only”,
 “Control the desktop”, “Control apps”, “Screen and input”. `Excluded`
 messages, by the error's message token: `app:<id>`: “{app name} is

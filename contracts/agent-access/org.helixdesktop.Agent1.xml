@@ -149,7 +149,9 @@
          the protected surfaces in README.md, "Control apps methods".
          A11yTree returns nodes (aa{sv}, Accessible node records in tree
          order, flat), window (u), app-id (s) and truncated (b); A11yFind
-         returns the matching nodes, waiting for one with timeout-ms. -->
+         returns the matching nodes, waiting for one with timeout-ms.
+         Text fields' text only with the read-text-fields switch, else
+         value-hidden (b) in its place. -->
     <method name="A11yTree">
       <arg type="u" name="window" direction="in"/>
       <arg type="a{sv}" name="options" direction="in"/>

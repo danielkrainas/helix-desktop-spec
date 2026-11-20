@@ -48,9 +48,9 @@ outright.
 | Control apps | `apps` | also reading and acting on apps' accessibility trees |
 | Screen and input | `screen-and-input` | also screenshots and synthetic pointer and keyboard input |
 
-Each level includes the ones above it. Notification contents and the
-clipboard need their own switches (`notifications`, `clipboard`) on top
-of the level.
+Each level includes the ones above it. Notification contents, the
+clipboard and the contents of apps' text fields need their own switches
+(`notifications`, `clipboard`, `read-text-fields`) on top of the level.
 
 ## Methods
 
@@ -110,7 +110,7 @@ status (`a{sv}`):
 | `remote` | `b` | the caller is in a remote session |
 | `allow-remote` | `b` | the `allow-remote` switch |
 | `locked` | `b` | the screen is locked |
-| `notifications`, `clipboard`, `confirm-sensitive` | `b` | the switches of those names |
+| `notifications`, `clipboard`, `read-text-fields`, `confirm-sensitive` | `b` | the switches of those names |
 
 `RequestAccess` asks for a grant of `level` (`""`: the configured
 `access-level`), going through the same checks as any method of that
@@ -165,8 +165,10 @@ added; clients ignore keys they do not know):
   `description` (`s`), `states` (`as`, AT-SPI state names: `focused`,
   `checked`, `editable`…), `actions` (`as`, the app's action names),
   `child-count` (`u`), and when they apply: `value` (`s` text, or `d`
-  with `min` and `max` (`d`) for a number; never for password fields),
-  `value-truncated` (`b`), `password` (`b`, true: a password field),
+  with `min` and `max` (`d`) for a number; never for password fields,
+  nor for text fields with `read-text-fields` off), `value-truncated`
+  (`b`), `password` (`b`, true: a password field), `value-hidden` (`b`,
+  true: a text field whose text was withheld),
   `truncated` (`b`, some of its children were left out), `x`, `y`,
   `width`, `height` (`i`, in its window, with `bounds`). See "Control
   apps methods".
@@ -450,12 +452,28 @@ it; `node` a node id from `A11yTree` or `A11yFind`.
 - **What is read.** Roles, names, descriptions, states and action names
   as the app gives them; a number's value, minimum and maximum; and the
   text of editable texts (and of other texts whose text is not their
-  name), at most 4,096 characters (`value-truncated`). *Helix's choice:*
-  text contents are given: driving apps means reading what they show,
-  the user chose *Control apps* knowing it, and apps whose contents must
-  not be read belong in `excluded-apps` (a password manager, banking,
+  name), at most 4,096 characters (`value-truncated`); text fields' text
+  only with `read-text-fields` (below). *Helix's choice:* other texts'
+  contents are given: driving apps means reading what they show, the
+  user chose *Control apps* knowing it, and apps whose contents must not
+  be read belong in `excluded-apps` (a password manager, banking,
   messaging). Unlike notifications, which every app sends, the agent
   reads one window it names.
+- **Text fields.** *Helix's choice:* what the user types is input, not
+  UI, and is withheld unless the user turns `read-text-fields` on
+  (default off). A text field is a node with the `EditableText`
+  interface or the state `editable`, and without a number (sliders and
+  spin buttons keep their `value`, `min` and `max`). With the switch
+  off, its record has `value-hidden` true and no `value` or
+  `value-truncated`, not even for an empty field; a name or description
+  that is exactly the field's text (some toolkits name a field after what
+  is in it) is given as `""`, and `A11yFind`'s `name` matches only names
+  as given, so a field's text cannot be found by searching for it.
+  Labels' and other non-editable texts' names and values are given
+  either way. `A11ySetValue` still sets a field's text (writing is not
+  reading), and nothing returns it afterwards. The switch is read on
+  every call, and again by an `A11yFind` waiting with `timeout-ms` each
+  time it looks.
 - **Password fields.** A node is one when its role is `password text`,
   or it is an editable text whose text is all mask characters (`•`, `●`,
   `∗`, `*`…; GTK 4 reports an entry with hidden characters as plain
@@ -530,7 +548,7 @@ that token, for clients to word their own message.
 | `Cancelled` | the user dismissed `Ask` or `Confirm`, or the screen locked while it was shown or queued | |
 | `TimedOut` | a wait or question ran out of time | |
 | `NotFound` | no such window, app, node or reminder | |
-| `NotSupported` | a name or action this shell does not support (e.g. a toggle without hardware) | |
+| `NotSupported` | a name or action this shell, this computer or the app does not support (e.g. a toggle without hardware, an app that does not let its focus be moved) | why, in English (e.g. `the app does not support this`); free text, not a token |
 | `Failed` | anything else | |
 
 Arguments that are malformed fail with
@@ -837,6 +855,7 @@ ignore keys they do not know; keys may be added):
 | `action` | string | `WindowAction`: the action (`tile-left`, `close`); `A11yAction`: the action when it is a common one (`click`, `activate`, `toggle`, `default`, `focus`, `select`, `window.close`, `clipboard.copy`…), else `other` (apps name their actions); `A11ySetValue`: `set-text` or `set-value`; a `SensitivePrompt`: what the prompt said the call does, where it said more than the method (`wifi-off`, `close`). |
 | `role` | string | `A11yAction`, `A11ySetValue`: the role of the node acted on (`button`, `password text`), also when refused; `A11yFind`: the role looked for. |
 | `node-count` | integer | `A11yTree`: how many nodes it returned; `A11yFind`: how many matched. |
+| `hidden-count` | integer | `A11yTree`, `A11yFind`: how many of the nodes returned had their text withheld (`read-text-fields` off); absent for none. Never which. |
 | `state` | string | `SetToggle`: `on` or `off`. |
 | `grant` | string | Consent prompts: `session` or `always`. |
 | `count`, `until` | integer | Coalesced refusals (below): how many calls the line stands for (≥ 2), and the last one's `time`. |
