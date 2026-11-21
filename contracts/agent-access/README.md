@@ -1189,8 +1189,21 @@ caller itself and is **unidentified**.
   used for identity**: two agents with the same name and different
   executables are different agents.
 
-A program that changes its executable's path (e.g. every update
-installs to a new directory) is a new agent and is asked again.
+- **Launchers.** *Helix's choice:* when the agent (not an interpreter)
+  was started through a symlink, the symlink is its id and executable.
+  The shell looks up the agent's command (its first command-line
+  argument) the way a shell would: against its working directory when
+  it holds a `/`, else in the first `PATH` directory (from the agent's
+  environment) that has it. The id is the launcher only if what it finds
+  is a symlink that resolves to the executable itself, or to another
+  file in the executable's directory (the launcher already points at a
+  newer version while the old one still runs). This way, a program that
+  installs every update to a new path (e.g. `~/.local/bin/claude` ->
+  `~/.local/share/claude/versions/<version>`) stays the same agent and
+  keeps its grants. Otherwise the id is the executable's path.
+
+A program that changes its executable's path with no such launcher is
+a new agent and is asked again.
 
 ## Grants
 
