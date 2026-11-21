@@ -1004,9 +1004,10 @@ to quit entirely.", with **Wait** and **Force Quit**.
   is closed (`XKillClient`).
 - An answer from the app closes the dialog.
 - *Helix's choice:* some X11 apps list `_NET_WM_PING` and never answer it
-  (Zoom), even when idle. An X11 app (its client, together with
+  (Zoom), even when idle. An X11 window (with its
   `_NET_WM_PID`) counts as not responding only once it has answered a
-  ping before. If its first ping goes unanswered, it is not pinged again
+  ping before. This is per window, not per app: Zoom's start-up window
+  answers, its main windows never do. If its first ping goes unanswered, it is not pinged again
   and no dialog is shown. Wayland apps must answer `xdg_wm_base.ping`,
   so for them every late answer counts.
 - **Wait** is the dialog's default: Enter waits. Force Quit is a red
