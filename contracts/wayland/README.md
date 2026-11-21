@@ -459,6 +459,13 @@ them, and unlocking happens after the fade-out.
   (maximized, fullscreen, parent, app id) and whatever Helix decided for
   it (focus, so the `activated` state; bounds; capabilities) goes out in
   one first configure answering that commit, as xdg-shell describes.
+- Only the window with the keyboard is `activated`; every other window
+  is not, hidden ones too (minimized, on another workspace). So a window
+  shown and focused again (from the overview, the dock, the switcher)
+  always gets a configure with `activated` set. Chromium-based apps
+  (browsers, Electron apps) that minimized themselves draw nothing until
+  such a configure comes; without it they stayed a still picture that
+  took no input.
 - Popup menus are kept inside the monitor their window mostly covers.
 - When a monitor goes away (unplugged or turned off), its layer surfaces
   are closed (`closed` event), so the shell creates them again on the
