@@ -2190,6 +2190,16 @@ color under the picked point and the overview shows window pictures in
 headless sessions. A test that needs requests left unanswered sets
 `HELIX_HEADLESS_NO_CAPTURE`.
 
+With `HELIX_HEADLESS_GPU` set to a GPU's render node, the headless backend
+also draws every monitor with that GPU each frame, off-screen, as bare
+hardware would show it (without scan-out planes), offers GPU buffers
+(`zwp_linux_dmabuf_v1`, and explicit sync when the GPU has it), presents
+`wp_presentation` feedback for what it drew, and answers captures and its
+snapshots from those drawings. Tests use it to run apps that draw with the
+GPU (browsers) as on hardware. Its test input also takes `wheel STEPS`, a
+mouse wheel turned by notches (`value120`), and with two monitors the
+second one's snapshot is written next to the first (`NAME-2.png`).
+
 ## Input methods (Helix)
 
 The compositor offers `zwp_text_input_v3` to every client, and
