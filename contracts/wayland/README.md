@@ -786,6 +786,19 @@ previews the half it would fill (a translucent rectangle); releasing there
 tiles it. Touching the top edge previews and then maximizes. Moving away
 from the edge drops the preview.
 
+**Dragging a maximized (or tiled, or full-screen) window**, however the
+drag started (a title bar Helix draws, an app's own title bar or drag
+area through `xdg_toplevel.move` or `_NET_WM_MOVERESIZE`, or
+`<Super>`+drag), restores it once the pointer has moved 8 pixels, under
+the pointer: the restored window keeps the pointer at the same fraction
+of its width, and as far below its top as when grabbed (so a title bar
+stays under the pointer), or, grabbed lower than the restored window is
+tall, at the same fraction of its height. It is placed from the size it
+is restored to, not the size the app still has until it redraws, and
+never back where it was before it was maximized; it then follows the
+pointer, onto any monitor. *Mutter also restores under the pointer; the
+8-pixel threshold and the height rule are Helix's choice.*
+
 The compositor itself handles:
 
 - `org.gnome.mutter.keybindings` `switch-monitor` (default Super+P and
