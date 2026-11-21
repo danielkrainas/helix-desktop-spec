@@ -848,8 +848,13 @@ is split into quarters). These clicks are not passed to the app.
 
 **New windows.** They open on the monitor under the pointer, cascading
 from the top-left corner of its work area, or centered in it with
-`center-new-windows`. With `auto-maximize`, a new window at least as
-large as the work area (title bar included) opens maximized. A window
+`center-new-windows`. With `auto-maximize`, a new window covering more
+than 80% of the work area's area (title bar included; mutter's
+`MAX_UNMAXIMIZED_WINDOW_AREA`) opens maximized, unless it cannot be
+resized (equal minimum and maximum sizes). This catches apps restoring a
+size saved where they could not see the panels: Slack on Wayland comes
+back at 1920x1018 below a 32 px panel on a 1920x1080 monitor, which
+placed as is leaves a band of the desktop above its menu bar. A window
 that asks to be maximized, fullscreen or tiled before its first frame
 (`xdg_toplevel.set_maximized` before its first buffer) is not placed
 again when that frame arrives, whatever size the frame has: it stays
